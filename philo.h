@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
+/*   Updated: 2024/07/12 13:50:27 by bposa            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -9,12 +21,12 @@
 # define SUCCESS 0
 #endif
 
-#ifndef ARGC
-# define ARGC 1
+#ifndef EARGC
+# define EARGC 1
 #endif
 
-#ifndef ARG
-# define ARG 2
+#ifndef EARG
+# define EARG 2
 #endif
 
 #include <pthread.h>

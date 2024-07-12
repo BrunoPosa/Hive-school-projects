@@ -56,8 +56,8 @@ static int	islenok(char **s)
 int	validator(int argc, char **args)
 {
 	if (argc < 5 || argc > 6)
-		return (errs(ARGC));
+		return (errs(EARGC));
 	if (aredigits(args) != 1 || islenok(args) != 1)
-		return (errs(ARG));
+		return (errs(EARG));
 	return (1);
 }
