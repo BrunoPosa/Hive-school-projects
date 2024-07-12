@@ -28,6 +28,12 @@ int errs(int status)
 	return (0);
 }
 
+static int	init()
+{
+
+	return (0);
+}
+
 int main(int argc, char **argv)
 {
 	if (validator(argc, argv) == ERROR)

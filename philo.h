@@ -5,6 +5,10 @@
 # define ERROR -1
 #endif
 
+#ifndef SUCCESS
+# define SUCCESS 0
+#endif
+
 #ifndef ARGC
 # define ARGC 1
 #endif
