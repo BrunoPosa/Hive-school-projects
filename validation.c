@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validation.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/22 12:29:44 by bposa             #+#    #+#             */
+/*   Updated: 2024/07/22 16:20:32 by bposa            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 static int	my_isdigit(int c)
@@ -56,8 +68,9 @@ static int	islenok(char **s)
 int	validator(int argc, char **args)
 {
 	if (argc < 5 || argc > 6)
-		return (errs(EARGC));
-	if (aredigits(args) != 1 || islenok(args) != 1)
-		return (errs(EARG));
+		return (msg(EARGC));
+	if (aredigits(args) != 1 || islenok(args) != 1
+		|| my_atoi(args[1]) == 0)
+		return (msg(EARG));
 	return (1);
 }

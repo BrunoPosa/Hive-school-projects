@@ -5,7 +5,10 @@ DEBUGFLAGS	=	-O0 -g
 
 # Source files and dependencies
 SRCS	= 	philo.c \
-			validation.c 
+			validation.c \
+			utils.c \
+			init.c \
+			exit.c
 
 DEPS	=	philo.h
 
@@ -28,6 +31,8 @@ fclean:	clean
 
 re:	fclean all
 
-debug: 
+debug:	$(SRCS) $(DEPS)
+	@$(CC) $(CFLAGS) $(DEBUGFLAGS) -o $(NAME) $(SRCS)
+	@echo debug build made
 
 .PHONY:	all clean fclean re debug
