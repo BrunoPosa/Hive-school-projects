@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 08:35:50 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 19:13:33 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,14 @@ int ermsg(int status)
 		write(2, "\nMalloc!\n", 9);
 	if (status == EMUTEX)
 		write(2, "\nMutex!\n", 8);
+	if (status == ERROR)
+		write(2, "\nError!\n", 8);
 	return (ERROR);
 }
 
+/*
+	Ditch i for sake of not doing free() inside return()
+*/
 int	cleanerr(t_data *d, int status, int initialized)
 {
 	int	i;
