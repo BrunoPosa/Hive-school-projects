@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 08:15:38 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 08:34:21 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,10 @@ int	validator(int argc, char **args)
 {
 	if (argc < 5 || argc > 6)
 		return (ermsg(EARGC));
-	if (aredigits(args) != 1 || islenok(args) != 1
-		|| my_atoi(args[1]) == 0)
+	if (aredigits(args) != 1 || islenok(args) != 1)
+		return (ermsg(EARG));
+	if (my_atoi(args[1]) == 0 || my_atoi(args[2]) == 0
+		|| my_atoi(args[3]) == 0 || my_atoi(args[4]) == 0)
 		return (ermsg(EARG));
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 08:11:37 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 08:35:50 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 int ermsg(int status)
 {
 	if (status == EVAL)
-		write(2, "\nUsage:\n        ./philo Philos T_die T_eat"
-			" T_sleep [optional: Meals]\n", 69);
+		write(2, "\nUsage\n        ./philo Philos T_die T_eat"
+			" T_sleep [optional: Meals]\n\n", 69);
 	if (status == EINIT)
 		write(2, "\nInitialization failed, please try again\n\n", 42);
 	if (status == EARG)
-		write(2, "\nEach argument must be 1-9999\n", 30);
+		write(2, "\nMain arguments must be 1-9999\n", 31);
 	if (status == EARGC)
 		write(2, "\nMust have 4 or 5 arguments.\n", 29);
 	if (status == ETHREAD)
