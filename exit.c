@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 19:13:33 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 19:45:48 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ int ermsg(int status)
 }
 
 /*
-	Ditch i for sake of not doing free() inside return()
+	-Fix by protecting mutex_destroy() and pthread_join() [they ret 0 on success]!
+	-Ditch i for sake of not doing free() inside return()
 */
 int	cleanerr(t_data *d, int status, int initialized)
 {

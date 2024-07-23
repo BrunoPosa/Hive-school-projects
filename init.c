@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 18:54:49 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 19:58:02 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,10 @@ int	my_usleep(long long int mseconds)
 	return (SUCCESS);
 }
 
+/*
+	Forks (mutexes) go 0-99
+	Philos id's go 1-100
+*/
 int	init_mu_th(t_data *d)
 {
 	int	i;
