@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 13:26:22 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 18:54:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ int	init_mu_th(t_data *d)
 	i = 0;
 	while (i < d->n_philos)
 	{
-		if (pthread_create(&d->philo[i].thread, NULL, (void *)&live, d) != SUCCESS)
+		if (pthread_create(&d->philo[i].thread, NULL, (void *)&routine, d)
+			!= SUCCESS)
 			return (cleanerr(d, ETHREAD, i));
 		d->philo[i].id = i + 1;
 		i++;
@@ -66,20 +67,16 @@ int	init_mu_th(t_data *d)
 	return (SUCCESS);
 }
 
-/*
-	TODO:
-	-Initialilze condition variables?
-*/
 int	initor(char **argv, t_data *d)
 {
 	d->n_philos = my_atoi(argv[1]);
-	if (init_mu_th(d) != SUCCESS)
-		return (ERROR);
 	d->t_die = my_atoi(argv[2]);
 	d->t_eat = my_atoi(argv[3]);
 	d->t_sleep = my_atoi(argv[4]);
 	d->meals = 0;
 	if (argv[5])
 		d->meals = my_atoi(argv[5]);
+	if (init_mu_th(d) != SUCCESS)
+		return (ERROR);
 	return (SUCCESS);
 }
