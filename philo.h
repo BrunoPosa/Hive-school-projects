@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 08:16:05 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 13:26:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,14 @@ typedef struct	s_data
 	int				death;
 }	t_data;
 
-t_data	*live(t_data *d);
-int		validator(int argc, char **args);
-int		initor(char **argv, t_data *d);
-int		init_mu_th(t_data *d);
-int		cleanerr(t_data *d, int status, int initialized);
-int		ermsg(int status);
-int		my_atoi(char *n);
+t_data			*live(t_data *d);
+int				validator(int argc, char **args);
+int				initor(char **argv, t_data *d);
+int				init_mu_th(t_data *d);
+long long int	get_time_ms(void);
+int				my_usleep(long long int mseconds);
+int				cleanerr(t_data *d, int status, int initialized);
+int				ermsg(int status);
+int				my_atoi(char *n);
 
 #endif

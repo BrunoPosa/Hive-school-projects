@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 08:35:50 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 13:18:50 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ int ermsg(int status)
 	return (ERROR);
 }
 
+/*
+	Ditch i for sake of not doing free() inside return()
+*/
 int	cleanerr(t_data *d, int status, int initialized)
 {
 	int	i;

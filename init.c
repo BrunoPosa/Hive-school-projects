@@ -6,11 +6,43 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/22 16:39:41 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 13:26:22 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+long long int	get_time_ms(void)
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) == -1)
+		return(ERROR);
+	return ((long long int)(time.tv_sec * 1000LL + (time.tv_usec + 500) / 1000));
+}
+
+int	my_usleep(long long int mseconds)
+{
+	long long int	timer;
+	long long int	start;
+	long long int	current;
+
+	timer = 0;
+	current = 0;
+	start = get_time_ms();
+	if (start == ERROR)
+		return (ERROR);
+	while (timer < mseconds)
+	{
+		current = get_time_ms();
+		if (current == ERROR)
+			return (ERROR);
+		timer = current - start;
+		if (usleep(200) == -1)
+			return (ERROR);
+	}
+	return (SUCCESS);
+}
 
 int	init_mu_th(t_data *d)
 {
@@ -28,6 +60,7 @@ int	init_mu_th(t_data *d)
 	{
 		if (pthread_create(&d->philo[i].thread, NULL, (void *)&live, d) != SUCCESS)
 			return (cleanerr(d, ETHREAD, i));
+		d->philo[i].id = i + 1;
 		i++;
 	}
 	return (SUCCESS);
