@@ -6,13 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/22 16:40:02 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 08:11:37 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int msg(int status)
+int ermsg(int status)
 {
 	if (status == EVAL)
 		write(2, "\nUsage:\n        ./philo Philos T_die T_eat"
@@ -58,5 +58,5 @@ int	cleanerr(t_data *d, int status, int initialized)
 			pthread_join(d->philo[i].thread, NULL);
 		}
 	}
-	return (free(d), msg(status));
+	return (free(d), ermsg(status));
 }

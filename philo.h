@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/22 16:19:57 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 08:16:05 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int		validator(int argc, char **args);
 int		initor(char **argv, t_data *d);
 int		init_mu_th(t_data *d);
 int		cleanerr(t_data *d, int status, int initialized);
-int		msg(int status);
+int		ermsg(int status);
 int		my_atoi(char *n);
 
 #endif

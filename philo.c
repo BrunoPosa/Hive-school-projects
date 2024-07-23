@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/22 16:19:44 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/23 08:11:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ int main(int argc, char **argv)
 	t_data	*d;
 
 	if (validator(argc, argv) == ERROR)
-		return (msg(EVAL));
+		return (ermsg(EVAL));
 	d = malloc(sizeof(t_data));
 	if (!d)
-		return (msg(EMALLOC));
+		return (ermsg(EMALLOC));
 	memset(d, 0, sizeof(t_data));
 	if (initor(argv, d) == ERROR)
-		return (msg(EINIT));
+		return (ermsg(EINIT));
 
 printf("\n Yay! Program initialized successfully\n");
 
