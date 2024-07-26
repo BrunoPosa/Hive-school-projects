@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/26 18:55:34 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/26 20:13:10 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,11 @@ int	cleanerr(t_data *d, int status, int initialized)
 	if (status == EMUTEX || status == EMALLOC)
 	{
 		while (--initialized >= 0)
+		{
 			pthread_mutex_destroy(&d->forks[initialized]);
+			if (d->philo[initialized])
+				free(d->philo[initialized]);
+		}
 	}
 	else if (status == ETHREAD)
 	{
@@ -59,11 +63,6 @@ int	cleanerr(t_data *d, int status, int initialized)
 			pthread_mutex_destroy(&d->forks[d->n_philos]);
 			pthread_join(d->philo[d->n_philos]->thread, NULL);
 		}
-	}
-	if (status == EMALLOC)
-	{
-		while (--initialized >= 0)
-			free(d->philo[initialized]);
 	}
 	pthread_join(d->butler, NULL);
 	free(d);

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/26 19:24:33 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/26 20:31:05 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ long long int	get_time_ms(void)
 
 	if (gettimeofday(&time, NULL) == -1)
 		return(ERROR);
-	return ((long long int)(time.tv_sec * 1000LL + (time.tv_usec + 500) / 1000));
+	return ((long long int)(time.tv_sec * 1000LL + time.tv_usec / 1000));//(time.tv_usec + 500) / 1000??
 }
 
 int	ms_sleep(long long int mseconds)
@@ -58,6 +58,7 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->t_eat = d->t_eat;
 	d->philo[i]->t_sleep = d->t_sleep;
 	d->philo[i]->meals = d->meals;
+	d->philo[i]->starttime = get_time_ms();
 	return (SUCCESS);
 }
 

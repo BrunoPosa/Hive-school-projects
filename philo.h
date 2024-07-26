@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/26 15:44:30 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/26 20:59:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ typedef	struct	s_philo
 	int				t_sleep;
 	int				meals;
 	int				death;
+	long long int	last_meal;
+	long long int	starttime;
+	int				error;
 }	t_philo;
 
 typedef struct	s_data
