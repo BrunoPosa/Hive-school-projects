@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 18:06:55 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/26 15:44:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,26 +65,35 @@ typedef	struct	s_philo
 {
 	int				id;
 	pthread_t		thread;
+	pthread_mutex_t	*lfork;
+	pthread_mutex_t	*rfork;
+	int				t_die;
+	int				t_eat;
+	int				t_sleep;
+	int				meals;
+	int				death;
 }	t_philo;
 
 typedef struct	s_data
 {
-	t_philo			philo[MAX_PHILOS];
+	pthread_t		butler;
+	t_philo			*philo[MAX_PHILOS];
 	pthread_mutex_t	forks[MAX_PHILOS];
 	int				n_philos;
 	int				t_die;
 	int				t_eat;
 	int				t_sleep;
 	int				meals;
-	int				death;
+	int				dead;
 }	t_data;
 
-t_data			*routine(t_data *d);
+void			routine(t_philo *p);
+void			butler(t_data *d);
 int				validator(int argc, char **args);
 int				initor(char **argv, t_data *d);
 int				init_mu_th(t_data *d);
 long long int	get_time_ms(void);
-int				my_usleep(long long int mseconds);
+int				ms_sleep(long long int mseconds);
 int				cleanerr(t_data *d, int status, int initialized);
 int				ermsg(int status);
 int				my_atoi(char *n);

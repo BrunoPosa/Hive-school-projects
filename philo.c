@@ -6,30 +6,35 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 19:58:28 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/26 18:39:43 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_data	*routine(t_data *d)
+void	routine(t_philo *p)
 {
-	if (prep(d) == ERROR)
-		return (cleanerr(d, ERROR, d->n_philos));
-	printf("\nroutine\n");
-	return (SUCCESS);
+	while (1)
+	{
+		(void)p;
+		printf("\n%lld id=%d\n", get_time_ms(), p->id);
+		ms_sleep(1000);
+	}
 }
 
-// int	conductor(t_data *d)
-// {
-
-// }
-
+void	butler(t_data *d)
+{
+	(void)d;
+	printf("\nbutler started\n");
+	ms_sleep(1000);
+}
 /*
 	TODO:
 	-fix validator() to work using macros
 	-reorganize initialization
 	-have a conductor()/monitor function to run the simulation
+	-Limit philos in validation and header to 4000
+	-"\e[31m Error \e[0m\n"
 */
 int main(int argc, char **argv)
 {
@@ -43,9 +48,6 @@ int main(int argc, char **argv)
 	memset(d, 0, sizeof(t_data));
 	if (initor(argv, d) == ERROR)
 		return (ermsg(EINIT));
-
-	// if (conductor(d) == ERROR)
-	// 	return (cleanerr(d, ERROR, d->n_philos));
 
 	cleanerr(d, SUCCESS, d->n_philos);
 	return (SUCCESS);

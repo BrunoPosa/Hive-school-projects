@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 19:45:48 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/26 18:55:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,29 +40,32 @@ int ermsg(int status)
 */
 int	cleanerr(t_data *d, int status, int initialized)
 {
-	int	i;
-
-	i = -1;
-	if (status == EMUTEX)
+	if (status == EMUTEX || status == EMALLOC)
 	{
-		while (++i < initialized)
-			pthread_mutex_destroy(&d->forks[i]);
+		while (--initialized >= 0)
+			pthread_mutex_destroy(&d->forks[initialized]);
 	}
 	else if (status == ETHREAD)
 	{
-		while (++i < d->n_philos)
-			pthread_mutex_destroy(&d->forks[i]);
-		i = -1;
-		while (++i < initialized)
-			pthread_join(d->philo[i].thread, NULL);
+		while (--d->n_philos >= 0)
+			pthread_mutex_destroy(&d->forks[d->n_philos]);
+		while (--initialized >= 0)
+			pthread_join(d->philo[initialized]->thread, NULL);
 	}
 	else
 	{
-		while (++i < d->n_philos)
+		while (--d->n_philos >= 0)
 		{
-			pthread_mutex_destroy(&d->forks[i]);
-			pthread_join(d->philo[i].thread, NULL);
+			pthread_mutex_destroy(&d->forks[d->n_philos]);
+			pthread_join(d->philo[d->n_philos]->thread, NULL);
 		}
 	}
-	return (free(d), ermsg(status));
+	if (status == EMALLOC)
+	{
+		while (--initialized >= 0)
+			free(d->philo[initialized]);
+	}
+	pthread_join(d->butler, NULL);
+	free(d);
+	return (ermsg(status));
 }

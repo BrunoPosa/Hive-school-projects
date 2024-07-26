@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 19:58:02 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/26 19:24:33 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ long long int	get_time_ms(void)
 	return ((long long int)(time.tv_sec * 1000LL + (time.tv_usec + 500) / 1000));
 }
 
-int	my_usleep(long long int mseconds)
+int	ms_sleep(long long int mseconds)
 {
 	long long int	timer;
 	long long int	start;
@@ -44,29 +44,47 @@ int	my_usleep(long long int mseconds)
 	return (SUCCESS);
 }
 
+int	init_philo(t_data *d, int i)
+{
+	d->philo[i] = malloc(sizeof(t_philo));
+	if (!d->philo[i])
+		return (ERROR);
+	memset(d->philo[i], 0, sizeof(t_philo));
+	d->philo[i]->id = i + 1;
+	d->philo[i]->lfork = &d->forks[i];
+	d->philo[i]->rfork = &d->forks[(i + 1) % d->n_philos];
+	d->philo[i]->death = 0;
+	d->philo[i]->t_die = d->t_die;
+	d->philo[i]->t_eat = d->t_eat;
+	d->philo[i]->t_sleep = d->t_sleep;
+	d->philo[i]->meals = d->meals;
+	return (SUCCESS);
+}
+
 /*
-	Forks (mutexes) go 0-99
-	Philos id's go 1-100
+	Forks (mutexes) start from 0
+	Philos start from 0 + correspond to array index but their id is +1
 */
 int	init_mu_th(t_data *d)
 {
 	int	i;
 
-	i = 0;
-	while (i < d->n_philos)
+	i = -1;
+	while (++i < d->n_philos)
 	{
 		if (pthread_mutex_init(&d->forks[i], NULL) != SUCCESS)
 			return (cleanerr(d, EMUTEX, i));
-		i++;
 	}
-	i = 0;
-	while (i < d->n_philos)
+	if (pthread_create(&d->butler, NULL, (void *)&butler, d) != SUCCESS)
+			return (cleanerr(d, ETHREAD, 0));
+	i = -1;
+	while (++i < d->n_philos)
 	{
-		if (pthread_create(&d->philo[i].thread, NULL, (void *)&routine, d)
+		if (init_philo(d, i) != SUCCESS)
+			return (cleanerr(d, EMALLOC, i));
+		if (pthread_create(&(d->philo[i]->thread), NULL, (void *)&routine, d->philo[i])
 			!= SUCCESS)
 			return (cleanerr(d, ETHREAD, i));
-		d->philo[i].id = i + 1;
-		i++;
 	}
 	return (SUCCESS);
 }

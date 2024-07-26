@@ -1,7 +1,19 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/07/25 11:18:16 by bposa             #+#    #+#              #
+#    Updated: 2024/07/25 11:18:20 by bposa            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 # Compiler and flags
 CC			=	cc
 CFLAGS		=	-Wall -Wextra -Werror -pthread
-DEBUGFLAGS	=	-O0 -g
+DEBUGFLAGS	=	-fsanitize=thread -O0 -g
 
 # Source files and dependencies
 SRCS	= 	philo.c \
