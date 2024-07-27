@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/26 20:13:10 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/27 19:54:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int ermsg(int status)
 		write(2, "\nUsage\n        ./philo Philos T_die T_eat"
 			" T_sleep [optional: Meals]\n\n", 69);
 	if (status == EINIT)
-		write(2, "\nInitialization failed, please try again\n\n", 42);
+		printf("\n\e[31mInitialization failed, please try again\e[0m\n\n");
 	if (status == EARG)
 		write(2, "\nMain arguments must be 1-9999\n", 31);
 	if (status == EARGC)
@@ -31,7 +31,7 @@ int ermsg(int status)
 		write(2, "\nMutex!\n", 8);
 	if (status == ERROR)
 		write(2, "\nError!\n", 8);
-	return (ERROR);
+	return (status);
 }
 
 /*
@@ -40,6 +40,9 @@ int ermsg(int status)
 */
 int	cleanerr(t_data *d, int status, int initialized)
 {
+	void	*res;
+
+	res = NULL;
 	if (status == EMUTEX || status == EMALLOC)
 	{
 		while (--initialized >= 0)
@@ -63,8 +66,10 @@ int	cleanerr(t_data *d, int status, int initialized)
 			pthread_mutex_destroy(&d->forks[d->n_philos]);
 			pthread_join(d->philo[d->n_philos]->thread, NULL);
 		}
+		pthread_mutex_destroy(&d->printlock);
 	}
-	pthread_join(d->butler, NULL);
+	pthread_join(d->butler, &res);
 	free(d);
+	printf("Heloeo\n");
 	return (ermsg(status));
 }

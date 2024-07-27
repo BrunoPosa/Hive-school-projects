@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/26 20:59:30 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/27 19:45:54 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,10 @@
 # define EMALLOC 8
 #endif
 
+#ifndef DEATH
+# define DEATH 616
+#endif
+
 #ifndef MAX_PHILOS
 # define MAX_PHILOS 10000
 #endif
@@ -67,13 +71,14 @@ typedef	struct	s_philo
 	pthread_t		thread;
 	pthread_mutex_t	*lfork;
 	pthread_mutex_t	*rfork;
-	int				t_die;
-	int				t_eat;
-	int				t_sleep;
+	pthread_mutex_t	*prlock;
+	int				die_t;
+	int				eat_t;
+	int				sleep_t;
 	int				meals;
-	int				death;
-	long long int	last_meal;
-	long long int	starttime;
+	int				dead;
+	long long int	last_meal_t;
+	long long int	start_t;
 	int				error;
 }	t_philo;
 
@@ -82,21 +87,22 @@ typedef struct	s_data
 	pthread_t		butler;
 	t_philo			*philo[MAX_PHILOS];
 	pthread_mutex_t	forks[MAX_PHILOS];
+	pthread_mutex_t	printlock;
 	int				n_philos;
-	int				t_die;
-	int				t_eat;
-	int				t_sleep;
+	int				die_t;
+	int				eat_t;
+	int				sleep_t;
 	int				meals;
-	int				dead;
+	int				error_death;
 }	t_data;
 
 void			routine(t_philo *p);
-void			butler(t_data *d);
+void			*butler(t_data *d);
 int				validator(int argc, char **args);
 int				initor(char **argv, t_data *d);
 int				init_mu_th(t_data *d);
 long long int	get_time_ms(void);
-int				ms_sleep(long long int mseconds);
+int				wait_ms(long long int mseconds, t_philo *p);
 int				cleanerr(t_data *d, int status, int initialized);
 int				ermsg(int status);
 int				my_atoi(char *n);
