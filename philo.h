@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/27 19:45:54 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/30 01:11:11 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@
 #endif
 
 #ifndef MAX_PHILOS
-# define MAX_PHILOS 10000
+# define MAX_PHILOS 4000
 #endif
 
 #include <pthread.h>
@@ -75,11 +75,12 @@ typedef	struct	s_philo
 	int				die_t;
 	int				eat_t;
 	int				sleep_t;
-	int				meals;
-	int				dead;
+	int				meals_had;
+	int				*dead;
 	long long int	last_meal_t;
-	long long int	start_t;
+	long long int	*start_t;
 	int				error;
+	int				*go;
 }	t_philo;
 
 typedef struct	s_data
@@ -92,12 +93,14 @@ typedef struct	s_data
 	int				die_t;
 	int				eat_t;
 	int				sleep_t;
-	int				meals;
-	int				error_death;
+	int				n_meals;
+	long long int	starttime;
+	int				death;
+	int				go;
 }	t_data;
 
 void			routine(t_philo *p);
-void			*butler(t_data *d);
+void			butler(t_data *d);
 int				validator(int argc, char **args);
 int				initor(char **argv, t_data *d);
 int				init_mu_th(t_data *d);
@@ -105,6 +108,7 @@ long long int	get_time_ms(void);
 int				wait_ms(long long int mseconds, t_philo *p);
 int				cleanerr(t_data *d, int status, int initialized);
 int				ermsg(int status);
+void			printer(int arg, char *str, t_philo *p);
 int				my_atoi(char *n);
 
 #endif

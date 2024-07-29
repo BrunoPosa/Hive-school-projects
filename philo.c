@@ -6,97 +6,87 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/27 19:54:03 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/30 01:38:20 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
-	How do i free anything from here on error? Maybe handle error handling last?
-	Will this th be joined on error before butler gets the memo?
+	-Time slip more proportional to larger n_philos, 1-2 ms every second
 */
 void	routine(t_philo *p)
 {
-	while (1)//get_time_ms() - p->last_meal_t < p->die_t
+	while (!*p->dead)
 	{
-		if (get_time_ms() - p->start_t == 0 && p->id % 2 == 0)
-		{
-			if (wait_ms(2, p) != SUCCESS)
-				break ;
-		}
+		while (!*p->go)
+			usleep(100);
+		if (get_time_ms() - *p->start_t <= 1 && p->id % 2 == 0)
+			wait_ms(1, p);
 		pthread_mutex_lock(p->lfork);
-		// pthread_mutex_lock(p->prlock);
-		printf("%lld %d has taken a fork\n", get_time_ms() - p->start_t, p->id);
-		// pthread_mutex_unlock(p->prlock);
+		if (!*p->dead)
+			printer(p->id, "has taken a fork", p);
 		pthread_mutex_lock(p->rfork);
-		// pthread_mutex_lock(p->prlock);
-		printf("%lld %d has taken a fork\n", get_time_ms() - p->start_t, p->id);
-		// pthread_mutex_unlock(p->prlock);
-		if (p->die_t < get_time_ms() - p->last_meal_t)
-			break ;
+		if (!*p->dead)
+			printer(p->id, "has taken a fork", p);
+		if (!*p->dead)
+			printer(p->id, "is eating", p);
 		p->last_meal_t = get_time_ms();
-		// pthread_mutex_lock(p->prlock);
-		printf("%lld %d is eating\n", p->last_meal_t - p->start_t, p->id);
-		// pthread_mutex_unlock(p->prlock);
-		if (wait_ms(p->eat_t, p) != SUCCESS)
-			break ;
+		wait_ms(p->eat_t, p);
 		pthread_mutex_unlock(p->lfork);
 		pthread_mutex_unlock(p->rfork);
-		// pthread_mutex_lock(p->prlock);
-		printf("%lld %d is thinking\n", get_time_ms() - p->start_t, p->id);
-		// pthread_mutex_unlock(p->prlock);
-		// if (wait_ms(get_time_ms() - , p) != SUCCESS)
-		// 	break ;
-		// pthread_mutex_lock(p->prlock);
-		printf("%lld %d is sleeping\n", get_time_ms() - p->start_t, p->id);
-		// pthread_mutex_unlock(p->prlock);
-		if (wait_ms(p->sleep_t, p) != SUCCESS)
+		if (*p->dead)
+			break ;
+		if (!*p->dead)
+			printer(p->id, "is thinking", p);
+		if (!*p->dead)
+			printer(p->id, "is sleeping", p);
+		if (*p->dead || wait_ms(p->eat_t, p) == DEATH)
 			break ;
 	}
-	p->error = 1;
+	printf("%d exit\n", p->id);
 }
 
 /*
-	-do i call cleanerr() here or leave it only in main?
 	-Michael says philos checking themselves for death is slow (4 310 200 100), so maybe butler should check
 */
-void	*butler(t_data *d)
+void	butler(t_data *d)
 {
 	int	i;
 
-	i = 0;
-	while (d->philo[i]->dead != 1 || d->philo[i]->error != 1)
+	i = -1;
+	wait_ms(500, d->philo[0]);
+	d->starttime = get_time_ms();
+	d->go = 1;
+	while (1)
 	{
 		i = -1;
 		while (++i < d->n_philos)
 		{
-			if (d->philo[i]->dead == 1 || d->philo[i]->error == 1)
+			if (get_time_ms() - d->starttime == 0)
+				d->philo[i]->last_meal_t = d->starttime;
+			if (get_time_ms() - d->philo[i]->last_meal_t >= d->die_t)
+			{
+				d->death = d->philo[i]->id;
 				break ;
+			}
 		}
+		if (d->death)
+			break ;
+		wait_ms(1, d->philo[i]);
 	}
-	if (d->philo[i]->dead == 1)
-	{
-		// pthread_mutex_lock(&d->printlock);
-		printf("%lld %d died\n", get_time_ms() - d->philo[i]->start_t, d->philo[i]->id);
-		// pthread_mutex_unlock(&d->printlock);
-		d->error_death = 1;
-		cleanerr(d, DEATH, d->n_philos);
-	}
-	if (d->philo[i]->error == 1)
-	{
-		d->error_death = 1;
-		cleanerr(d, ERROR, d->n_philos);
-	}
-	return (SUCCESS);
+	printer(d->death, "died", d->philo[i]);
+	printf("\e[33mbutler exit\e[0m\n");
 }
 /*
 	TODO:
+	-shuffle routine so odd number of philos can manage the forks and live (play w think_t?)
 	-fix validator() to work using macros/enums
 	-reorganize initialization
-	-Limit philos in validation and header to 4000?
+	-Limit philos in validation to 4000? + Malloc instead of static alloc, bc valgrind
 	-"\e[31m Error \e[0m\n" colors
 	-use Enums for error codes
+	-Consider having a synced simulation starting time in case of many philos
 */
 int main(int argc, char **argv)
 {
@@ -107,11 +97,8 @@ int main(int argc, char **argv)
 	d = malloc(sizeof(t_data));
 	if (!d)
 		return (ermsg(EMALLOC));
-	memset(d, 0, sizeof(t_data));
 	if (initor(argv, d) == ERROR)
 		return (ermsg(EINIT));
-	if (d->error_death == 1)
-		return (ERROR);
-printf("Herer!");
-	return (SUCCESS);//cleanerr(d, SUCCESS, d->n_philos)
+	// usleep(500000);
+	return (cleanerr(d, SUCCESS, d->n_philos));
 }

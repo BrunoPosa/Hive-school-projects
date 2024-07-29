@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/27 19:54:30 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/28 21:10:29 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int ermsg(int status)
 		write(2, "\nMutex!\n", 8);
 	if (status == ERROR)
 		write(2, "\nError!\n", 8);
-	return (status);
+	return (ERROR);
 }
 
 /*
@@ -40,9 +40,6 @@ int ermsg(int status)
 */
 int	cleanerr(t_data *d, int status, int initialized)
 {
-	void	*res;
-
-	res = NULL;
 	if (status == EMUTEX || status == EMALLOC)
 	{
 		while (--initialized >= 0)
@@ -63,13 +60,12 @@ int	cleanerr(t_data *d, int status, int initialized)
 	{
 		while (--d->n_philos >= 0)
 		{
-			pthread_mutex_destroy(&d->forks[d->n_philos]);
 			pthread_join(d->philo[d->n_philos]->thread, NULL);
+			pthread_mutex_destroy(&d->forks[d->n_philos]);
 		}
 		pthread_mutex_destroy(&d->printlock);
 	}
-	pthread_join(d->butler, &res);
 	free(d);
-	printf("Heloeo\n");
+printf("\e[33mCleanerr done\e[0m\n");
 	return (ermsg(status));
 }
