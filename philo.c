@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/30 01:38:20 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/30 21:26:04 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 /*
 	-Time slip more proportional to larger n_philos, 1-2 ms every second
+	-change the flag pointers to variables (make butler cycle through each updating them)
 */
 void	routine(t_philo *p)
 {
@@ -21,35 +22,25 @@ void	routine(t_philo *p)
 	{
 		while (!*p->go)
 			usleep(100);
+		printer(p->id, "is thinking", p);
 		if (get_time_ms() - *p->start_t <= 1 && p->id % 2 == 0)
 			wait_ms(1, p);
 		pthread_mutex_lock(p->lfork);
-		if (!*p->dead)
-			printer(p->id, "has taken a fork", p);
+		printer(p->id, "has taken a fork", p);
 		pthread_mutex_lock(p->rfork);
-		if (!*p->dead)
-			printer(p->id, "has taken a fork", p);
-		if (!*p->dead)
-			printer(p->id, "is eating", p);
+		printer(p->id, "has taken a fork", p);
+		printer(p->id, "is eating", p);
 		p->last_meal_t = get_time_ms();
 		wait_ms(p->eat_t, p);
 		pthread_mutex_unlock(p->lfork);
 		pthread_mutex_unlock(p->rfork);
-		if (*p->dead)
-			break ;
-		if (!*p->dead)
-			printer(p->id, "is thinking", p);
-		if (!*p->dead)
-			printer(p->id, "is sleeping", p);
+		printer(p->id, "is sleeping", p);
 		if (*p->dead || wait_ms(p->eat_t, p) == DEATH)
 			break ;
 	}
 	printf("%d exit\n", p->id);
 }
 
-/*
-	-Michael says philos checking themselves for death is slow (4 310 200 100), so maybe butler should check
-*/
 void	butler(t_data *d)
 {
 	int	i;
@@ -75,11 +66,11 @@ void	butler(t_data *d)
 			break ;
 		wait_ms(1, d->philo[i]);
 	}
-	printer(d->death, "died", d->philo[i]);
+	printf("%lld %d died\n", get_time_ms() - d->starttime, d->philo[i]->id);
 	printf("\e[33mbutler exit\e[0m\n");
 }
 /*
-	TODO:
+	THINK --> EAT --> SLEEP --> THINK --> EAT
 	-shuffle routine so odd number of philos can manage the forks and live (play w think_t?)
 	-fix validator() to work using macros/enums
 	-reorganize initialization

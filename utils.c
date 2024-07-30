@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/30 01:28:45 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/30 14:47:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,12 @@ int	my_atoi(char *n)
 
 void	printer(int arg, char *str, t_philo *p)
 {
-	pthread_mutex_lock(p->prlock);
-	printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
-	pthread_mutex_unlock(p->prlock);
+	if (!*p->dead)
+	{
+		pthread_mutex_lock(p->prlock);
+		printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
+		pthread_mutex_unlock(p->prlock);
+	}
 }
 
 
