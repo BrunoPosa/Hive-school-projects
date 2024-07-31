@@ -6,15 +6,17 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/30 21:26:04 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/31 20:21:06 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
-	-Time slip more proportional to larger n_philos, 1-2 ms every second
+	-handle case 1 800 200 200 (philo should die)
+	-make death as mutex that i un/lock bc now the philos keep thinking after death
 	-change the flag pointers to variables (make butler cycle through each updating them)
+	-unlock all forks before exiting
 */
 void	routine(t_philo *p)
 {
@@ -27,6 +29,11 @@ void	routine(t_philo *p)
 			wait_ms(1, p);
 		pthread_mutex_lock(p->lfork);
 		printer(p->id, "has taken a fork", p);
+		if (!p->rfork)
+		{
+			pthread_mutex_unlock(p->lfork);
+			break ;
+		}
 		pthread_mutex_lock(p->rfork);
 		printer(p->id, "has taken a fork", p);
 		printer(p->id, "is eating", p);
@@ -58,17 +65,34 @@ void	butler(t_data *d)
 				d->philo[i]->last_meal_t = d->starttime;
 			if (get_time_ms() - d->philo[i]->last_meal_t >= d->die_t)
 			{
-				d->death = d->philo[i]->id;
+				d->death = d->philo[i]->id;printf("butler dead id:%d\n", d->philo[i]->id);
 				break ;
 			}
 		}
 		if (d->death)
-			break ;
-		wait_ms(1, d->philo[i]);
+			{break ;printf("DEAD\n");}
+		wait_ms(1, d->philo[0]);
 	}
 	printf("%lld %d died\n", get_time_ms() - d->starttime, d->philo[i]->id);
 	printf("\e[33mbutler exit\e[0m\n");
 }
+
+//add mutex for death check
+void	printer(int arg, char *str, t_philo *p)
+{
+	if (!*p->dead)
+	{
+		pthread_mutex_lock(p->prlock);
+		printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
+		pthread_mutex_unlock(p->prlock);
+	}
+	else if (my_strncmp(str, "is eating", my_strlen(str)) == 0)
+	{
+		pthread_mutex_unlock(p->lfork);
+		pthread_mutex_unlock(p->rfork);
+	}
+}
+
 /*
 	THINK --> EAT --> SLEEP --> THINK --> EAT
 	-shuffle routine so odd number of philos can manage the forks and live (play w think_t?)

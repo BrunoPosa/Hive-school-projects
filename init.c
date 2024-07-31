@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/30 01:28:36 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/31 19:52:01 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->id = i + 1;
 	d->philo[i]->lfork = &d->forks[i];
 	d->philo[i]->rfork = &d->forks[(i + 1) % d->n_philos];
+	if (d->n_philos == 1)
+		d->philo[i]->rfork = NULL;
 	d->philo[i]->dead = &d->death;
 	d->philo[i]->die_t = d->die_t;
 	d->philo[i]->eat_t = d->eat_t;

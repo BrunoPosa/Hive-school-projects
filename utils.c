@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/30 14:47:07 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/31 20:24:28 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,6 @@ int	my_atoi(char *n)
 		res = res * 10 + *n++ - '0';
 	return (res);
 }
-
-void	printer(int arg, char *str, t_philo *p)
-{
-	if (!*p->dead)
-	{
-		pthread_mutex_lock(p->prlock);
-		printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
-		pthread_mutex_unlock(p->prlock);
-	}
-}
-
 
 long long int	get_time_ms(void)
 {
@@ -55,4 +44,24 @@ int	wait_ms(long long int mseconds, t_philo *p)
 		usleep(400);
 	}
 	return (SUCCESS);
+}
+
+int	my_strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t	i;
+
+	i = 0;
+	if (n == 0)
+	{
+		return (0);
+	}
+	while (i + 1 < n && (s1[i] != '\0' || s2[i] != '\0'))
+	{
+		if (s1[i] != s2[i])
+		{
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+		}
+		i++;
+	}
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
