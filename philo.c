@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/01 19:36:44 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/01 22:53:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	routine(t_philo *p)
 	}
 }
 
+//make sure nothing gets printed after death (might need a death mutex for that, or just by focusing on printing)
 void	butler(t_data *d)
 {
 	int	i;
@@ -61,26 +62,30 @@ void	butler(t_data *d)
 			if (get_time_ms() - d->starttime == 0)
 				d->philo[i]->last_meal_t = d->starttime;
 			if (get_time_ms() - d->philo[i]->last_meal_t >= d->die_t)
-			{
 				d->death = d->philo[i]->id;
+			if (d->death || (mealchecker(d) == d->n_meals && d->n_meals != -1))
 				break ;
-			}
 		}
+		if (mealchecker(d) == d->n_meals && d->n_meals != -1)
+			d->death = -1;
 		if (d->death)
-			{break ;}
+			break ;
 		wait_ms(1, d->philo[0]);
 	}
-	printf("%lld %d died\n", get_time_ms() - d->starttime, d->philo[i]->id);
+	if (d->death && (mealchecker(d) != d->n_meals || d->n_meals == -1))
+		printer(d->philo[i]->id, "died", d->philo[i]);
 }
 
 //add mutex for death check
 void	printer(int arg, char *str, t_philo *p)
 {
-	if (!*p->dead)
+	if (!*p->dead || (*p->dead && my_strncmp(str, "died", my_strlen(str)) == 0))
 	{
 		pthread_mutex_lock(p->prlock);
 		printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
 		pthread_mutex_unlock(p->prlock);
+		if (my_strncmp(str, "is eating", my_strlen(str)) == 0)
+			p->meals_had++;
 	}
 	else if (my_strncmp(str, "is eating", my_strlen(str)) == 0)
 	{
@@ -97,6 +102,7 @@ void	printer(int arg, char *str, t_philo *p)
 	-"\e[31m Error \e[0m\n" colors
 	-use Enums for error codes
 	-Consider having a synced simulation starting time in case of many philos
+	-ensure when someone dies, NOTHING gets ever printed after that
 */
 int main(int argc, char **argv)
 {

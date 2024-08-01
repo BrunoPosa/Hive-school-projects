@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/01 19:12:55 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/01 21:52:27 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->die_t = d->die_t;
 	d->philo[i]->eat_t = d->eat_t;
 	d->philo[i]->sleep_t = d->sleep_t;
-	d->philo[i]->meals_had = d->n_meals;
 	d->philo[i]->prlock = &d->printlock;
 	d->philo[i]->start_t = &d->starttime;
 	d->philo[i]->last_meal_t = d->starttime;
@@ -77,6 +76,8 @@ int	initor(char **argv, t_data *d)
 	d->sleep_t = my_atoi(argv[4]);
 	if (argv[5])
 		d->n_meals = my_atoi(argv[5]);
+	else
+		d->n_meals = -1;
 	if (init_mu_th(d) != SUCCESS)
 		return (ERROR);
 	return (SUCCESS);
