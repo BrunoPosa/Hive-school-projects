@@ -6,21 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/31 20:24:28 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/01 21:36:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int	my_atoi(char *n)
-{
-	int	res;
-
-	res = 0;
-	while (n && *n >= '0' && *n <= '9')
-		res = res * 10 + *n++ - '0';
-	return (res);
-}
 
 long long int	get_time_ms(void)
 {
@@ -44,6 +34,29 @@ int	wait_ms(long long int mseconds, t_philo *p)
 		usleep(400);
 	}
 	return (SUCCESS);
+}
+
+int	mealchecker(t_data *d)
+{
+	int	i;
+
+	i = -1;
+	while (++i < d->n_philos)
+	{
+		if (d->philo[i]->meals_had < d->n_meals)
+			return (ERROR);
+	}
+	return (d->n_meals);
+}
+
+int	my_atoi(char *n)
+{
+	int	res;
+
+	res = 0;
+	while (n && *n >= '0' && *n <= '9')
+		res = res * 10 + *n++ - '0';
+	return (res);
 }
 
 int	my_strncmp(const char *s1, const char *s2, size_t n)

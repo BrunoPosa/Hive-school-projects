@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/31 20:24:03 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/01 20:54:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ int				wait_ms(long long int mseconds, t_philo *p);
 int				cleanerr(t_data *d, int status, int initialized);
 int				ermsg(int status);
 void			printer(int arg, char *str, t_philo *p);
+int				mealchecker(t_data *d);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
 int				my_strncmp(const char *s1, const char *s2, size_t n);
