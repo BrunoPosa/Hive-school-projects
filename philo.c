@@ -6,24 +6,22 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/31 20:21:06 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/01 19:36:44 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
-	-handle case 1 800 200 200 (philo should die)
 	-make death as mutex that i un/lock bc now the philos keep thinking after death
-	-change the flag pointers to variables (make butler cycle through each updating them)
-	-unlock all forks before exiting
+	-change the flag pointers to variables/mutexes (make butler cycle through each updating them)
 */
 void	routine(t_philo *p)
 {
 	while (!*p->dead)
 	{
 		while (!*p->go)
-			usleep(100);
+			usleep(200);
 		printer(p->id, "is thinking", p);
 		if (get_time_ms() - *p->start_t <= 1 && p->id % 2 == 0)
 			wait_ms(1, p);
@@ -45,7 +43,6 @@ void	routine(t_philo *p)
 		if (*p->dead || wait_ms(p->eat_t, p) == DEATH)
 			break ;
 	}
-	printf("%d exit\n", p->id);
 }
 
 void	butler(t_data *d)
@@ -65,16 +62,15 @@ void	butler(t_data *d)
 				d->philo[i]->last_meal_t = d->starttime;
 			if (get_time_ms() - d->philo[i]->last_meal_t >= d->die_t)
 			{
-				d->death = d->philo[i]->id;printf("butler dead id:%d\n", d->philo[i]->id);
+				d->death = d->philo[i]->id;
 				break ;
 			}
 		}
 		if (d->death)
-			{break ;printf("DEAD\n");}
+			{break ;}
 		wait_ms(1, d->philo[0]);
 	}
 	printf("%lld %d died\n", get_time_ms() - d->starttime, d->philo[i]->id);
-	printf("\e[33mbutler exit\e[0m\n");
 }
 
 //add mutex for death check
@@ -95,7 +91,6 @@ void	printer(int arg, char *str, t_philo *p)
 
 /*
 	THINK --> EAT --> SLEEP --> THINK --> EAT
-	-shuffle routine so odd number of philos can manage the forks and live (play w think_t?)
 	-fix validator() to work using macros/enums
 	-reorganize initialization
 	-Limit philos in validation to 4000? + Malloc instead of static alloc, bc valgrind
@@ -114,6 +109,7 @@ int main(int argc, char **argv)
 		return (ermsg(EMALLOC));
 	if (initor(argv, d) == ERROR)
 		return (ermsg(EINIT));
-	// usleep(500000);
+	while (!d->death)
+		usleep(100);
 	return (cleanerr(d, SUCCESS, d->n_philos));
 }
