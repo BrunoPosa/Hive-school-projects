@@ -6,11 +6,21 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 08:34:21 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/31 20:23:55 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+size_t	my_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i] != '\0')
+		i++;
+	return (i);
+}
 
 static int	my_isdigit(int c)
 {
@@ -19,16 +29,6 @@ static int	my_isdigit(int c)
 		return (1);
 	}
 	return (0);
-}
-
-static size_t	my_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i] != '\0')
-		i++;
-	return (i);
 }
 
 static int	aredigits(char **s)

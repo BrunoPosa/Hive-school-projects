@@ -6,76 +6,77 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 18:54:49 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/01 19:12:55 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long long int	get_time_ms(void)
+int	init_philo(t_data *d, int i)
 {
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) == -1)
-		return(ERROR);
-	return ((long long int)(time.tv_sec * 1000LL + (time.tv_usec + 500) / 1000));
-}
-
-int	my_usleep(long long int mseconds)
-{
-	long long int	timer;
-	long long int	start;
-	long long int	current;
-
-	timer = 0;
-	current = 0;
-	start = get_time_ms();
-	if (start == ERROR)
+	d->philo[i] = malloc(sizeof(t_philo));
+	if (!d->philo[i])
 		return (ERROR);
-	while (timer < mseconds)
-	{
-		current = get_time_ms();
-		if (current == ERROR)
-			return (ERROR);
-		timer = current - start;
-		if (usleep(200) == -1)
-			return (ERROR);
-	}
+	memset(d->philo[i], 0, sizeof(t_philo));
+	d->philo[i]->id = i + 1;
+	d->philo[i]->lfork = &d->forks[i];
+	d->philo[i]->rfork = &d->forks[(i + 1) % d->n_philos];
+	if (d->n_philos == 1)
+		d->philo[i]->rfork = NULL;
+	d->philo[i]->dead = &d->death;
+	d->philo[i]->die_t = d->die_t;
+	d->philo[i]->eat_t = d->eat_t;
+	d->philo[i]->sleep_t = d->sleep_t;
+	d->philo[i]->meals_had = d->n_meals;
+	d->philo[i]->prlock = &d->printlock;
+	d->philo[i]->start_t = &d->starttime;
+	d->philo[i]->last_meal_t = d->starttime;
+	d->philo[i]->go = &d->go;
 	return (SUCCESS);
 }
 
+/*
+	Forks (mutexes) start from 0
+	Philos start from 0 + correspond to array index but their id is +1
+*/
 int	init_mu_th(t_data *d)
 {
 	int	i;
 
-	i = 0;
-	while (i < d->n_philos)
+	i = -1;
+	while (++i < d->n_philos)
 	{
 		if (pthread_mutex_init(&d->forks[i], NULL) != SUCCESS)
 			return (cleanerr(d, EMUTEX, i));
-		i++;
 	}
-	i = 0;
-	while (i < d->n_philos)
+	if (pthread_mutex_init(&d->printlock, NULL))
+		return (cleanerr(d, ERROR, i));
+	i = -1;
+	while (++i < d->n_philos)
 	{
-		if (pthread_create(&d->philo[i].thread, NULL, (void *)&routine, d)
+		if (init_philo(d, i) != SUCCESS)
+			return (cleanerr(d, EMALLOC, i));
+		if (pthread_create(&d->philo[i]->thread, NULL, (void *)&routine, d->philo[i])
 			!= SUCCESS)
 			return (cleanerr(d, ETHREAD, i));
-		d->philo[i].id = i + 1;
-		i++;
 	}
+	if (pthread_create(&d->butler, NULL, (void *)&butler, d) != SUCCESS)
+		return (cleanerr(d, ETHREAD, i));
+	if (pthread_detach(d->butler) != SUCCESS)
+		return (cleanerr(d, ERROR, i));
 	return (SUCCESS);
 }
 
+//do i need to init n_meals as something else in case user gives 0 as argv[5]
 int	initor(char **argv, t_data *d)
 {
+	memset(d, 0, sizeof(t_data));
 	d->n_philos = my_atoi(argv[1]);
-	d->t_die = my_atoi(argv[2]);
-	d->t_eat = my_atoi(argv[3]);
-	d->t_sleep = my_atoi(argv[4]);
-	d->meals = 0;
+	d->die_t = my_atoi(argv[2]);
+	d->eat_t = my_atoi(argv[3]);
+	d->sleep_t = my_atoi(argv[4]);
 	if (argv[5])
-		d->meals = my_atoi(argv[5]);
+		d->n_meals = my_atoi(argv[5]);
 	if (init_mu_th(d) != SUCCESS)
 		return (ERROR);
 	return (SUCCESS);

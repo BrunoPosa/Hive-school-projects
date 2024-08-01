@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 18:06:55 by bposa            ###   ########.fr       */
+/*   Updated: 2024/07/31 20:24:03 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,12 @@
 # define EMALLOC 8
 #endif
 
+#ifndef DEATH
+# define DEATH 616
+#endif
+
 #ifndef MAX_PHILOS
-# define MAX_PHILOS 10000
+# define MAX_PHILOS 4000
 #endif
 
 #include <pthread.h>
@@ -65,28 +69,48 @@ typedef	struct	s_philo
 {
 	int				id;
 	pthread_t		thread;
+	pthread_mutex_t	*lfork;
+	pthread_mutex_t	*rfork;
+	pthread_mutex_t	*prlock;
+	int				die_t;
+	int				eat_t;
+	int				sleep_t;
+	int				meals_had;
+	int				*dead;
+	long long int	last_meal_t;
+	long long int	*start_t;
+	int				error;
+	int				*go;
 }	t_philo;
 
 typedef struct	s_data
 {
-	t_philo			philo[MAX_PHILOS];
+	pthread_t		butler;
+	t_philo			*philo[MAX_PHILOS];
 	pthread_mutex_t	forks[MAX_PHILOS];
+	pthread_mutex_t	printlock;
 	int				n_philos;
-	int				t_die;
-	int				t_eat;
-	int				t_sleep;
-	int				meals;
+	int				die_t;
+	int				eat_t;
+	int				sleep_t;
+	int				n_meals;
+	long long int	starttime;
 	int				death;
+	int				go;
 }	t_data;
 
-t_data			*routine(t_data *d);
+void			routine(t_philo *p);
+void			butler(t_data *d);
 int				validator(int argc, char **args);
 int				initor(char **argv, t_data *d);
 int				init_mu_th(t_data *d);
 long long int	get_time_ms(void);
-int				my_usleep(long long int mseconds);
+int				wait_ms(long long int mseconds, t_philo *p);
 int				cleanerr(t_data *d, int status, int initialized);
 int				ermsg(int status);
+void			printer(int arg, char *str, t_philo *p);
 int				my_atoi(char *n);
+size_t			my_strlen(const char *s);
+int				my_strncmp(const char *s1, const char *s2, size_t n);
 
 #endif

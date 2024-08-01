@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/23 19:13:33 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/01 19:41:26 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int ermsg(int status)
 		write(2, "\nUsage\n        ./philo Philos T_die T_eat"
 			" T_sleep [optional: Meals]\n\n", 69);
 	if (status == EINIT)
-		write(2, "\nInitialization failed, please try again\n\n", 42);
+		printf("\n\e[31mInitialization failed, please try again\e[0m\n\n");
 	if (status == EARG)
 		write(2, "\nMain arguments must be 1-9999\n", 31);
 	if (status == EARGC)
@@ -35,33 +35,37 @@ int ermsg(int status)
 }
 
 /*
-	Ditch i for sake of not doing free() inside return()
+	-Fix by protecting mutex_destroy() and pthread_join() [they ret 0 on success]!
+	-Ditch i for sake of not doing free() inside return()
 */
 int	cleanerr(t_data *d, int status, int initialized)
 {
-	int	i;
-
-	i = -1;
-	if (status == EMUTEX)
+	if (status == EMUTEX || status == EMALLOC)
 	{
-		while (++i < initialized)
-			pthread_mutex_destroy(&d->forks[i]);
+		while (--initialized >= 0)
+		{
+			pthread_mutex_destroy(&d->forks[initialized]);
+			if (d->philo[initialized])
+				free(d->philo[initialized]);
+		}
 	}
 	else if (status == ETHREAD)
 	{
-		while (++i < d->n_philos)
-			pthread_mutex_destroy(&d->forks[i]);
-		i = -1;
-		while (++i < initialized)
-			pthread_join(d->philo[i].thread, NULL);
+		while (--d->n_philos >= 0)
+			pthread_mutex_destroy(&d->forks[d->n_philos]);
+		while (--initialized >= 0)
+			pthread_join(d->philo[initialized]->thread, NULL);
 	}
 	else
 	{
-		while (++i < d->n_philos)
+		while (--d->n_philos >= 0)
 		{
-			pthread_mutex_destroy(&d->forks[i]);
-			pthread_join(d->philo[i].thread, NULL);
+			pthread_join(d->philo[d->n_philos]->thread, NULL);
+			pthread_mutex_destroy(&d->forks[d->n_philos]);
 		}
+		pthread_mutex_destroy(&d->printlock);
 	}
-	return (free(d), ermsg(status));
+	free(d);
+printf("\e[33mCleanerr done\e[0m\n");
+	return (ermsg(status));
 }
