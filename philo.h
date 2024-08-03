@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/01 20:54:39 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/03 22:49:46 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,11 +72,12 @@ typedef	struct	s_philo
 	pthread_mutex_t	*lfork;
 	pthread_mutex_t	*rfork;
 	pthread_mutex_t	*prlock;
+	pthread_mutex_t	dlock;
 	int				die_t;
 	int				eat_t;
 	int				sleep_t;
 	int				meals_had;
-	int				*dead;
+	int				dead;
 	long long int	last_meal_t;
 	long long int	*start_t;
 	int				error;
@@ -110,6 +111,8 @@ int				cleanerr(t_data *d, int status, int initialized);
 int				ermsg(int status);
 void			printer(int arg, char *str, t_philo *p);
 int				mealchecker(t_data *d);
+int				isdead(t_philo *p);
+void			godot(t_data *d);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
 int				my_strncmp(const char *s1, const char *s2, size_t n);

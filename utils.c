@@ -6,20 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/01 21:36:15 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/03 23:00:16 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-long long int	get_time_ms(void)
-{
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) == -1)
-		return(ERROR);
-	return ((long long int)(time.tv_sec * 1000LL + time.tv_usec / 1000));//(time.tv_usec + 500) / 1000??
-}
 
 int	wait_ms(long long int mseconds, t_philo *p)
 {
@@ -28,12 +19,27 @@ int	wait_ms(long long int mseconds, t_philo *p)
 
 	current = 0;
 	start = get_time_ms();
-	while (!*p->dead && current - start < mseconds)
+	while (!isdead(p) && current - start < mseconds)
 	{
 		current = get_time_ms();
 		usleep(400);
 	}
 	return (SUCCESS);
+}
+
+int	isdead(t_philo *p)
+{
+	pthread_mutex_lock(&p->dlock);
+	if (p->dead)
+	{
+		pthread_mutex_unlock(&p->dlock);
+		return (DEATH);
+	}
+	else
+	{
+		pthread_mutex_unlock(&p->dlock);
+		return (0);
+	}
 }
 
 int	mealchecker(t_data *d)

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/03 19:02:43 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/03 22:59:38 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,11 @@
 	-make death as mutex that i un/lock bc now the philos keep thinking after death
 	-Why does sometimes philo N die at 1ms?
 	-change the flag pointers to variables/mutexes (make butler cycle through each updating them)
+	-invert the go flag, have butler cycle through each philo and check if philo has raised their initializtion flag
 */
 void	routine(t_philo *p)
 {
-	while (!*p->dead)
+	while (!isdead(p))
 	{
 		while (!*p->go)
 			usleep(200);
@@ -41,7 +42,7 @@ void	routine(t_philo *p)
 		pthread_mutex_unlock(p->lfork);
 		pthread_mutex_unlock(p->rfork);
 		printer(p->id, "is sleeping", p);
-		if (*p->dead || wait_ms(p->sleep_t, p) == DEATH)
+		if (isdead(p) || wait_ms(p->sleep_t, p) == DEATH)
 			break ;
 	}
 }
@@ -52,7 +53,7 @@ void	butler(t_data *d)
 	int	i;
 
 	i = -1;
-	wait_ms(500, d->philo[0]);
+	wait_ms(1500, d->philo[0]);
 	d->starttime = get_time_ms();
 	d->go = 1;
 	while (1)
@@ -63,24 +64,39 @@ void	butler(t_data *d)
 			if (get_time_ms() - d->starttime == 0)
 				d->philo[i]->last_meal_t = d->starttime;
 			if (get_time_ms() - d->philo[i]->last_meal_t >= d->die_t)
-				d->death = d->philo[i]->id;
-			if (d->death || (mealchecker(d) == d->n_meals && d->n_meals != -1))
+				godot(d);
+			if (isdead(d->philo[i]) || (mealchecker(d) == d->n_meals && d->n_meals != -1))
 				break ;
 		}
 		if (mealchecker(d) == d->n_meals && d->n_meals != -1)
-			d->death = -1;
+			godot(d);
 		if (d->death)
 			break ;
-		wait_ms(1, d->philo[0]);
 	}
 	if (d->death && (mealchecker(d) != d->n_meals || d->n_meals == -1))
 		printer(d->philo[i]->id, "died", d->philo[i]);
 }
 
+void	godot(t_data *d)
+{
+	int	i;
+
+	i = -1;
+	while (++i < d->n_philos)
+		pthread_mutex_lock(&d->philo[i]->dlock);
+	i = -1;
+	d->death = 1;
+	while (++i < d->n_philos)
+		d->philo[i]->dead = 1;
+	i = -1;
+	while (++i < d->n_philos)
+		pthread_mutex_unlock(&d->philo[i]->dlock);
+}
+
 //add mutex for death check
 void	printer(int arg, char *str, t_philo *p)
 {
-	if (!*p->dead || (*p->dead && my_strncmp(str, "died", my_strlen(str)) == 0))
+	if (!isdead(p) || (isdead(p) && my_strncmp(str, "died", my_strlen(str)) == 0))
 	{
 		pthread_mutex_lock(p->prlock);
 		printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
