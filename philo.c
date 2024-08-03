@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/01 22:53:35 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/03 19:02:43 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 /*
 	-make death as mutex that i un/lock bc now the philos keep thinking after death
+	-Why does sometimes philo N die at 1ms?
 	-change the flag pointers to variables/mutexes (make butler cycle through each updating them)
 */
 void	routine(t_philo *p)
@@ -40,7 +41,7 @@ void	routine(t_philo *p)
 		pthread_mutex_unlock(p->lfork);
 		pthread_mutex_unlock(p->rfork);
 		printer(p->id, "is sleeping", p);
-		if (*p->dead || wait_ms(p->eat_t, p) == DEATH)
+		if (*p->dead || wait_ms(p->sleep_t, p) == DEATH)
 			break ;
 	}
 }
