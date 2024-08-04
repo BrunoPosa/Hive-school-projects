@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 20:17:22 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 22:10:12 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,19 @@ int	isdead(t_philo *p)
 		pthread_mutex_unlock(&p->dlock);
 		return (0);
 	}
+}
+
+int	getter(int *var, pthread_mutex_t *lock)
+{
+	int	value;
+
+	value = 0;
+	if (!var || !lock)
+		return (ERROR);
+	pthread_mutex_lock(lock);
+	value = *var;
+	pthread_mutex_unlock(lock);
+	return (value);
 }
 
 int	checker(t_data *d, int flag)

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 21:51:34 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 22:10:36 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,8 @@ int				checker(t_data *d, int flag);
 // int				check_var(int *var, int status, pthread_mutex_t *lock);
 int				isdead(t_philo *p);
 void			spread(t_data *d, int signal);
-void			edit_var(int	*var, int value, pthread_mutex_t *lock);
+int				getter(int *var, pthread_mutex_t *lock);
+void			setter(int	*var, int value, pthread_mutex_t *lock);
 void			wait_until(int *var, int status, pthread_mutex_t *lock);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);

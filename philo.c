@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 20:39:35 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 22:17:48 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 */
 void	routine(t_philo *p)
 {
-	edit_var(&p->ready, SUCCESS, &p->readylock);
+	setter(&p->ready, SUCCESS, &p->readylock);
 	wait_until(&p->go, GO, &p->golock);
 	while (!isdead(p))
 	{
@@ -91,13 +91,13 @@ void	spread(t_data *d, int signal)
 	if (signal == DEATH)
 	{
 		while (++i < d->n_philos)
-			edit_var(&d->philo[i]->dead, DEATH, &d->philo[i]->dlock);
-		edit_var(&d->death, DEATH, &d->printlock);
+			setter(&d->philo[i]->dead, DEATH, &d->philo[i]->dlock);
+		setter(&d->death, DEATH, &d->printlock);
 	}
 	else if (signal == GO)
 	{
 		while (++i < d->n_philos)
-			edit_var(&d->philo[i]->go, GO, &d->philo[i]->golock);
+			setter(&d->philo[i]->go, GO, &d->philo[i]->golock);
 	}
 }
 
