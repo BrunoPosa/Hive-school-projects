@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/03 22:49:46 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 22:10:36 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,16 @@
 # define DEATH 616
 #endif
 
+#ifndef GO
+# define GO 42
+#endif
+
 #ifndef MAX_PHILOS
-# define MAX_PHILOS 4000
+# define MAX_PHILOS 400
+#endif
+
+#ifndef MEAL
+# define MEAL 747
 #endif
 
 #include <pthread.h>
@@ -73,6 +81,8 @@ typedef	struct	s_philo
 	pthread_mutex_t	*rfork;
 	pthread_mutex_t	*prlock;
 	pthread_mutex_t	dlock;
+	pthread_mutex_t	golock;
+	pthread_mutex_t	readylock;
 	int				die_t;
 	int				eat_t;
 	int				sleep_t;
@@ -81,7 +91,8 @@ typedef	struct	s_philo
 	long long int	last_meal_t;
 	long long int	*start_t;
 	int				error;
-	int				*go;
+	int				ready;
+	int				go;
 }	t_philo;
 
 typedef struct	s_data
@@ -97,7 +108,6 @@ typedef struct	s_data
 	int				n_meals;
 	long long int	starttime;
 	int				death;
-	int				go;
 }	t_data;
 
 void			routine(t_philo *p);
@@ -108,11 +118,16 @@ int				init_mu_th(t_data *d);
 long long int	get_time_ms(void);
 int				wait_ms(long long int mseconds, t_philo *p);
 int				cleanerr(t_data *d, int status, int initialized);
+void			free_philos(t_data *d);
 int				ermsg(int status);
 void			printer(int arg, char *str, t_philo *p);
-int				mealchecker(t_data *d);
+int				checker(t_data *d, int flag);
+// int				check_var(int *var, int status, pthread_mutex_t *lock);
 int				isdead(t_philo *p);
-void			godot(t_data *d);
+void			spread(t_data *d, int signal);
+int				getter(int *var, pthread_mutex_t *lock);
+void			setter(int	*var, int value, pthread_mutex_t *lock);
+void			wait_until(int *var, int status, pthread_mutex_t *lock);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
 int				my_strncmp(const char *s1, const char *s2, size_t n);

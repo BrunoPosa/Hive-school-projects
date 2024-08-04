@@ -6,20 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/03 23:00:27 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 20:10:21 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-long long int	get_time_ms(void)
-{
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) == -1)
-		return(ERROR);
-	return ((long long int)(time.tv_sec * 1000LL + time.tv_usec / 1000));//(time.tv_usec + 500) / 1000??
-}
 
 int	init_philo(t_data *d, int i)
 {
@@ -38,7 +29,13 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->prlock = &d->printlock;
 	d->philo[i]->start_t = &d->starttime;
 	d->philo[i]->last_meal_t = d->starttime;
-	d->philo[i]->go = &d->go;
+	d->philo[i]->ready = -1;
+	if (pthread_mutex_init(&d->philo[i]->dlock, NULL))
+			return (cleanerr(d, ERROR, i));
+	if (pthread_mutex_init(&d->philo[i]->golock, NULL))
+		return (cleanerr(d, ERROR, i));
+	if (pthread_mutex_init(&d->philo[i]->readylock, NULL))
+		return (cleanerr(d, ERROR, i));
 	return (SUCCESS);
 }
 
@@ -66,8 +63,6 @@ int	init_mu_th(t_data *d)
 		if (pthread_create(&d->philo[i]->thread, NULL, (void *)&routine, d->philo[i])
 			!= SUCCESS)
 			return (cleanerr(d, ETHREAD, i));
-		if (pthread_mutex_init(&d->philo[i]->dlock, NULL))
-			return (cleanerr(d, ERROR, i));
 	}
 	if (pthread_create(&d->butler, NULL, (void *)&butler, d) != SUCCESS)
 		return (cleanerr(d, ETHREAD, i));

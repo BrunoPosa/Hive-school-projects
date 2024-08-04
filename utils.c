@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/03 23:00:16 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 22:10:12 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,48 @@ int	isdead(t_philo *p)
 	}
 }
 
-int	mealchecker(t_data *d)
+int	getter(int *var, pthread_mutex_t *lock)
+{
+	int	value;
+
+	value = 0;
+	if (!var || !lock)
+		return (ERROR);
+	pthread_mutex_lock(lock);
+	value = *var;
+	pthread_mutex_unlock(lock);
+	return (value);
+}
+
+int	checker(t_data *d, int flag)
 {
 	int	i;
 
 	i = -1;
-	while (++i < d->n_philos)
+	if (flag == MEAL)
 	{
-		if (d->philo[i]->meals_had < d->n_meals)
-			return (ERROR);
+		while (++i < d->n_philos)
+		{
+			if (d->philo[i]->meals_had < d->n_meals)
+				return (ERROR);
+		}
+		return (d->n_meals);
 	}
-	return (d->n_meals);
+	else if (flag == GO)
+	{
+		while (++i < d->n_philos)
+		{
+			pthread_mutex_lock(&d->philo[i]->readylock);
+			if (d->philo[i]->ready != SUCCESS)
+			{
+				pthread_mutex_unlock(&d->philo[i]->readylock);
+				return (ERROR);
+			}
+			pthread_mutex_unlock(&d->philo[i]->readylock);
+		}
+		return (GO);
+	}
+	return (ERROR);
 }
 
 int	my_atoi(char *n)
