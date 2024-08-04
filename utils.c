@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 13:29:16 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 20:17:22 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,13 @@ int	checker(t_data *d, int flag)
 	{
 		while (++i < d->n_philos)
 		{
+			pthread_mutex_lock(&d->philo[i]->readylock);
 			if (d->philo[i]->ready != SUCCESS)
+			{
+				pthread_mutex_unlock(&d->philo[i]->readylock);
 				return (ERROR);
+			}
+			pthread_mutex_unlock(&d->philo[i]->readylock);
 		}
 		return (GO);
 	}

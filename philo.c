@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 13:36:27 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 20:39:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,18 @@
 
 /*
 	-Why does sometimes philo N die at 1ms?
+	-consider having status for each philo
+	(maybe a subroutine function too, which will be locked by one mutex
+	instead of having every action locked)
 */
 void	routine(t_philo *p)
 {
-	edit_var(&p->ready, SUCCESS, &p->golock);
+	edit_var(&p->ready, SUCCESS, &p->readylock);
+	wait_until(&p->go, GO, &p->golock);
 	while (!isdead(p))
 	{
-		wait_until(&p->ready, GO, &p->golock);
 		printer(p->id, "is thinking", p);
-		if (get_time_ms() - *p->start_t <= 1 && p->id % 2 == 0)
+		if (get_time_ms() - *p->start_t <= 1 && p->id % 2 == 0)//change this
 			wait_ms(1, p);
 		pthread_mutex_lock(p->lfork);
 		printer(p->id, "has taken a fork", p);
@@ -50,7 +53,7 @@ void	butler(t_data *d)
 
 	i = -1;
 	while (checker(d, GO) != GO)
-		usleep(200);
+		usleep(400);
 	d->starttime = get_time_ms();
 	spread(d, GO);
 	while (1)
@@ -70,8 +73,14 @@ void	butler(t_data *d)
 		if (d->death)
 			break ;
 	}
+	pthread_mutex_lock(&d->printlock);
 	if (d->death && (checker(d, MEAL) != d->n_meals || d->n_meals == -1))
+	{
+		pthread_mutex_unlock(&d->printlock);
 		printer(d->philo[i]->id, "died", d->philo[i]);
+	}
+	else
+		pthread_mutex_unlock(&d->printlock);
 }
 
 void	spread(t_data *d, int signal)
@@ -83,31 +92,36 @@ void	spread(t_data *d, int signal)
 	{
 		while (++i < d->n_philos)
 			edit_var(&d->philo[i]->dead, DEATH, &d->philo[i]->dlock);
-		d->death = DEATH;
+		edit_var(&d->death, DEATH, &d->printlock);
 	}
 	else if (signal == GO)
 	{
 		while (++i < d->n_philos)
-			edit_var(&d->philo[i]->ready, GO, &d->philo[i]->golock);
+			edit_var(&d->philo[i]->go, GO, &d->philo[i]->golock);
 	}
 }
 
-//add mutex for death check
 void	printer(int arg, char *str, t_philo *p)
 {
+	int printed;
+
+	printed = 0;
 	if (!isdead(p) || (isdead(p) && my_strncmp(str, "died", my_strlen(str)) == 0))
 	{
 		pthread_mutex_lock(p->prlock);
 		printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
 		pthread_mutex_unlock(p->prlock);
+		printed = 1;
 		if (my_strncmp(str, "is eating", my_strlen(str)) == 0)
 			p->meals_had++;
 	}
-	else if (my_strncmp(str, "is eating", my_strlen(str)) == 0)
+	else if (printed && my_strncmp(str, "is eating", my_strlen(str)) == 0)
 	{
 		pthread_mutex_unlock(p->lfork);
 		pthread_mutex_unlock(p->rfork);
 	}
+	// else if (!printed && isdead(p))
+	// 	pthread_mutex_unlock(p->lfork);
 }
 
 /*
@@ -131,7 +145,6 @@ int main(int argc, char **argv)
 		return (ermsg(EMALLOC));
 	if (initor(argv, d) == ERROR)
 		return (ermsg(EINIT));
-	while (!d->death)
-		usleep(100);
+	wait_until(&d->death, DEATH, &d->printlock);
 	return (cleanerr(d, SUCCESS, d->n_philos));
 }

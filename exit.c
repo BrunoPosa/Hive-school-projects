@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 00:25:11 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 20:41:08 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int	cleanerr(t_data *d, int status, int initialized)
 			pthread_join(d->philo[d->n_philos]->thread, NULL);
 			pthread_mutex_destroy(&d->forks[d->n_philos]);
 		}
+		edit_var(&d->death, DEATH, &d->printlock);
 		pthread_mutex_destroy(&d->printlock);
 	}
 	free_philos(d);

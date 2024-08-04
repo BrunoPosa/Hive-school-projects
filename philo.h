@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 13:36:24 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 21:51:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@
 #endif
 
 #ifndef MAX_PHILOS
-# define MAX_PHILOS 4000
+# define MAX_PHILOS 400
 #endif
 
 #ifndef MEAL
@@ -82,6 +82,7 @@ typedef	struct	s_philo
 	pthread_mutex_t	*prlock;
 	pthread_mutex_t	dlock;
 	pthread_mutex_t	golock;
+	pthread_mutex_t	readylock;
 	int				die_t;
 	int				eat_t;
 	int				sleep_t;
@@ -91,6 +92,7 @@ typedef	struct	s_philo
 	long long int	*start_t;
 	int				error;
 	int				ready;
+	int				go;
 }	t_philo;
 
 typedef struct	s_data
@@ -120,6 +122,7 @@ void			free_philos(t_data *d);
 int				ermsg(int status);
 void			printer(int arg, char *str, t_philo *p);
 int				checker(t_data *d, int flag);
+// int				check_var(int *var, int status, pthread_mutex_t *lock);
 int				isdead(t_philo *p);
 void			spread(t_data *d, int signal);
 void			edit_var(int	*var, int value, pthread_mutex_t *lock);

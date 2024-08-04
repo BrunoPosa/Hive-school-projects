@@ -6,14 +6,14 @@
 #    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/25 11:18:16 by bposa             #+#    #+#              #
-#    Updated: 2024/08/04 13:32:34 by bposa            ###   ########.fr        #
+#    Updated: 2024/08/04 21:52:45 by bposa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# Compiler and flags
+# Compiler and flags; add -fsanitize=thread
 CC			=	cc
 CFLAGS		=	-Wall -Wextra -Werror -pthread
-DEBUGFLAGS	=	-O0 -g
+DEBUGFLAGS	=	-O0 -g 
 
 # Source files and dependencies
 SRCS	= 	philo.c \
