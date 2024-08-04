@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/01 19:41:26 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 00:25:11 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,17 @@ int ermsg(int status)
 	if (status == ERROR)
 		write(2, "\nError!\n", 8);
 	return (ERROR);
+}
+
+void free_philos(t_data *d)
+{
+    t_philo **philo = d->philo;
+    while (*philo)
+    {
+        free(*philo);
+        *philo = NULL;
+        philo++;
+    }
 }
 
 /*
@@ -65,7 +76,8 @@ int	cleanerr(t_data *d, int status, int initialized)
 		}
 		pthread_mutex_destroy(&d->printlock);
 	}
+	free_philos(d);
 	free(d);
-printf("\e[33mCleanerr done\e[0m\n");
+// printf("\e[33mCleanerr done\e[0m\n");
 	return (ermsg(status));
 }

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/03 23:00:16 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/04 13:29:16 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,30 @@ int	isdead(t_philo *p)
 	}
 }
 
-int	mealchecker(t_data *d)
+int	checker(t_data *d, int flag)
 {
 	int	i;
 
 	i = -1;
-	while (++i < d->n_philos)
+	if (flag == MEAL)
 	{
-		if (d->philo[i]->meals_had < d->n_meals)
-			return (ERROR);
+		while (++i < d->n_philos)
+		{
+			if (d->philo[i]->meals_had < d->n_meals)
+				return (ERROR);
+		}
+		return (d->n_meals);
 	}
-	return (d->n_meals);
+	else if (flag == GO)
+	{
+		while (++i < d->n_philos)
+		{
+			if (d->philo[i]->ready != SUCCESS)
+				return (ERROR);
+		}
+		return (GO);
+	}
+	return (ERROR);
 }
 
 int	my_atoi(char *n)
