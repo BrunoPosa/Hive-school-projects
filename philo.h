@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 21:21:12 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 23:09:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ int				checker(t_data *d, int flag);
 int				isdead(t_philo *p);
 void			spread(t_data *d, int signal);
 long long int	lastmealget(t_philo *p);
-void			lastmealset(t_philo *p);
+int				lastmealset(t_philo *p);
 int				getter(int *var, pthread_mutex_t *lock);
 void			setter(int	*var, int value, pthread_mutex_t *lock);
 void			wait_until(int *var, int status, pthread_mutex_t *lock);

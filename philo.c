@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 21:45:16 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 23:45:26 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ void	routine(t_philo *p)
 			wait_ms(1, p);
 		pthread_mutex_lock(p->forkone);
 		printer(p->id, "has taken a fork", p);
-		if (!p->forktwo)
+		if (!p->forktwo && lastmealset(p))
 		{
-			lastmealset(p);
 			pthread_mutex_unlock(p->forkone);
 			break ;
 		}
@@ -64,18 +63,16 @@ void	butler(t_data *d)
 			if (d->philo[i]->last_meal_t != 0 
 				&& get_time_ms() - lastmealget(d->philo[i]) >= d->die_t)
 				spread(d, DEATH);
-			if (isdead(d->philo[i]) || (checker(d, MEAL) == d->n_meals && d->n_meals != -1))
+			if (isdead(d->philo[i]) || checker(d, MEAL) == SUCCESS)
 				break ;
 		}
-		if (checker(d, MEAL) == d->n_meals && d->n_meals != -1)
+		if (checker(d, MEAL) == SUCCESS)
 			spread(d, DEATH);
 		if (d->death)
 			break ;
 	}
-	pthread_mutex_lock(&d->dielock);
-	if (d->death && (checker(d, MEAL) != d->n_meals || d->n_meals == -1))
+	if (getter(&d->death, &d->dielock) && checker(d, MEAL) != SUCCESS)
 		printer(d->philo[i]->id, "died", d->philo[i]);
-	pthread_mutex_unlock(&d->dielock);
 }
 
 void	spread(t_data *d, int signal)

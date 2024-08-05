@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 21:32:54 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 23:19:57 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	initor(char **argv, t_data *d)
 	if (argv[5])
 		d->n_meals = my_atoi(argv[5]);
 	else
-		d->n_meals = -1;
+		d->n_meals = ERROR;
 	if (init_mu_th(d) != SUCCESS)
 		return (ERROR);
 	return (SUCCESS);

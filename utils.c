@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 21:16:10 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 23:27:58 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,12 @@ long long int	lastmealget(t_philo *p)
 	return (value);
 }
 
-void	lastmealset(t_philo *p)
+int	lastmealset(t_philo *p)
 {
 	pthread_mutex_lock(&p->lmeallock);
 	p->last_meal_t = get_time_ms();
 	pthread_mutex_unlock(&p->lmeallock);
+	return (42);
 }
 
 int	checker(t_data *d, int flag)
@@ -80,26 +81,21 @@ int	checker(t_data *d, int flag)
 	int	i;
 
 	i = -1;
-	if (flag == MEAL)
+	if (flag == MEAL && d->n_meals != ERROR)
 	{
 		while (++i < d->n_philos)
 		{
 			if (d->philo[i]->meals_had < d->n_meals)
 				return (ERROR);
 		}
-		return (d->n_meals);
+		return (SUCCESS);
 	}
 	else if (flag == GO)
 	{
 		while (++i < d->n_philos)
 		{
-			pthread_mutex_lock(&d->philo[i]->readylock);
-			if (d->philo[i]->ready != SUCCESS)
-			{
-				pthread_mutex_unlock(&d->philo[i]->readylock);
+			if (getter(&d->philo[i]->ready, &d->philo[i]->readylock) != SUCCESS)
 				return (ERROR);
-			}
-			pthread_mutex_unlock(&d->philo[i]->readylock);
 		}
 		return (GO);
 	}
