@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 23:27:58 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/06 01:53:38 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,29 +19,14 @@ int	wait_ms(long long int mseconds, t_philo *p)
 
 	current = 0;
 	start = get_time_ms();
-	if (mseconds <= 0)
-		mseconds = 1;
-	while (!isdead(p) && current - start < mseconds)
+	if (mseconds < 5)
+		mseconds = 5;
+	while (getter(&p->dead, &p->dlock) != DEATH && current - start < mseconds)
 	{
 		current = get_time_ms();
 		usleep(400);
 	}
 	return (SUCCESS);
-}
-
-int	isdead(t_philo *p)
-{
-	pthread_mutex_lock(&p->dlock);
-	if (p->dead)
-	{
-		pthread_mutex_unlock(&p->dlock);
-		return (DEATH);
-	}
-	else
-	{
-		pthread_mutex_unlock(&p->dlock);
-		return (0);
-	}
 }
 
 int	getter(int *var, pthread_mutex_t *lock)

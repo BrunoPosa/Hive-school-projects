@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 12:47:59 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 21:05:43 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/06 01:44:46 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,19 +31,4 @@ void	setter(int *var, int value, pthread_mutex_t *lock)
 	}
 	else
 		printf("setter: ERROR with accessing mutex or struct's variable!\n");
-}
-
-void	wait_until(int *var, int status, pthread_mutex_t *lock)
-{
-	while (1)
-	{
-		pthread_mutex_lock(lock);
-		if (*var == status)
-		{
-			pthread_mutex_unlock(lock);
-			break ;
-		}
-		pthread_mutex_unlock(lock);
-		usleep(400);
-	}
 }

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 23:09:35 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/06 01:44:53 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ typedef	struct	s_philo
 	int				error;
 	int				ready;
 	int				go;
+	int				forkcount;
 }	t_philo;
 
 typedef struct	s_data
@@ -124,14 +125,11 @@ void			free_philos(t_data *d);
 int				ermsg(int status);
 void			printer(int arg, char *str, t_philo *p);
 int				checker(t_data *d, int flag);
-// int				check_var(int *var, int status, pthread_mutex_t *lock);
-int				isdead(t_philo *p);
-void			spread(t_data *d, int signal);
+int				spread(t_data *d, int signal);
 long long int	lastmealget(t_philo *p);
 int				lastmealset(t_philo *p);
 int				getter(int *var, pthread_mutex_t *lock);
 void			setter(int	*var, int value, pthread_mutex_t *lock);
-void			wait_until(int *var, int status, pthread_mutex_t *lock);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
 int				my_strncmp(const char *s1, const char *s2, size_t n);
