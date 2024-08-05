@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 19:56:24 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 21:45:16 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,32 +16,31 @@
 	-consider having status for each philo
 	(maybe a subroutine function too, which will be locked by one mutex
 	instead of having every action locked)
-	-change even-odd fork picking order to opposite of each other, to avoid wait
 */
 void	routine(t_philo *p)
 {
 	setter(&p->ready, SUCCESS, &p->readylock);
 	wait_until(&p->go, GO, &p->golock);
-	p->last_meal_t = *p->start_t;
 	while (!isdead(p))
 	{
 		printer(p->id, "is thinking", p);
-		if (get_time_ms() - *p->start_t <= 1 && p->id % 2 == 0)
-			wait_ms((p->die_t - p->eat_t - p->sleep_t) / 2, p);
-		pthread_mutex_lock(p->lfork);
+		if (p->last_meal_t == 0 && p->id % 2 == 0)
+			wait_ms(1, p);
+		pthread_mutex_lock(p->forkone);
 		printer(p->id, "has taken a fork", p);
-		if (!p->rfork)
+		if (!p->forktwo)
 		{
-			pthread_mutex_unlock(p->lfork);
+			lastmealset(p);
+			pthread_mutex_unlock(p->forkone);
 			break ;
 		}
-		pthread_mutex_lock(p->rfork);
+		pthread_mutex_lock(p->forktwo);
 		printer(p->id, "has taken a fork", p);
 		printer(p->id, "is eating", p);
-		p->last_meal_t = get_time_ms();
+		lastmealset(p);
 		wait_ms(p->eat_t, p);
-		pthread_mutex_unlock(p->lfork);
-		pthread_mutex_unlock(p->rfork);
+		pthread_mutex_unlock(p->forkone);
+		pthread_mutex_unlock(p->forktwo);
 		printer(p->id, "is sleeping", p);
 		if (isdead(p) || wait_ms(p->sleep_t, p) == DEATH)
 			break ;
@@ -62,8 +61,8 @@ void	butler(t_data *d)
 		i = -1;
 		while (++i < d->n_philos)
 		{
-			if (d->philo[i]->last_meal_t != 0
-				&& get_time_ms() - d->philo[i]->last_meal_t >= d->die_t)
+			if (d->philo[i]->last_meal_t != 0 
+				&& get_time_ms() - lastmealget(d->philo[i]) >= d->die_t)
 				spread(d, DEATH);
 			if (isdead(d->philo[i]) || (checker(d, MEAL) == d->n_meals && d->n_meals != -1))
 				break ;
@@ -73,14 +72,10 @@ void	butler(t_data *d)
 		if (d->death)
 			break ;
 	}
-	pthread_mutex_lock(&d->printlock);
+	pthread_mutex_lock(&d->dielock);
 	if (d->death && (checker(d, MEAL) != d->n_meals || d->n_meals == -1))
-	{
-		pthread_mutex_unlock(&d->printlock);
 		printer(d->philo[i]->id, "died", d->philo[i]);
-	}
-	else
-		pthread_mutex_unlock(&d->printlock);
+	pthread_mutex_unlock(&d->dielock);
 }
 
 void	spread(t_data *d, int signal)
@@ -117,11 +112,11 @@ void	printer(int arg, char *str, t_philo *p)
 	}
 	else if (printed && my_strncmp(str, "is eating", my_strlen(str)) == 0)
 	{
-		pthread_mutex_unlock(p->lfork);
-		pthread_mutex_unlock(p->rfork);
+		pthread_mutex_unlock(p->forkone);
+		pthread_mutex_unlock(p->forktwo);
 	}
 	// else if (!printed && isdead(p))
-	// 	pthread_mutex_unlock(p->lfork);
+	// 	pthread_mutex_unlock(p->forkone);
 }
 
 /*

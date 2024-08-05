@@ -6,12 +6,12 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 19:57:30 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 21:32:54 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
+//odd philo picks left fork first, even philo picks right fork first
 int	init_philo(t_data *d, int i)
 {
 	d->philo[i] = malloc(sizeof(t_philo));
@@ -19,10 +19,10 @@ int	init_philo(t_data *d, int i)
 		return (ERROR);
 	memset(d->philo[i], 0, sizeof(t_philo));
 	d->philo[i]->id = i + 1;
-	d->philo[i]->lfork = &d->forks[i];
-	d->philo[i]->rfork = &d->forks[(i + 1) % d->n_philos];
+	d->philo[i]->forkone = &d->forks[i];
+	d->philo[i]->forktwo = &d->forks[(i + 1) % d->n_philos];
 	if (d->n_philos == 1)
-		d->philo[i]->rfork = NULL;
+		d->philo[i]->forktwo = NULL;
 	d->philo[i]->die_t = d->die_t;
 	d->philo[i]->eat_t = d->eat_t;
 	d->philo[i]->sleep_t = d->sleep_t;
@@ -30,10 +30,12 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->start_t = &d->starttime;
 	d->philo[i]->ready = -1;
 	if (pthread_mutex_init(&d->philo[i]->dlock, NULL))
-			return (cleanerr(d, ERROR, i));
+		return (cleanerr(d, ERROR, i));
 	if (pthread_mutex_init(&d->philo[i]->golock, NULL))
 		return (cleanerr(d, ERROR, i));
 	if (pthread_mutex_init(&d->philo[i]->readylock, NULL))
+		return (cleanerr(d, ERROR, i));
+	if (pthread_mutex_init(&d->philo[i]->lmeallock, NULL))
 		return (cleanerr(d, ERROR, i));
 	return (SUCCESS);
 }
@@ -53,6 +55,8 @@ int	init_mu_th(t_data *d)
 			return (cleanerr(d, EMUTEX, i));
 	}
 	if (pthread_mutex_init(&d->printlock, NULL))
+		return (cleanerr(d, ERROR, i));
+	if (pthread_mutex_init(&d->dielock, NULL))
 		return (cleanerr(d, ERROR, i));
 	i = -1;
 	while (++i < d->n_philos)

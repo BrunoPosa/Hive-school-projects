@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/05 18:44:36 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 21:16:10 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,24 @@ int	getter(int *var, pthread_mutex_t *lock)
 	value = *var;
 	pthread_mutex_unlock(lock);
 	return (value);
+}
+
+long long int	lastmealget(t_philo *p)
+{
+	long long int	value;
+
+	value = 0;
+	pthread_mutex_lock(&p->lmeallock);
+	value = p->last_meal_t;
+	pthread_mutex_unlock(&p->lmeallock);
+	return (value);
+}
+
+void	lastmealset(t_philo *p)
+{
+	pthread_mutex_lock(&p->lmeallock);
+	p->last_meal_t = get_time_ms();
+	pthread_mutex_unlock(&p->lmeallock);
 }
 
 int	checker(t_data *d, int flag)

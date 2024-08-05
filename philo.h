@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 22:10:36 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 21:21:12 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,13 @@ typedef	struct	s_philo
 {
 	int				id;
 	pthread_t		thread;
-	pthread_mutex_t	*lfork;
-	pthread_mutex_t	*rfork;
+	pthread_mutex_t	*forkone;
+	pthread_mutex_t	*forktwo;
 	pthread_mutex_t	*prlock;
 	pthread_mutex_t	dlock;
 	pthread_mutex_t	golock;
 	pthread_mutex_t	readylock;
+	pthread_mutex_t	lmeallock;
 	int				die_t;
 	int				eat_t;
 	int				sleep_t;
@@ -101,6 +102,7 @@ typedef struct	s_data
 	t_philo			*philo[MAX_PHILOS];
 	pthread_mutex_t	forks[MAX_PHILOS];
 	pthread_mutex_t	printlock;
+	pthread_mutex_t	dielock;
 	int				n_philos;
 	int				die_t;
 	int				eat_t;
@@ -125,6 +127,8 @@ int				checker(t_data *d, int flag);
 // int				check_var(int *var, int status, pthread_mutex_t *lock);
 int				isdead(t_philo *p);
 void			spread(t_data *d, int signal);
+long long int	lastmealget(t_philo *p);
+void			lastmealset(t_philo *p);
 int				getter(int *var, pthread_mutex_t *lock);
 void			setter(int	*var, int value, pthread_mutex_t *lock);
 void			wait_until(int *var, int status, pthread_mutex_t *lock);
