@@ -6,27 +6,28 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 22:17:48 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:56:24 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
-	-Why does sometimes philo N die at 1ms?
 	-consider having status for each philo
 	(maybe a subroutine function too, which will be locked by one mutex
 	instead of having every action locked)
+	-change even-odd fork picking order to opposite of each other, to avoid wait
 */
 void	routine(t_philo *p)
 {
 	setter(&p->ready, SUCCESS, &p->readylock);
 	wait_until(&p->go, GO, &p->golock);
+	p->last_meal_t = *p->start_t;
 	while (!isdead(p))
 	{
 		printer(p->id, "is thinking", p);
-		if (get_time_ms() - *p->start_t <= 1 && p->id % 2 == 0)//change this
-			wait_ms(1, p);
+		if (get_time_ms() - *p->start_t <= 1 && p->id % 2 == 0)
+			wait_ms((p->die_t - p->eat_t - p->sleep_t) / 2, p);
 		pthread_mutex_lock(p->lfork);
 		printer(p->id, "has taken a fork", p);
 		if (!p->rfork)
@@ -61,9 +62,8 @@ void	butler(t_data *d)
 		i = -1;
 		while (++i < d->n_philos)
 		{
-			if (get_time_ms() - d->starttime == 0)
-				d->philo[i]->last_meal_t = d->starttime;
-			if (get_time_ms() - d->philo[i]->last_meal_t >= d->die_t) //improve this area
+			if (d->philo[i]->last_meal_t != 0
+				&& get_time_ms() - d->philo[i]->last_meal_t >= d->die_t)
 				spread(d, DEATH);
 			if (isdead(d->philo[i]) || (checker(d, MEAL) == d->n_meals && d->n_meals != -1))
 				break ;

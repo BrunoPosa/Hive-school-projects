@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 20:10:21 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/05 19:57:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->sleep_t = d->sleep_t;
 	d->philo[i]->prlock = &d->printlock;
 	d->philo[i]->start_t = &d->starttime;
-	d->philo[i]->last_meal_t = d->starttime;
 	d->philo[i]->ready = -1;
 	if (pthread_mutex_init(&d->philo[i]->dlock, NULL))
 			return (cleanerr(d, ERROR, i));
