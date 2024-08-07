@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 14:41:29 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 16:11:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ void free_philos(t_data *d)
 */
 int	cleanerr(t_data *d, int status, int initialized)
 {
+	int	i;
+
+	i = d->n_philos;
 	if (status == EMUTEX || status == EMALLOC)
 	{
 		while (--initialized >= 0)
@@ -65,8 +68,8 @@ int	cleanerr(t_data *d, int status, int initialized)
 	else if (status == ETHREAD)
 	{
 		setter(&d->death, DEATH, &d->dielock);
-		while (--d->n_philos >= 0)
-			pthread_mutex_destroy(&d->forks[d->n_philos]);
+		while (--i >= 0)
+			pthread_mutex_destroy(&d->forks[i]);
 		while (--initialized >= 0)
 			pthread_join(d->philo[initialized]->thread, NULL);
 	}
@@ -74,7 +77,7 @@ int	cleanerr(t_data *d, int status, int initialized)
 		normal_cleanup(d);
 	free_philos(d);
 	free(d);
-// printf("\e[33mCleanerr done\e[0m\n");
+printf("\e[33mCleanerr done\e[0m\n");
 	return (ermsg(status));
 }
 void	normal_cleanup(t_data *d)

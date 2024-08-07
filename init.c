@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 14:41:24 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 16:08:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ int	init_philo(t_data *d, int i)
 /*
 	Forks (mutexes) start from 0
 	Philos start from 0 + correspond to array index but their id is +1
+	-Sometimes in isolated test w/ empty butler, the butler thread leaks (the detached one),
+	but i suspect it will not when tested with all of the code uncommented.
 */
 int	init_mu_th(t_data *d)
 {
@@ -69,8 +71,6 @@ int	init_mu_th(t_data *d)
 	}
 	if (pthread_create(&d->butler, NULL, (void *)&butler, d) != SUCCESS)
 		return (cleanerr(d, ETHREAD, i));
-	if (pthread_detach(d->butler) != SUCCESS)
-		return (cleanerr(d, ERROR, i));
 	return (SUCCESS);
 }
 
