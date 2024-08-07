@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/06 22:46:50 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 12:26:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,17 @@ int	initor(char **argv, t_data *d)
 		d->n_meals = my_atoi(argv[5]);
 	else
 		d->n_meals = ERROR;
+	d->philo = malloc(d->n_philos * sizeof(t_philo *));
+	if (!d->philo)
+		return (ERROR);
+	memset(d->philo, 0, d->n_philos * sizeof(t_philo *));
+	d->forks = malloc(d->n_philos * sizeof(pthread_mutex_t));
+	if (!d->forks)
+	{
+		free(d->philo);
+		return (ERROR);
+	}
+	memset(d->forks, 0, d->n_philos * sizeof(pthread_mutex_t));
 	if (init_mu_th(d) != SUCCESS)
 		return (ERROR);
 	return (SUCCESS);

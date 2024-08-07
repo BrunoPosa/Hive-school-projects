@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 11:37:49 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 12:43:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,19 @@ int ermsg(int status)
 
 void free_philos(t_data *d)
 {
-    t_philo **philo = d->philo;
-    while (*philo)
+    int i;
+
+    i = -1;
+    while (++i < d->n_philos)
     {
-        free(*philo);
-        *philo = NULL;
-        philo++;
+        if (d->philo[i])
+        {
+            free(d->philo[i]);
+            d->philo[i] = NULL;
+        }
     }
+    free(d->philo);
+    d->philo = NULL;
 }
 
 /*

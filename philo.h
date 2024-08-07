@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/06 01:44:53 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 12:26:52 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,6 @@
 # define GO 42
 #endif
 
-#ifndef MAX_PHILOS
-# define MAX_PHILOS 400
-#endif
-
 #ifndef MEAL
 # define MEAL 747
 #endif
@@ -100,8 +96,8 @@ typedef	struct	s_philo
 typedef struct	s_data
 {
 	pthread_t		butler;
-	t_philo			*philo[MAX_PHILOS];
-	pthread_mutex_t	forks[MAX_PHILOS];
+	t_philo			**philo;
+	pthread_mutex_t	*forks;
 	pthread_mutex_t	printlock;
 	pthread_mutex_t	dielock;
 	int				n_philos;
