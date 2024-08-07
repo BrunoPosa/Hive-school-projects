@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 11:46:09 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 14:41:33 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 	-dies at 400 every sometime with 3 599 200 200
 */
 void	routine(t_philo *p)
-{
+{//usleep(1000);printf("routine : %d\n", p->id);
 	setter(&p->ready, SUCCESS, &p->readylock);
 	while (getter(&p->go, &p->golock) != GO)
 		usleep(400);
@@ -53,7 +53,7 @@ void	routine(t_philo *p)
 }
 
 void	butler(t_data *d)
-{
+{//usleep(1000);printf("butler:%d\n", d->death);
 	int	i;
 
 	i = -1;
@@ -133,6 +133,8 @@ int main(int argc, char **argv)
 		return (ermsg(EMALLOC));
 	if (initor(argv, d) == ERROR)
 		return (ermsg(EINIT));
+	d->initflag = 1;
+	// printf("Main\n");
 	while (getter(&d->death, &d->dielock) != DEATH)
 		usleep(400);
 	return (cleanerr(d, SUCCESS, d->n_philos));

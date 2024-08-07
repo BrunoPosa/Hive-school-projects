@@ -6,12 +6,12 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 12:26:15 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 14:41:24 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-//odd philo picks left fork first, even philo picks right fork first
+
 int	init_philo(t_data *d, int i)
 {
 	d->philo[i] = malloc(sizeof(t_philo));
@@ -74,7 +74,6 @@ int	init_mu_th(t_data *d)
 	return (SUCCESS);
 }
 
-//do i need to init n_meals as something else in case user gives 0 as argv[5]
 int	initor(char **argv, t_data *d)
 {
 	memset(d, 0, sizeof(t_data));
@@ -87,16 +86,18 @@ int	initor(char **argv, t_data *d)
 	else
 		d->n_meals = ERROR;
 	d->philo = malloc(d->n_philos * sizeof(t_philo *));
-	if (!d->philo)
-		return (ERROR);
-	memset(d->philo, 0, d->n_philos * sizeof(t_philo *));
-	d->forks = malloc(d->n_philos * sizeof(pthread_mutex_t));
-	if (!d->forks)
+	if (!d->philo || !memset(d->philo, 0, d->n_philos * sizeof(t_philo *)))
 	{
-		free(d->philo);
+		free(d);
 		return (ERROR);
 	}
-	memset(d->forks, 0, d->n_philos * sizeof(pthread_mutex_t));
+	d->forks = malloc(d->n_philos * sizeof(pthread_mutex_t));
+	if (!d->forks || !memset(d->forks, 0, d->n_philos * sizeof(pthread_mutex_t)))
+	{
+		free(d->philo);
+		free(d);
+		return (ERROR);
+	}
 	if (init_mu_th(d) != SUCCESS)
 		return (ERROR);
 	return (SUCCESS);

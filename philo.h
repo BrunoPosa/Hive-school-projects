@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 12:26:52 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 14:41:38 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ typedef struct	s_data
 	int				n_meals;
 	long long int	starttime;
 	int				death;
+	int				initflag;
 }	t_data;
 
 void			routine(t_philo *p);
@@ -129,5 +130,6 @@ void			setter(int	*var, int value, pthread_mutex_t *lock);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
 int				my_strncmp(const char *s1, const char *s2, size_t n);
+void			normal_cleanup(t_data *d);
 
 #endif

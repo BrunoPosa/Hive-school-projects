@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 12:43:23 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 14:41:29 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,19 +36,15 @@ int ermsg(int status)
 
 void free_philos(t_data *d)
 {
-    int i;
-
-    i = -1;
-    while (++i < d->n_philos)
-    {
-        if (d->philo[i])
-        {
-            free(d->philo[i]);
-            d->philo[i] = NULL;
-        }
-    }
-    free(d->philo);
-    d->philo = NULL;
+	while (--d->n_philos > -1)
+	{
+		free(d->philo[d->n_philos]);
+		d->philo[d->n_philos] = NULL;
+	}
+	free(d->philo);
+	d->philo = NULL;
+	free(d->forks);
+	d->forks = NULL;
 }
 
 /*
@@ -75,18 +71,23 @@ int	cleanerr(t_data *d, int status, int initialized)
 			pthread_join(d->philo[initialized]->thread, NULL);
 	}
 	else
-	{
-		if (checker(d, MEAL) != SUCCESS)
-			pthread_mutex_unlock(&d->printlock);
-		while (--d->n_philos >= 0)
-		{
-			pthread_join(d->philo[d->n_philos]->thread, NULL);
-			pthread_mutex_destroy(&d->forks[d->n_philos]);
-		}
-		pthread_mutex_destroy(&d->printlock);
-	}
+		normal_cleanup(d);
 	free_philos(d);
 	free(d);
 // printf("\e[33mCleanerr done\e[0m\n");
 	return (ermsg(status));
+}
+void	normal_cleanup(t_data *d)
+{
+	int	i;
+
+	i = d->n_philos;
+	if (!d->initflag && checker(d, MEAL) != SUCCESS)
+			pthread_mutex_unlock(&d->printlock);
+		while (--i >= 0)
+		{
+			pthread_join(d->philo[i]->thread, NULL);
+			pthread_mutex_destroy(&d->forks[i]);
+		}
+		pthread_mutex_destroy(&d->printlock);
 }
