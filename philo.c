@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 16:13:29 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 18:05:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 	-it still sometimes prints "taken a fork" after death, e.g. with 200 130 60 60
 	-it does not work with odd number of philos and 130 60 60
 	-dies at 400 every sometime with 3 599 200 200
+	-try testing w/ fast debug optimization flag
 */
 void	routine(t_philo *p)
 {//usleep(5000);printf("routine : %d\n", p->id);
@@ -113,10 +114,10 @@ void	printer(int arg, char *str, t_philo *p)
 }
 
 /*
-	THINK --> EAT --> SLEEP --> THINK --> EAT
+	-Implement mutex lock/unlock protections..
 	-fix validator() to work using macros/enums
 	-reorganize initialization
-	-Limit philos in validation to 4000? + Malloc instead of static alloc, bc valgrind
+	-Limit philos in validation to 2000
 	-"\e[31m Error \e[0m\n" colors
 	-use Enums for error codes
 	-Consider having a synced simulation starting time in case of many philos

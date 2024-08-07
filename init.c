@@ -6,11 +6,36 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 16:08:23 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 18:30:52 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+int	init_mutex(t_data *d, int i)
+{
+	if (pthread_mutex_init(&d->philo[i]->dlock, NULL))
+		return (cleanerr(d, ERROR, i));
+	if (pthread_mutex_init(&d->philo[i]->golock, NULL))
+	{
+		pthread_mutex_destroy(&d->philo[i]->dlock);
+		return (cleanerr(d, ERROR, i));
+	}
+	if (pthread_mutex_init(&d->philo[i]->readylock, NULL))
+	{
+		pthread_mutex_destroy(&d->philo[i]->dlock);
+		pthread_mutex_destroy(&d->philo[i]->golock);
+		return (cleanerr(d, ERROR, i));
+	}
+	if (pthread_mutex_init(&d->philo[i]->lmeallock, NULL))
+	{
+		pthread_mutex_destroy(&d->philo[i]->dlock);
+		pthread_mutex_destroy(&d->philo[i]->golock);
+		pthread_mutex_destroy(&d->philo[i]->readylock);
+		return (cleanerr(d, ERROR, i));
+	}
+	return (SUCCESS);
+}
 
 int	init_philo(t_data *d, int i)
 {
@@ -29,14 +54,8 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->prlock = &d->printlock;
 	d->philo[i]->start_t = &d->starttime;
 	d->philo[i]->ready = -1;
-	if (pthread_mutex_init(&d->philo[i]->dlock, NULL))
-		return (cleanerr(d, ERROR, i));
-	if (pthread_mutex_init(&d->philo[i]->golock, NULL))
-		return (cleanerr(d, ERROR, i));
-	if (pthread_mutex_init(&d->philo[i]->readylock, NULL))
-		return (cleanerr(d, ERROR, i));
-	if (pthread_mutex_init(&d->philo[i]->lmeallock, NULL))
-		return (cleanerr(d, ERROR, i));
+	if (init_mutex(d, i) != SUCCESS)
+		return (ERROR);
 	return (SUCCESS);
 }
 
@@ -45,6 +64,7 @@ int	init_philo(t_data *d, int i)
 	Philos start from 0 + correspond to array index but their id is +1
 	-Sometimes in isolated test w/ empty butler, the butler thread leaks (the detached one),
 	but i suspect it will not when tested with all of the code uncommented.
+	----CHECK MUTEX INIT FAILS, they need to be destroyed properly
 */
 int	init_mu_th(t_data *d)
 {

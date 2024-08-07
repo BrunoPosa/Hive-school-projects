@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 16:11:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 18:01:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void free_philos(t_data *d)
 
 /*
 	-Fix by protecting mutex_destroy() and pthread_join() [they ret 0 on success]!
-	-Ditch i for sake of not doing free() inside return()
 */
 int	cleanerr(t_data *d, int status, int initialized)
 {
@@ -80,12 +79,13 @@ int	cleanerr(t_data *d, int status, int initialized)
 printf("\e[33mCleanerr done\e[0m\n");
 	return (ermsg(status));
 }
+
 void	normal_cleanup(t_data *d)
 {
 	int	i;
 
 	i = d->n_philos;
-	if (!d->initflag && checker(d, MEAL) != SUCCESS)
+	if (!d->initflag && checker(d, MEAL) != SUCCESS) // think this needs to be ||
 			pthread_mutex_unlock(&d->printlock);
 		while (--i >= 0)
 		{
