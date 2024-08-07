@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 16:06:15 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 20:43:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,12 @@
 # define EVAL 7
 #endif
 
-#ifndef EMALLOC
-# define EMALLOC 8
+#ifndef EMALMUT
+# define EMALMUT 8
+#endif
+
+#ifndef EJOIN
+# define EJOIN 9999
 #endif
 
 #ifndef DEATH
@@ -107,19 +111,19 @@ typedef struct	s_data
 	int				n_meals;
 	long long int	starttime;
 	int				death;
-	int				initflag;
+	int				initdone;
 }	t_data;
 
-void			routine(t_philo *p);
-void			butler(t_data *d);
 int				validator(int argc, char **args);
 int				initor(char **argv, t_data *d);
 int				init_mu_th(t_data *d);
-long long int	get_time_ms(void);
-int				wait_ms(long long int mseconds, t_philo *p);
 int				cleanerr(t_data *d, int status, int initialized);
+int				normal_cleanup(t_data *d);
+int				mumalth_cleanup(t_data *d, int status, int initialized);
 void			free_philos(t_data *d);
 int				ermsg(int status);
+void			routine(t_philo *p);
+void			butler(t_data *d);
 void			printer(int arg, char *str, t_philo *p);
 int				checker(t_data *d, int flag);
 int				spread(t_data *d, int signal);
@@ -127,9 +131,10 @@ long long int	lastmealget(t_philo *p);
 int				lastmealset(t_philo *p);
 int				getter(int *var, pthread_mutex_t *lock);
 void			setter(int	*var, int value, pthread_mutex_t *lock);
+long long int	get_time_ms(void);
+int				wait_ms(long long int mseconds, t_philo *p);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
 int				my_strncmp(const char *s1, const char *s2, size_t n);
-void			normal_cleanup(t_data *d);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 18:30:52 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 19:37:33 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,25 @@
 
 int	init_mutex(t_data *d, int i)
 {
-	if (pthread_mutex_init(&d->philo[i]->dlock, NULL))
-		return (cleanerr(d, ERROR, i));
-	if (pthread_mutex_init(&d->philo[i]->golock, NULL))
+	if (pthread_mutex_init(&d->philo[i]->dlock, NULL) != SUCCESS)
+		return (ERROR);
+	if (pthread_mutex_init(&d->philo[i]->golock, NULL) != SUCCESS)
 	{
 		pthread_mutex_destroy(&d->philo[i]->dlock);
-		return (cleanerr(d, ERROR, i));
+		return (ERROR);
 	}
-	if (pthread_mutex_init(&d->philo[i]->readylock, NULL))
+	if (pthread_mutex_init(&d->philo[i]->readylock, NULL) != SUCCESS)
 	{
 		pthread_mutex_destroy(&d->philo[i]->dlock);
 		pthread_mutex_destroy(&d->philo[i]->golock);
-		return (cleanerr(d, ERROR, i));
+		return (ERROR);
 	}
-	if (pthread_mutex_init(&d->philo[i]->lmeallock, NULL))
+	if (pthread_mutex_init(&d->philo[i]->lmeallock, NULL) != SUCCESS)
 	{
 		pthread_mutex_destroy(&d->philo[i]->dlock);
 		pthread_mutex_destroy(&d->philo[i]->golock);
 		pthread_mutex_destroy(&d->philo[i]->readylock);
-		return (cleanerr(d, ERROR, i));
+		return (ERROR);
 	}
 	return (SUCCESS);
 }
@@ -59,13 +59,6 @@ int	init_philo(t_data *d, int i)
 	return (SUCCESS);
 }
 
-/*
-	Forks (mutexes) start from 0
-	Philos start from 0 + correspond to array index but their id is +1
-	-Sometimes in isolated test w/ empty butler, the butler thread leaks (the detached one),
-	but i suspect it will not when tested with all of the code uncommented.
-	----CHECK MUTEX INIT FAILS, they need to be destroyed properly
-*/
 int	init_mu_th(t_data *d)
 {
 	int	i;
@@ -84,7 +77,7 @@ int	init_mu_th(t_data *d)
 	while (++i < d->n_philos)
 	{
 		if (init_philo(d, i) != SUCCESS)
-			return (cleanerr(d, EMALLOC, i));
+			return (cleanerr(d, EMALMUT, i));
 		if (pthread_create(&d->philo[i]->thread, NULL, (void *)&routine, d->philo[i])
 			!= SUCCESS)
 			return (cleanerr(d, ETHREAD, i));

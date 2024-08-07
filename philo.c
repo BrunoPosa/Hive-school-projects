@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 18:05:34 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 20:47:20 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,9 +118,6 @@ void	printer(int arg, char *str, t_philo *p)
 	-fix validator() to work using macros/enums
 	-reorganize initialization
 	-Limit philos in validation to 2000
-	-"\e[31m Error \e[0m\n" colors
-	-use Enums for error codes
-	-Consider having a synced simulation starting time in case of many philos
 	-ensure when someone dies, NOTHING gets ever printed after that
 */
 int main(int argc, char **argv)
@@ -131,13 +128,11 @@ int main(int argc, char **argv)
 		return (ermsg(EVAL));
 	d = malloc(sizeof(t_data));
 	if (!d)
-		return (ermsg(EMALLOC));
+		return (ermsg(EMALMUT));
 	if (initor(argv, d) == ERROR)
 		return (ermsg(EINIT));
-	d->initflag = 1;
-	// printf("Main\n");
+	d->initdone = 1;
 	while (getter(&d->death, &d->dielock) != DEATH)
 		usleep(400);
-	pthread_join(d->butler, NULL);
 	return (cleanerr(d, SUCCESS, d->n_philos));
 }
