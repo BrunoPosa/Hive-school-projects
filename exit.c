@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 22:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 11:37:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ int	cleanerr(t_data *d, int status, int initialized)
 	}
 	else if (status == ETHREAD)
 	{
+		setter(&d->death, DEATH, &d->dielock);
 		while (--d->n_philos >= 0)
 			pthread_mutex_destroy(&d->forks[d->n_philos]);
 		while (--initialized >= 0)
@@ -69,12 +70,13 @@ int	cleanerr(t_data *d, int status, int initialized)
 	}
 	else
 	{
+		if (checker(d, MEAL) != SUCCESS)
+			pthread_mutex_unlock(&d->printlock);
 		while (--d->n_philos >= 0)
 		{
 			pthread_join(d->philo[d->n_philos]->thread, NULL);
 			pthread_mutex_destroy(&d->forks[d->n_philos]);
 		}
-		setter(&d->death, DEATH, &d->printlock);
 		pthread_mutex_destroy(&d->printlock);
 	}
 	free_philos(d);

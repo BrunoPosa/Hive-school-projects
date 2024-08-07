@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/06 02:10:20 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/07 11:46:09 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 	-Philo dies after some time with 200 130 60 60
 	-it still sometimes prints "taken a fork" after death, e.g. with 200 130 60 60
 	-it does not work with odd number of philos and 130 60 60
+	-dies at 400 every sometime with 3 599 200 200
 */
 void	routine(t_philo *p)
 {
@@ -65,17 +66,18 @@ void	butler(t_data *d)
 		i = -1;
 		while (++i < d->n_philos)
 		{
-			if (d->philo[i]->last_meal_t != 0 
-				&& get_time_ms() - lastmealget(d->philo[i]) >= d->die_t
-				&& spread(d, DEATH) == SUCCESS)
+			if ((d->philo[i]->last_meal_t != 0 
+				&& get_time_ms() - lastmealget(d->philo[i]) >= d->die_t)
+				|| checker(d, MEAL) == SUCCESS)
+			{
+				spread(d, DEATH);
 				break ;
+			}
 		}
-		if (checker(d, MEAL) == SUCCESS)
-			spread(d, DEATH);
-		if (wait_ms(1, d->philo[0]) == SUCCESS && getter(&d->death, &d->dielock))
+		if (i != d->n_philos)
 			break ;
 	}
-	if (getter(&d->death, &d->dielock) && checker(d, MEAL) != SUCCESS)
+	if (checker(d, MEAL) != SUCCESS)
 		printer(d->philo[i]->id, "died", d->philo[i]);
 }
 
@@ -88,7 +90,7 @@ int	spread(t_data *d, int signal)
 	{
 		while (++i < d->n_philos)
 			setter(&d->philo[i]->dead, DEATH, &d->philo[i]->dlock);
-		setter(&d->death, DEATH, &d->printlock);
+		setter(&d->death, DEATH, &d->dielock);
 	}
 	else if (signal == GO)
 	{
@@ -100,23 +102,14 @@ int	spread(t_data *d, int signal)
 
 void	printer(int arg, char *str, t_philo *p)
 {
-	if (getter(&p->dead, &p->dlock) != DEATH
-		|| (getter(&p->dead, &p->dlock) == DEATH
-		&& my_strncmp(str, "died", my_strlen(str)) == 0))
-	{
-		pthread_mutex_lock(p->prlock);
-		printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
+	if (getter(&p->dead, &p->dlock) == DEATH && my_strncmp(str, "died", 4) != SUCCESS)
+		return ;
+	pthread_mutex_lock(p->prlock);
+	printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
+	if (my_strncmp(str, "died", 4) != SUCCESS)
 		pthread_mutex_unlock(p->prlock);
-		if (my_strncmp(str, "is eating", my_strlen(str)) == 0)
-			p->meals_had++;
-	}
-	else if (my_strncmp(str, "is eating", my_strlen(str)) == 0)
-	{
-		pthread_mutex_unlock(p->forkone);
-		pthread_mutex_unlock(p->forktwo);
-	}
-	// else if (!printed && isdead(p))
-	// 	pthread_mutex_unlock(p->forkone);
+	if (my_strncmp(str, "is eating", 9) == 0)
+		p->meals_had++;
 }
 
 /*
