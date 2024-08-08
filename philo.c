@@ -6,25 +6,26 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 20:47:20 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/08 13:15:01 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
-	-consider having status for each philo
-	(maybe a subroutine function too, which will be locked by one mutex
-	instead of having every action locked)
-	-consider  mutex golock_even + golock_odd with *golock
 	-Philo dies after some time with 200 130 60 60
 	-it still sometimes prints "taken a fork" after death, e.g. with 200 130 60 60
-	-it does not work with odd number of philos and 130 60 60
-	-dies at 400 every sometime with 3 599 200 200
 	-try testing w/ fast debug optimization flag
+	-./philo 200 599 200 200 should not die at 600 i think, but it often does. 
+		AND rarely has some prints after death. 199 599 200 200 SHOUOLD die though.
+	-Fix Helgrind
+	-198 6 200 200 when giving small die_t, the printing continues a while after death
+	-test 200 800 200 200 (none should die) Arthur fixed with every
+		odd taking one fork first and even the other - BUT only on first run through. 
+		Also waiting for sleep_t/2 to look for forks.
 */
 void	routine(t_philo *p)
-{//usleep(5000);printf("routine : %d\n", p->id);
+{
 	setter(&p->ready, SUCCESS, &p->readylock);
 	while (getter(&p->go, &p->golock) != GO)
 		usleep(400);
@@ -54,7 +55,7 @@ void	routine(t_philo *p)
 }
 
 void	butler(t_data *d)
-{//usleep(3000);printf("butler:%d\n", d->death);
+{
 	int	i;
 
 	i = -1;
