@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/08 13:15:01 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/08 13:29:48 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,15 @@ void	routine(t_philo *p)
 	setter(&p->ready, SUCCESS, &p->readylock);
 	while (getter(&p->go, &p->golock) != GO)
 		usleep(400);
-	while (getter(&p->dead, &p->dlock) != DEATH)
+	while (1)
 	{
 		printer(p->id, "is thinking", p);
 		if (p->id % 2 == 0)
 			wait_ms(5, p);
 		pthread_mutex_lock(p->forkone);
 		printer(p->id, "has taken a fork", p);
-		if (p->last_meal_t == 0 && !p->forktwo && lastmealset(p))
-		{
-			pthread_mutex_unlock(p->forkone);
+		if (!p->forktwo && lastmealset(p))
 			break ;
-		}
 		pthread_mutex_lock(p->forktwo);
 		printer(p->id, "has taken a fork", p);
 		printer(p->id, "is eating", p);

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 20:57:19 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/08 13:29:01 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ int	normal_cleanup(t_data *d)
 	int	i;
 
 	i = d->n_philos;
+	if (d->n_philos == 1)
+		pthread_mutex_unlock(d->philo[0]->forkone);
 	if (d->initdone && checker(d, MEAL) != SUCCESS) // think this needs to be ||
 		pthread_mutex_unlock(&d->printlock);
 	while (--i >= 0)
