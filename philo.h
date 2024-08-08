@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 20:43:35 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/08 14:06:55 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ typedef	struct	s_philo
 	int				ready;
 	int				go;
 	int				forkcount;
+	int				firstrun;
 }	t_philo;
 
 typedef struct	s_data

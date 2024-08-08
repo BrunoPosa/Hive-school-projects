@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/08 13:29:48 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/08 14:11:37 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void	routine(t_philo *p)
 	while (1)
 	{
 		printer(p->id, "is thinking", p);
-		if (p->id % 2 == 0)
-			wait_ms(5, p);
+		if (getter(&p->firstrun, &p->readylock) && p->id % 2 == 0)
+			wait_ms(p->sleep_t / 2, p);
 		pthread_mutex_lock(p->forkone);
 		printer(p->id, "has taken a fork", p);
 		if (!p->forktwo && lastmealset(p))
@@ -48,6 +48,7 @@ void	routine(t_philo *p)
 		printer(p->id, "is sleeping", p);
 		if (getter(&p->dead, &p->dlock) == DEATH || wait_ms(p->sleep_t, p))
 			break ;
+		setter(&p->firstrun, 0, &p->readylock);
 	}
 }
 
