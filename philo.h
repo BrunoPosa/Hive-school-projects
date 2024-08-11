@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/11 23:46:48 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 01:43:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ int				spread(t_data *d, int signal);
 long long int	lastmealget(t_philo *p);
 int				lastmealset(t_philo *p);
 int				getter(int *var, pthread_mutex_t *lock);
-void			setter(int	*var, int value, pthread_mutex_t *lock);
+void			setter(void	*var, int value, pthread_mutex_t *lock);
 long long int	get_time_ms(void);
 int				wait_ms(long long int mseconds, t_philo *p);
 int				my_atoi(char *n);

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 12:47:59 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/07 17:34:38 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 01:42:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ long long int	get_time_ms(void)
 	return ((long long int)(time.tv_sec * 1000LL + time.tv_usec / 1000));
 }
 
-void	setter(int *var, int value, pthread_mutex_t *lock)
+void	setter(void *var, int value, pthread_mutex_t *lock)
 {
 	if (lock && var)
 	{
 		pthread_mutex_lock(lock);
-		*var = value;
+		*(int *)var = value;
 		pthread_mutex_unlock(lock);
 	}
 	else

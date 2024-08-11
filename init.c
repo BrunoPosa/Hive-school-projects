@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 00:01:15 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 02:47:12 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,16 @@ int	init_philo(t_data *d, int i)
 		return (ERROR);
 	memset(d->philo[i], 0, sizeof(t_philo));
 	d->philo[i]->id = i + 1;
-	d->philo[i]->forkone = &d->forks[i];
-	d->philo[i]->forktwo = &d->forks[(i + 1) % d->n_philos];
+	if (i % 2 == 0)
+	{
+		d->philo[i]->forkone = &d->forks[i];
+		d->philo[i]->forktwo = &d->forks[(i + 1) % d->n_philos];
+	}
+	else
+	{
+		d->philo[i]->forkone = &d->forks[(i + 1) % d->n_philos];
+		d->philo[i]->forktwo = &d->forks[i];
+	}
 	if (d->n_philos == 1)
 		d->philo[i]->forktwo = NULL;
 	d->philo[i]->die_t = d->die_t;
@@ -55,6 +63,7 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->start_t = &d->starttime;
 	d->philo[i]->ready = -1;
 	d->philo[i]->meals = d->n_meals;
+	d->philo[i]->meals_had = -1;
 	d->philo[i]->firstrun = 1;
 	if (init_mutex(d, i) != SUCCESS)
 		return (ERROR);
@@ -80,7 +89,7 @@ int	init_mu_th(t_data *d)
 	{
 		if (init_philo(d, i) != SUCCESS)
 			return (cleanerr(d, EMALMUT, i));
-		if (pthread_create(&d->philo[i]->thread, NULL, (void *)&routine, d->philo[i])
+		if (pthread_create(&d->philo[i]->thread, NULL, (void *)&philolife, d->philo[i])
 			!= SUCCESS)
 			return (cleanerr(d, ETHREAD, i));
 	}
