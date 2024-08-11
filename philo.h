@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/08 14:06:55 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/11 23:46:48 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,14 @@
 #include <unistd.h>
 #include <string.h>
 
+typedef enum	e_action
+{
+	THINK,
+	FORK,
+	FORKEAT,
+	SLEEP
+}	t_action;
+
 typedef	struct	s_philo
 {
 	int				id;
@@ -88,6 +96,7 @@ typedef	struct	s_philo
 	int				eat_t;
 	int				sleep_t;
 	int				meals_had;
+	int				meals;
 	int				dead;
 	long long int	last_meal_t;
 	long long int	*start_t;
@@ -101,7 +110,7 @@ typedef	struct	s_philo
 typedef struct	s_data
 {
 	pthread_t		butler;
-	t_philo			**philo;
+	t_philo			**philo;//should this be *
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	printlock;
 	pthread_mutex_t	dielock;
@@ -123,8 +132,10 @@ int				normal_cleanup(t_data *d);
 int				mumalth_cleanup(t_data *d, int status, int initialized);
 void			free_philos(t_data *d);
 int				ermsg(int status);
-void			routine(t_philo *p);
+void			philolife(t_philo *p);
 void			butler(t_data *d);
+int				routine(t_philo *p);
+int				action(t_action act, int arg, char *str, t_philo *p);
 void			printer(int arg, char *str, t_philo *p);
 int				checker(t_data *d, int flag);
 int				spread(t_data *d, int signal);

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/08 14:24:24 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 00:07:59 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,32 +24,71 @@
 		odd taking one fork first and even the other - BUT only on first run through. 
 		Also waiting for sleep_t/2 to look for forks.
 */
-void	routine(t_philo *p)
+void	philolife(t_philo *p)
 {
 	setter(&p->ready, SUCCESS, &p->readylock);
 	while (getter(&p->go, &p->golock) != GO)
-		usleep(400);
-	while (1)
+		usleep(200);
+	while (!getter(&p->dead, &p->dlock))
 	{
-		printer(p->id, "is thinking", p);
-		if (getter(&p->firstrun, &p->readylock) && p->id % 2 == 0)
-			wait_ms(p->sleep_t / 2, p);
-		pthread_mutex_lock(p->forkone);
-		printer(p->id, "has taken a fork", p);
-		if (!p->forktwo && lastmealset(p))
+		if (action(THINK, p->id, "is thinking", p))
 			break ;
-		pthread_mutex_lock(p->forktwo);
-		printer(p->id, "has taken a fork", p);
-		printer(p->id, "is eating", p);
-		lastmealset(p);
-		wait_ms(p->eat_t, p);
-		pthread_mutex_unlock(p->forkone);
-		pthread_mutex_unlock(p->forktwo);
-		printer(p->id, "is sleeping", p);
-		if (getter(&p->dead, &p->dlock) == DEATH || wait_ms(p->sleep_t, p))
+		if (routine(p) != SUCCESS)// || (p->meals_had != -1 && p->meals_had >= p->meals)
 			break ;
-		setter(&p->firstrun, 0, &p->readylock);
 	}
+}
+
+int	routine(t_philo *p)
+{
+	if (getter(&p->firstrun, &p->readylock) && p->id % 2 == 0)
+		wait_ms(p->sleep_t / 2, p);
+	pthread_mutex_lock(p->forkone);
+	if (action(FORK, p->id, "has taken a fork", p))
+		return (DEATH);
+	if (!p->forktwo && lastmealset(p))
+		return (ERROR);
+	pthread_mutex_lock(p->forktwo);
+	if (action(FORKEAT, p->id, "has taken a fork", p) || wait_ms(p->eat_t, p))
+		return (DEATH);
+	pthread_mutex_unlock(p->forkone);
+	pthread_mutex_unlock(p->forktwo);
+	if (action(SLEEP, p->id, "is sleeping", p) || wait_ms(p->sleep_t, p))
+		return (DEATH);
+	setter(&p->firstrun, 0, &p->readylock);
+	return (SUCCESS);
+}
+
+int	action(t_action act, int arg, char *str, t_philo *p)
+{
+	pthread_mutex_lock(&p->dlock);
+	if (p->dead)
+	{
+		if (act == FORK)
+			pthread_mutex_unlock(p->forkone);
+		else if (act == FORKEAT)
+		{
+			pthread_mutex_unlock(p->forkone);
+			pthread_mutex_unlock(p->forktwo);
+		}
+		pthread_mutex_unlock(&p->dlock);
+		return (DEATH);
+	}
+	printer(arg, str, p);
+	if (act == FORKEAT)
+	{
+		printer(arg, "is eating", p);
+		p->meals_had++;
+		lastmealset(p);
+	}
+	pthread_mutex_unlock(&p->dlock);
+	return (SUCCESS);
+}
+
+void	printer(int arg, char *str, t_philo *p)
+{
+	pthread_mutex_lock(p->prlock);
+	printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
+	pthread_mutex_unlock(p->prlock);
 }
 
 void	butler(t_data *d)
@@ -58,10 +97,10 @@ void	butler(t_data *d)
 
 	i = -1;
 	while (checker(d, GO) != GO)
-		usleep(400);
+		usleep(200);
 	d->starttime = get_time_ms();
 	spread(d, GO);
-	while (1)
+	while (!getter(&d->death, &d->dielock))
 	{
 		i = -1;
 		while (++i < d->n_philos)
@@ -98,18 +137,6 @@ int	spread(t_data *d, int signal)
 			setter(&d->philo[i]->go, GO, &d->philo[i]->golock);
 	}
 	return (SUCCESS);
-}
-
-void	printer(int arg, char *str, t_philo *p)
-{
-	if (getter(&p->dead, &p->dlock) == DEATH && my_strncmp(str, "died", 4) != SUCCESS)
-		return ;
-	pthread_mutex_lock(p->prlock);
-	printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
-	if (my_strncmp(str, "died", 4) != SUCCESS)
-		pthread_mutex_unlock(p->prlock);
-	if (my_strncmp(str, "is eating", 9) == 0)
-		p->meals_had++;
 }
 
 /*

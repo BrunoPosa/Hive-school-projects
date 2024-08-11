@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/08 14:25:21 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/11 23:32:29 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	lastmealset(t_philo *p)
 	pthread_mutex_unlock(&p->lmeallock);
 	return (42);
 }
-
+//NEEDS A MUTEX FOR meals_had!
 int	checker(t_data *d, int flag)
 {
 	int	i;
