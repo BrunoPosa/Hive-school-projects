@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 01:43:30 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 03:23:38 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ typedef struct	s_data
 	long long int	starttime;
 	int				death;
 	int				initdone;
+	int				singlephiloflag;
 }	t_data;
 
 int				validator(int argc, char **args);

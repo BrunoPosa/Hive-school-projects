@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 02:47:12 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 03:25:44 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,8 @@ int	initor(char **argv, t_data *d)
 		d->n_meals = my_atoi(argv[5]);
 	else
 		d->n_meals = ERROR;
+	if (d->n_philos == 1)
+		d->singlephiloflag = 1;
 	d->philo = malloc(d->n_philos * sizeof(t_philo *));
 	if (!d->philo || !memset(d->philo, 0, d->n_philos * sizeof(t_philo *)))
 	{

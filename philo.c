@@ -6,13 +6,24 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 02:54:54 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 03:30:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
+	test with these, a la Otto H4:
+	-1 800 200 200 should not die and exit
+	-200 410 200 200 should last long, min 30sec/1min (close unneeded apps on mac when running)
+	-4 410 200 200 should last
+	-4 310 200 100 should be less than 10ms
+	-2 310 200 100 -||-
+	-1 800 200 200 shuld die and exit
+	-199 610 200 200 no one shuld die
+	-3 600 200 200 one should die after time to die plus some ms
+	-5 800 200 60 no one should die
+
 	-Philo dies after some time with 200 130 60 60
 	-it still sometimes prints "taken a fork" after death, e.g. with 200 130 60 60
 	-try testing w/ fast debug optimization flag
@@ -39,7 +50,7 @@ void	philolife(t_philo *p)
 	}
 }
 
-int	routine(t_philo *p)/*  */
+int	routine(t_philo *p)
 {
 	if (action(THINK, p->id, "is thinking", p))
 		return (DEATH);
@@ -117,7 +128,7 @@ void	butler(t_data *d)
 		t = get_time_ms();
 		while (++i < d->n_philos)
 		{
-			if ((d->philo[i]->last_meal_t != 0 && t - lastmealget(d->philo[i]) >= d->die_t)
+			if ((lastmealget(d->philo[i]) != 0 && t - lastmealget(d->philo[i]) >= d->die_t)
 				|| checker(d, MEAL) == SUCCESS)
 			{
 				spread(d, DEATH);
