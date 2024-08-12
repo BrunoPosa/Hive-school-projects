@@ -6,25 +6,17 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/13 00:02:16 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/13 01:01:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
-	test with these, a la Otto H4:
-	-1 800 200 200 should not die and exit
-	-200 410 200 200 should last long, min 30sec/1min (close unneeded apps on mac when running)
-	-4 410 200 200 should last
-	-4 310 200 100 should be less than 10ms
-	-2 310 200 100 -||-
-	-1 800 200 200 shuld die and exit
-	-199 610 200 200 no one shuld die
-	-3 600 200 200 one should die after time to die plus some ms
-	-5 800 200 60 no one should die
-as of aug 12th 15:30
-	-everything fails sometimes
+	-ask Arthur about lack of forkswap with just the sleep_t / 3 delay. Seek edge cases.
+	-delete bloat
+	-norm pass
+	-mock eval
 */
 void	philolife(t_philo *p)
 {
@@ -68,17 +60,17 @@ int	routine(t_philo *p)
 	dropforks(p);
 	if (action(SLEEP, p->id, "is sleeping", p) || wait_ms(p->sleep_t, p))
 		return (DEATH);
-	incrementrun(p);
+	p->run++;
 	return (SUCCESS);
 }
 
-void	incrementrun(t_philo *p)
+void	increment(int *var, pthread_mutex_t *lock)
 {
-	pthread_mutex_lock(&p->readylock);
-	p->run = p->run + 1;
-	if (p->run > 1000000)
-		p->run = 3;
-	pthread_mutex_unlock(&p->readylock);
+	pthread_mutex_lock(lock);
+	*var = *var + 1;
+	if (*var == 2147483647)
+		*var = 3;
+	pthread_mutex_unlock(lock);
 }
 
 int	ifonlyonefork(t_philo *p)
@@ -130,9 +122,12 @@ int	action(t_action act, int arg, char *str, t_philo *p)
 	printer(arg, str, p);
 	if (act == FORKEAT)
 	{
-		printer(arg, "is eating", p);
-		p->meals_had++; //Mutex?
-		lastmealset(p);
+		if (p->meals)
+		{
+			printer(arg, "is eating", p);
+			increment(&p->meals_had, &p->lmeallock);
+			lastmealset(p);
+		}
 	}
 	pthread_mutex_unlock(&p->dlock);
 	return (SUCCESS);

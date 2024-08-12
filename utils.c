@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/13 00:04:01 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/13 00:44:33 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,8 @@ int	wait_ms(long long int mseconds, t_philo *p)
 	start = get_time_ms();
 	if (mseconds < 5)
 		mseconds = 5;
-	if (getter(&p->run, &p->readylock) && start - lastmealget(p) + mseconds >= p->die_t)
-	{
+	if (p->run && start - lastmealget(p) + mseconds >= p->die_t)
 		return (DEATH);
-	}
 	while (current - start < mseconds)
 	{
 		current = get_time_ms();
@@ -76,7 +74,7 @@ int	checker(t_data *d, int flag)
 	{
 		while (++i < d->n_philos)
 		{
-			if (d->philo[i]->meals_had < d->n_meals)
+			if (getter(&d->philo[i]->meals_had, &d->philo[i]->lmeallock) < d->n_meals)
 				return (ERROR);
 		}
 		return (SUCCESS);

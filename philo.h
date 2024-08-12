@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 23:39:53 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/13 00:41:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,6 @@ int				wait_ms(long long int mseconds, t_philo *p);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
 int				my_strncmp(const char *s1, const char *s2, size_t n);
-void	incrementrun(t_philo *p);
+void	increment(int *var, pthread_mutex_t *lock);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 23:57:18 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/13 00:52:10 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->start_t = &d->starttime;
 	d->philo[i]->ready = -1;
 	d->philo[i]->meals = d->n_meals;
-	d->philo[i]->meals_had = -1;
 	if (init_mutex(d, i) != SUCCESS)
 		return (ERROR);
 	return (SUCCESS);
