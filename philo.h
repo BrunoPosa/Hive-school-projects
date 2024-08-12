@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 03:23:38 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 23:39:53 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,8 @@ typedef	struct	s_philo
 	int				ready;
 	int				go;
 	int				forkcount;
-	int				firstrun;
+	int				run;
+	int				end;
 }	t_philo;
 
 typedef struct	s_data
@@ -125,6 +126,11 @@ typedef struct	s_data
 	int				singlephiloflag;
 }	t_data;
 
+void			setter(void	*var, int value, pthread_mutex_t *lock);
+int	ifonlyonefork(t_philo *p);
+int	endchecker(t_data *d);
+void	dropforks(t_philo *p);
+void	swapforks(t_philo *p);
 int				validator(int argc, char **args);
 int				initor(char **argv, t_data *d);
 int				init_mu_th(t_data *d);
@@ -143,11 +149,11 @@ int				spread(t_data *d, int signal);
 long long int	lastmealget(t_philo *p);
 int				lastmealset(t_philo *p);
 int				getter(int *var, pthread_mutex_t *lock);
-void			setter(void	*var, int value, pthread_mutex_t *lock);
 long long int	get_time_ms(void);
 int				wait_ms(long long int mseconds, t_philo *p);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
 int				my_strncmp(const char *s1, const char *s2, size_t n);
+void	incrementrun(t_philo *p);
 
 #endif

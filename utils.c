@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 01:53:59 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/13 00:04:01 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,16 @@ int	wait_ms(long long int mseconds, t_philo *p)
 	start = get_time_ms();
 	if (mseconds < 5)
 		mseconds = 5;
+	if (getter(&p->run, &p->readylock) && start - lastmealget(p) + mseconds >= p->die_t)
+	{
+		return (DEATH);
+	}
 	while (current - start < mseconds)
 	{
 		current = get_time_ms();
 		usleep(200);
-		if (getter(&p->dead, &p->dlock))
-			return (ERROR);
+		// if (getter(&p->dead, &p->dlock))
+		// 	return (ERROR);
 	}
 	return (SUCCESS);
 }
@@ -87,6 +91,19 @@ int	checker(t_data *d, int flag)
 		return (GO);
 	}
 	return (ERROR);
+}
+
+int	endchecker(t_data *d)
+{
+	int	i;
+
+	i = -1;
+	while (++i < d->n_philos)
+	{
+		if (!getter(&d->philo[i]->end, &d->philo[i]->readylock))
+			return (ERROR);
+	}
+	return (SUCCESS);
 }
 
 int	my_atoi(char *n)

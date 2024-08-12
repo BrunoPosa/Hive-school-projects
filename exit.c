@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 03:24:03 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 19:51:12 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,8 @@ int	normal_cleanup(t_data *d)
 	int	i;
 
 	i = d->n_philos;
-	if (d->singlephiloflag)
-		pthread_mutex_unlock(d->philo[0]->forkone);
-	if (d->initdone && checker(d, MEAL) != SUCCESS) // think this needs to be ||
-		pthread_mutex_unlock(&d->printlock);
+	// if (d->initdone && checker(d, MEAL) != SUCCESS) // think this needs to be ||
+	// 	pthread_mutex_unlock(&d->printlock);
 	while (--i >= 0)
 	{
 		if (pthread_join(d->philo[i]->thread, NULL) != SUCCESS)

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 03:25:44 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/12 23:57:18 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,21 @@ int	init_philo(t_data *d, int i)
 		return (ERROR);
 	memset(d->philo[i], 0, sizeof(t_philo));
 	d->philo[i]->id = i + 1;
-	if (i % 2 == 0)
+	if (d->n_philos == 1)
+	{
+		d->philo[i]->forkone = &d->forks[i];
+		d->philo[i]->forktwo = NULL;
+	}
+	else //if (d->philo[i]->id % 2 == 0)
 	{
 		d->philo[i]->forkone = &d->forks[i];
 		d->philo[i]->forktwo = &d->forks[(i + 1) % d->n_philos];
 	}
-	else
-	{
-		d->philo[i]->forkone = &d->forks[(i + 1) % d->n_philos];
-		d->philo[i]->forktwo = &d->forks[i];
-	}
-	if (d->n_philos == 1)
-		d->philo[i]->forktwo = NULL;
+	// else
+	// {
+	// 	d->philo[i]->forkone = &d->forks[(i + 1) % d->n_philos];
+	// 	d->philo[i]->forktwo = &d->forks[i];
+	// }
 	d->philo[i]->die_t = d->die_t;
 	d->philo[i]->eat_t = d->eat_t;
 	d->philo[i]->sleep_t = d->sleep_t;
@@ -64,7 +67,6 @@ int	init_philo(t_data *d, int i)
 	d->philo[i]->ready = -1;
 	d->philo[i]->meals = d->n_meals;
 	d->philo[i]->meals_had = -1;
-	d->philo[i]->firstrun = 1;
 	if (init_mutex(d, i) != SUCCESS)
 		return (ERROR);
 	return (SUCCESS);
@@ -109,8 +111,8 @@ int	initor(char **argv, t_data *d)
 		d->n_meals = my_atoi(argv[5]);
 	else
 		d->n_meals = ERROR;
-	if (d->n_philos == 1)
-		d->singlephiloflag = 1;
+	// if (d->n_philos == 1)
+	// 	d->singlephiloflag = 1;
 	d->philo = malloc(d->n_philos * sizeof(t_philo *));
 	if (!d->philo || !memset(d->philo, 0, d->n_philos * sizeof(t_philo *)))
 	{
