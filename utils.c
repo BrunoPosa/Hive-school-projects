@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 22:09:52 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 22:44:17 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,34 +38,6 @@ void	dropforks(t_philo *p)
 	pthread_mutex_unlock(p->forkone);
 	pthread_mutex_unlock(p->forktwo);
 }
-
-void	swapforks(t_philo *p)
-{
-	pthread_mutex_t	*temp;
-
-	temp = p->forkone;
-	p->forkone = p->forktwo;
-	p->forktwo = temp;
-}
-
-// int	wait_ms(long long int mseconds, t_philo *p)
-// {
-// 	long long int	start;
-// 	long long int	current;
-
-// 	current = 0;
-// 	start = get_time_ms();
-// 	if (mseconds < 5)
-// 		mseconds = 5;
-// 	while (current - start < mseconds)
-// 	{
-// 		current = get_time_ms();
-// 		if (getter(p->death, p->dlock))
-// 			return (ERROR);
-// 		usleep(1000);
-// 	}
-// 	return (SUCCESS);
-// }
 
 int	ft_usleep(long long int mseconds, t_philo *p)
 {
@@ -120,7 +92,7 @@ int	lastmealset(t_philo *p)
 	pthread_mutex_unlock(&p->lmeallock);
 	return (42);
 }
-//NEEDS A MUTEX FOR meals_had!
+
 int	checker(t_data *d, int flag)
 {
 	int	i;

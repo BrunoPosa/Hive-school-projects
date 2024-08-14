@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 12:47:59 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 22:03:16 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 22:41:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,23 +40,14 @@ void	printer(int arg, char *str, t_philo *p)
 	pthread_mutex_unlock(p->prlock);
 }
 
-int	spread(t_data *d, int signal)
+void	syncing(t_data *d)
 {
 	int	i;
 
 	i = -1;
-	if (signal == GO)
-	{
-		while (++i < d->n_philos)
-			setter(&d->philo[i]->go, GO, &d->philo[i]->golock);
-	}
-	return (SUCCESS);
-}
-
-void	syncing(t_data *d)
-{
 	while (checker(d, GO) != GO)
 		usleep(200);
 	d->starttime = get_time_ms();
-	spread(d, GO);
+	while (++i < d->n_philos)
+		setter(&d->philo[i]->go, GO, &d->philo[i]->golock);
 }

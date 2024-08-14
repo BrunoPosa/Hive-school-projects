@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 22:03:10 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 23:57:44 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,8 @@ void	life(t_philo *p)
 	action(THINK, p->id, "is thinking", p);
 	while (!getter(p->death, p->dlock))
 	{
-		if (routine(p) || (p->meals != -1 && p->meals_had >= p->meals))
+		if (routine(p) || (getter(&p->meals, &p->lmeallock) != -1
+			&& getter(&p->meals_had, &p->lmeallock) >= p->meals))
 		{
 			setter(p->death, p->id, p->dlock);
 			break ;
@@ -99,7 +100,7 @@ void	butler(t_data *d)
 		while (++i < d->n_philos)
 		{
 			if ((lastmealget(d->philo[i]) != 0
-					&& t - lastmealget(d->philo[i]) >= d->die_t)
+					&& t - lastmealget(d->philo[i]) >= d->philo[i]->die_t)
 				|| checker(d, MEAL) == SUCCESS)
 			{
 				setter(&d->death, DEATH, &d->dielock);

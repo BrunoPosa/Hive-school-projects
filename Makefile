@@ -6,7 +6,7 @@
 #    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/25 11:18:16 by bposa             #+#    #+#              #
-#    Updated: 2024/08/14 18:25:02 by bposa            ###   ########.fr        #
+#    Updated: 2024/08/15 00:08:52 by bposa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 CC			=	cc
 CFLAGS		=	-Wall -Wextra -Werror -pthread
 DEBUGFLAGS	=	-O1 -g 
-SANITFLAG	=	-fsanitize=thread
+SANITFLAG	=	-fsanitize=address
 
 # Source files and dependencies
 SRCS	= 	philo.c \
@@ -51,6 +51,6 @@ debug:	$(SRCS) $(DEPS)
 
 sanit:	$(SRCS) $(DEPS)
 	@$(CC) $(CFLAGS) $(SANITFLAG) -o $(NAME) $(SRCS)
-	@echo debug made
+	@echo sanit made
 
 .PHONY:	all clean fclean re debug
