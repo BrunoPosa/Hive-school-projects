@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 19:51:12 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 19:39:32 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int ermsg(int status)
 	if (status == EINIT)
 		printf("\n\e[31mInitialization failed, please try again\e[0m\n\n");
 	if (status == EARG)
-		write(2, "\nMain arguments must be 1-9999\n", 31);
+		write(2, "\nPhilosophers must be 1-400; other arguments 1(0)-9999\n", 55);
 	if (status == EARGC)
 		write(2, "\nMust have 4 or 5 arguments.\n", 29);
 	if (status == ETHREAD)
