@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 19:41:22 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 20:14:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ int	init_mu_th(t_data *d)
 	{
 		if (init_philo(d, i) != SUCCESS)
 			return (cleanerr(d, EMALMUT, i));
-		if (pthread_create(&d->philo[i]->thread, NULL, (void *)&philolife, d->philo[i])
-			!= SUCCESS)
+		if (pthread_create(&d->philo[i]->thread, NULL,
+				(void *)&life, d->philo[i]) != SUCCESS)
 			return (cleanerr(d, ETHREAD, i));
 	}
 	if (pthread_create(&d->butler, NULL, (void *)&butler, d) != SUCCESS)
@@ -100,10 +100,9 @@ int	initor(char **argv, t_data *d)
 	d->die_t = my_atoi(argv[2]);
 	d->eat_t = my_atoi(argv[3]);
 	d->sleep_t = my_atoi(argv[4]);
+	d->n_meals = ERROR;
 	if (argv[5])
 		d->n_meals = my_atoi(argv[5]);
-	else
-		d->n_meals = ERROR;
 	d->philo = malloc(d->n_philos * sizeof(t_philo *));
 	if (!d->philo || !memset(d->philo, 0, d->n_philos * sizeof(t_philo *)))
 	{
@@ -111,7 +110,8 @@ int	initor(char **argv, t_data *d)
 		return (ERROR);
 	}
 	d->forks = malloc(d->n_philos * sizeof(pthread_mutex_t));
-	if (!d->forks || !memset(d->forks, 0, d->n_philos * sizeof(pthread_mutex_t)))
+	if (!d->forks
+		|| !memset(d->forks, 0, d->n_philos * sizeof(pthread_mutex_t)))
 	{
 		free(d->philo);
 		free(d);

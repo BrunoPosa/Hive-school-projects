@@ -6,13 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 19:39:32 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 20:15:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int ermsg(int status)
+int	ermsg(int status)
 {
 	if (status == EVAL)
 		write(2, "\nUsage\n        ./philo Philos T_die T_eat"
@@ -36,7 +36,7 @@ int ermsg(int status)
 	return (ERROR);
 }
 
-void free_philos(t_data *d)
+void	free_philos(t_data *d)
 {
 	while (--d->n_philos > -1)
 	{
@@ -54,8 +54,6 @@ int	normal_cleanup(t_data *d)
 	int	i;
 
 	i = d->n_philos;
-	// if (d->initdone && checker(d, MEAL) != SUCCESS) // think this needs to be ||
-	// 	pthread_mutex_unlock(&d->printlock);
 	while (--i >= 0)
 	{
 		if (pthread_join(d->philo[i]->thread, NULL) != SUCCESS)

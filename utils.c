@@ -6,11 +6,47 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 18:29:06 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 20:34:11 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	increment(int *var, pthread_mutex_t *lock)
+{
+	pthread_mutex_lock(lock);
+	*var = *var + 1;
+	if (*var == 2147483647)
+		*var = 3;
+	pthread_mutex_unlock(lock);
+}
+
+int	ifonlyonefork(t_philo *p)
+{
+	if (!p->forktwo)
+	{
+		pthread_mutex_unlock(p->forkone);
+		wait_ms(p->die_t, p);
+		setter(p->death, DEATH, p->dlock);
+		return (DEATH);
+	}
+	return (ERROR);
+}
+
+void	dropforks(t_philo *p)
+{
+	pthread_mutex_unlock(p->forkone);
+	pthread_mutex_unlock(p->forktwo);
+}
+
+void	swapforks(t_philo *p)
+{
+	pthread_mutex_t	*temp;
+
+	temp = p->forkone;
+	p->forkone = p->forktwo;
+	p->forktwo = temp;
+}
 
 int	wait_ms(long long int mseconds, t_philo *p)
 {
@@ -26,7 +62,7 @@ int	wait_ms(long long int mseconds, t_philo *p)
 		current = get_time_ms();
 		if (getter(p->death, p->dlock))
 			return (ERROR);
-		usleep(200);
+		usleep(100);
 	}
 	return (SUCCESS);
 }

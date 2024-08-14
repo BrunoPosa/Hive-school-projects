@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 12:47:59 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/12 01:42:49 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 20:23:36 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,32 @@ void	setter(void *var, int value, pthread_mutex_t *lock)
 	}
 	else
 		printf("setter: ERROR with accessing mutex or struct's variable!\n");
+}
+
+void	printer(int arg, char *str, t_philo *p)
+{
+	pthread_mutex_lock(p->prlock);
+	printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
+	pthread_mutex_unlock(p->prlock);
+}
+
+int	spread(t_data *d, int signal)
+{
+	int	i;
+
+	i = -1;
+	if (signal == GO)
+	{
+		while (++i < d->n_philos)
+			setter(&d->philo[i]->go, GO, &d->philo[i]->golock);
+	}
+	return (SUCCESS);
+}
+
+void	syncing(t_data *d)
+{
+	while (checker(d, GO) != GO)
+		usleep(200);
+	d->starttime = get_time_ms();
+	spread(d, GO);
 }
