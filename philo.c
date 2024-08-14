@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 20:41:37 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 22:03:10 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	routine(t_philo *p)
 	if (p->runs && action(THINK, p->id, "is thinking", p))
 		return (DEATH);
 	if (!p->runs && p->id % 2 == 0)
-		wait_ms(p->sleep_t / 3, p);
+		ft_usleep(p->sleep_t / 3, p);
 	pthread_mutex_lock(p->forkone);
 	if (action(FORK, p->id, "has taken a fork", p))
 		return (DEATH);
@@ -55,13 +55,13 @@ int	routine(t_philo *p)
 	pthread_mutex_lock(p->forktwo);
 	if (action(FORKEAT, p->id, "has taken a fork", p))
 		return (DEATH);
-	if (wait_ms(p->eat_t, p) != SUCCESS)
+	if (ft_usleep(p->eat_t, p) != SUCCESS)
 	{
 		dropforks(p);
 		return (DEATH);
 	}
 	dropforks(p);
-	if (action(SLEEP, p->id, "is sleeping", p) || wait_ms(p->sleep_t, p))
+	if (action(SLEEP, p->id, "is sleeping", p) || ft_usleep(p->sleep_t, p))
 		return (DEATH);
 	p->runs++;
 	return (SUCCESS);

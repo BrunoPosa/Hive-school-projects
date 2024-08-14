@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 20:20:03 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 22:04:03 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ long long int	lastmealget(t_philo *p);
 int				lastmealset(t_philo *p);
 int				getter(int *var, pthread_mutex_t *lock);
 long long int	get_time_ms(void);
-int				wait_ms(long long int mseconds, t_philo *p);
+int				ft_usleep(long long int mseconds, t_philo *p);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
 int				my_strncmp(const char *s1, const char *s2, size_t n);

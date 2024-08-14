@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 20:34:11 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 22:09:52 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	ifonlyonefork(t_philo *p)
 	if (!p->forktwo)
 	{
 		pthread_mutex_unlock(p->forkone);
-		wait_ms(p->die_t, p);
+		ft_usleep(p->die_t, p);
 		setter(p->death, DEATH, p->dlock);
 		return (DEATH);
 	}
@@ -48,21 +48,43 @@ void	swapforks(t_philo *p)
 	p->forktwo = temp;
 }
 
-int	wait_ms(long long int mseconds, t_philo *p)
-{
-	long long int	start;
-	long long int	current;
+// int	wait_ms(long long int mseconds, t_philo *p)
+// {
+// 	long long int	start;
+// 	long long int	current;
 
-	current = 0;
-	start = get_time_ms();
+// 	current = 0;
+// 	start = get_time_ms();
+// 	if (mseconds < 5)
+// 		mseconds = 5;
+// 	while (current - start < mseconds)
+// 	{
+// 		current = get_time_ms();
+// 		if (getter(p->death, p->dlock))
+// 			return (ERROR);
+// 		usleep(1000);
+// 	}
+// 	return (SUCCESS);
+// }
+
+int	ft_usleep(long long int mseconds, t_philo *p)
+{
+	long long int start = get_time_ms();
+	long long int elapsed;
+
 	if (mseconds < 5)
 		mseconds = 5;
-	while (current - start < mseconds)
+	while (1)
 	{
-		current = get_time_ms();
 		if (getter(p->death, p->dlock))
 			return (ERROR);
-		usleep(100);
+		elapsed = get_time_ms() - start;
+		if (elapsed >= mseconds)
+			break;
+		if (mseconds - elapsed > 1000)
+			usleep(1000);
+		else
+			usleep((mseconds - elapsed) * 1000);
 	}
 	return (SUCCESS);
 }
