@@ -6,13 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:39:06 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 22:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 20:15:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int ermsg(int status)
+int	ermsg(int status)
 {
 	if (status == EVAL)
 		write(2, "\nUsage\n        ./philo Philos T_die T_eat"
@@ -20,38 +20,56 @@ int ermsg(int status)
 	if (status == EINIT)
 		printf("\n\e[31mInitialization failed, please try again\e[0m\n\n");
 	if (status == EARG)
-		write(2, "\nMain arguments must be 1-9999\n", 31);
+		write(2, "\nPhilosophers must be 1-400; other arguments 1(0)-9999\n", 55);
 	if (status == EARGC)
 		write(2, "\nMust have 4 or 5 arguments.\n", 29);
 	if (status == ETHREAD)
 		write(2, "\nThreads!\n", 10);
-	if (status == EMALLOC)
-		write(2, "\nMalloc!\n", 9);
+	if (status == EMALMUT)
+		write(2, "\nMalloc or mutex!\n", 18);
 	if (status == EMUTEX)
 		write(2, "\nMutex!\n", 8);
 	if (status == ERROR)
 		write(2, "\nError!\n", 8);
+	if (status == EJOIN)
+		write(2, "\nJoin!\n", 7);
 	return (ERROR);
 }
 
-void free_philos(t_data *d)
+void	free_philos(t_data *d)
 {
-    t_philo **philo = d->philo;
-    while (*philo)
-    {
-        free(*philo);
-        *philo = NULL;
-        philo++;
-    }
+	while (--d->n_philos > -1)
+	{
+		free(d->philo[d->n_philos]);
+		d->philo[d->n_philos] = NULL;
+	}
+	free(d->philo);
+	d->philo = NULL;
+	free(d->forks);
+	d->forks = NULL;
 }
 
-/*
-	-Fix by protecting mutex_destroy() and pthread_join() [they ret 0 on success]!
-	-Ditch i for sake of not doing free() inside return()
-*/
-int	cleanerr(t_data *d, int status, int initialized)
+int	normal_cleanup(t_data *d)
 {
-	if (status == EMUTEX || status == EMALLOC)
+	int	i;
+
+	i = d->n_philos;
+	while (--i >= 0)
+	{
+		if (pthread_join(d->philo[i]->thread, NULL) != SUCCESS)
+			return (ERROR);
+		pthread_mutex_destroy(&d->forks[i]);
+	}
+	pthread_mutex_destroy(&d->printlock);
+	return (SUCCESS);
+}
+
+int	mumalth_cleanup(t_data *d, int status, int initialized)
+{
+	int	i;
+
+	i = d->n_philos;
+	if (status == EMUTEX || status == EMALMUT)
 	{
 		while (--initialized >= 0)
 		{
@@ -62,23 +80,30 @@ int	cleanerr(t_data *d, int status, int initialized)
 	}
 	else if (status == ETHREAD)
 	{
-		while (--d->n_philos >= 0)
-			pthread_mutex_destroy(&d->forks[d->n_philos]);
+		setter(&d->death, DEATH, &d->dielock);
+		while (--i >= 0)
+			pthread_mutex_destroy(&d->forks[i]);
 		while (--initialized >= 0)
-			pthread_join(d->philo[initialized]->thread, NULL);
+		{
+			if (pthread_join(d->philo[initialized]->thread, NULL) != SUCCESS)
+				return (ERROR);
+		}
 	}
+	return (SUCCESS);
+}
+
+int	cleanerr(t_data *d, int status, int initialized)
+{
+	if (mumalth_cleanup(d, status, initialized) != SUCCESS)
+		return (ermsg(EJOIN));
 	else
 	{
-		while (--d->n_philos >= 0)
-		{
-			pthread_join(d->philo[d->n_philos]->thread, NULL);
-			pthread_mutex_destroy(&d->forks[d->n_philos]);
-		}
-		setter(&d->death, DEATH, &d->printlock);
-		pthread_mutex_destroy(&d->printlock);
+		if (normal_cleanup(d) != SUCCESS)
+			return (ermsg(EJOIN));
 	}
+	if (pthread_join(d->butler, NULL) != SUCCESS)
+		status = EJOIN;
 	free_philos(d);
 	free(d);
-// printf("\e[33mCleanerr done\e[0m\n");
 	return (ermsg(status));
 }

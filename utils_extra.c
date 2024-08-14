@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 12:47:59 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/04 22:14:42 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 22:41:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,32 +18,36 @@ long long int	get_time_ms(void)
 
 	if (gettimeofday(&time, NULL) == -1)
 		return(ERROR);
-	return ((long long int)(time.tv_sec * 1000LL + time.tv_usec / 1000));//(time.tv_usec + 500) / 1000??
+	return ((long long int)(time.tv_sec * 1000LL + time.tv_usec / 1000));
 }
 
-void	setter(int *var, int value, pthread_mutex_t *lock)
+void	setter(void *var, int value, pthread_mutex_t *lock)
 {
 	if (lock && var)
 	{
 		pthread_mutex_lock(lock);
-		*var = value;
+		*(int *)var = value;
 		pthread_mutex_unlock(lock);
 	}
 	else
 		printf("setter: ERROR with accessing mutex or struct's variable!\n");
 }
 
-void	wait_until(int *var, int status, pthread_mutex_t *lock)
+void	printer(int arg, char *str, t_philo *p)
 {
-	while (1)
-	{
-		pthread_mutex_lock(lock);
-		if (*var == status)
-		{
-			pthread_mutex_unlock(lock);
-			break ;
-		}
-		pthread_mutex_unlock(lock);
-		usleep(400);
-	}
+	pthread_mutex_lock(p->prlock);
+	printf("%lld %d %s\n", get_time_ms() - *p->start_t, arg, str);
+	pthread_mutex_unlock(p->prlock);
+}
+
+void	syncing(t_data *d)
+{
+	int	i;
+
+	i = -1;
+	while (checker(d, GO) != GO)
+		usleep(200);
+	d->starttime = get_time_ms();
+	while (++i < d->n_philos)
+		setter(&d->philo[i]->go, GO, &d->philo[i]->golock);
 }

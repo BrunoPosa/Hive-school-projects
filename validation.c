@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/07/31 20:23:55 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 19:44:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static int	aredigits(char **s)
 
 static int	islenok(char **s)
 {
-	if (my_strlen(s[1]) > 4
+	if (my_strlen(s[1]) > 3
 		|| my_strlen(s[2]) > 4
 		|| my_strlen(s[3]) > 4
 		|| my_strlen(s[4]) > 4)
@@ -71,7 +71,7 @@ int	validator(int argc, char **args)
 		return (ermsg(EARGC));
 	if (aredigits(args) != 1 || islenok(args) != 1)
 		return (ermsg(EARG));
-	if (my_atoi(args[1]) == 0 || my_atoi(args[2]) == 0
+	if (my_atoi(args[1]) == 0 || my_atoi(args[1]) > 400 || my_atoi(args[2]) == 0
 		|| my_atoi(args[3]) == 0 || my_atoi(args[4]) == 0)
 		return (ermsg(EARG));
 	return (1);
