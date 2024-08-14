@@ -6,14 +6,15 @@
 #    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/25 11:18:16 by bposa             #+#    #+#              #
-#    Updated: 2024/08/04 21:52:45 by bposa            ###   ########.fr        #
+#    Updated: 2024/08/14 18:25:02 by bposa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Compiler and flags; add -fsanitize=thread
 CC			=	cc
 CFLAGS		=	-Wall -Wextra -Werror -pthread
-DEBUGFLAGS	=	-O0 -g 
+DEBUGFLAGS	=	-O1 -g 
+SANITFLAG	=	-fsanitize=thread
 
 # Source files and dependencies
 SRCS	= 	philo.c \
@@ -46,6 +47,10 @@ re:	fclean all
 
 debug:	$(SRCS) $(DEPS)
 	@$(CC) $(CFLAGS) $(DEBUGFLAGS) -o $(NAME) $(SRCS)
-	@echo debug build made
+	@echo debug made
+
+sanit:	$(SRCS) $(DEPS)
+	@$(CC) $(CFLAGS) $(SANITFLAG) -o $(NAME) $(SRCS)
+	@echo debug made
 
 .PHONY:	all clean fclean re debug

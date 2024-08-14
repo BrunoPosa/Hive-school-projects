@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/13 00:44:33 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 18:29:06 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,12 @@ int	wait_ms(long long int mseconds, t_philo *p)
 	start = get_time_ms();
 	if (mseconds < 5)
 		mseconds = 5;
-	if (p->run && start - lastmealget(p) + mseconds >= p->die_t)
-		return (DEATH);
 	while (current - start < mseconds)
 	{
 		current = get_time_ms();
+		if (getter(p->death, p->dlock))
+			return (ERROR);
 		usleep(200);
-		// if (getter(&p->dead, &p->dlock))
-		// 	return (ERROR);
 	}
 	return (SUCCESS);
 }

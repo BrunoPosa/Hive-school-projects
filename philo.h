@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/13 00:41:40 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 18:48:20 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ typedef	struct	s_philo
 	pthread_mutex_t	*forkone;
 	pthread_mutex_t	*forktwo;
 	pthread_mutex_t	*prlock;
-	pthread_mutex_t	dlock;
+	pthread_mutex_t	*dlock;
 	pthread_mutex_t	golock;
 	pthread_mutex_t	readylock;
 	pthread_mutex_t	lmeallock;
@@ -97,14 +97,14 @@ typedef	struct	s_philo
 	int				sleep_t;
 	int				meals_had;
 	int				meals;
-	int				dead;
+	int				*death;
 	long long int	last_meal_t;
 	long long int	*start_t;
 	int				error;
 	int				ready;
 	int				go;
 	int				forkcount;
-	int				run;
+	int				runs;
 	int				end;
 }	t_philo;
 

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 14:33:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/13 00:52:10 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 18:18:57 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,22 @@
 
 int	init_mutex(t_data *d, int i)
 {
-	if (pthread_mutex_init(&d->philo[i]->dlock, NULL) != SUCCESS)
+	if (pthread_mutex_init(d->philo[i]->dlock, NULL) != SUCCESS)
 		return (ERROR);
 	if (pthread_mutex_init(&d->philo[i]->golock, NULL) != SUCCESS)
 	{
-		pthread_mutex_destroy(&d->philo[i]->dlock);
+		pthread_mutex_destroy(d->philo[i]->dlock);
 		return (ERROR);
 	}
 	if (pthread_mutex_init(&d->philo[i]->readylock, NULL) != SUCCESS)
 	{
-		pthread_mutex_destroy(&d->philo[i]->dlock);
+		pthread_mutex_destroy(d->philo[i]->dlock);
 		pthread_mutex_destroy(&d->philo[i]->golock);
 		return (ERROR);
 	}
 	if (pthread_mutex_init(&d->philo[i]->lmeallock, NULL) != SUCCESS)
 	{
-		pthread_mutex_destroy(&d->philo[i]->dlock);
+		pthread_mutex_destroy(d->philo[i]->dlock);
 		pthread_mutex_destroy(&d->philo[i]->golock);
 		pthread_mutex_destroy(&d->philo[i]->readylock);
 		return (ERROR);
@@ -54,15 +54,12 @@ int	init_philo(t_data *d, int i)
 		d->philo[i]->forkone = &d->forks[i];
 		d->philo[i]->forktwo = &d->forks[(i + 1) % d->n_philos];
 	}
-	// else
-	// {
-	// 	d->philo[i]->forkone = &d->forks[(i + 1) % d->n_philos];
-	// 	d->philo[i]->forktwo = &d->forks[i];
-	// }
 	d->philo[i]->die_t = d->die_t;
 	d->philo[i]->eat_t = d->eat_t;
 	d->philo[i]->sleep_t = d->sleep_t;
 	d->philo[i]->prlock = &d->printlock;
+	d->philo[i]->dlock = &d->dielock;
+	d->philo[i]->death = &d->death;
 	d->philo[i]->start_t = &d->starttime;
 	d->philo[i]->ready = -1;
 	d->philo[i]->meals = d->n_meals;
