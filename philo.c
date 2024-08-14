@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 18:50:32 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/14 18:54:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int	ifonlyonefork(t_philo *p)
 	if (!p->forktwo)
 	{
 		pthread_mutex_unlock(p->forkone);
+		wait_ms(p->die_t, p);
 		setter(p->death, DEATH, p->dlock);
 		return (DEATH);
 	}
