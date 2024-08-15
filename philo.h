@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/15 14:43:47 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/15 15:30:41 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,6 @@ void			setter(void	*var, int value, pthread_mutex_t *lock);
 long long int	lastmealget(t_philo *p);
 int				lastmealset(t_philo *p);
 void			increment(int *var, pthread_mutex_t *lock);
-void			swapforks(t_philo *p);
 void			dropforks(t_philo *p);
 int				ifonlyonefork(t_philo *p);
 long long int	get_time_ms(void);

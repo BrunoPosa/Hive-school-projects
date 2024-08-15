@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/15 14:11:02 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/15 15:30:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,6 @@ int	ifonlyonefork(t_philo *p)
 		return (DEATH);
 	}
 	return (ERROR);
-}
-
-void	swapforks(t_philo *p)
-{
-	pthread_mutex_t	*temp;
-
-	temp = p->forkone;
-	p->forkone = p->forktwo;
-	p->forktwo = temp;
 }
 
 void	dropforks(t_philo *p)
