@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/15 14:35:14 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/16 00:05:51 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,13 @@ static int	aredigits(char **s)
 static int	islenok(char **s)
 {
 	if (my_strlen(s[1]) > 3
-		|| my_strlen(s[2]) > 4
-		|| my_strlen(s[3]) > 4
-		|| my_strlen(s[4]) > 4)
+		|| my_strlen(s[2]) > 6
+		|| my_strlen(s[3]) > 6
+		|| my_strlen(s[4]) > 6)
 		return (0);
 	if (s[5])
 	{
-		if (my_strlen(s[5]) > 4)
+		if (my_strlen(s[5]) > 6)
 			return (0);
 	}
 	return (1);
