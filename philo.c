@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/15 16:23:23 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/15 16:25:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	life(t_philo *p)
 			break ;
 		}
 		if (getter(&p->meals, &p->lmeallock) != -1
-				&& getter(&p->meals_had, &p->lmeallock) >= p->meals)
+			&& getter(&p->meals_had, &p->lmeallock) >= p->meals)
 		{
 			break ;
 		}
