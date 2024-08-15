@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/15 13:57:29 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/15 15:19:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	life(t_philo *p)
 	setter(&p->ready, SUCCESS, &p->readylock);
 	while (getter(&p->go, &p->golock) != GO)
 		usleep(200);
-	if (p->forkone > p->forktwo)
+	if (p->forktwo && p->forkone > p->forktwo)
 		swapforks(p);
 	action(THINK, p->id, "is thinking", p);
 	while (!getter(p->death, p->dlock))
