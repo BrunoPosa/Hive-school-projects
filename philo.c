@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:28:33 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/15 16:25:39 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/15 16:32:44 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void	butler(t_data *d)
 			break ;
 	}
 	if (checker(d, MEAL) != SUCCESS)
-		printf("%lld %d died\n", t - d->starttime, i);
+		printf("%lld %d died\n", t - d->starttime, d->philo[i]->id);
 }
 
 int	main(int argc, char **argv)
