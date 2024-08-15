@@ -6,74 +6,73 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 13:43:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 23:55:08 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/15 14:43:47 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
-#ifndef ERROR
-# define ERROR -1
-#endif
+# ifndef ERROR
+#  define ERROR -1
+# endif
 
-#ifndef SUCCESS
-# define SUCCESS 0
-#endif
+# ifndef SUCCESS
+#  define SUCCESS 0
+# endif
 
-#ifndef EARGC
-# define EARGC 1
-#endif
+# ifndef EARGC
+#  define EARGC 1
+# endif
 
-#ifndef EARG
-# define EARG 2
-#endif
+# ifndef EARG
+#  define EARG 2
+# endif
 
-#ifndef EINIT
-# define EINIT 3
-#endif
+# ifndef EINIT
+#  define EINIT 3
+# endif
 
-#ifndef ETHREAD
-# define ETHREAD 4
-#endif
+# ifndef ETHREAD
+#  define ETHREAD 4
+# endif
 
-#ifndef EMUTEX
-# define EMUTEX 6
-#endif
+# ifndef EMUTEX
+#  define EMUTEX 6
+# endif
 
-#ifndef EVAL
-# define EVAL 7
-#endif
+# ifndef EVAL
+#  define EVAL 7
+# endif
 
-#ifndef EMALMUT
-# define EMALMUT 8
-#endif
+# ifndef EMALMUT
+#  define EMALMUT 8
+# endif
 
-#ifndef EJOIN
-# define EJOIN 9999
-#endif
+# ifndef EJOIN
+#  define EJOIN 9999
+# endif
 
-#ifndef DEATH
-# define DEATH 616
-#endif
+# ifndef DEATH
+#  define DEATH 616
+# endif
 
-#ifndef GO
-# define GO 42
-#endif
+# ifndef GO
+#  define GO 42
+# endif
 
-#ifndef MEAL
-# define MEAL 747
-#endif
+# ifndef MEAL
+#  define MEAL 747
+# endif
 
-#include <pthread.h>
-#include <stdlib.h>
-#include <sys/time.h>
+# include <pthread.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <string.h>
 
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-
-typedef enum	e_action
+typedef enum e_action
 {
 	THINK,
 	FORK,
@@ -81,7 +80,7 @@ typedef enum	e_action
 	SLEEP
 }	t_action;
 
-typedef	struct	s_philo
+typedef struct s_philo
 {
 	int				id;
 	pthread_t		thread;
@@ -107,15 +106,15 @@ typedef	struct	s_philo
 	int				end;
 }	t_philo;
 
-typedef struct	s_data
+typedef struct s_data
 {
 	pthread_t		butler;
-	t_philo			**philo;//should this be *
+	t_philo			**philo;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	printlock;
 	pthread_mutex_t	dielock;
 	int				n_philos;
-	int				die_t;//delete if pass **argv from initor
+	int				die_t;
 	int				eat_t;
 	int				sleep_t;
 	int				n_meals;
@@ -124,11 +123,6 @@ typedef struct	s_data
 	int				initdone;
 }	t_data;
 
-void	syncing(t_data *d);
-void			setter(void	*var, int value, pthread_mutex_t *lock);
-int	ifonlyonefork(t_philo *p);
-int	endchecker(t_data *d);
-void	dropforks(t_philo *p);
 int				validator(int argc, char **args);
 int				initor(char **argv, t_data *d);
 int				init_mu_th(t_data *d);
@@ -141,15 +135,21 @@ void			life(t_philo *p);
 void			butler(t_data *d);
 int				routine(t_philo *p);
 int				action(t_action act, int arg, char *str, t_philo *p);
+void			syncing(t_data *d);
 void			printer(int arg, char *str, t_philo *p);
 int				checker(t_data *d, int flag);
+int				endchecker(t_data *d);
+int				getter(int *var, pthread_mutex_t *lock);
+void			setter(void	*var, int value, pthread_mutex_t *lock);
 long long int	lastmealget(t_philo *p);
 int				lastmealset(t_philo *p);
-int				getter(int *var, pthread_mutex_t *lock);
+void			increment(int *var, pthread_mutex_t *lock);
+void			swapforks(t_philo *p);
+void			dropforks(t_philo *p);
+int				ifonlyonefork(t_philo *p);
 long long int	get_time_ms(void);
 int				ft_usleep(long long int mseconds, t_philo *p);
 int				my_atoi(char *n);
 size_t			my_strlen(const char *s);
-void	increment(int *var, pthread_mutex_t *lock);
 
 #endif

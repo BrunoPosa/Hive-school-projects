@@ -6,15 +6,15 @@
 #    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/25 11:18:16 by bposa             #+#    #+#              #
-#    Updated: 2024/08/15 00:08:52 by bposa            ###   ########.fr        #
+#    Updated: 2024/08/15 14:25:40 by bposa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# Compiler and flags; add -fsanitize=thread
+# Compiler and flags
 CC			=	cc
 CFLAGS		=	-Wall -Wextra -Werror -pthread
 DEBUGFLAGS	=	-O1 -g 
-SANITFLAG	=	-fsanitize=address
+SANITFLAG	=	-fsanitize=thread -g
 
 # Source files and dependencies
 SRCS	= 	philo.c \
@@ -22,6 +22,7 @@ SRCS	= 	philo.c \
 			validation.c \
 			utils.c \
 			utils_extra.c \
+			utils_more.c \
 			exit.c
 
 DEPS	=	philo.h

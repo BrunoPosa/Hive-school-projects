@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 12:47:59 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 22:41:15 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/15 14:11:59 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ long long int	get_time_ms(void)
 	struct timeval	time;
 
 	if (gettimeofday(&time, NULL) == -1)
-		return(ERROR);
+		return (ERROR);
 	return ((long long int)(time.tv_sec * 1000LL + time.tv_usec / 1000));
 }
 
@@ -50,4 +50,13 @@ void	syncing(t_data *d)
 	d->starttime = get_time_ms();
 	while (++i < d->n_philos)
 		setter(&d->philo[i]->go, GO, &d->philo[i]->golock);
+}
+
+void	increment(int *var, pthread_mutex_t *lock)
+{
+	pthread_mutex_lock(lock);
+	*var = *var + 1;
+	if (*var == 2147483647)
+		*var = 3;
+	pthread_mutex_unlock(lock);
 }

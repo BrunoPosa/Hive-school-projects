@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:44 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/14 19:44:34 by bposa            ###   ########.fr       */
+/*   Updated: 2024/08/15 14:35:14 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	my_isdigit(int c)
 
 static int	aredigits(char **s)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (*(++s))
@@ -74,5 +74,10 @@ int	validator(int argc, char **args)
 	if (my_atoi(args[1]) == 0 || my_atoi(args[1]) > 400 || my_atoi(args[2]) == 0
 		|| my_atoi(args[3]) == 0 || my_atoi(args[4]) == 0)
 		return (ermsg(EARG));
+	if (args[5])
+	{
+		if (my_atoi(args[5]) == 0)
+			return (ermsg(EARG));
+	}
 	return (1);
 }
