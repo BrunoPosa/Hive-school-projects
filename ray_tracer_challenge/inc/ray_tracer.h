@@ -1,4 +1,6 @@
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 
 typedef enum e_type{
@@ -9,9 +11,9 @@ typedef enum e_type{
 
 typedef struct	s_tuple
 {
-    double x;
-    double y;
-    double z;
+    float x;
+    float y;
+    float z;
     t_type w;
 }               t_tuple;
 

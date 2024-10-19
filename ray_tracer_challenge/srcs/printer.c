@@ -16,50 +16,29 @@ void	ft_putstring(char *s)
 	}
 }
 
-void ft_ftoa(float n, char *res, int afterpoint)
+char *float_to_ascii(float value)
 {
-	int ipart = (int)n;
-	float fpart = n - (float)ipart;
-	int i = 0;
+    int int_part = (int)value;
+    int decimal_part = (int)((value - int_part) * 1000); // Adjust precision as needed
+    char *str = malloc(sizeof(char) * (12 + 3)); // Allocate memory for string
 
-	if (n < 0)
-	{
-		res[i++] = '-';
-		ipart = -ipart;
-		fpart = -fpart;
-	}
-	if (ipart == 0)
-		res[i++] = '0';
-	else
-	{
-		while (ipart)
-		{
-			res[i++] = ipart % 10 + '0';
-			ipart = ipart / 10;
-		}
-	}
-	if (fpart != 0)
-	{
-		res[i++] = '.';
-		fpart = fpart * pow(10, afterpoint);
-		ipart = (int)fpart;
-		while (afterpoint--)
-		{
-			res[i++] = ipart % 10 + '0';
-			ipart = ipart / 10;
-		}
-	}
-	res[i] = '\0';
+    if (str == NULL) {
+        return NULL; // Handle memory allocation failure
+    }
+
+	sprintf(str, "%d.%03d", int_part, decimal_part);
+
+    return str;
 }
 
 void	ft_tuple_print(t_tuple *t)
 {
 	ft_putstring("x: ");
-	ft_putstring(ft_ftoa(t->x));
+	ft_putstring((char*)float_to_ascii(t->x));
 	ft_putstring("\ny: ");
-	ft_putstring(ft_ftoa(t->y));
+	ft_putstring((char*)float_to_ascii(t->y));
 	ft_putstring("\nz: ");
-	ft_putstring(ft_ftoa(t->z));
+	ft_putstring((char*)float_to_ascii(t->z));
 	ft_putstring("\nw: ");
 	if (t->w == VECTOR)
 		ft_putstring("VECTOR\n");
