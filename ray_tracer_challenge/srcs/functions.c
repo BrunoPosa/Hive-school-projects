@@ -28,3 +28,27 @@ int compare(t_tuple *t1, t_tuple *t2)
     return diff_count;
 }
 
+t_tuple *add(t_tuple *t1, t_tuple *t2)
+{
+    t_tuple *t;
+    t = malloc(1 * sizeof(t_tuple));
+    
+    t->x = t1->x + t2->x;
+    t->y = t1->y + t2->y;
+    t->z = t1->z + t2->z;
+    t->w = t1->w + t2->w;
+    return t;
+}   
+#include <stdio.h>
+t_tuple *subtract(t_tuple *t1, t_tuple *t2)
+{
+    t_tuple *t;
+    t = malloc(1 * sizeof(t_tuple));
+    
+    t->x = t1->x - t2->x;
+    t->y = t1->y - t2->y;
+    t->z = t1->z - t2->z;
+    t->w = t1->w - t2->w;
+    return t;
+}
+

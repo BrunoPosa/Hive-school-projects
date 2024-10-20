@@ -40,9 +40,9 @@ void	ft_tuple_print(t_tuple *t)
 	ft_putstring("\nz: ");
 	ft_putstring((char*)float_to_ascii(t->z));
 	ft_putstring("\nw: ");
-	if (t->w == VECTOR)
+	if (t->w == 0)
 		ft_putstring("VECTOR\n");
-	else
+	if (t->w == 1)
 		ft_putstring("POINT\n");
 	ft_putchar('\n');
 }

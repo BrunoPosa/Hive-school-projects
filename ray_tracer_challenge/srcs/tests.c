@@ -82,7 +82,7 @@ void	tests(void)
     t.x = 1.0;
     t.y = 2.0;
     t.z = 3.0;
-    t.w = VECTOR;
+    t.w = 1;
     ft_tuple_print(&t);
 
     float x = 1.1;
@@ -97,10 +97,34 @@ void	tests(void)
 
     ft_tuple_print(v);
 
-    compare(p, v);
+    if(compare(p, v) != 0)
+        ft_putstring("Compare is KO\n");
+    else
+        ft_putstring("Compare is OK\n");
+
+    t_tuple *a = add(p, v);
+
+    ft_tuple_print(a);
+
+    t_tuple *p1 = create_point(3, 2, 1);
+    t_tuple *p2 = create_point(5, 6, 7);
+    t_tuple *v1 = create_vector(5, 6, 7);
+    t_tuple *r1 = subtract(p1, p2);
+    t_tuple *r2 = subtract(p1, v1);
+
+    ft_putstring("Subtract - isn't that cool!\n");
+    ft_tuple_print(v1);
+
+    ft_putstring("should be p -2, -4, -6\n");
+    ft_tuple_print(r2);
 
     free(p);
     free(v);
-
+    free(a);
+    free(p1);
+    free(p2);
+    free(v1);
+    free(r1);   
+    free(r2);
 
 }

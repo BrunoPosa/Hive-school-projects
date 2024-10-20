@@ -8,7 +8,7 @@ t_tuple    *create_point(float x, float y, float z)
     t->x = x;
     t->y = y;
     t->z = z;
-    t->w = POINT;
+    t->w = 1;
     return t;
 }
 
@@ -20,6 +20,6 @@ t_tuple    *create_vector(float x, float y, float z)
     t->x = x;
     t->y = y;
     t->z = z;
-    t->w = VECTOR;
+    t->w = 0;
     return t;
 }
