@@ -109,14 +109,42 @@ void	tests(void)
     t_tuple *p1 = create_point(3, 2, 1);
     t_tuple *p2 = create_point(5, 6, 7);
     t_tuple *v1 = create_vector(5, 6, 7);
-    t_tuple *r1 = subtract(p1, p2);
+    t_tuple *v2 = create_vector(3, 2, 1);
+
     t_tuple *r2 = subtract(p1, v1);
 
     ft_putstring("Subtract - isn't that cool!\n");
-    ft_tuple_print(v1);
+    ft_putstring("Subtracting two points\n");
+    t_tuple *r1 = subtract(p1, p2);
+    ft_tuple_print(r1);
 
+    ft_putstring("Subtracting a vector from a point\n");
     ft_putstring("should be p -2, -4, -6\n");
     ft_tuple_print(r2);
+
+    ft_putstring("Subtracting two vectors\n");
+    t_tuple *r3 = subtract(v2, v1);
+    ft_putstring("should be v -2, -4, -6\n");
+    ft_tuple_print(r3);
+
+    t_tuple *zero = create_vector(0, 0, 0);
+    t_tuple *v3 = create_vector(1, -2, 3);
+    ft_putstring("Subtracting a vector from the zero vector\n");
+    ft_putstring("should be -1, 2, -3\n");
+    t_tuple *r4 = subtract(zero, v3);
+    ft_tuple_print(r4);
+
+    ft_putstring("Negating a tuple\n");
+    t_tuple *a1 = create_tuple(1, -2, 3, -4);
+    t_tuple *r5 = negate_tuple(a1);
+    ft_putstring("should be -1, 2, -3, 4\n");
+    ft_tuple_print(r5);
+
+    ft_putstring("Multiply a tuple by a scalar\n");
+    t_tuple *r6 = scale_tuple(a1, 3.5);
+    ft_tuple_print(a1);
+    ft_putstring("should be 3.5, -7, 10.5, -14\n");
+    ft_tuple_print(r6);
 
     free(p);
     free(v);

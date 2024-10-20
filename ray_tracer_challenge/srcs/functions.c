@@ -39,7 +39,6 @@ t_tuple *add(t_tuple *t1, t_tuple *t2)
     t->w = t1->w + t2->w;
     return t;
 }   
-#include <stdio.h>
 t_tuple *subtract(t_tuple *t1, t_tuple *t2)
 {
     t_tuple *t;
@@ -50,5 +49,30 @@ t_tuple *subtract(t_tuple *t1, t_tuple *t2)
     t->z = t1->z - t2->z;
     t->w = t1->w - t2->w;
     return t;
+}
+t_tuple *negate_tuple(t_tuple *t)
+{
+    t_tuple *t1;
+    t1 = malloc(1 * sizeof(t_tuple));
+    
+    t1->x = -t->x;
+    t1->y = -t->y;
+    t1->z = -t->z;
+    t1->w = -t->w;
+    return t1;
+}
+
+t_tuple *scale_tuple(t_tuple *t, float scalar)
+{
+    t_tuple *t1;
+
+    t1 = malloc(1 * sizeof(t_tuple));
+    if (!t1)
+        return (NULL);
+    t1->x = t->x * scalar;
+    t1->y = t->y * scalar;
+    t1->z = t->z * scalar;
+    t1->w = t->w * scalar;
+    return (t1);
 }
 
