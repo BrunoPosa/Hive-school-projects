@@ -44,4 +44,5 @@ void	ft_tuple_print(t_tuple *t)
 		ft_putstring("VECTOR\n");
 	else
 		ft_putstring("POINT\n");
+	ft_putchar('\n');
 }

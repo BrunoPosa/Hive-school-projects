@@ -7,7 +7,8 @@ RM			=	rm -rf
 SRCS 		=	functions.c \
 				main.c \
 				printer.c \
-				test.c
+				tests.c \
+				create.c
 
 HEADER = ./inc/ray_tracer.h
 
