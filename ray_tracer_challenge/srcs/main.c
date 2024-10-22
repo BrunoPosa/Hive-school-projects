@@ -6,5 +6,6 @@ int	main(void)
 	printf("Test\n\n");
 	
 	tests();
+	tests_colours();
 }
 

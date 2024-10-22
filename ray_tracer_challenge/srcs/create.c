@@ -16,3 +16,18 @@ t_tuple *create_tuple(float x, float y, float z, float w)
 	t->w = w;
 	return (t);
 }
+
+
+
+t_colour	*create_colour(float r, float g, float b)
+{
+	t_colour *c;
+
+	c = malloc(1 * sizeof(t_colour));
+	if (!c)
+		return (NULL);
+	c->r = r;
+	c->g = g;
+	c->b = b;
+	return (c);
+}

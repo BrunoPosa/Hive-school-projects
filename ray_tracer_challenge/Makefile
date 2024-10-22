@@ -8,7 +8,9 @@ SRCS 		=	functions.c \
 				main.c \
 				printer.c \
 				tests.c \
-				create.c
+				create.c \
+				tests_colours.c \
+				functions_colours.c
 
 HEADER = ./inc/ray_tracer.h
 

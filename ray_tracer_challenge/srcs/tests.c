@@ -1,80 +1,5 @@
 #include "../inc/ray_tracer.h"
 
-/*
-test_compare(void)
-{
-	t_tuple	t1;
-	t_tuple	t2;
-
-	t1.x = 1.0;
-	t1.y = 2.0;
-	t1.z = 3.0;
-	t1.w = VECTOR;
-
-	t2.x = 1.0;
-	t2.y = 2.0;
-	t2.z = 3.0;
-	t2.w = VECTOR;
-
-	printf("Test 1: ");
-	if (compare(&t1, &t2) == 0)
-		printf("OK\n");
-	else
-		printf("KO\n");
-
-	t2.x = 1.0;
-	t2.y = 2.0;
-	t2.z = 3.0;
-	t2.w = POINT;
-
-	printf("Test 2: ");
-	if (compare(&t1, &t2) == 1)
-		printf("OK\n");
-	else
-		printf("KO\n");
-
-	t2.x = 1.0;
-	t2.y = 2.0;
-	t2.z = 3.0;
-	t2.w = VECTOR;
-
-	t2.x = 1.0;
-	t2.y = 2.0;
-	t2.z = 3.1;
-	t2.w = VECTOR;
-
-	printf("Test 3: ");
-	if (compare(&t1, &t2) == 1)
-		printf("OK\n");
-	else
-		printf("KO\n");
-
-	t2.x = 1.0;
-	t2.y = 2.0;
-	t2.z = 3.0;
-	t2.w = VECTOR;
-
-	t2.x = 1.0;
-	t2.y = 2.1;
-	t2.z = 3.0;
-	t2.w = VECTOR;
-
-	printf("Test 4: ");
-	if (compare(&t1, &t2) == 1)
-		printf("OK\n");
-	else
-		printf("KO\n");
-
-	t2.x = 1.0;
-	t2.y = 2.0;
-	t2.z = 3.0;
-	t2.w = VECTOR;
-
-	t2.x = 1.1;
-	t2.y = 2.0;
-	t2.z = 3.0;
-	t2  .w = VECTOR;  
-*/
 void	tests(void)
 {
 	//-------- print a tuple --------
@@ -214,6 +139,16 @@ void	tests(void)
 	printf("Should be 1, -2, 1\n");
 	ft_tuple_print(cross(v8, v5));
 	ft_print_line('-');
+
+	//-------- Colours --------
+	print_y("Colors are (red, green, blue) tuples\n");
+	t_colour *c1 = create_colour(-0.5, 0.4, 1.7);
+	ft_colour_printer(c1);
+	ft_print_line('-');
+
+	
+
+
 
 	free(p);
 	free(p1);
