@@ -1,5 +1,6 @@
 *.o
 ray_tracer_challenge/ray_tracer
+*.out
 .vscode/
 
 #ignores /examples/ as it's easier to find and replace text across all files

@@ -8,6 +8,8 @@
 //	  A L I A S E S
 #define POINT 1
 #define VECTOR 0
+#define SUCESS 0
+#define ERROR -1
 
 //	  C O L O U R S
 #define YELLOW	"\033[1;33m"
@@ -33,7 +35,7 @@ void	ft_tuple_print(t_tuple *t);
 void	ft_print_line(char c);
 
 //         C R E A T E
-
+//create_tuple() takes in w which can be POINT or VECTOR macro
 t_tuple *create_tuple(float x, float y, float z, float w);
 
 //         F U N C T I O N S

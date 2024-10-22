@@ -5,12 +5,15 @@ int diff(t_tuple *t1, t_tuple *t2)
 {
 	int diff_count = 0;
 
+	if (!t1 || !t2)
+		return (ERROR);
 	if (fabs(t1->x - t2->x) > EPSILON)
-	{    printf("x is different\n");
+	{
+		printf("x is different\n");
 		diff_count++;
 	}
 	if (fabs(t1->y - t2->y) > EPSILON)
-	{   
+	{
 		printf("y is different\n");
 		diff_count++;
 	}
@@ -27,10 +30,15 @@ int diff(t_tuple *t1, t_tuple *t2)
 	return (diff_count);
 }
 
+/*
+	returns a new tuple, or NULL on errors
+*/
 t_tuple *add(t_tuple *t1, t_tuple *t2)
 {
 	t_tuple *t;
 
+	if (!t1 || !t2)
+		return (NULL);
 	t = malloc(1 * sizeof(t_tuple));
 	if (!t)
 		return (NULL);
@@ -39,11 +47,17 @@ t_tuple *add(t_tuple *t1, t_tuple *t2)
 	t->z = t1->z + t2->z;
 	t->w = t1->w + t2->w;
 	return (t);
-}   
+}
+
+/*
+	returns a new tuple or NULL on errors
+*/
 t_tuple *subtract(t_tuple *t1, t_tuple *t2)
 {
 	t_tuple *res;
 
+	if (!t1 || !t2)
+		return (NULL);
 	res = malloc(1 * sizeof(t_tuple));
 	if (!res)
 		return (NULL);
@@ -53,10 +67,16 @@ t_tuple *subtract(t_tuple *t1, t_tuple *t2)
 	res->w = t1->w - t2->w;
 	return (res);
 }
+
+/*
+	returns a new tuple or NULL on errors
+*/
 t_tuple *negate_tuple(t_tuple *t)
 {
 	t_tuple *res;
 
+	if (!t)
+		return (NULL);
 	res = malloc(1 * sizeof(t_tuple));
 	if (!res)
 		return (NULL);
@@ -67,10 +87,15 @@ t_tuple *negate_tuple(t_tuple *t)
 	return (res);
 }
 
+/*
+	returns a new tuple, or NULL on errors
+*/
 t_tuple *multiply_tuple(t_tuple *t, float multiplier)
 {
 	t_tuple *res;
 
+	if (!t)
+		return (NULL);
 	res = malloc(1 * sizeof(t_tuple));
 	if (!res)
 		return (NULL);
@@ -81,10 +106,15 @@ t_tuple *multiply_tuple(t_tuple *t, float multiplier)
 	return (res);
 }
 
+/*
+	returns a new tuple, or NULL on errors
+*/
 t_tuple *divide_tuple(t_tuple *t, float divisor)
 {
 	t_tuple *res;
 
+	if (!t || divisor == 0)
+		return (NULL);
 	res = malloc(1 * sizeof(t_tuple));
 	if (!res)
 		return (NULL);
@@ -95,10 +125,15 @@ t_tuple *divide_tuple(t_tuple *t, float divisor)
 	return (res);
 }
 
+/*
+	returns the magnitude of the vector, or ERROR on errors
+*/
 float magnitude(t_tuple *t)
 {
 	float res;
 
+	if (!t)
+		return (ERROR);
 	res = 0.0;
 	if (t->w)
 		printf("Error: magnitude is only for vectors\n");
@@ -109,15 +144,20 @@ float magnitude(t_tuple *t)
 	return (res);
 }
 
+/*
+	returns a new vector (normalized input vector), or NULL on errors
+*/
 t_tuple *normalize(t_tuple *t)
 {
 	t_tuple	*res;
 	float	mag;
 
+	if (!t)
+		return (NULL);
+	mag = magnitude(t);
 	res = malloc(1 * sizeof(t_tuple));
 	if (!res)
 		return (NULL);
-	mag = magnitude(t);
 	res->x = t->x / mag;
 	res->y = t->y / mag;
 	res->z = t->z / mag;
@@ -125,21 +165,34 @@ t_tuple *normalize(t_tuple *t)
 	return (res);
 }
 
+/*
+	returns the dot product of two vectors, or ERROR on errors
+*/
 float	dot(t_tuple *a, t_tuple *b)
 {
 	float result;
 
+	if (!a || !b)
+		return (ERROR);
 	result = 0.0;
 	if (a->w || b->w)
-		return(printf("Error: dot product is only for vectors\n"));
+	{
+		printf("Error: dot product is only for vectors\n");
+		return(ERROR);
+	}
 	result = a->x * b->x + a->y * b->y + a->z * b->z + a->w * b->w;
 	return (result);
 }
 
+/*
+	returns a new vector (cross product of input vectors), or NULL on errors
+*/
 t_tuple *cross(t_tuple *a, t_tuple *b)
 {
 	t_tuple *t;
 
+	if (!a || !b)
+		return (NULL);
 	t = malloc(1 * sizeof(t_tuple));
 	if (!t)
 		return (NULL);
