@@ -96,7 +96,10 @@ float magnitude(t_tuple *t)
 
 	result = 0.0;
 	if (t->w)
+	{
 		printf("Error: magnitude is only for vectors\n");
+		return(-1);
+	}
 	result = (float)sqrt((double)t->x * (double)t->x
 						+ (double)t->y * (double)t->y
 						+ (double)t->z * (double)t->z
@@ -126,7 +129,7 @@ float	dot(t_tuple *a, t_tuple *b)
 
 	result = 0.0;
 	if (a->w || b->w)
-		printf("Error: dot product is only for vectors\n");
+		return(printf("Error: dot product is only for vectors\n"));
 	result = a->x * b->x + a->y * b->y + a->z * b->z + a->w * b->w;
 	return (result);
 }
@@ -139,7 +142,11 @@ t_tuple *cross(t_tuple *a, t_tuple *b)
 	if (!t)
 		return (NULL);
 	if (a->w || b->w)
+	{
 		printf("Error: cross product is only for vectors\n");
+		free (t);
+		return (NULL);
+	}
 	t->x = a->y * b->z - a->z * b->y;
 	t->y = a->z * b->x - a->x * b->z;
 	t->z = a->x * b->y - a->y * b->x;

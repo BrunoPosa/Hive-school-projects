@@ -19,7 +19,7 @@ OBJS		=	$(MANPATH:%.c=%.o)
 all:			$(NAME)
 
 $(NAME):		$(OBJS)
-			$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -lm
+			$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -lm -g
 					
 %.o:%.c
 			@$(CC) $(CFLAGS) -c $< -o $@		

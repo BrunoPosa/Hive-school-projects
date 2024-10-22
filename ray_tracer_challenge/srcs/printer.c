@@ -1,51 +1,26 @@
 #include "../inc/ray_tracer.h"
 
-void	ft_putchar(char c)
-{
-	write(1, &c, 1);
-}
-
-void	ft_putstring(char *s)
-{
-	int	i = 0;
-
-	while(s[i] != '\0')
-	{
-		ft_putchar(s[i]);
-		i++;
-	}
-}
-
-char *float_to_ascii(float value)
-{
-    int int_part = (int)value;
-    int decimal_part = (int)((value - int_part) * 1000); // Adjust precision as needed
-    char *str = malloc(sizeof(char) * (12 + 3)); // Allocate memory for string
-
-    if (str == NULL) {
-        return NULL; // Handle memory allocation failure
-    }
-
-	sprintf(str, "%d.%03d", int_part, decimal_part);
-
-    return str;
-}
-
 void	ft_tuple_print(t_tuple *t)
 {
-	ft_putstring("x: ");
-	ft_putstring((char*)float_to_ascii(t->x));
-	ft_putstring("\ny: ");
-	ft_putstring((char*)float_to_ascii(t->y));
-	ft_putstring("\nz: ");
-	ft_putstring((char*)float_to_ascii(t->z));
-	ft_putstring("\nw: ");
-	if (t->w == 0)
-		ft_putstring("VECTOR\n");
-	if (t->w == 1)
-		ft_putstring("POINT\n");
-	else
-		ft_putstring((char*)float_to_ascii(t->w));
-	
-	ft_putchar('\n');
+	if (!t)
+	{
+		printf("%sError: tuple is NULL%s\n", RED, ENDCLR);
+		return ;
+	}
+	printf("x: %.3f | y: %.3f | z: %.3f | w: %.1f %s\n",
+			t->x, t->y, t->z, t->w,
+			t->w == 0 ? "(VECTOR)" : t->w == 1 ? "(POINT)" : "(neither)");
+}
+
+void	ft_print_line(char c)
+{
+	int i;
+
+	i = 0;
+	while (i < 62)
+	{
+		write(1, &c, 1);
+		i++;
+	}
+	write(1, "\n", 1);
 }

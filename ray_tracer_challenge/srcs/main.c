@@ -1,8 +1,10 @@
 #include "../inc/ray_tracer.h"
 
-int    main(void)
+int	main(void)
 {
-    ft_putstring("Test\n\n");
-    tests();
+	ft_print_line('#');
+	printf("Test\n\n");
+	
+	tests();
 }
 
