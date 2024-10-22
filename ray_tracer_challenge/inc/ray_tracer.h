@@ -37,8 +37,7 @@ void	ft_print_line(char c);
 t_tuple *create_tuple(float x, float y, float z, float w);
 
 //         F U N C T I O N S
-int		compare(t_tuple *t1, t_tuple *t2);
-t_tuple	*create_vector(float x, float y, float z);
+int		diff(t_tuple *t1, t_tuple *t2);
 t_tuple	*add(t_tuple *t1, t_tuple *t2);
 t_tuple	*subtract(t_tuple *t1, t_tuple *t2);
 t_tuple	*negate_tuple(t_tuple *t);

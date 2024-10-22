@@ -88,7 +88,7 @@ void	tests(void)
 	ft_tuple_print(&t);
 	ft_print_line('-');
 
-	printf("%s-------- compare two tuples: --------%s\n", YELLOW, ENDCLR);
+	printf("%sCompare two tuples:%s\n", YELLOW, ENDCLR);
 	float x = 1.1;
 	float y = 2.2;
 	float z = 3.3;
@@ -99,13 +99,19 @@ void	tests(void)
 	printf("tuple v:\n");
 	ft_tuple_print(v);
 
-	if(compare(p, v) != 0)
-		printf("%sCompare is KO%s\n", RED, ENDCLR);
+	if(diff(p, v) != 0)
+		printf("%sCompare is KO%s\n\n", RED, ENDCLR);
 	else
-		printf("%sCompare is OK%s\n", GREEN, ENDCLR);
+		printf("%sCompare is OK%s\n\n", GREEN, ENDCLR);
+	
+	printf("\ndiff(\n 1, 1, 1, 1\n 1, 1, 1, 1)\n= %d\n",
+			diff(
+				create_tuple(1.19887, 1.19887, 1.19887, 1.19887),
+				create_tuple(-1.19887, -1.19887, -1.19887, 1.19887)));
 	ft_print_line('-');
 
-	printf("%s-------- addition: --------%s\n  ", YELLOW, ENDCLR);
+	//-------- Addition --------
+	printf("%sAddition%s\n", YELLOW, ENDCLR);
 	ft_tuple_print(p);
 	printf("+ ");
 	ft_tuple_print(v);
@@ -113,7 +119,7 @@ void	tests(void)
 	ft_tuple_print(add(p, v));
 	ft_print_line('-');
 
-	printf("%s-------- subtraction: --------%s\n", YELLOW, ENDCLR);
+	//-------- Subtraction --------
 	t_tuple *p1 = create_tuple(3, 2, 1, POINT);
 	t_tuple *p2 = create_tuple(5, 6, 7, POINT);
 	t_tuple *v1 = create_tuple(5, 6, 7, VECTOR);
@@ -146,8 +152,7 @@ void	tests(void)
 	t_tuple *v3 = create_tuple(1, -2, 3, VECTOR);
 	printf("%sSubtracting a vector from the zero vector%s\n", YELLOW, ENDCLR);
 	printf("should be -1, 2, -3\n");
-	t_tuple *r4 = subtract(zero, v3);
-	ft_tuple_print(r4);
+	ft_tuple_print(subtract(zero, v3));
 	ft_print_line('-');
 
 	//-------- Negating a tuple --------
@@ -164,10 +169,9 @@ void	tests(void)
 	ft_tuple_print(multiply_tuple(a1, 3.5));
 
 	printf("%sMultiply a tuple by a fraction%s\n", YELLOW, ENDCLR);
-	t_tuple *r7 = multiply_tuple(a1, 0.5);
 	ft_tuple_print(a1);
 	printf("should be 0.5, -1, 1.5, -2\n");
-	ft_tuple_print(r7);
+	ft_tuple_print(multiply_tuple(a1, 0.5));
 
 	printf("%sDivide a tuple by a scalar%s\n", YELLOW, ENDCLR);
 	t_tuple *r8 = divide_tuple(a1, 2);
@@ -177,7 +181,6 @@ void	tests(void)
 	ft_print_line('-');
 
 	//-------- Magnitude and normalization --------
-	printf("%s------- Magnitude and normalization -------%s\n", YELLOW, ENDCLR);
 	printf("%sMagnitude of vector%s\n", YELLOW, ENDCLR);
 	t_tuple *v4 = create_tuple(1, 0, 0, VECTOR);
 	t_tuple *v5 = create_tuple(1, 2, 3, VECTOR);
@@ -186,13 +189,15 @@ void	tests(void)
 	printf("magnitude of v5 = %f\n", magnitude(v5));
 	printf("magnitude of v6 = %f\n", magnitude(v6));
 
-	printf("Normalize vector\n");
+	printf("%sNormalize vector%s\n", YELLOW, ENDCLR);
 	t_tuple *v7 = create_tuple(4, 0, 0, VECTOR);
 	printf("Expected normalized values\n");
 	ft_tuple_print(normalize(v5));
 	ft_tuple_print(normalize(v7));
+	ft_print_line('-');
 
-	printf("Dot product of two vectors\n");
+	//-------- Dot product --------
+	printf("%sDot product of two vectors%s\n", YELLOW, ENDCLR);
 	t_tuple *v8 = create_tuple(2, 3, 4, VECTOR);
 	printf("Tuple a:\n");
 	ft_tuple_print(v5);
@@ -200,25 +205,25 @@ void	tests(void)
 	ft_tuple_print(v8);
 	printf("Dot product:%f\n", dot(v5, v8));
 	printf("Expected value: 20\n");
+	ft_print_line('-');
 
-	printf("Cross product of two vectors\n");
-	t_tuple *r15 = cross(v5, v8);
-	t_tuple *r16 = cross(v8, v5);
-	ft_tuple_print(r15);
-	ft_tuple_print(r16);
-
+	//-------- Cross product --------
+	printf("%sCross product of two vectors%s\n", YELLOW, ENDCLR);
+	printf("Should be -1, 2, -1\n");
+	ft_tuple_print(cross(v5, v8));
+	printf("Should be 1, -2, 1\n");
+	ft_tuple_print(cross(v8, v5));
+	ft_print_line('-');
 
 	free(p);
-	free(v);
 	free(p1);
 	free(p2);
+	free(v);
 	free(v1);
-	free(r4);
-	free(r7);
-	free(a1);
-	free(zero);
 	free(v2);
 	free(v3);
+	free(a1);
+	free(zero);
 
 
 }

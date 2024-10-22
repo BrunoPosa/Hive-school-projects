@@ -1,7 +1,7 @@
 #include "../inc/ray_tracer.h"
 
-// returns the number of differences between the two tuples
-int compare(t_tuple *t1, t_tuple *t2)
+// returns the number of differences between the two tuples, 0 if they are the same
+int diff(t_tuple *t1, t_tuple *t2)
 {
 	int diff_count = 0;
 
@@ -9,7 +9,6 @@ int compare(t_tuple *t1, t_tuple *t2)
 	{    printf("x is different\n");
 		diff_count++;
 	}
-	
 	if (fabs(t1->y - t2->y) > EPSILON)
 	{   
 		printf("y is different\n");
@@ -20,107 +19,110 @@ int compare(t_tuple *t1, t_tuple *t2)
 		printf("z is different\n");
 		diff_count++;
 	}
-	if ((t1->w - t2->w) != 0)
+	if ((t1->w - t2->w) > EPSILON)
 	{
 		printf("w is different\n");
 		diff_count++;
 	}
-	return diff_count;
+	return (diff_count);
 }
 
 t_tuple *add(t_tuple *t1, t_tuple *t2)
 {
 	t_tuple *t;
+
 	t = malloc(1 * sizeof(t_tuple));
-	
+	if (!t)
+		return (NULL);
 	t->x = t1->x + t2->x;
 	t->y = t1->y + t2->y;
 	t->z = t1->z + t2->z;
 	t->w = t1->w + t2->w;
-	return t;
+	return (t);
 }   
 t_tuple *subtract(t_tuple *t1, t_tuple *t2)
 {
-	t_tuple *t;
-	t = malloc(1 * sizeof(t_tuple));
-	
-	t->x = t1->x - t2->x;
-	t->y = t1->y - t2->y;
-	t->z = t1->z - t2->z;
-	t->w = t1->w - t2->w;
-	return t;
+	t_tuple *res;
+
+	res = malloc(1 * sizeof(t_tuple));
+	if (!res)
+		return (NULL);
+	res->x = t1->x - t2->x;
+	res->y = t1->y - t2->y;
+	res->z = t1->z - t2->z;
+	res->w = t1->w - t2->w;
+	return (res);
 }
 t_tuple *negate_tuple(t_tuple *t)
 {
-	t_tuple *t1;
-	t1 = malloc(1 * sizeof(t_tuple));
-	
-	t1->x = -t->x;
-	t1->y = -t->y;
-	t1->z = -t->z;
-	t1->w = -t->w;
-	return t1;
+	t_tuple *res;
+
+	res = malloc(1 * sizeof(t_tuple));
+	if (!res)
+		return (NULL);
+	res->x = -t->x;
+	res->y = -t->y;
+	res->z = -t->z;
+	res->w = -t->w;
+	return (res);
 }
 
 t_tuple *multiply_tuple(t_tuple *t, float multiplier)
 {
-	t_tuple *t1;
+	t_tuple *res;
 
-	t1 = malloc(1 * sizeof(t_tuple));
-	if (!t1)
+	res = malloc(1 * sizeof(t_tuple));
+	if (!res)
 		return (NULL);
-	t1->x = t->x * multiplier;
-	t1->y = t->y * multiplier;
-	t1->z = t->z * multiplier;
-	t1->w = t->w * multiplier;
-	return (t1);
+	res->x = t->x * multiplier;
+	res->y = t->y * multiplier;
+	res->z = t->z * multiplier;
+	res->w = t->w * multiplier;
+	return (res);
 }
 
 t_tuple *divide_tuple(t_tuple *t, float divisor)
 {
-	t_tuple *t1;
+	t_tuple *res;
 
-	t1 = malloc(1 * sizeof(t_tuple));
-	if (!t1)
+	res = malloc(1 * sizeof(t_tuple));
+	if (!res)
 		return (NULL);
-	t1->x = t->x / divisor;
-	t1->y = t->y / divisor;
-	t1->z = t->z / divisor;
-	t1->w = t->w / divisor;
-	return (t1);
+	res->x = t->x / divisor;
+	res->y = t->y / divisor;
+	res->z = t->z / divisor;
+	res->w = t->w / divisor;
+	return (res);
 }
 
 float magnitude(t_tuple *t)
 {
-	float result;
+	float res;
 
-	result = 0.0;
+	res = 0.0;
 	if (t->w)
-	{
 		printf("Error: magnitude is only for vectors\n");
-		return(-1);
-	}
-	result = (float)sqrt((double)t->x * (double)t->x
-						+ (double)t->y * (double)t->y
-						+ (double)t->z * (double)t->z
-						+ (double)t->w * (double)t->w);
-	return (result);
+	res = (float)sqrt((double)t->x * (double)t->x
+					+ (double)t->y * (double)t->y
+					+ (double)t->z * (double)t->z
+					+ (double)t->w * (double)t->w);
+	return (res);
 }
 
 t_tuple *normalize(t_tuple *t)
 {
-	t_tuple	*t1;
+	t_tuple	*res;
 	float	mag;
 
-	t1 = malloc(1 * sizeof(t_tuple));
-	if (!t1)
+	res = malloc(1 * sizeof(t_tuple));
+	if (!res)
 		return (NULL);
 	mag = magnitude(t);
-	t1->x = t->x / mag;
-	t1->y = t->y / mag;
-	t1->z = t->z / mag;
-	t1->w = t->w / mag;
-	return (t1);
+	res->x = t->x / mag;
+	res->y = t->y / mag;
+	res->z = t->z / mag;
+	res->w = t->w / mag;
+	return (res);
 }
 
 float	dot(t_tuple *a, t_tuple *b)
