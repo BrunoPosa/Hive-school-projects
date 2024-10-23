@@ -49,3 +49,8 @@ t_colour   *hadamard_product(t_colour *a, t_colour *b)
 
     return p;
 }
+
+void    write_pixel(t_colour **canvas, int x, int y, t_colour *colour)
+{
+    canvas[x][y] = *colour;
+}

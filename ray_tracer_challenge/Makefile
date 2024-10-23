@@ -4,14 +4,15 @@ CC			=	cc
 CFLAGS		=	-Wall -Wextra -Werror
 RM			=	rm -rf
 
-SRCS 		=	functions.c \
-				main.c \
+SRCS 		=	main.c \
 				printer.c \
 				tests.c \
 				create.c \
+				functions_tuples.c \
 				tests_colours.c \
 				functions_colours.c \
-				functions_canvas.c
+				functions_canvas.c \
+				functions_utils.c
 
 HEADER = ./inc/ray_tracer.h
 

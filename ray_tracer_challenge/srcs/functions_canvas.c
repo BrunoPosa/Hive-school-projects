@@ -57,3 +57,45 @@ t_colour **create_canvas(int x, int y)
     init_canvas(img, x, y);
     return img;
 }
+
+size_t  x_of_canvas(t_colour **canvas)
+{
+    size_t i = 0;
+    while(canvas[i])
+        i++;
+    return i;
+}
+
+size_t  y_of_canvas(t_colour **canvas)
+{
+    size_t i = 0;
+    print_r("WARNING Y_OF_CANVAS IS WONKY DONKY\n");
+    while(canvas[0][i].r == 0)
+        i++;
+    return (i/2 - 1);
+}
+
+// char *line_of_canvas()
+// {
+//     //make a line of tuples in to x,x,x in a string.
+// }
+
+
+// char    *canvas_to_ppm(t_colour **canvas)
+// {
+//     size_t i = x_of_canvas(canvas);
+
+//     char *s1="P3\n5 3\n255";
+
+//     char **s2[x]
+
+//     s2 = malloc(sizeof(char) * x_of_canvas * y_of_canvas * )
+
+//     while(i)
+
+
+
+
+//     return (ft_strjoin(s1, s2));
+
+// }
