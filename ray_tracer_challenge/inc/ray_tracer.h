@@ -47,6 +47,7 @@ typedef struct s_colour
 
 void	tests(void);
 void	tests_colours(void);
+int		project_one(void);
 
 //      P R I N T E R S
 

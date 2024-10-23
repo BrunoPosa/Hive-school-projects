@@ -19,7 +19,7 @@ SRCS 		=	main.c \
 				functions_utils.c \
 				tests.c \
 				tests_colours.c \
-				#projectile_exercises.c
+				project_one.c
 
 HEADER = ./inc/ray_tracer.h
 

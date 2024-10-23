@@ -99,7 +99,7 @@ void canvas_to_ppm(t_colour **canvas, int x, int y)
     i = 0;
     j = 0;
 
-    FILE *fp = fopen("example.ppm", "w");
+    FILE *fp = fopen("1.ppm", "w");
     if (fp == NULL)
     {
         perror("Error opening file");
