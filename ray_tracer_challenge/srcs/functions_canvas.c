@@ -75,27 +75,59 @@ size_t  y_of_canvas(t_colour **canvas)
     return (i/2 - 1);
 }
 
-// char *line_of_canvas()
-// {
-//     //make a line of tuples in to x,x,x in a string.
-// }
+unsigned int float_to_uint(float value)
+{
+    if (value < 0.0f)
+    {
+        return 0;
+    }
+    
+    else if (value > 1.0f)
+    {
+        return 255;
+    }
+    
+    else
+    {
+        return (unsigned int)(value * 255.0f);
+    }
+}
 
+void canvas_to_ppm(t_colour **canvas, int x, int y)
+{
+    int i, j;
+    i = 0;
+    j = 0;
 
-// char    *canvas_to_ppm(t_colour **canvas)
-// {
-//     size_t i = x_of_canvas(canvas);
+    FILE *fp = fopen("example.ppm", "w");
+    if (fp == NULL)
+    {
+        perror("Error opening file");
+        return;
+    }
 
-//     char *s1="P3\n5 3\n255";
-
-//     char **s2[x]
-
-//     s2 = malloc(sizeof(char) * x_of_canvas * y_of_canvas * )
-
-//     while(i)
-
-
-
-
-//     return (ft_strjoin(s1, s2));
-
-// }
+    fprintf(fp, "P3\n%d %d\n255\n", x, y);
+    while (i < y)
+    {
+        while (j < x)
+        {
+            if (j == 0)
+            {
+                fprintf(fp, "%d %d %d",
+                    float_to_uint(canvas[i][j].r),
+                    float_to_uint(canvas[i][j].g),
+                    float_to_uint(canvas[i][j].b));
+                    j++;
+            }
+            fprintf(fp, " %d %d %d",
+                float_to_uint(canvas[i][j].r),
+                float_to_uint(canvas[i][j].g),
+                float_to_uint(canvas[i][j].b));
+            j++;
+        }
+        fprintf(fp, "\n");
+        j = 0;
+        i++;
+    }
+    fclose(fp);
+}

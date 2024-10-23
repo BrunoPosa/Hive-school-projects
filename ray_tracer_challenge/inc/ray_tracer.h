@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "../../MLX42/include/MLX42/MLX42.h"
+//#include "../../MLX42/include/MLX42/MLX42.h"
 
-#define EPSILON 0.00001
 
 //	  A L I A S E S
 
+#define EPSILON 0.00001
 #define POINT 1
 #define VECTOR 0
 #define SUCCESS 0
@@ -62,7 +62,7 @@ void	print_g(char *s);
 t_tuple		*create_tuple(float x, float y, float z, float w);
 t_colour	*create_colour(float r, float g, float b);
 
-//         F U N C T I O N S
+//         F U N C T I O N S (TUPLE?)
 
 int			diff(t_tuple *t1, t_tuple *t2);
 t_tuple		*add(t_tuple *t1, t_tuple *t2);
@@ -89,3 +89,5 @@ void		write_pixel(t_colour **canvas, int x, int y, t_colour *colour);
 t_colour	**create_canvas(int x, int y);
 size_t 		x_of_canvas(t_colour **canvas);
 size_t		y_of_canvas(t_colour **canvas);
+void		canvas_to_ppm(t_colour **canvas, int x, int y);
+

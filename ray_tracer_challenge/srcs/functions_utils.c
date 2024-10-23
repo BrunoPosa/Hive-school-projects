@@ -25,7 +25,6 @@ char *ft_strjoin(char* a, char *b)
     while(*a)
     {
         c[k++] = *a++;
-
     }
     while(*b)
     {

@@ -11,11 +11,6 @@ void	tests_colours(void)
 
     t_colour *c1 = create_colour(0.9, 0.6, 0.75);
     t_colour *c2 = create_colour(0.7, 0.1, 0.25);
-   
-
-    // t_colour *c6 = create_colour();
-    // t_colour *c7 = create_colour();
-
 
 	print_y("Adding colours\n");
     t_colour *c3 = add_colours(c1, c2);
@@ -61,10 +56,9 @@ void	tests_colours(void)
     printf("we are doing this by i/2-1 which doesn't work because of rounding\n");
 
 
-    // print_y("Canvas to PPY\n");
+    print_y("Canvas to PPY\n");
     // t_colour **canvas = create_canvas(5, 3);
-    // char *ppm = canvas_to_ppm(canvas);
-    // printf("%s\n", ppm);
+    canvas_to_ppm(c, 5, 3);
 
     free(c0);
     free(c1);

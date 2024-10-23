@@ -29,8 +29,10 @@ OBJS		=	$(MANPATH:%.c=%.o)
 
 all:			$(NAME)
 
-$(NAME):		$(MLXLIB) $(OBJS)
-			$(CC) $(CFLAGS) $(OBJS) -lm $(MLXLIB) $(MLXFLAGS) $(MLXHEADERS) -o $(NAME)
+#$(NAME):		$(MLXLIB) $(OBJS)
+#			$(CC) $(CFLAGS) $(OBJS) -lm $(MLXLIB) $(MLXFLAGS) $(MLXHEADERS) -o $(NAME)
+$(NAME):		$(OBJS)
+			$(CC) $(CFLAGS) $(OBJS) -lm -o $(NAME)
 
 %.o:%.c
 			@$(CC) $(CFLAGS) -c $< -o $@		
@@ -40,11 +42,11 @@ $(MLXLIB):
 
 clean:
 			$(RM) $(OBJS)
-			cd $(MLXDIR)build && make clean
+#			cd $(MLXDIR)build && make clean
 
 fclean:			clean
 			$(RM) $(NAME)
-			$(RM) $(MLXLIB)
+#			$(RM) $(MLXLIB)
 
 re:			fclean all
 
