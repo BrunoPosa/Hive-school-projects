@@ -2,6 +2,6 @@
 ray_tracer_challenge/ray_tracer
 *.out
 .vscode/
-
+/MLX42/
 #ignores /examples/ as it's easier to find and replace text across all files
 /examples/

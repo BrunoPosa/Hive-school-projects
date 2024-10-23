@@ -49,7 +49,7 @@ void	tests_colours(void)
     print_y("Writing pixels to a canvas\n");
     t_colour *red = create_colour(1, 0, 0);
     write_pixel(c, 2, 3, red);
-    printf("pixel in position [2][3] is now red, while others are black");
+    printf("pixel in position [2][3] is now red, while others are black\n");
     ft_colour_printer(&c[2][2]);
     ft_colour_printer(&c[2][3]);
     ft_colour_printer(&c[2][4]);
@@ -65,7 +65,6 @@ void	tests_colours(void)
     // t_colour **canvas = create_canvas(5, 3);
     // char *ppm = canvas_to_ppm(canvas);
     // printf("%s\n", ppm);
-
 
     free(c0);
     free(c1);

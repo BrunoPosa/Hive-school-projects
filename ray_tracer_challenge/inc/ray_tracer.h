@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include "../../MLX42/include/MLX42/MLX42.h"
 
 #define EPSILON 0.00001
 
@@ -9,7 +10,7 @@
 
 #define POINT 1
 #define VECTOR 0
-#define SUCESS 0
+#define SUCCESS 0
 #define ERROR -1
 
 //	  C O L O U R S

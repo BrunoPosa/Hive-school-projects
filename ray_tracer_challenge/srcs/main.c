@@ -7,5 +7,6 @@ int	main(void)
 	
 	tests();
 	tests_colours();
+	return (0);
 }
 
