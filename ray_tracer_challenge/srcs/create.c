@@ -1,7 +1,8 @@
 #include "../inc/ray_tracer.h"
 
 /*
-	allocates, fills and returns a new tuple, or NULL on errors
+	allocates, fills and returns a new tuple, or NULL on errors.
+	pass in VECTOR or POINT macro as 'w' parameter to specify the type of tuple.
 */
 t_tuple *create_tuple(float x, float y, float z, float w)
 {

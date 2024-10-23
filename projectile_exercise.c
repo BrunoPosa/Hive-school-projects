@@ -11,16 +11,16 @@
 # define ERROR 1
 #endif
 
-t_tuple	*add(t_tuple *t1, t_tuple *t2);
-float	magnitude(t_tuple *t);
-t_tuple	*normalize(t_tuple *t);
-void	ft_tuple_print(t_tuple *t);
-t_tuple	*create_tuple(float x, float y, float z, float w);
+static t_tuple	*add_clone(t_tuple *t1, t_tuple *t2);
+static float	magnitude_clone(t_tuple *t);
+static t_tuple	*normalize_clone(t_tuple *t);
+static void	ft_tuple_print_clone(t_tuple *t);
+static t_tuple	*create_tuple_clone(float x, float y, float z, float w);
 
 /*
 	copy pasting bc I'm lazy
 */
-t_tuple *add(t_tuple *t1, t_tuple *t2)
+static t_tuple *add_clone(t_tuple *t1, t_tuple *t2)
 {
 	t_tuple *t;
 
@@ -39,7 +39,7 @@ t_tuple *add(t_tuple *t1, t_tuple *t2)
 /*
 	copy pasting bc I'm lazy
 */
-float magnitude(t_tuple *t)
+static float magnitude_clone(t_tuple *t)
 {
 	float res;
 
@@ -58,14 +58,14 @@ float magnitude(t_tuple *t)
 /*
 	copy pasting bc I'm lazy
 */
-t_tuple *normalize(t_tuple *t)
+static t_tuple *normalize_clone(t_tuple *t)
 {
 	t_tuple	*res;
 	float	mag;
 
 	if (!t)
 		return (NULL);
-	mag = magnitude(t);
+	mag = magnitude_clone(t);
 	res = malloc(1 * sizeof(t_tuple));
 	if (!res)
 		return (NULL);
@@ -79,7 +79,7 @@ t_tuple *normalize(t_tuple *t)
 /*
 	copy pasting bc I'm lazy
 */
-void	ft_tuple_print(t_tuple *t)
+static void	ft_tuple_print_clone(t_tuple *t)
 {
 	if (!t)
 	{
@@ -94,7 +94,7 @@ void	ft_tuple_print(t_tuple *t)
 /*
 	copy pasting bc I'm lazy
 */
-t_tuple *create_tuple(float x, float y, float z, float w)
+static t_tuple *create_tuple_clone(float x, float y, float z, float w)
 {
 	t_tuple *t;
 
@@ -120,17 +120,17 @@ typedef struct s_environment
 	t_tuple *wind;
 } t_environment;
 
-int	tick(t_environment *env, t_projectile *proj)
+static int	tick_clone(t_environment *env, t_projectile *proj)
 {
 	t_tuple	*position;
 	t_tuple	*velocity;
 	t_tuple	*temp;
 
-	temp = add(proj->velocity, env->gravity);
+	temp = add_clone(proj->velocity, env->gravity);
 	if (!temp)
 		return (ERROR);
-	position = add(proj->position, proj->velocity);
-	velocity = add(temp, env->wind);
+	position = add_clone(proj->position, proj->velocity);
+	velocity = add_clone(temp, env->wind);
 	if (!position || !velocity)
 		return (ERROR);
 	proj->position = position;
@@ -151,19 +151,19 @@ int	main(void)
 	if (!env || !proj)
 		return (ERROR);
 	tick_count = 0;
-	proj->position = create_tuple(0, 1, 0, POINT);
-	proj->velocity = normalize(create_tuple(1, 1, 0, VECTOR));
-	env->gravity = create_tuple(0, -0.1, 0, VECTOR);
-	env->wind = create_tuple(-0.01, 0, 0, VECTOR);
+	proj->position = create_tuple_clone(0, 1, 0, POINT);
+	proj->velocity = normalize_clone(create_tuple_clone(1, 1, 0, VECTOR));
+	env->gravity = create_tuple_clone(0, -0.1, 0, VECTOR);
+	env->wind = create_tuple_clone(-0.01, 0, 0, VECTOR);
 	while (proj->position->y > 0)
 	{
-		if (tick(env, proj) == ERROR)
+		if (tick_clone(env, proj) == ERROR)
 			return (ERROR);
-		ft_tuple_print(proj->position);
+		ft_tuple_print_clone(proj->position);
 		tick_count++;
 	}
 	printf("Projectile has landed after %d ticks at:\n", tick_count);
-	ft_tuple_print(proj->position);
+	ft_tuple_print_clone(proj->position);
 	// free(proj->position);
 	// free(proj->velocity);
 	return (SUCCESS);

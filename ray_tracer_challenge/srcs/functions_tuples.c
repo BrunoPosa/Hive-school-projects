@@ -1,6 +1,9 @@
 #include "../inc/ray_tracer.h"
 
-// returns the number of differences between the two tuples, 0 if they are the same
+/*
+	returns number of differences between the two tuples;
+	0 if identical, ERROR on errors.
+*/
 int diff(t_tuple *t1, t_tuple *t2)
 {
 	int diff_count = 0;
