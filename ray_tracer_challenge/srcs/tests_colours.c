@@ -33,14 +33,27 @@ void	tests_colours(void)
     ft_colour_printer(c6);
     ft_print_line('-');
 
-    print_y("Multiplying colours\n");
+    print_y("Multiplying colours - hadamard_product\n");
     t_colour *c7 = create_colour(1, 0.2, 0.4);
     t_colour *c8 = create_colour(0.9, 1, 0.1);
-    t_colour *c9 = multiply_colours(c7, c8);
+    t_colour *c9 = hadamard_product(c7, c8);
     ft_colour_printer(c9);
     ft_print_line('-');
 
+    print_y("Create canvas\n");
+    t_colour **img = create_canvas(10, 20);
+    printf("here is position [2][2] initialised to 0,0,0:\n");
+    ft_colour_printer(&img[2][2]);
+    
 
-
-
+    free(c0);
+    free(c1);
+    free(c2);
+    free(c3);
+    free(c4);
+    free(c5);
+    free(c6);
+    free(c7);
+    free(c8);
+    free(c9);
 }

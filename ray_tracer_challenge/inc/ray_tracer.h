@@ -33,6 +33,13 @@ typedef struct s_colour
 	float b;
 } t_colour;
 
+
+// what we want is a 2d array of colour
+// typedef struct s_canvas
+// {
+// 	t_colour i;
+// }
+
 //      T E S T S
 void	tests(void);
 void	tests_colours(void);
@@ -68,4 +75,7 @@ t_tuple		*cross(t_tuple *a, t_tuple *b);
 t_colour   *add_colours(t_colour *a, t_colour *b);
 t_colour   *subtract_colours(t_colour *a, t_colour *b);
 t_colour   *multiply_colour_by(t_colour *a, float scaler);
-t_colour   *multiply_colours(t_colour *a, t_colour *b);
+t_colour   *hadamard_product(t_colour *a, t_colour *b);
+
+//			C A N V A S
+t_colour	**create_canvas(int x, int y);

@@ -37,7 +37,7 @@ t_colour   *multiply_colour_by(t_colour *a, float scaler)
     return p;
 }
 
-t_colour   *multiply_colours(t_colour *a, t_colour *b)
+t_colour   *hadamard_product(t_colour *a, t_colour *b)
 {
     t_colour *p;
     p = malloc(sizeof(t_colour));

@@ -10,7 +10,8 @@ SRCS 		=	functions.c \
 				tests.c \
 				create.c \
 				tests_colours.c \
-				functions_colours.c
+				functions_colours.c \
+				functions_canvas.c
 
 HEADER = ./inc/ray_tracer.h
 
