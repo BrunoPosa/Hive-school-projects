@@ -45,8 +45,9 @@ typedef struct s_colour
 
 //      T E S T S
 
-void	tests(void);
+void	tests_tuples(void);
 void	tests_colours(void);
+void	tests_canvas(void);
 int		project_one(void);
 
 //      P R I N T E R S
@@ -57,6 +58,7 @@ void	ft_print_line(char c);
 void	print_y(char *s);
 void	print_r(char *s);
 void	print_g(char *s);
+void canvas_to_print(t_colour **canvas, int x, int y);
 
 /*         C R E A T E         */
 
@@ -75,6 +77,8 @@ float		magnitude(t_tuple *t);
 t_tuple		*normalize(t_tuple *t);
 float		dot(t_tuple *a, t_tuple *b);
 t_tuple		*cross(t_tuple *a, t_tuple *b);
+unsigned int float_to_uint(float value);
+
 
 
 //			C O L O U R S

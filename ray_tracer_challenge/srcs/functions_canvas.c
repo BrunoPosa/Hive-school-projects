@@ -89,17 +89,51 @@ unsigned int float_to_uint(float value)
     
     else
     {
-        return (unsigned int)(value * 255.0f);
+        float r = value * 255.0f;
+        float fractol = value - (int)value;
+        if (fractol >= 0.5)
+            r += 0.5;
+        return (unsigned int)r;
     }
 }
-
-void canvas_to_ppm(t_colour **canvas, int x, int y)
+void canvas_to_print(t_colour **canvas, int y, int x)
 {
     int i, j;
     i = 0;
     j = 0;
 
-    FILE *fp = fopen("1.ppm", "w");
+    printf("P3\n%d %d\n255\n", x, y);
+    while (i < y)
+    {
+        while (j < x)
+        {
+            if (j == 0)
+            {
+                printf("%d %d %d",
+                    float_to_uint(canvas[i][j].r),
+                    float_to_uint(canvas[i][j].g),
+                    float_to_uint(canvas[i][j].b));
+                    j++;
+            }
+            printf(" %d %d %d",
+                float_to_uint(canvas[i][j].r),
+                float_to_uint(canvas[i][j].g),
+                float_to_uint(canvas[i][j].b));
+            j++;
+        }
+        printf("\n");
+        j = 0;
+        i++;
+    }
+}
+
+void canvas_to_ppm(t_colour **canvas, int y, int x)
+{
+    int i, j;
+    i = 0;
+    j = 0;
+
+    FILE *fp = fopen("output.ppm", "w");
     if (fp == NULL)
     {
         perror("Error opening file");

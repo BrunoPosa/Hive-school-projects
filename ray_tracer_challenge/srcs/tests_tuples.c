@@ -1,6 +1,6 @@
 #include "../inc/ray_tracer.h"
 
-void	tests(void)
+void	tests_tuples(void)
 {
 	//-------- print a tuple --------
 	t_tuple	t;
