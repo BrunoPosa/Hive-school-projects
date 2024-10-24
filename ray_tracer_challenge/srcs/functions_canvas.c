@@ -1,6 +1,6 @@
 #include "../inc/ray_tracer.h"
 
-int init_canvas(t_colour **img, int x, int y)
+int init_canvas(t_colour **canvas, int x, int y, t_colour *init_value)
 {
     int i;
     int j;
@@ -12,7 +12,7 @@ int init_canvas(t_colour **img, int x, int y)
     {
         while(j < y)
         {
-            img[i][j] = *create_colour(0, 0, 0);
+            canvas[i][j] = *init_value;
             j++;
         }
         i++;
@@ -25,13 +25,14 @@ t_colour **create_canvas(int x, int y)
 {
     int i;
     int j;
-    t_colour **img;
+    t_colour **canvas;
+    t_colour *init_value = create_colour(0, 0, 0);
 
     i = 0;
     j = 0;
-    img = (t_colour **)malloc(x * sizeof(t_colour *));
+    canvas = (t_colour **)malloc(x * sizeof(t_colour *));
 
-    if (img == NULL)
+    if (canvas == NULL)
     {
         printf("Malloc failed!\n");
         return NULL;
@@ -39,25 +40,25 @@ t_colour **create_canvas(int x, int y)
 
     while(i < x)
     {
-        img[i] = (t_colour *)malloc(y * sizeof(t_colour));
-        if (img[i] == NULL)
+        canvas[i] = (t_colour *)malloc(y * sizeof(t_colour));
+        if (canvas[i] == NULL)
         {
             printf("Malloc failed for row %d!\n", i);
             while(j < i)
             {
-                free(img[j]);
+                free(canvas[j]);
                 j++;
             }
-            free(img);
+            free(canvas);
             return NULL;
         }
         i++;
     }
-
-    init_canvas(img, x, y);
-    return img;
+    init_canvas(canvas, x, y, init_value);
+    return canvas;
 }
 
+// this is unused
 size_t  x_of_canvas(t_colour **canvas)
 {
     size_t i = 0;
@@ -65,7 +66,7 @@ size_t  x_of_canvas(t_colour **canvas)
         i++;
     return i;
 }
-
+// this is wonky donky
 size_t  y_of_canvas(t_colour **canvas)
 {
     size_t i = 0;
@@ -96,7 +97,7 @@ unsigned int float_to_uint(float value)
         return (unsigned int)r;
     }
 }
-void canvas_to_print(t_colour **canvas, int y, int x)
+void canvas_to_print(t_colour **canvas, int x, int y)
 {
     int i, j;
     i = 0;

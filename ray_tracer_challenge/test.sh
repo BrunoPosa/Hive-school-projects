@@ -10,4 +10,4 @@ make re
 ./ray_tracer
 
 # Display the image
-cat output.ppm
+#cat output.ppm
