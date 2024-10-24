@@ -94,5 +94,5 @@ void		write_pixel(t_colour **canvas, int x, int y, t_colour *colour);
 t_colour	**create_canvas(int x, int y);
 size_t 		x_of_canvas(t_colour **canvas);
 size_t		y_of_canvas(t_colour **canvas);
-void		canvas_to_ppm(t_colour **canvas, int x, int y);
+void		canvas_to_ppm(char* filename, t_colour **canvas, int x, int y);
 

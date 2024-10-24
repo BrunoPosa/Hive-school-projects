@@ -35,31 +35,6 @@ void	tests_colours(void)
     ft_colour_printer(c9);
     ft_print_line('-');
 
-    print_y("Create canvas\n");
-    t_colour **c = create_canvas(10, 20);
-    printf("here is position [2][2] initialised to 0,0,0:\n");
-    ft_colour_printer(&c[2][2]);
-    ft_print_line('-');
-
-    print_y("Writing pixels to a canvas\n");
-    t_colour *red = create_colour(1, 0, 0);
-    write_pixel(c, 2, 3, red);
-    printf("pixel in position [2][3] is now red, while others are black\n");
-    ft_colour_printer(&c[2][2]);
-    ft_colour_printer(&c[2][3]);
-    ft_colour_printer(&c[2][4]);
-    ft_print_line('-');
-
-    print_y("Can we find out the size of our canvas?\n");
-    printf("x = 10, y = 20 is the target\n");
-    printf("x = %zu, y = %zu\n", x_of_canvas(c), y_of_canvas(c));
-    printf("we are doing this by i/2-1 which doesn't work because of rounding\n");
-
-
-    print_y("Canvas to PPY\n");
-    // t_colour **canvas = create_canvas(5, 3);
-    canvas_to_ppm(c, 5, 3);
-
     free(c0);
     free(c1);
     free(c2);

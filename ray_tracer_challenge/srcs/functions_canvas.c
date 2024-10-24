@@ -127,13 +127,13 @@ void canvas_to_print(t_colour **canvas, int y, int x)
     }
 }
 
-void canvas_to_ppm(t_colour **canvas, int y, int x)
+void canvas_to_ppm(char *filename, t_colour **canvas, int y, int x)
 {
     int i, j;
     i = 0;
     j = 0;
 
-    FILE *fp = fopen("output.ppm", "w");
+    FILE *fp = fopen(filename, "w");
     if (fp == NULL)
     {
         perror("Error opening file");

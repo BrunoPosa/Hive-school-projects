@@ -72,7 +72,7 @@ int	project_one(void)
 		write_pixel(canvas, proj->position->x, 55 - proj->position->y, color);
 		tick_count++;
 	}
-	canvas_to_ppm(canvas, 90, 55);
+	canvas_to_ppm("project1.ppm", canvas, 90, 55);
 	printf("Projectile has landed after %d ticks at:\n", tick_count);
 	ft_tuple_print(proj->position);
 	// free(proj->position);

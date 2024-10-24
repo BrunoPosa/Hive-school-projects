@@ -45,9 +45,8 @@ void	tests_canvas(void)
     printf("1.5f should be 255, 0.5f should be 128, -0.5f should be 0\n");
     printf("%d %d %d\n", float_to_uint(1.5), float_to_uint(0.5), float_to_uint(-0.5));
     ft_print_line('-');
-
     canvas_to_print(canvas, 5, 3);
-    canvas_to_ppm(canvas, 5, 3);
+    canvas_to_ppm("output.ppm", canvas, 5, 3);
 
   
 }
