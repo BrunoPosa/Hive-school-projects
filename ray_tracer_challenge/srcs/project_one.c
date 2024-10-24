@@ -17,10 +17,10 @@ uint32_t	ft_colour_to_uint32(t_colour *colour)
 	uint32_t color;
 
 	color = 0;
-	color =  (uint32_t)(0xFF) << 24;
-	color |= ((uint32_t)(colour->b * 255.0) & 0xFF) << 16;
-	color |= ((uint32_t)(colour->g * 255.0) & 0xFF) << 8;
-	color |= ((uint32_t)(colour->r * 255.0) & 0xFF);
+	color = 0xFF << 24
+			| (uint32_t)(colour->b * 255.0) << 16
+			| (uint32_t)(colour->g * 255.0) << 8
+			| (uint32_t)(colour->r * 255.0);
 	return (color);
 }
 
@@ -73,7 +73,7 @@ int	project_one(mlx_image_t *img)
 	ft_color_screen(img, 0xFF000000);
 	env = malloc(1 * sizeof(t_environment));
 	proj = malloc(1 * sizeof(t_projectile));
-	colour = create_colour(1, 0.753, 0.796);//pink
+	colour = create_colour(1, 0, 0);
 	if (!env || !proj)
 		return (ERROR);
 	tick_count = 0;
