@@ -2,12 +2,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-//#include "../../MLX42/include/MLX42/MLX42.h"
+#include "../../MLX42/include/MLX42/MLX42.h"
 
+//	  C O N S T A N T S
+
+#ifndef WINSIZE
+# define WINSIZE 900
+#endif
+#define EPSILON 0.00001
 
 //	  A L I A S E S
 
-#define EPSILON 0.00001
 #define POINT 1
 #define VECTOR 0
 #define SUCCESS 0
@@ -48,7 +53,7 @@ typedef struct s_colour
 void	tests_tuples(void);
 void	tests_colours(void);
 void	tests_canvas(void);
-int		project_one(void);
+int		project_one(mlx_image_t *img);
 
 //      P R I N T E R S
 
@@ -58,7 +63,7 @@ void	ft_print_line(char c);
 void	print_y(char *s);
 void	print_r(char *s);
 void	print_g(char *s);
-void canvas_to_print(t_colour **canvas, int x, int y);
+void 	canvas_to_print(t_colour **canvas, int x, int y);
 
 /*         C R E A T E         */
 
@@ -94,6 +99,10 @@ void		write_pixel(t_colour **canvas, int x, int y, t_colour *colour);
 t_colour	**create_canvas(int x, int y);
 // size_t 		x_of_canvas(t_colour **canvas);
 // size_t		y_of_canvas(t_colour **canvas);
-int init_canvas(t_colour **canvas, int x, int y, t_colour *init_value);
+int			init_canvas(t_colour **canvas, int x, int y, t_colour *init_value);
 void		canvas_to_ppm(char* filename, t_colour **canvas, int x, int y);
 
+//			M L X   D R A W I N G
+
+uint32_t	ft_colour_to_uint32(t_colour *colour);
+void		ft_color_screen(mlx_image_t *img, uint32_t colour);

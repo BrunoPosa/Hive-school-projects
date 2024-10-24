@@ -5,6 +5,7 @@ clear
 
 # Recompile the raytracer
 make re
+make clean
 
 # Run the raytracer
 ./ray_tracer
