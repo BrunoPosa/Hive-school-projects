@@ -4,7 +4,7 @@ void	tests_colours(void)
 {
 
 	//-------- Colours --------
-	print_y("Colors are (red, green, blue) tuples\n");
+	print_y("Colours are (red, green, blue) tuples\n");
 	t_colour *c0 = create_colour(-0.5, 0.4, 1.7);
 	ft_colour_printer(c0);
 	ft_print_line('-');
