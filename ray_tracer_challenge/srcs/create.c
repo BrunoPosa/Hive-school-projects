@@ -18,6 +18,15 @@ t_tuple *create_tuple(float x, float y, float z, float w)
 	return (t);
 }
 
+t_tuple *create_point(float x, float y, float z)
+{
+	return (create_tuple(x, y, z, POINT));
+}
+
+t_tuple *create_vector(float x, float y, float z)
+{
+	return (create_tuple(x, y, z, VECTOR));
+}
 
 
 t_colour	*create_colour(float r, float g, float b)

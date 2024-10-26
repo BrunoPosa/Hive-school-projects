@@ -8,14 +8,15 @@ int init_canvas(t_colour **canvas, int x, int y, t_colour *init_value)
     i = 0;
     j = 0;
 
-    while(i < x)
+    while(i < y)
     {
-        while(j < y)
+        while(j < x)
         {
             canvas[i][j] = *init_value;
             j++;
         }
         i++;
+        j = 0;
     }
     return 0; 
 }
@@ -26,7 +27,8 @@ t_colour **create_canvas(int x, int y)
     int i;
     int j;
     t_colour **canvas;
-    t_colour *init_value = create_colour(0, 0, 0);
+    // t_colour *init_value = create_colour(0, 0, 0);
+    // t_colour *init_value = create_colour(1, 0.8, 0.6);
 
     i = 0;
     j = 0;
@@ -54,7 +56,7 @@ t_colour **create_canvas(int x, int y)
         }
         i++;
     }
-    init_canvas(canvas, x, y, init_value);
+    // init_canvas(canvas, x, y, init_value);
     return canvas;
 }
 

@@ -26,7 +26,7 @@ void	tests_canvas(void)
     // printf("x = %zu, y = %zu\n", x_of_canvas(c), y_of_canvas(c));
     // printf("we are doing this by i/2-1 which doesn't work because of rounding\n");
 
-
+//  5x3 canvas
     print_y("Canvas to PPY\n");
     t_colour **canvas0 = create_canvas(5, 3);
     t_colour *c1 = create_colour(1.5, 0, 0);
@@ -50,14 +50,19 @@ void	tests_canvas(void)
     // canvas_to_ppm("output1.ppm", canvas0, 5, 3);
     // ft_print_line('-');
 
+// 10x2 canvas
     print_y("Splitting long lines in PPM files\n");
     t_colour **canvas1 = create_canvas(10, 2);
     t_colour *init_value = create_colour(1, 0.8, 0.6);
     init_canvas(canvas1, 10, 2, init_value);
     canvas_to_print(canvas1, 10, 2);
     canvas_to_ppm("long_lines.ppm", canvas1, 10, 2);
+    ft_print_line('-');
 
-
-
-  
+// last activity in chapter
+    print_y("PPM files are terminated by a nl char\n");
+    t_colour **canvas2 = create_canvas(5, 3);
+    canvas_to_ppm("terminated.ppm", canvas2, 5, 3);
+    printf("the output file terminated.ppm should end with a newline\n");
+    ft_print_line('-');
 }
