@@ -55,6 +55,7 @@ void	tests_colours(void);
 void	tests_canvas(void);
 int		project_one(mlx_image_t *img);
 int		project_one_mlx();
+void	tests_matrix(void);
 
 //      P R I N T E R S
 
@@ -109,3 +110,12 @@ void		canvas_to_ppm(char* filename, t_colour **canvas, int x, int y);
 
 uint32_t	ft_colour_to_uint32(t_colour *colour);
 void		ft_color_screen(mlx_image_t *img, uint32_t colour);
+
+// 	M A T R I C E S
+
+float	**matrix_create(int x, int y);
+void	matrix_assign(float **matrix, int x, int y, float f);
+void	matrix_print(float **matrix, int x, int y);
+void	matrix_fill(float **matrix, int x, int y, float f);
+int		matrix_compare(float **matrix1, float **matrix2, int x, int y);
+float	**matrix_multiply(float **matrix1, float **matrix2, int x, int y);

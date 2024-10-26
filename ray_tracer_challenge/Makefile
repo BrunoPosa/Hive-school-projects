@@ -17,10 +17,12 @@ SRCS 		=	main.c \
 				functions_colours.c \
 				functions_canvas.c \
 				functions_utils.c \
+				functions_matrix.c \
 				tests_tuples.c \
 				tests_colours.c \
 				tests_canvas.c \
-				project_one.c
+				tests_matrix.c \
+				project_one.c 			
 
 HEADER = ./inc/ray_tracer.h
 
