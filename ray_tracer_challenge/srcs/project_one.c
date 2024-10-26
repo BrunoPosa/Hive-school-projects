@@ -77,10 +77,10 @@ int	project_one(mlx_image_t *img)
 	if (!env || !proj)
 		return (ERROR);
 	tick_count = 0;
-	proj->position = create_tuple(0, 250, 0, POINT);
-	proj->velocity = multiply_tuple((create_tuple(1, 1, 0, VECTOR)), scale);
-	env->gravity = create_tuple(0, -0.1, 0, VECTOR);
-	env->wind = create_tuple(-0.01, 0, 0, VECTOR);
+	proj->position = create_point(0, 250, 0);
+	proj->velocity = multiply_tuple((create_vector(1, 1, 0)), scale);
+	env->gravity = create_vector(0, -0.1, 0);
+	env->wind = create_vector(-0.01, 0, 0);
 	while (proj->position->y > 0)
 	{
 		if (tick(env, proj) == ERROR)

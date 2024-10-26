@@ -69,6 +69,8 @@ void 	canvas_to_print(t_colour **canvas, int x, int y);
 
 t_tuple		*create_tuple(float x, float y, float z, float w);
 t_colour	*create_colour(float r, float g, float b);
+t_tuple		*create_point(float x, float y, float z);
+t_tuple		*create_vector(float x, float y, float z);
 
 //         F U N C T I O N S (TUPLE?)
 
