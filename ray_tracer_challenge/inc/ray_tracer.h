@@ -54,6 +54,7 @@ void	tests_tuples(void);
 void	tests_colours(void);
 void	tests_canvas(void);
 int		project_one(mlx_image_t *img);
+int		project_one_mlx();
 
 //      P R I N T E R S
 

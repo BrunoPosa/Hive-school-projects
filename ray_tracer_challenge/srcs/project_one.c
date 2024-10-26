@@ -71,15 +71,17 @@ int	project_one(mlx_image_t *img)
 
 	scale = 6.05;//6.25 is visible on a ~900x900 window
 	ft_color_screen(img, 0xFF000000);
+	// ft_color_screen(img, 0xFFFFFF00);
 	env = malloc(1 * sizeof(t_environment));
 	proj = malloc(1 * sizeof(t_projectile));
 	colour = create_colour(1, 0, 0);
 	if (!env || !proj)
 		return (ERROR);
 	tick_count = 0;
-	proj->position = create_point(0, 250, 0);
+	proj->position = create_point(0, 550, 0);
 	proj->velocity = multiply_tuple((create_vector(1, 1, 0)), scale);
 	env->gravity = create_vector(0, -0.1, 0);
+	// env->wind = create_vector(0.25, 0, 0);
 	env->wind = create_vector(-0.01, 0, 0);
 	while (proj->position->y > 0)
 	{
@@ -87,8 +89,24 @@ int	project_one(mlx_image_t *img)
 			return (ERROR);
 		if (proj->position->y < 0)
 			break ;
-		((uint32_t *)img->pixels)[(WINSIZE - (unsigned int)proj->position->y) * WINSIZE + (unsigned int)proj->position->x] = ft_colour_to_uint32(colour);
+		((uint32_t *)img->pixels)[(WINSIZE - (unsigned int)proj->position->y) *
+				WINSIZE + (unsigned int)proj->position->x] = ft_colour_to_uint32(colour);
 		tick_count++;
 	}
 	return (SUCCESS);
+}
+int project_one_mlx()
+{    
+    mlx_t		*mlx;
+	mlx_image_t	*img;
+	mlx = mlx_init(WINSIZE, WINSIZE, "projectile", false);
+	if (!(mlx))
+		return (ERROR);
+	img = mlx_new_image(mlx, WINSIZE, WINSIZE);
+	if (!img || mlx_image_to_window(mlx, img, 0, 0) < 0)
+		return (mlx_terminate(mlx), ERROR);
+	project_one(img);
+	mlx_loop(mlx);
+	mlx_terminate(mlx);
+	return(SUCCESS);
 }
