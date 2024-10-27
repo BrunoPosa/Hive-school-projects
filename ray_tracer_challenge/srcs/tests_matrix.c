@@ -122,6 +122,38 @@ void	tests_matrix(void)
     matrix_print(matrix12, 2, 2);
     ft_print_line('-');
 
+// Matrix multiplied by a tuple
+
+    print_y("Multiplying a matrix by a tuple\n");
+    float **matrix13 = matrix_create(4, 4);
+    matrix_assign(matrix13, 0, 0, 1);
+    matrix_assign(matrix13, 0, 1, 2);
+    matrix_assign(matrix13, 0, 2, 3);
+    matrix_assign(matrix13, 0, 3, 4);
+    matrix_assign(matrix13, 1, 0, 2);
+    matrix_assign(matrix13, 1, 1, 4);
+    matrix_assign(matrix13, 1, 2, 4);
+    matrix_assign(matrix13, 1, 3, 2);
+    matrix_assign(matrix13, 2, 0, 8);
+    matrix_assign(matrix13, 2, 1, 6);
+    matrix_assign(matrix13, 2, 2, 4);
+    matrix_assign(matrix13, 2, 3, 1);
+    matrix_assign(matrix13, 3, 0, 0);
+    matrix_assign(matrix13, 3, 1, 0);
+    matrix_assign(matrix13, 3, 2, 0);
+    matrix_assign(matrix13, 3, 3, 1);
+    print_g("Matrix 13\n");
+    matrix_print(matrix13, 4, 4);
+    t_tuple *t = create_tuple(1, 2, 3, 1);
+    print_g("Tuple\n");
+    ft_tuple_print(t);
+    ft_print_line('-');
+    float **t2 = matrix_tuple_multiply(matrix13, t, 4, 4);
+    print_g("Tuple after multiplication\n");
+    ft_tuple_print(t2);
+    ft_print_line('-');
+
+
     
     // print_y("Creating a matrix\n");
     // t_matrix *m = create_matrix(4, 4);
