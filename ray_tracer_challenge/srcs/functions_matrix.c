@@ -130,17 +130,17 @@ float **matric_tuple_multiply(float **matrix, t_tuple *t, int x, int y)
     }
     return r;
 }
-t_tuple *matrix_tuple_multiply(float **matrix, t_tuple *t, int x, int y)
-{
-    t_tuple *result = (t_tuple *)malloc(sizeof(t_tuple));
+// t_tuple *matrix_tuple_multiply(float **matrix, t_tuple *t, int x, int y)
+// {
+//     t_tuple *result = (t_tuple *)malloc(sizeof(t_tuple));
     
-    for (int i = 0; i < y; i++)
-    {
-        result->x += matrix[i][0] * t->x + matrix[i][1] * t->y + matrix[i][2] * t->z + matrix[i][3] * t->w;
-        result->y += matrix[i + y][0] * t->x + matrix[i + y][1] * t->y + matrix[i + y][2] * t->z + matrix[i + y][3] * t->w;
-        result->z += matrix[i + 2 * y][0] * t->x + matrix[i + 2 * y][1] * t->y + matrix[i + 2 * y][2] * t->z + matrix[i + 2 * y][3] * t->w;
-        result->w += matrix[i + 3 * y][0] * t->x + matrix[i + 3 * y][1] * t->y + matrix[i + 3 * y][2] * t->z + matrix[i + 3 * y][3] * t->w;
-    }
+//     for (int i = 0; i < y; i++)
+//     {
+//         result->x += matrix[i][0] * t->x + matrix[i][1] * t->y + matrix[i][2] * t->z + matrix[i][3] * t->w;
+//         result->y += matrix[i + y][0] * t->x + matrix[i + y][1] * t->y + matrix[i + y][2] * t->z + matrix[i + y][3] * t->w;
+//         result->z += matrix[i + 2 * y][0] * t->x + matrix[i + 2 * y][1] * t->y + matrix[i + 2 * y][2] * t->z + matrix[i + 2 * y][3] * t->w;
+//         result->w += matrix[i + 3 * y][0] * t->x + matrix[i + 3 * y][1] * t->y + matrix[i + 3 * y][2] * t->z + matrix[i + 3 * y][3] * t->w;
+//     }
 
-    return result;
-}
+//     return result;
+// }

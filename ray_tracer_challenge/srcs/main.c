@@ -8,8 +8,8 @@ int	main(void)
 	// tests_tuples();
 	// tests_colours();
 	// tests_canvas();
-	// project_one_mlx();
-	tests_matrix();
+	project_one_mlx();
+	// tests_matrix();
 
 
 	return (0);
