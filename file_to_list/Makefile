@@ -41,7 +41,6 @@ $(LIBFT):
 
 clean:
 			@$(RM) $(OBJS)
-			@make -C ../libft clean
 			@echo "$(YELLOW)Objects removed$(END)"
 
 fclean:			clean

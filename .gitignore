@@ -4,3 +4,4 @@ ray_tracer_challenge/ray_tracer
 .vscode/
 /MLX42/
 *.a
+*.ppm

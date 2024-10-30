@@ -12,6 +12,27 @@ void	ft_tuple_print(t_tuple *t)
 			t->w == 0 ? "(VECTOR)" : t->w == 1 ? "(POINT)" : "(neither)");
 }
 
+void	 ft_matrix_print_new(float *matrix, unsigned int cols, unsigned int rows)
+{
+	unsigned int row;
+	unsigned int col;
+
+	row = 0;
+	while (row < rows)
+	{
+		col = 0;
+		while (col < cols)
+		{
+			if (matrix[row * cols + col] >= 0 && matrix[row * cols + col] <= 10)
+				printf(" ");
+			printf(" %.1f |", matrix[row * cols + col]);
+			col++;
+		}
+		printf("\n");
+		row++;
+	}
+}
+
 void	ft_print_line(char c)
 {
 	int i;
