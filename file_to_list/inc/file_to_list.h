@@ -3,10 +3,12 @@
 #include <stdio.h>
 #include <math.h>
 #include <fcntl.h>
+#include "../../libft/libft.h"
 
 typedef struct s_list
 {
 	char			*content;
+	char			*contect2;
 	struct s_list	*next;
 }				t_list;
 
@@ -43,6 +45,7 @@ t_list *ft_lstnew(void *content);
 int	file_to_list(char *file_name, t_list **l);
 // int		ft_list_push_back(t_list *l, char *content);
 void 	ft_list_print(t_list **l);
+void	process_list(t_list **l);
 
 
 //      T E S T S
