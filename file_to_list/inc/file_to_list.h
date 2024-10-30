@@ -6,7 +6,7 @@
 
 typedef struct s_list
 {
-	void			*content;
+	char			*content;
 	struct s_list	*next;
 }				t_list;
 
@@ -31,6 +31,19 @@ typedef struct s_list
 #define RED		"\033[0;31m"
 #define PINK	"\033[1;95m"
 #define ENDCLR	"\033[0m"
+
+// Linked list
+
+void ft_lstadd_back(t_list **lst, t_list *new);
+t_list *ft_lstlast(t_list *lst);
+t_list *ft_lstnew(void *content);
+
+// 	F U N C T I O N S
+
+int	file_to_list(char *file_name, t_list **l);
+// int		ft_list_push_back(t_list *l, char *content);
+void 	ft_list_print(t_list **l);
+
 
 //      T E S T S
 

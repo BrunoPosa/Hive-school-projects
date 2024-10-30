@@ -1,13 +1,13 @@
 #include "../inc/file_to_list.h"
 
-void	ft_list_print(t_list *l)
+void	ft_list_print(t_list **l)
 {
 	t_list *tmp;
 
-	tmp = l;
+	tmp = *l;
 	while (tmp)
 	{
-		printf("%s\n", (char *)tmp->content);
+		printf("%s\n", tmp->content);
 		tmp = tmp->next;
 	}
 }
