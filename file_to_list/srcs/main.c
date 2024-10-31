@@ -11,7 +11,8 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 
-	//input the file
+	// function to check the last two letters of argv are .rt
+	
 	file_to_list(argv[1], &l);
 	process_list(&l);
 	// validate: checkif there are two camera, if camera >1 retuirn erroro

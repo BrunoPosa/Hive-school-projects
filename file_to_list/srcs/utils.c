@@ -1,14 +1,16 @@
 #include "../inc/file_to_list.h"
 
-// size_t	ft_strlen(char *s)
-// {
-// 	size_t i;
-// 	while(s[i] != '\0')
-// 	{
-// 		i++;
-// 	}
-// 	return i;
-// }
+char    *skip_space(char *s)
+{
+    if (!s)
+        return (NULL);
+    while(*s == ' ')
+            s++;
+    return (s);
+}
+
+// sturct->content = skip_space(stuct->content);
+
 
 char*	process(char *s)
 {

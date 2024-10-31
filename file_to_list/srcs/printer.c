@@ -10,7 +10,7 @@ void	ft_list_print(t_list **l)
 	while (tmp)
 	{
 		printf("--- Node %d ---\n", i);
-		// printf("%s", tmp->content);
+		printf("%s", tmp->content);
 	
 		// if(!tmp->next)
 		// 	printf("\n");
@@ -20,8 +20,8 @@ void	ft_list_print(t_list **l)
 		// if(!tmp->next)
 		// 	printf("\n");
 
-		printf("%s", tmp->content3);
-
+		// printf("%s\n", tmp->content3);
+		printf("%d\n", tmp->pos);
 		i++;
 			if(!tmp->next)
 			printf("\n");

@@ -5,13 +5,58 @@
 #include <fcntl.h>
 #include "../../libft/libft.h"
 
+#define LEGAL_CHARS "0123456789.CALplcysp-, \n"
+#define LEGAL_CHARS "0123456789.-, \n"
+
+typedef enum e_type
+{
+	camera,
+	cylinder,
+	plane,
+	light,
+	sphere,
+	ambiant
+} t_type;
+
+typedef struct s_rgb
+{
+	unsigned int r;
+	unsigned int g;
+	unsigned int b;
+} t_rgb;
+
+typedef struct s_xyz
+{
+	float x;
+	float y;
+	float z;
+} t_xyz;
+
+typedef struct s_xyz_3d
+{
+	float x;
+	float y;
+	float z;
+} t_xyz_3d;
+
 typedef struct s_list
 {
 	char			*content;
 	char			*content2;
 	char			*content3;
+	t_type			type;
+	float			alr;
+	t_rgb			rgb;
+	t_xyz			xyz;
+	t_xyz_3d		xyz_3d;
+	unsigned int	fov;
+	float			lbr;
+	float			sd;
+	float			cd;
+	float			ch;
+	int				pos;
 	struct s_list	*next;
-}				t_list;
+}	t_list;
 
 //	  C O N S T A N T S
 
@@ -46,10 +91,15 @@ t_list *ft_lstnew(void *content);
 int	file_to_list(char *file_name, t_list **l);
 // int		ft_list_push_back(t_list *l, char *content);
 void 	ft_list_print(t_list **l);
-void	process_list(t_list **l);
+int		process_list(t_list **l);
 void	remove_spaces(t_list **l);
 char*	process(char *s);
 char*	process2(char *s);
+int		list_legality_check(t_list **l);
+int		only_legal_chars(char *s);
+char    *skip_space(char *s);
+void move_pointer_to_arg(t_list **l);
+	assign_node_type();
 
 //      T E S T S
 
