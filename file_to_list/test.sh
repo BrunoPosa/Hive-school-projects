@@ -8,6 +8,7 @@ make re
 make clean
 
 # Run the raytracer
+# ./file_to_list test_short.txt
 ./file_to_list test.txt
 
 # Display the image

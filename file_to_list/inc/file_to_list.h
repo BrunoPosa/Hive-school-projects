@@ -8,7 +8,8 @@
 typedef struct s_list
 {
 	char			*content;
-	char			*contect2;
+	char			*content2;
+	char			*content3;
 	struct s_list	*next;
 }				t_list;
 
@@ -46,7 +47,9 @@ int	file_to_list(char *file_name, t_list **l);
 // int		ft_list_push_back(t_list *l, char *content);
 void 	ft_list_print(t_list **l);
 void	process_list(t_list **l);
-
+void	remove_spaces(t_list **l);
+char*	process(char *s);
+char*	process2(char *s);
 
 //      T E S T S
 

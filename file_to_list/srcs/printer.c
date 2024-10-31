@@ -2,12 +2,30 @@
 
 void	ft_list_print(t_list **l)
 {
+	int i;
 	t_list *tmp;
 
+	i = 0;
 	tmp = *l;
 	while (tmp)
 	{
-		printf("%s\n", tmp->content);
+		printf("--- Node %d ---\n", i);
+		// printf("%s", tmp->content);
+	
+		// if(!tmp->next)
+		// 	printf("\n");
+
+		// printf("%s", tmp->content2);
+
+		// if(!tmp->next)
+		// 	printf("\n");
+
+		printf("%s", tmp->content3);
+
+		i++;
+			if(!tmp->next)
+			printf("\n");
+		printf("--- Node end ---\n\n");
 		tmp = tmp->next;
 	}
 }

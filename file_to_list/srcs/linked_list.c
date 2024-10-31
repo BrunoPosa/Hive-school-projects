@@ -32,7 +32,7 @@ void ft_lstadd_back(t_list **lst, t_list *new)
 
 
 
-// t_list *ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+// t_list *c(t_list *lst, void *(*f)(void *), void (*del)(void *))
 // {
 // 	t_list	*new_list;
 // 	t_list	*new_node;

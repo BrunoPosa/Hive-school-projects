@@ -1,0 +1,21 @@
+[H[J[0;33mObjects removed[0m
+cc -Wall -Wextra -Werror   -c -o srcs/main.o srcs/main.c
+cc -Wall -Wextra -Werror   -c -o srcs/printer.o srcs/printer.c
+cc -Wall -Wextra -Werror   -c -o srcs/linked_list.o srcs/linked_list.c
+cc -Wall -Wextra -Werror   -c -o srcs/file_to_list.o srcs/file_to_list.c
+cc -Wall -Wextra -Werror   -c -o srcs/process_list.o srcs/process_list.c
+cc -Wall -Wextra -Werror   -c -o srcs/utils.o srcs/utils.c
+[0;32m Files compiled [0m
+[0;33mObjects removed[0m
+--- Node 0 ---
+sp	-4,0,2				    1			255,0,0
+sp	-4,0,2				 1			255,0,0
+sp	-4,0,2	 1	255,0,0
+--- Node end ---
+
+--- Node 1 ---
+sp	4,0,2				    1			255,0,0
+sp	4,0,2				 1			255,0,0
+sp	4,0,2	 1	255,0,0
+--- Node end ---
+

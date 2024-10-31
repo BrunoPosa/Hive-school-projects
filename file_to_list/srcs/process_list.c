@@ -5,28 +5,16 @@ void	process_list(t_list **l)
 	remove_spaces(l);
 }
 
-void	remove_spaces(l)
+void remove_spaces(t_list **l)
 {
-	if(s)
-}
+    t_list *current = *l;
 
-char *function(char *s1)
-{
-	int i;
-	int j;
-	char *s2;
+    while (current) {
+        // current->content2 = "test\n";
+        current->content2 = process(current->content);
+		current->content3 = process2(current->content2);
 
-	s2 = (char *)malloc(sizeof(char) * ft_strlen(s1) + 1);
-
-	i = 0;
-	j = 0;
-
-	while (s1[i] && s1[i+1] == ' ')
-	{
-		i++;
-	}
-	s2[j] = s1[i];
-	j++;
-	i++;
+        current = current->next;
+    }
 }
 

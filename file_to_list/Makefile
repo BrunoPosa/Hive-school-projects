@@ -15,7 +15,8 @@ SRCS 		=	main.c \
 				printer.c \
 				linked_list.c \
 				file_to_list.c \
-				process_list.c
+				process_list.c \
+				utils.c
 
 HEADER = ./inc/file_to_list.h
 
