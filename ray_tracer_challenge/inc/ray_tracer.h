@@ -114,8 +114,15 @@ void		ft_color_screen(mlx_image_t *img, uint32_t colour);
 // 	M A T R I C E S
 
 float	**matrix_create(int x, int y);
+float	*create_matrix_new(int cols, int rows);
 void	matrix_assign(float **matrix, int x, int y, float f);
+void	matrix_assign_new(float *matrix, int row, int col, float value, unsigned int matrixsize);
 void	matrix_print(float **matrix, int x, int y);
+void	ft_matrix_print_new(float *matrix, unsigned int cols, unsigned int rows);
 void	matrix_fill(float **matrix, int x, int y, float f);
+void    matrix_fill_new(float *matrix, unsigned int width, unsigned int height, float value);
 int		matrix_compare(float **matrix1, float **matrix2, int x, int y);
+int		matrix_compare_new(float *matrix1, float *matrix2, unsigned int width, unsigned int height);
 float	**matrix_multiply(float **matrix1, float **matrix2, int x, int y);
+float	*matrix_multiply_new(float *matrix1, float *matrix2, int width, int height);
+t_tuple	*matrix_tuple_multiply_new(float *matrix, t_tuple *t);
