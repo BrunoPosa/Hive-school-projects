@@ -1,24 +1,24 @@
 int	assign_node_type(l);
 
 
-if current->content[0] == num, ',' 
-    return error
+// if current->s[0] == num, ',' 
+//     return error
 
 
-if (!strcmp(current->content[0] && !strcmp(content[1] == ' '))
+// if (!strcmp(current->s[0] && !strcmp(s[1] == ' '))
 
 
 
-A
-C
-L
-pl
-sp
-cy
+// A
+// C
+// L
+// pl
+// sp
+// cy
 
-check the first letters of current->content are etc.
+// check the first letters of current->content are etc.
 
-update the pointer, of the content.
+// update the pointer, of the content.
 
-update the type enum.
+// update the type enum.
 

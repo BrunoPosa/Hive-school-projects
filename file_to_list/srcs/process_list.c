@@ -8,20 +8,21 @@ int	process_list(t_list **l)
 		printf("KO - Illegal.\n");
 		return(ERROR);
 	}
-	// move_pointer_to_arg(l);
-	assign_node_type(l);
+	move_pointer_to_arg(l);
+	test_pos(l);  //test function
+	// assign_node_type(l);
 	// 		if first chars == pl -> this is enum 3
 	// 		if first chars = sp -> this is enum 4
-	move_pointer_to_arg();
-	check_chars_second_time();
-		if we have a lp, that wouldn't haave been passed so it fails the check
+	// move_pointer_to_arg();
+	// check_chars_second_time();
+		// if we have a lp, that wouldn't haave been passed so it fails the check
 	
 	// check count of camera, ambiant, light.()
 
-	take_next_arg_for_type();
+	// take_next_arg_for_type();
 	// remove_spaces(l);
 
-	test_pos(l);
+	
 
 	return (SUCCESS);
 }
@@ -81,16 +82,16 @@ void test_pos(t_list **l)
     }
 }
 
-void remove_spaces(t_list **l)
-{
-    t_list *current = *l;
+// void remove_spaces(t_list **l)
+// {
+//     t_list *current = *l;
 
-    while (current) {
-        current->content2 = "test\n";
-        current->content2 = process(current->content);
-		current->content3 = process2(current->content2);
+//     while (current) {
+//         current->content2 = "test\n";
+//         current->content2 = process(current->content);
+// 		current->content3 = process2(current->content2);
 
-        current = current->next;
-    }
-}
+//         current = current->next;
+//     }
+// }
 

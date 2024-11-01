@@ -8,8 +8,23 @@
 #define LEGAL_CHARS "0123456789.CALplcysp-, \n"
 #define LEGAL_CHARS "0123456789.-, \n"
 
+
+/*
+error types
+wrong file name
+illegal characters (1 and 2?)
+
+
+malloc fail
+
+
+
+*/ 
+
+
 typedef enum e_type
 {
+	unassigned,
 	camera,
 	cylinder,
 	plane,
@@ -41,9 +56,9 @@ typedef struct s_xyz_3d
 
 typedef struct s_list
 {
-	char			*content;
-	char			*content2;
-	char			*content3;
+	char			*s;
+	// char			*content2;
+	// char			*content3;
 	t_type			type;
 	float			alr;
 	t_rgb			rgb;
@@ -54,7 +69,6 @@ typedef struct s_list
 	float			sd;
 	float			cd;
 	float			ch;
-	int				pos;
 	struct s_list	*next;
 }	t_list;
 

@@ -1,11 +1,21 @@
 #include "../inc/file_to_list.h"
 
 
+// int	check_filename(char *filename)
+// {
+// 	check len.
+// 	last three chars == .rt
+// }
+
+
 int	file_to_list(char *filename, t_list **l)
 {
 	int fd;
 	char *line;
 	t_list *tmp;
+
+	// if(check_filename(filename))
+	// 	return(??)
 
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
