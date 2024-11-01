@@ -48,9 +48,11 @@ int	main(int argc, char **argv)
 
 	init_node(l);
 
-	// function to check the last two letters of argv are .rt
-	// len = ft_strlen(argv[1])
-	// strcmp(argv[len - 3], ".rt") 
+	if (does_file_end_with_rt(argv[1]) == 0)
+	{
+		printf("Error: file does not end with .rt\n");
+		return (ERROR);
+	}
 
 	file_to_list(argv[1], &l);
 	process_list(&l);
