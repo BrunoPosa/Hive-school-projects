@@ -8,8 +8,8 @@ make re
 make clean
 
 # Run the raytracer
-# ./file_to_list test_short.txt
-./file_to_list test_short.txt
+# ./file_to_list test_short.rt
+./file_to_list test_simple.rt
 
 # Display the image
 #cat output.ppm

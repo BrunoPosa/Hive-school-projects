@@ -124,12 +124,10 @@ int		list_legality_check(t_list **l);
 int		only_legal_chars(char *s);
 char    *skip_space(char *s);
 void move_pointer_to_arg(t_list **l);
-<<<<<<< HEAD
 	// assign_node_type();
-=======
-	assign_node_type();
+	//assign_node_type();
 int	does_file_end_with_rt(char *filename);
->>>>>>> 77f65e70ff6eb75576ad4fb22f36a33f903af1cc
+void	init_node(t_list **l);
 
 //      T E S T S
 

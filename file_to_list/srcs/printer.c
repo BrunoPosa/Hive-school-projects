@@ -9,26 +9,26 @@ void	ft_list_print(t_list **l)
 	tmp = *l;
 	while (tmp)
 	{
-		printf("--- Node %d ---\n", i);
+		printf("\n      --- Node %d ---\n\n", i);
 
-		// printf("s = %s\n", l->s);
-		// printf("type = %d\n", l->type);
-		// printf("alr = %f\n", l->alr);
-		// printf("rgb - r = %d", l->rgb->r);
-		// printf("rgb - g = %d", l->rgb->g);
-		// printf("rgb - b = %d", l->rgb->b);
-		// printf("xyz - x = %f", l->xyz->x);
-		// printf("xyz - y = %f", l->xyz->y);
-		// printf("xyz - z = %f", l->xyz->z);
-		// printf("xyz_3d - x = %f", l->xyz_3d->x);
-		// printf("xyz_3d - x = %f", l->xyz_3d->y);
-		// printf("xyz_3d - x = %f", l->xyz_3d->z);
-		// printf("fov = %d\n", l->fov);
-		// printf("lbr %f\n", l->lbr);
-		// printf("sd %f\n", l->sd);
-		// printf("cd %f\n", l->cd);
-		// printf("ch %f\n", l->ch);
-		// printf("next %x\n", l->next);
+		printf("s = %s\n", tmp->s);
+		printf("      type = %d\n", tmp->type);
+		printf("       alr = %f\n", tmp->alr);
+		printf("     rgb-r = %d\n", tmp->rgb.r);
+		printf("     rgb-g = %d\n", tmp->rgb.g);
+		printf("     rgb-b = %d\n", tmp->rgb.b);
+		printf("     xyz-x = %f\n", tmp->xyz.x);
+		printf("     xyz-y = %f\n", tmp->xyz.y);
+		printf("     xyz-z = %f\n", tmp->xyz.z);
+		printf("  xyz_3d-x = %f\n", tmp->xyz_3d.x);
+		printf("  xyz_3d-y = %f\n", tmp->xyz_3d.y);
+		printf("  xyz_3d-z = %f\n", tmp->xyz_3d.z);
+		printf("       fov = %d\n", tmp->fov);
+		printf("       lbr = %f\n", tmp->lbr);
+		printf("        sd = %f\n", tmp->sd);
+		printf("        cd = %f\n", tmp->cd);
+		printf("        ch = %f\n", tmp->ch);
+		printf(      "next = %p\n", tmp->next);
 
 
 		printf("%s", tmp->s);
@@ -42,7 +42,7 @@ void	ft_list_print(t_list **l)
 		i++;
 			if(!tmp->next)
 			printf("\n");
-		printf("--- Node end ---\n\n");
+		printf("      --- Node end ---\n\n");
 		tmp = tmp->next;
 	}
 }

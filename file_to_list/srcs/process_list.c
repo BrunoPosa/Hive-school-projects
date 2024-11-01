@@ -3,11 +3,13 @@ void test_pos(t_list **l);
 
 int	process_list(t_list **l)
 {
+
 	if (list_legality_check(l) == 0)
 	{
 		printf("KO - Illegal.\n");
 		return(ERROR);
 	}
+
 	move_pointer_to_arg(l);
 
 
@@ -41,10 +43,12 @@ void move_pointer_to_arg(t_list **l)
 
 int	list_legality_check(t_list **l)
 {
+
     t_list *current = *l;
 
     while (current)
 	{	
+			
 		if(!only_legal_chars(current->s))
 		{
 			printf("KO - illegal char!\n");

@@ -13,7 +13,8 @@ int	file_to_list(char *filename, t_list **l)
 	int fd;
 	char *line;
 	t_list *tmp;
-
+	// tmp = NULL;
+	// init_node(&tmp);
 	// if(check_filename(filename))
 	// 	return(??)
 
