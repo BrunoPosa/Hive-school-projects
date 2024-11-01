@@ -9,7 +9,8 @@ int	process_list(t_list **l)
 		return(ERROR);
 	}
 	move_pointer_to_arg(l);
-	test_pos(l);  //test function
+
+
 	// assign_node_type(l);
 	// 		if first chars == pl -> this is enum 3
 	// 		if first chars = sp -> this is enum 4
@@ -32,7 +33,7 @@ void move_pointer_to_arg(t_list **l)
 
     while (current)
 	{
-		current->content = skip_space(current->content);
+		current->s = skip_space(current->s);
 		current = current->next;
 	}
 }
@@ -44,7 +45,7 @@ int	list_legality_check(t_list **l)
 
     while (current)
 	{	
-		if(!only_legal_chars(current->content))
+		if(!only_legal_chars(current->s))
 		{
 			printf("KO - illegal char!\n");
 			return 0;
@@ -62,7 +63,7 @@ int	only_legal_chars(char *s)
 	i = -1;
 	while(s[++i])
 	{
-		if (ft_strchr(LEGAL_CHARS, s[i]) == NULL)
+		if (ft_strchr(LEGAL_CHARS1, s[i]) == NULL)
 		{
 			// printf("i=%d\n", i);
 			return (0);
@@ -70,28 +71,3 @@ int	only_legal_chars(char *s)
 	}
 	return (1);
 }
-
-void test_pos(t_list **l)
-{
-    t_list *current = *l;
-
-    while (current) {
-        current->pos = ft_strlen(current->content2);
-
-        current = current->next;
-    }
-}
-
-// void remove_spaces(t_list **l)
-// {
-//     t_list *current = *l;
-
-//     while (current) {
-//         current->content2 = "test\n";
-//         current->content2 = process(current->content);
-// 		current->content3 = process2(current->content2);
-
-//         current = current->next;
-//     }
-// }
-

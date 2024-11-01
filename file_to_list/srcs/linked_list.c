@@ -43,7 +43,7 @@ void ft_lstadd_back(t_list **lst, t_list *new)
 // 	new_list = NULL;
 // 	while (lst)
 // 	{
-// 		tmp = f(lst->content);
+// 		tmp = f(lst->s);
 // 		new_node = ft_lstnew(tmp);
 // 		if (!(new_node))
 // 		{

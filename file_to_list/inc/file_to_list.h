@@ -5,12 +5,25 @@
 #include <fcntl.h>
 #include "../../libft/libft.h"
 
-#define LEGAL_CHARS "0123456789.CALplcysp-, \n"
-#define LEGAL_CHARS "0123456789.-, \n"
+#define LEGAL_CHARS1 "0123456789.CALplcysp-, \n"
+#define LEGAL_CHARS2 "0123456789.-, \n"
 
 
 /*
 error types
+
+typedef enum e_error
+{
+	NO_ERROR,
+	E_FILE_NAME
+	E_ARGS,
+	E_MALLOC,
+	E_THREAD,
+	E_JOIN,
+	E_MUTEX
+}			t_error;
+
+
 wrong file name
 illegal characters (1 and 2?)
 
@@ -57,8 +70,6 @@ typedef struct s_xyz_3d
 typedef struct s_list
 {
 	char			*s;
-	// char			*content2;
-	// char			*content3;
 	t_type			type;
 	float			alr;
 	t_rgb			rgb;
@@ -113,7 +124,7 @@ int		list_legality_check(t_list **l);
 int		only_legal_chars(char *s);
 char    *skip_space(char *s);
 void move_pointer_to_arg(t_list **l);
-	assign_node_type();
+	// assign_node_type();
 
 //      T E S T S
 

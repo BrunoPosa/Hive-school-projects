@@ -16,9 +16,9 @@ int	assign_node_type(l);
 // sp
 // cy
 
-// check the first letters of current->content are etc.
+// check the first letters of current->s are etc.
 
-// update the pointer, of the content.
+// update the pointer, of the s.
 
 // update the type enum.
 
