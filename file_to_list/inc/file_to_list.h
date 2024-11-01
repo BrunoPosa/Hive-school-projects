@@ -114,6 +114,7 @@ int		only_legal_chars(char *s);
 char    *skip_space(char *s);
 void move_pointer_to_arg(t_list **l);
 	assign_node_type();
+int	does_file_end_with_rt(char *filename);
 
 //      T E S T S
 
