@@ -10,7 +10,6 @@ void	ft_list_print(t_list **l)
 	while (tmp)
 	{
 		printf("\n      --- Node %d ---\n\n", i);
-
 		printf("s = %s\n", tmp->s);
 		printf("      type = %d\n", tmp->type);
 		printf("       alr = %f\n", tmp->alr);
@@ -29,20 +28,8 @@ void	ft_list_print(t_list **l)
 		printf("        cd = %f\n", tmp->cd);
 		printf("        ch = %f\n", tmp->ch);
 		printf(      "next = %p\n", tmp->next);
-
-
-		printf("%s", tmp->s);
-	
-		if(!tmp->next)
-			printf("\n");
-
-		if(!tmp->next)
-			printf("\n");
-
 		i++;
-			if(!tmp->next)
-			printf("\n");
-		printf("      --- Node end ---\n\n");
+		printf("      --- Node end ---\n\n\n");
 		tmp = tmp->next;
 	}
 }
