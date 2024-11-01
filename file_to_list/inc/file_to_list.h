@@ -8,32 +8,16 @@
 #define LEGAL_CHARS1 "0123456789.CALplcysp-, \n"
 #define LEGAL_CHARS2 "0123456789.-, \n"
 
-
-/*
-error types
-
 typedef enum e_error
 {
-	NO_ERROR,
-	E_FILE_NAME
+	E_SUCCESS,
 	E_ARGS,
-	E_MALLOC,
-	E_THREAD,
-	E_JOIN,
-	E_MUTEX
+	E_FILE_NAME,
+	E_ILLEGAL_CHARS1,
+	E_ILLEGAL_CHARS2,
+	E_something,
+	E_something_else,
 }			t_error;
-
-
-wrong file name
-illegal characters (1 and 2?)
-
-
-malloc fail
-
-
-
-*/ 
-
 
 typedef enum e_type
 {
@@ -128,6 +112,10 @@ void move_pointer_to_arg(t_list **l);
 	//assign_node_type();
 int	does_file_end_with_rt(char *filename);
 void	init_node(t_list **l);
+
+
+// ERRORS
+int	ret_error(t_error error, t_list *l);
 
 //      T E S T S
 

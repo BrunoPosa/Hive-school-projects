@@ -17,7 +17,8 @@ SRCS 		=	main.c \
 				file_to_list.c \
 				process_list.c \
 				utils.c \
-				init.c
+				init.c \
+				error.c
 
 HEADER = ./inc/file_to_list.h
 

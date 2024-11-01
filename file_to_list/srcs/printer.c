@@ -9,8 +9,8 @@ void	ft_list_print(t_list **l)
 	tmp = *l;
 	while (tmp)
 	{
-		printf("\n      --- Node %d ---\n\n", i);
-		printf("s = %s\n", tmp->s);
+		printf("\n--- Node %d start ---\n\n", i);
+		printf("s = %s", tmp->s);
 		printf("      type = %d\n", tmp->type);
 		printf("       alr = %f\n", tmp->alr);
 		printf("     rgb-r = %d\n", tmp->rgb.r);
@@ -28,9 +28,10 @@ void	ft_list_print(t_list **l)
 		printf("        cd = %f\n", tmp->cd);
 		printf("        ch = %f\n", tmp->ch);
 		printf(      "next = %p\n", tmp->next);
-		i++;
-		printf("      --- Node end ---\n\n\n");
+
+		printf("--- Node %d end ---\n\n\n", i);
 		tmp = tmp->next;
+		i++;
 	}
 }
 
