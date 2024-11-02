@@ -5,9 +5,11 @@
 #include <fcntl.h>
 #include "../../libft/libft.h"
 
-#define LEGAL_CHARS1 "0123456789.CALplcysp-, \n"
-#define LEGAL_CHARS2 "0123456789.-, \n"
-#define LEGAL_CHARS3 "0123456789.-, \n"
+#define LEGAL_CHARS1 "0123456789.CALplcysp-, \n" //input
+#define LEGAL_CHARS2 "0123456789.-, \n" //after assign type
+#define LEGAL_CHARS3 "0123456789.-," //3dxyz, xyz, cd, ch, sd
+#define LEGAL_CHARS4 "0123456789." //alr, lbr
+#define LEGAL_CHARS5 "0123456789," //rgb
 
 typedef enum e_error
 {

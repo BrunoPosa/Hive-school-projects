@@ -30,7 +30,8 @@ SRCS 		=	main.c \
 				process_lbr.c \
 				process_rgb.c \
 				process_sd.c \
-				process_xyz.c
+				process_xyz.c \
+				process_utils.c
 
 HEADER = ./inc/file_to_list.h
 
