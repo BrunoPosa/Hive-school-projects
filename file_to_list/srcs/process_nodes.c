@@ -6,6 +6,7 @@ void process_ambiant(t_list *current)
 {
     printf("process ambiant\n");
     printf("data = %s\n", current->s);
+    process_alr(current);
     // alr - 0.0 - 1.0
     // skip_space(current->s);
     // rgb - [0-255], [0-255], [0-255]

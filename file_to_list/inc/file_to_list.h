@@ -18,7 +18,9 @@ typedef enum e_error
 	E_FILE_NAME,
 	E_ILLEGAL_CHARS1,
 	E_ILLEGAL_CHARS2,
-	E_something,
+	E_ILLEGAL_CHARS3,
+	E_ILLEGAL_CHARS4,
+	E_ILLEGAL_CHARS5,
 	E_something_else,
 }			t_error;
 
@@ -109,6 +111,9 @@ void	remove_spaces(t_list **l);
 // char*	process2(char *s);
 int		list_legality_check(t_list **l, char *legal);
 int		only_legal_chars(char *s, char* legal);
+int	only_legal_chars_n(char *s, char *legal, int n);
+int		len_until_space(char *s);
+
 char    *skip_space(char *s);
 void	move_pointer_to_arg(t_list **l);
 int		assign_node_type(t_list **l);
@@ -124,6 +129,16 @@ void	process_plane(t_list *current);
 void	process_light(t_list *current);
 void	process_sphere(t_list *current);
 void	process_ambiant(t_list *current);
+void process_alr(t_list *current);
+void process_xyz(t_list *current);
+void process_xyz_3d(t_list *current);
+void process_fov(t_list *current);
+void process_lbr(t_list *current);
+void process_sd(t_list *current);
+void process_cd(t_list *current);
+void process_ch(t_list *current);
+void process_rgb(t_list *current);
+
 
 void    check_count_of_types(t_list **l);
 
@@ -137,6 +152,7 @@ int	list_legality_check(t_list **l, char *legal);
 
 // ERRORS
 int	ret_error(t_error error, t_list *l);
+
 
 //      T E S T S
 

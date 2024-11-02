@@ -1,5 +1,23 @@
 #include "../inc/file_to_list.h"
 
+int	only_legal_chars_n(char *s, char *legal, int n)
+{
+	int	i;
+
+	i = -1;
+	while(s[++i] && i < n)
+	{
+		if (ft_strchr(legal, s[i]) == NULL)
+		{
+			printf("i=%d\n", i);
+            printf("%s\n", s);
+			return (0);
+		}
+		n--;
+	}
+	return (1);
+}
+
 int	only_legal_chars(char *s, char *legal)
 {
 	int	i;

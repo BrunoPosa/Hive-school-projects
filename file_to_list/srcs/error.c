@@ -30,14 +30,18 @@ static char	*ft_strerror(t_error error)
 {
 	if (error == E_ARGS)
 		return ("Invalid arguments");
-	// else if (error == E_MALLOC)
-	// 	return ("Malloc failed");
-	// else if (error == E_THREAD)
-	// 	return ("Thread creation failed");
-	// else if (error == E_JOIN)
-	// 	return ("Thread join failed");
-	// else if (error == E_MUTEX)
-	// 	return ("Mutex creation failed");
+	else if (error == E_FILE_NAME)
+		return ("file name");
+	else if (error == E_ILLEGAL_CHARS1)
+		return ("chars 1");
+	else if (error == E_ILLEGAL_CHARS2)
+		return ("chars 2");
+	else if (error == E_ILLEGAL_CHARS3)
+		return ("chars 3");
+	else if (error == E_ILLEGAL_CHARS4)
+		return ("chars 4");
+	else if (error == E_ILLEGAL_CHARS5)
+		return ("chars 5");
 	return (NULL);
 }
 
@@ -62,6 +66,7 @@ static char	*ft_strerror(t_error error)
 // 	if (data->mutex_died.init)
 // 		pthread_mutex_destroy(&data->mutex_died.mutex);
 // }
+
 
 int	ret_error(t_error error, t_list *l)
 {

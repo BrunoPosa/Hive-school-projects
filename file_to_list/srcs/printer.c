@@ -12,7 +12,7 @@ void	ft_list_print(t_list **l)
 		printf("\n--- Node %d start ---\n\n", i);
 		printf("s = %s", tmp->s);
 		printf("      type = %d\n", tmp->type);
-		// printf("       alr = %f\n", tmp->alr);
+		printf("       alr = %f\n", tmp->alr);
 		// printf("     rgb-r = %d\n", tmp->rgb.r);
 		// printf("     rgb-g = %d\n", tmp->rgb.g);
 		// printf("     rgb-b = %d\n", tmp->rgb.b);
