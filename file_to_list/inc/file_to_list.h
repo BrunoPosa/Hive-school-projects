@@ -102,15 +102,27 @@ int	file_to_list(char *file_name, t_list **l);
 void 	ft_list_print(t_list **l);
 int		process_list(t_list **l);
 void	remove_spaces(t_list **l);
-char*	process(char *s);
-char*	process2(char *s);
-int		list_legality_check(t_list **l);
-int		only_legal_chars(char *s);
+// char*	process(char *s);
+// char*	process2(char *s);
+int		list_legality_check(t_list **l, char *legal);
+int		only_legal_chars(char *s, char* legal);
 char    *skip_space(char *s);
-void move_pointer_to_arg(t_list **l);
-int	assign_node_type(t_list **l);
-int	does_file_end_with_rt(char *filename);
+void	move_pointer_to_arg(t_list **l);
+int		assign_node_type(t_list **l);
+int		does_file_end_with_rt(char *filename);
 void	init_node(t_list **l);
+
+// 	PROCESS NODES
+void process_nodes(t_list **l);
+void process_node(t_list *current);
+void process_camera(t_list *current);
+void process_cylinder(t_list *current);
+void process_plane(t_list *current);
+void process_light(t_list *current);
+void process_sphere(t_list *current);
+void process_ambiant(t_list *current);
+
+
 
 
 // ERRORS

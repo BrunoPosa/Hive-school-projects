@@ -9,7 +9,7 @@ make clean
 
 # Run the raytracer
 # ./file_to_list test_short.rt
-./file_to_list test_short.rt > log.txt && cat log.txt
+./file_to_list test_short.rt
 
 # Display the image
 #cat output.ppm

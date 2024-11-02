@@ -1,25 +1,21 @@
 #include "../inc/file_to_list.h"
-void test_pos(t_list **l);
 
 int	process_list(t_list **l)
 {
 
-	if (list_legality_check(l) == 0)
-	{
-		printf("KO - Illegal.\n");
-		return(ERROR);
-	}
+	// if (list_legality_check(l, LEGAL_CHARS1) == 0)
+	// {
+	// 	printf("KO - Illegal.\n");
+	// 	return(ERROR);
+	// }
 
+	list_legality_check(l, LEGAL_CHARS1); //only certain letters and numbers should be here
 	move_pointer_to_arg(l);
-
-
 	assign_node_type(l);
-	// 		if first chars == pl -> this is enum 3
-	// 		if first chars = sp -> this is enum 4
-	// move_pointer_to_arg();
-	// check_chars_second_time();
-		// if we have a lp, that wouldn't haave been passed so it fails the check
-	
+	list_legality_check(l, LEGAL_CHARS2); //now there should be only numbers and , etc
+	process_nodes(l);
+
+
 	// check count of camera, ambiant, light.()
 
 	// take_next_arg_for_type();
@@ -39,9 +35,23 @@ void move_pointer_to_arg(t_list **l)
 		current = current->next;
 	}
 }
+int	only_legal_chars(char *s, char *legal)
+{
+	int	i;
 
+	i = -1;
+	while(s[++i])
+	{
+		if (ft_strchr(legal, s[i]) == NULL)
+		{
+			// printf("i=%d\n", i);
+			return (0);
+		}
+	}
+	return (1);
+}
 
-int	list_legality_check(t_list **l)
+int	list_legality_check(t_list **l, char *legal)
 {
 
     t_list *current = *l;
@@ -49,7 +59,7 @@ int	list_legality_check(t_list **l)
     while (current)
 	{	
 			
-		if(!only_legal_chars(current->s))
+		if(!only_legal_chars(current->s, legal))
 		{
 			printf("KO - illegal char!\n");
 			return 0;
@@ -60,18 +70,3 @@ int	list_legality_check(t_list **l)
 	return 1;
 }
 
-int	only_legal_chars(char *s)
-{
-	int	i;
-
-	i = -1;
-	while(s[++i])
-	{
-		if (ft_strchr(LEGAL_CHARS1, s[i]) == NULL)
-		{
-			// printf("i=%d\n", i);
-			return (0);
-		}
-	}
-	return (1);
-}
