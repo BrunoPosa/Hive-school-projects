@@ -13,7 +13,7 @@ int	process_list(t_list **l)
 	move_pointer_to_arg(l);
 
 
-	// assign_node_type(l);
+	assign_node_type(l);
 	// 		if first chars == pl -> this is enum 3
 	// 		if first chars = sp -> this is enum 4
 	// move_pointer_to_arg();

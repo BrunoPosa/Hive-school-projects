@@ -4,7 +4,7 @@
 int	main(int argc, char **argv)
 {
 	t_list		*l;
-	t_error		exit_code;
+	// t_error		exit_code;
 
 	l = NULL;
 
@@ -24,7 +24,8 @@ int	main(int argc, char **argv)
 	}
 
 	file_to_list(argv[1], &l);
-	exit_code = process_list(&l);
+	// exit_code = 
+	process_list(&l);
 	// validate: checkif there are two camera, if camera >1 retuirn erroro
 	// assign_scene_object(l);
 

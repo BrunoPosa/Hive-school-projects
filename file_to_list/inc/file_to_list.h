@@ -108,8 +108,7 @@ int		list_legality_check(t_list **l);
 int		only_legal_chars(char *s);
 char    *skip_space(char *s);
 void move_pointer_to_arg(t_list **l);
-	// assign_node_type();
-	//assign_node_type();
+int	assign_node_type(t_list **l);
 int	does_file_end_with_rt(char *filename);
 void	init_node(t_list **l);
 

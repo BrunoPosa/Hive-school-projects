@@ -18,7 +18,8 @@ SRCS 		=	main.c \
 				process_list.c \
 				utils.c \
 				init.c \
-				error.c
+				error.c \
+				assign_node_type.c
 
 HEADER = ./inc/file_to_list.h
 
