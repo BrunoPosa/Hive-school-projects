@@ -68,7 +68,7 @@ void process_light(t_list *current)
 void process_sphere(t_list *current)
 {
     printf("process sphere\n");
-     printf("data = %s\n", current->s);
+    printf("data = %s\n", current->s);
     // xyz - [f], [f], [f]
     // skip_space(current->s);
     // sd - [f]

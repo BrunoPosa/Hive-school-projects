@@ -7,6 +7,7 @@
 
 #define LEGAL_CHARS1 "0123456789.CALplcysp-, \n"
 #define LEGAL_CHARS2 "0123456789.-, \n"
+#define LEGAL_CHARS3 "0123456789.-, \n"
 
 typedef enum e_error
 {
