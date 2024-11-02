@@ -5,7 +5,7 @@
 void process_ambiant(t_list *current)
 {
     printf("process ambiant\n");
-    printf("current->s = %s\n", current->s);
+    printf("data = %s\n", current->s);
     // alr - 0.0 - 1.0
     // skip_space(current->s);
     // rgb - [0-255], [0-255], [0-255]
@@ -16,7 +16,7 @@ void process_ambiant(t_list *current)
 void process_camera(t_list *current)
 {
     printf("process camera\n");
-     printf("current->s = %s\n", current->s);
+     printf("data = %s\n", current->s);
     // xyz - [f], [f], [f]
     // skip_space(current->s);
     // fov - [0-180]
@@ -28,7 +28,7 @@ void process_camera(t_list *current)
 void process_cylinder(t_list *current)
 {
     printf("process cylinder\n");
-     printf("current->s = %s\n", current->s);
+     printf("data = %s\n", current->s);
     // xyz - [f], [f], [f]
     // skip_space(current->s);
     // xyz_3d - [-1,1], [-1,1], [-1,1]
@@ -44,7 +44,7 @@ void process_cylinder(t_list *current)
 void process_plane(t_list *current)
 {
     printf("process plane\n");
-     printf("current->s = %s\n", current->s);
+     printf("data = %s\n", current->s);
     // xyz - [f], [f], [f]
     // skip_space(current->s);
     // xyz_3d - [-1,1], [-1,1], [-1,1]
@@ -56,7 +56,7 @@ void process_plane(t_list *current)
 void process_light(t_list *current)
 {
     printf("process light\n");
-     printf("current->s = %s\n", current->s);
+     printf("data = %s\n", current->s);
     // xyz - [f], [f], [f]
     // skip_space(current->s);
     // lbr - [0-1]
@@ -68,7 +68,7 @@ void process_light(t_list *current)
 void process_sphere(t_list *current)
 {
     printf("process sphere\n");
-     printf("current->s = %s\n", current->s);
+     printf("data = %s\n", current->s);
     // xyz - [f], [f], [f]
     // skip_space(current->s);
     // sd - [f]
@@ -111,7 +111,7 @@ void process_node(t_list *current)
     }
     else
     {
-        printf("Error: unknown type\nOMG DO SOMETHING\n");
+        printf("Error: has a blank line slipped through??\n\n");
     }
 }
 

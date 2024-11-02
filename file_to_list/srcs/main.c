@@ -30,8 +30,9 @@ int	main(int argc, char **argv)
 	// validate: checkif there are two camera, if camera >1 retuirn erroro
 	// assign_scene_object(l);
 
-	ft_list_print(&l);
-	//    free()
+	// ft_list_print(&l);
+
+
 	return (0);
 }
 

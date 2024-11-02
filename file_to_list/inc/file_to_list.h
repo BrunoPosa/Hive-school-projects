@@ -113,15 +113,22 @@ int		does_file_end_with_rt(char *filename);
 void	init_node(t_list **l);
 
 // 	PROCESS NODES
-void process_nodes(t_list **l);
-void process_node(t_list *current);
-void process_camera(t_list *current);
-void process_cylinder(t_list *current);
-void process_plane(t_list *current);
-void process_light(t_list *current);
-void process_sphere(t_list *current);
-void process_ambiant(t_list *current);
+void	process_nodes(t_list **l);
+void	process_node(t_list *current);
+void	process_camera(t_list *current);
+void	process_cylinder(t_list *current);
+void	process_plane(t_list *current);
+void	process_light(t_list *current);
+void	process_sphere(t_list *current);
+void	process_ambiant(t_list *current);
 
+void    check_count_of_types(t_list **l);
+
+
+// list legality
+
+int	only_legal_chars(char *s, char *legal);
+int	list_legality_check(t_list **l, char *legal);
 
 
 

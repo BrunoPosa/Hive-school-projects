@@ -25,8 +25,10 @@ int	file_to_list(char *filename, t_list **l)
 		return (-1);
 	}
 	line = get_next_line(fd);
+	// handle blank line
 	while (line)
 	{
+		// handle blank line. break?
 		tmp = ft_lstnew(line);
 		if (!tmp)
 		{

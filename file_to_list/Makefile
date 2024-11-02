@@ -21,6 +21,8 @@ SRCS 		=	main.c \
 				error.c \
 				assign_node_type.c \
 				process_nodes.c \
+				check_count_of_types.c \
+				list_legality.c 
 
 HEADER = ./inc/file_to_list.h
 
