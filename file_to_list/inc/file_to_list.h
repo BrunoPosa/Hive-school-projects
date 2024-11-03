@@ -10,6 +10,7 @@
 #define LEGAL_CHARS3 "0123456789.-," //3dxyz, xyz, cd, ch, sd
 #define LEGAL_CHARS4 "0123456789." //alr, lbr
 #define LEGAL_CHARS5 "0123456789," //rgb
+#define LEGAL_CHARS6 "0123456789" //fov
 
 typedef enum e_error
 {
@@ -25,6 +26,16 @@ typedef enum e_error
 	E_ALR_RANGE,
 	E_LBR_CHARS,
 	E_LBR_RANGE,
+	E_XYZ_CHARS,
+	E_XYZ_COMMA,
+	E_FLOAT_CHARS,
+	E_UINT_CHARS,
+	E_FOV_RANGE,
+	E_RGB_CHARS,
+	E_RGB_COMMA,
+	E_RGB_RANGE,
+	E_XYZ_3D_CHARS,
+	E_XYZ_3D_COMMA
 }			t_error;
 
 typedef enum e_type
@@ -133,14 +144,14 @@ void	process_light(t_list *current);
 void	process_sphere(t_list *current);
 void	process_ambiant(t_list *current);
 int		process_alr(t_list *current);
-void process_xyz(t_list *current);
-void process_xyz_3d(t_list *current);
-void process_fov(t_list *current);
-int process_lbr(t_list *current);
-void process_sd(t_list *current);
-void process_cd(t_list *current);
-void process_ch(t_list *current);
-void process_rgb(t_list *current);
+int		process_xyz(t_list *current);
+int		process_xyz_3d(t_list *current);
+int		process_fov(t_list *current);
+int		process_lbr(t_list *current);
+int		process_sd(t_list *current);
+int		process_cd(t_list *current);
+int		process_ch(t_list *current);
+int		process_rgb(t_list *current);
 
 int count_commas(char *s, int target);
 

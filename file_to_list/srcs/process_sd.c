@@ -1,15 +1,46 @@
 #include "../inc/file_to_list.h"
 
 /*
-find_len_until_space()
-int	only_legal_chars(char *s, char *LEGAL_CHARS4)
-float
-
 we allow negatives, but that means it is not there
-
-
-ft_atof
-
+float
 same as sd, cd, ch
-
 */
+
+int process_sd(t_list *current)
+{
+    printf("process sd\n");
+
+    int i;
+    char *sub_string;
+
+// find len until space
+    i = len_until_space(current->s);
+// printf("LEN UNITL SPACE = %d\n", i);
+
+// iscolate argument
+    sub_string = ft_substr(current->s, 0, i);
+    printf("substring = %s\n", sub_string);
+
+
+// check if only legal chars
+  if(!only_legal_chars(sub_string, LEGAL_CHARS3))
+    return (ret_error(E_FLOAT_CHARS, current));
+
+// convert argument to float
+    current->sd = 2.4;
+    // current-> sd = ft_atof(current->s);
+
+// // check within range
+//     if (current->sd < 0.0 || current->sd > 1.0)
+//         return (ret_error(E_ALR_RANGE, current));
+
+// move pointner past argument
+    current->s = current->s + i;
+
+// move pointer to next argument
+    current->s = skip_space(current->s);
+    // printf("data = %s\n", current->s);
+free(sub_string);
+
+return (E_SUCCESS);
+}

@@ -1,17 +1,13 @@
 #include "../inc/file_to_list.h"
 
 /*
-[-1,1], [-1,1], [-1,1]
-
-minimum = -1
-maximum = 1
-3x floats
-2x commas
+// fov - [0-180]
+int
 */
 
-int process_xyz_3d(t_list *current)
+int process_fov(t_list *current)
 {
-    printf("process xyz_3d\n");
+    printf("process fov\n");
 
     int i;
     char *sub_string;
@@ -26,22 +22,15 @@ int process_xyz_3d(t_list *current)
 
 
 // check if only legal chars
-  if(!only_legal_chars(sub_string, LEGAL_CHARS3))
-    return (ret_error(E_XYZ_3D_CHARS, current));
-
-// check for two commas
-    if (!count_commas(sub_string, 2))
-        return (ret_error(E_XYZ_3D_COMMA, current));
-
-// split into three strings?
+//   if(!only_legal_chars(sub_string, LEGAL_CHARS6))
+//     return (ret_error(E_UINT_CHARS, current));
 
 // convert argument to float
-    current->xyz_3d.x = 2.4;
-    current->xyz_3d.y = 2.4;
-    current->xyz_3d.z = 2.4;
-
-// // check within range
-
+    current->fov = ft_atoi(sub_string);
+printf("-----------------fov = %d\n", current->fov);
+// // check within range 0-180
+//     if (!current->fov < 0 || !current->fov > 180)
+//         return (ret_error(E_FOV_RANGE, current));
 
 // move pointner past argument
     current->s = current->s + i;
