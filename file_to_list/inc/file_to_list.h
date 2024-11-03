@@ -21,7 +21,10 @@ typedef enum e_error
 	E_ILLEGAL_CHARS3,
 	E_ILLEGAL_CHARS4,
 	E_ILLEGAL_CHARS5,
-	E_something_else,
+	E_ALR_CHARS,
+	E_ALR_RANGE,
+	E_LBR_CHARS,
+	E_LBR_RANGE,
 }			t_error;
 
 typedef enum e_type
@@ -129,15 +132,18 @@ void	process_plane(t_list *current);
 void	process_light(t_list *current);
 void	process_sphere(t_list *current);
 void	process_ambiant(t_list *current);
-void process_alr(t_list *current);
+int		process_alr(t_list *current);
 void process_xyz(t_list *current);
 void process_xyz_3d(t_list *current);
 void process_fov(t_list *current);
-void process_lbr(t_list *current);
+int process_lbr(t_list *current);
 void process_sd(t_list *current);
 void process_cd(t_list *current);
 void process_ch(t_list *current);
 void process_rgb(t_list *current);
+
+int count_commas(char *s, int target);
+
 
 
 void    check_count_of_types(t_list **l);

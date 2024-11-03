@@ -42,6 +42,16 @@ static char	*ft_strerror(t_error error)
 		return ("chars 4");
 	else if (error == E_ILLEGAL_CHARS5)
 		return ("chars 5");
+	else if (error == E_ALR_CHARS)
+		return ("alr chars");
+	else if (error == E_ALR_RANGE)
+		return ("alr range");
+	else if (error == E_LBR_CHARS)
+		return ("lbr chars");
+	else if (error == E_LBR_RANGE)
+		return ("lbr range");
+	else if (error == E_SUCCESS)
+		return ("Success");
 	return (NULL);
 }
 

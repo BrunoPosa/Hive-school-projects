@@ -13,3 +13,23 @@ int len_until_space(char *s)
     return (i);
 }
 
+int count_commas(char *s, int target)
+{
+    int i;
+    int count;
+
+    i = 0;
+    count = 0;
+    while (s[i])
+    {
+        if (s[i] == ',')
+            count++;
+        i++;
+    }
+    if (target == -1)
+        return (count);
+    if (count != target)
+        return (0);
+    return (1);
+}
+

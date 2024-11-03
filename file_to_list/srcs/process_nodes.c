@@ -58,9 +58,11 @@ void process_light(t_list *current)
 {
     printf("process light\n");
      printf("data = %s\n", current->s);
+     
     // xyz - [f], [f], [f]
     // skip_space(current->s);
     // lbr - [0-1]
+    process_lbr(current);
     // skip_space(current->s);
     // rgb - [0-255], [0-255], [0-255]
     // ft_anything_else_in_string_say_no(current->s);
