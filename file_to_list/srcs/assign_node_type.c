@@ -46,6 +46,7 @@ int	assign_node_type(t_list **l)
             current->type = sphere;
         else if (!ft_strncmp(current->s, "cy", 2))
             current->type = cylinder;
+        //if none of these, return error? e.g. "yc" Should we add a final 'else' for that?
         current = current->next;
     }
     move_past_type(l);

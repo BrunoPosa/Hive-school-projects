@@ -10,8 +10,10 @@ int process_fov(t_list *current)
     printf("process fov\n");
 
     int i;
+    int atoi_overflow;
     char *sub_string;
 
+    atoi_overflow = 0;
 // find len until space
     i = len_until_space(current->s);
 // printf("LEN UNITL SPACE = %d\n", i);
@@ -26,7 +28,7 @@ int process_fov(t_list *current)
 //     return (ret_error(E_UINT_CHARS, current));
 
 // convert argument to float
-    current->fov = ft_atoi(sub_string);
+    current->fov = ft_atoi(sub_string, &atoi_overflow);
 printf("-----------------fov = %d\n", current->fov);
 // // check within range 0-180
 //     if (!current->fov < 0 || !current->fov > 180)

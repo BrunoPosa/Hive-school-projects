@@ -2,38 +2,38 @@
 
 int process_alr(t_list *current)
 {
-    printf("process alr\n");
+	printf("process alr\n");
 
-    int i;
-    char *sub_string;
+	int i;
+	int	atoi_overflow;
+	char *sub_string;
 
 // find len until space
-    i = len_until_space(current->s);
+	i = len_until_space(current->s);
 // printf("LEN UNITL SPACE = %d\n", i);
-
+	atoi_overflow = 0;
 // iscolate argument
-    sub_string = ft_substr(current->s, 0, i);
-    printf("substring = %s\n", sub_string);
+	sub_string = ft_substr(current->s, 0, i);
+	printf("substring = %s\n", sub_string);
 
 
 // check if only legal chars
-  if(!only_legal_chars(sub_string, LEGAL_CHARS4))
-    return (ret_error(E_ALR_CHARS, current));
+	if(!only_legal_chars(sub_string, LEGAL_CHARS4))
+		return (ret_error(E_ALR_CHARS, current));
 
 // convert argument to float
-    current->alr = 2.4;
-    // current-> alr = ft_atof(current->s);
+	current->alr = ft_atod(current->s, &atoi_overflow);
 
 // // check within range
-//     if (current->alr < 0.0 || current->alr > 1.0)
-//         return (ret_error(E_ALR_RANGE, current));
+	if (current->alr < 0 || current->alr > 1 || atoi_overflow)
+		return (ret_error(E_ALR_RANGE, current));
 
 // move pointner past argument
-    current->s = current->s + i;
+	current->s = current->s + i;
 
 // move pointer to next argument
-    current->s = skip_space(current->s);
-    // printf("data = %s\n", current->s);
+	current->s = skip_space(current->s);
+	// printf("data = %s\n", current->s);
 free(sub_string);
 //  0.0 - 1.0
 
