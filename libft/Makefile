@@ -3,6 +3,7 @@ NAME	= libft.a
 CC	= cc
 
 SRCS	= 	ft_atoi.c \
+			ft_atod.c \
 			ft_bzero.c \
 			ft_calloc.c \
 			ft_isalnum.c \
@@ -37,8 +38,7 @@ SRCS	= 	ft_atoi.c \
 			ft_tolower.c \
 			ft_toupper.c \
 			get_next_line.c \
-			get_next_line_utils.c \
-			ft_atof.c
+			get_next_line_utils.c 
 
 OBJCS	= $(SRCS:.c=.o)
 

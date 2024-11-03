@@ -1,42 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   ft_atod.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/07 21:41:07 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/03 15:02:00 by bposa            ###   ########.fr       */
+/*   Created: 2024/11/02 18:56:36 by jwadding          #+#    #+#             */
+/*   Updated: 2024/11/03 15:01:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <limits.h>
 
-int	ft_atoi(const char *s, int *error)
+double	ft_atod(char *s, int *err)
 {
-	long long	sign;
-	long long	result;
+	double	divisor;
+	double	fraction;
+	double	wholenum;
 
-	sign = 1;
-	result = 0;
-	if (!s || !error)
+	divisor = 1.0;
+	fraction = 0.0;
+	wholenum = (double)ft_atoi(s, err);
+	if (!s || !*s || !err || *err)
 		return (-1);
-	while (*s == ' ' || (*s >= 9 && *s <= 13))
-		s++;
 	if (*s == '-' || *s == '+')
-		sign = ',' - *s++;
-	while (*s && (*s >= '0' && *s <= '9'))
+		s++;
+	while (*s && ft_isdigit(*s))
+		s++;
+	if (s && *s++ == '.')
 	{
-		if (result > LLONG_MAX / 10
-			|| (result == LLONG_MAX / 10 && *s - '0' > LLONG_MAX % 10))
+		while (s && *s && *s >= '0' && *s <= '9')
 		{
-			*error = 1;
-			if (sign == -1)
-				return (0);
-			return (-1);
+			divisor *= 10.0;
+			fraction = fraction + (double)(*s - '0') / divisor;
+			s++;
 		}
-		result = result * 10 + *s++ - '0';
 	}
-	return (sign * result);
+	if (wholenum < 0)
+		return (wholenum - fraction);
+	return (wholenum + fraction);
 }
