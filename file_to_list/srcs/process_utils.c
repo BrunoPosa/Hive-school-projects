@@ -33,3 +33,17 @@ int count_commas(char *s, int target)
     return (1);
 }
 
+void	free_array(char **s)
+{
+	int	i;
+
+	i = 0;
+	if (!s)
+		return ;
+	while (s[i])
+	{
+		free(s[i]);
+		i++;
+	}
+	free(s);
+}

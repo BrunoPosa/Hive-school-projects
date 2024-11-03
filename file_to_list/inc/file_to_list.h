@@ -35,7 +35,8 @@ typedef enum e_error
 	E_RGB_COMMA,
 	E_RGB_RANGE,
 	E_XYZ_3D_CHARS,
-	E_XYZ_3D_COMMA
+	E_XYZ_3D_COMMA,
+	E_SPLIT
 }			t_error;
 
 typedef enum e_type
@@ -154,6 +155,8 @@ int		process_ch(t_list *current);
 int		process_rgb(t_list *current);
 
 int count_commas(char *s, int target);
+
+void	free_array(char **s);
 
 
 

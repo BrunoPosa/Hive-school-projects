@@ -31,6 +31,14 @@ int process_xyz(t_list *current)
         return (ret_error(E_XYZ_COMMA, current));
 
 // split into three strings?
+// // split into three strings?
+//     char **vec = ft_split(sub_string, ',');
+//     if (!vec)
+//         return (ret_error(E_SPLIT, current));   
+// 	current->xyz.x = ft_atof(vec[0]);
+// 	current->xyz.y = ft_atof(vec[1]);
+// 	current->xyz.z = ft_atof(vec[2]);
+// 	free_arr(vec);
 
 // convert argument to float
     current->xyz.x = 2.4;

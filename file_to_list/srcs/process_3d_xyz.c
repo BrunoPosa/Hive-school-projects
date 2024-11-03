@@ -33,7 +33,14 @@ int process_xyz_3d(t_list *current)
     if (!count_commas(sub_string, 2))
         return (ret_error(E_XYZ_3D_COMMA, current));
 
-// split into three strings?
+// // split into three strings?
+//     char **vec = ft_split(sub_string, ',');
+//     if (!vec)
+//         return (ret_error(E_SPLIT, current));   
+// 	current->xyz_3d.x = ft_atof(vec[0]);
+// 	current->xyz_3d.y = ft_atof(vec[1]);
+// 	current->xyz_3d.z = ft_atof(vec[2]);
+// 	free_arr(vec);
 
 // convert argument to float
     current->xyz_3d.x = 2.4;
