@@ -22,8 +22,10 @@ int	only_legal_chars(char *s, char *legal)
 {
 	int	i;
 
-	i = -1;
-	while(s[++i])
+	i = 0;
+	if (!s)
+		return (0);
+	while(s[i])
 	{
 		if (ft_strchr(legal, s[i]) == NULL)
 		{
@@ -31,6 +33,7 @@ int	only_legal_chars(char *s, char *legal)
             printf("%s\n", s);
 			return (0);
 		}
+		i++;
 	}
 	return (1);
 }

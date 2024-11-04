@@ -80,18 +80,19 @@ static char	*ft_strerror(t_error error)
 
 int	ret_error(t_error error, t_list *l)
 {
-	if (l)
-	{
-		// if (l->s)
-		// 	free(l->s);
-		// if (l->rgb.b)
-		// 	free(l->rgb.b);
-		// if (l)
-			free(l);
-	}
+	(void)l;
+	// if (l)
+	// {
+	// 	// if (l->s)
+	// 	// 	free(l->s);
+	// 	// if (l->rgb.b)
+	// 	// 	free(l->rgb.b);
+	// 	// if (l)
+	// 		free(l);
+	// }
 	if (error != E_SUCCESS)
 	{
-		write(2, "Error: ", 7);
+		printf("Hold your horses, Error!!\n");
 		write(2, ft_strerror(error), ft_strlen(ft_strerror(error)));
 		write(2, "\n", 1);
 		return (0);

@@ -12,6 +12,7 @@
 #define LEGAL_CHARS5 "0123456789," //rgb
 #define LEGAL_CHARS6 "0123456789" //fov
 
+//should this be called exit status? return codes?
 typedef enum e_error
 {
 	E_SUCCESS,
@@ -36,7 +37,8 @@ typedef enum e_error
 	E_RGB_RANGE,
 	E_XYZ_3D_CHARS,
 	E_XYZ_3D_COMMA,
-	E_SPLIT
+	E_SPLIT,
+	E_MALLOC
 }			t_error;
 
 typedef enum e_type
@@ -143,7 +145,7 @@ void	process_cylinder(t_list *current);
 void	process_plane(t_list *current);
 void	process_light(t_list *current);
 void	process_sphere(t_list *current);
-void	process_ambiant(t_list *current);
+int		process_ambiant(t_list *current);
 int		process_alr(t_list *current);
 int		process_xyz(t_list *current);
 int		process_xyz_3d(t_list *current);
@@ -155,6 +157,7 @@ int		process_ch(t_list *current);
 int		process_rgb(t_list *current);
 
 int count_commas(char *s, int target);
+int	count_commas_between(char *s);
 
 void	free_array(char **s);
 
