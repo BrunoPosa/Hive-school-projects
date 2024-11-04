@@ -38,6 +38,10 @@ int	only_legal_chars(char *s, char *legal)
 	return (1);
 }
 
+/*
+	Goes through list looking for illegal characters.
+	Returns 0 if found an illegal char.
+*/
 int	list_legality_check(t_list **l, char *legal)
 {
     t_list *current = *l;

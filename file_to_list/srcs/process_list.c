@@ -9,8 +9,9 @@ int	process_list(t_list **l)
 	// 	return(ERROR);
 	// }
 
-	list_legality_check(l, LEGAL_CHARS1); //only certain letters and numbers should be here
-	move_pointer_to_arg(l);
+	if (!list_legality_check(l, LEGAL_CHARS1))
+		return (ret_error(E_ILLEGAL_CHARS1, *l));
+	move_pointers_to_args(l);
 	assign_node_type(l);
 	list_legality_check(l, LEGAL_CHARS2); //now there should be only numbers and , etc
 	process_nodes(l);
@@ -26,7 +27,7 @@ int	process_list(t_list **l)
 
 	return (SUCCESS);
 }
-void move_pointer_to_arg(t_list **l)
+void move_pointers_to_args(t_list **l)
 {
 	t_list *current = *l;
 

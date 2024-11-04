@@ -132,7 +132,7 @@ int	only_legal_chars_n(char *s, char *legal, int n);
 int		len_until_space(char *s);
 
 char    *skip_space(char *s);
-void	move_pointer_to_arg(t_list **l);
+void	move_pointers_to_args(t_list **l);
 int		assign_node_type(t_list **l);
 int		does_file_end_with_rt(char *filename);
 void	init_node(t_list **l);
