@@ -20,13 +20,13 @@ int process_alr(t_list *current)
 
 
 // check if only legal chars
-	if(!only_legal_chars(sub_string, LEGAL_CHARS4))
-		return (ret_error(E_ALR_CHARS, current));
+	if(!only_legal_chars(sub_string, LEGAL_CHARS4) || !is_number_valid(sub_string))
+		return (free(sub_string), ret_error(E_ALR_CHARS, current));
 
 // convert argument to float and check if it's in range
 	current->alr = ft_atod(current->s, &atoi_overflow);
 	if (current->alr < 0 || current->alr > 1 || atoi_overflow)
-		return (ret_error(E_ALR_RANGE, current));
+		return (free(sub_string), ret_error(E_ALR_RANGE, current));
 
 // move pointner past argument
 	current->s = current->s + i;

@@ -18,30 +18,38 @@ int process_ambiant(t_list *current)
 		return (status);
 	// ft_anything_else_in_string_say_no(current->s);
 	if (current->s[0] != '\0' && current->s[0] != '\n')
-		return (ret_error(E_AMBIANT_EXTRA, current));
+		return (ret_error(E_EXTRA_CHARS, current));
 	printf("current->s=%s\n", current->s);
 	return (E_SUCCESS);
 }
 
-void process_camera(t_list *current)
+int	process_camera(t_list *current)
 {
 	printf("\nPROCESS CAMERA\n");
-	printf("data = %s\n", current->s);
+	printf("data =%s\n", current->s);
+	int	status;
 
+	status = 0;
 	// xyz - [f], [f], [f]
-	process_xyz(current);
+	status = process_xyz(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
 
 	// xyz_3d - [-1,1], [-1,1], [-1,1]
-	process_xyz_3d(current);
-
+	status = process_xyz_3d(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
 	// fov - [0-180]
-	process_fov(current);
-
-
-
+	status = process_fov(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
 
 	// ft_anything_else_in_string_say_no(current->s);
+	if (current->s[0] != '\0' && current->s[0] != '\n')
+		return (ret_error(E_EXTRA_CHARS, current));
+	return (E_SUCCESS);
 }
+
 void process_cylinder(t_list *current)
 {
 	printf("\nPROCESS CYLINDER\n");
@@ -122,12 +130,13 @@ void process_node(t_list *current)
 	{
 		printf("\n>> we have an ambiant\n");
 		if (process_ambiant(current) != E_SUCCESS)
-			printf(">> !!! Error: ambiant failed\n");
+			printf(">> !!! Error: ambiant failed  !!! <<\n");
 	}
 	else if (current->type == camera)
 	{
 		printf("\n>> we have a camera\n");
-		process_camera(current);
+		if (process_camera(current) != E_SUCCESS)
+			printf(">> !!! Error: camera failed  !!! <<\n");
 	}
 	else if (current->type == light)
 	{

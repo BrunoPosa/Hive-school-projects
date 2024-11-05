@@ -11,6 +11,12 @@
 #define LEGAL_CHARS4 "0123456789." //alr, lbr
 #define LEGAL_CHARS5 "0123456789," //rgb
 #define LEGAL_CHARS6 "0123456789" //fov
+#ifndef TRUE
+# define TRUE 1
+#endif
+#ifndef FALSE
+# define FALSE 0
+#endif
 
 //should this be called exit status? return codes?
 typedef enum e_error
@@ -40,7 +46,8 @@ typedef enum e_error
 	E_SPLIT,
 	E_MALLOC,
 	E_WRONG_TYPE,
-	E_AMBIANT_EXTRA
+	E_EXTRA_CHARS,
+	E_XYZ_RANGE
 }			t_error;
 
 typedef enum e_type
@@ -63,16 +70,16 @@ typedef struct s_rgb
 
 typedef struct s_xyz
 {
-	float x;
-	float y;
-	float z;
+	double x;
+	double y;
+	double z;
 } t_xyz;
 
 typedef struct s_xyz_3d
 {
-	float x;
-	float y;
-	float z;
+	double x;
+	double y;
+	double z;
 } t_xyz_3d;
 
 typedef struct s_list
@@ -142,7 +149,7 @@ void	init_node(t_list **l);
 // 	PROCESS NODES
 void	process_nodes(t_list **l);
 void	process_node(t_list *current);
-void	process_camera(t_list *current);
+int		process_camera(t_list *current);
 void	process_cylinder(t_list *current);
 void	process_plane(t_list *current);
 void	process_light(t_list *current);
@@ -160,6 +167,7 @@ int		process_rgb(t_list *current);
 
 int count_commas(char *s, int target);
 int	count_commas_between(char *s);
+int	is_number_valid(char *num);
 
 void	free_array(char **s);
 

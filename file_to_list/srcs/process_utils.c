@@ -65,6 +65,41 @@ int	count_commas_between(char *s)
 	return (comma);
 }
 
+/*
+ * Returns TRUE (1) if the string until comma or space is a valid number.
+ * FALSE (0) if:
+ * - string is null
+ * - there is an extraneous '-'
+ * - there is more than one '.'
+ * - the last character is a '.'
+ */
+int	is_number_valid(char *num)
+{
+	int	i;
+	int	dot;
+
+	i = 0;
+	dot = 0;
+	if (!num)
+		return (FALSE);
+	if (num[i] == '-')
+		i++;
+	while (num[i] && num[i] != ',' && num[i] != ' ')
+	{
+		if (num[i] == '-')
+			return (FALSE);
+		if (num[i++] == '.')
+		{
+			dot++;
+			if (dot > 1)
+				return (FALSE);
+		}
+	}
+	if (num[ft_strlen(num) - 1] == '.')
+		return (FALSE);
+	return (TRUE);
+}
+
 void	free_array(char **s)
 {
 	int	i;

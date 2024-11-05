@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 21:41:07 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/03 15:02:00 by bposa            ###   ########.fr       */
+/*   Updated: 2024/11/05 21:55:32 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ int	ft_atoi(const char *s, int *error)
 		sign = ',' - *s++;
 	while (*s && (*s >= '0' && *s <= '9'))
 	{
-		if (result > LLONG_MAX / 10
-			|| (result == LLONG_MAX / 10 && *s - '0' > LLONG_MAX % 10))
+		if (result > INT_MAX / 10
+			|| (result == INT_MAX / 10 && *s - '0' > INT_MAX % 10))
 		{
 			*error = 1;
 			if (sign == -1)

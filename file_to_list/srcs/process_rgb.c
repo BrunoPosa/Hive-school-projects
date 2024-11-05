@@ -40,8 +40,8 @@ printf("current->s = %s\n", current->s);
 	printf("substring = %s\n", sub_string);
 
 // check if only legal chars !!!!SEGFAULT HERE!!!!
-	// if(!only_legal_chars(sub_string, LEGAL_CHARS5))
-	// 	return (free(sub_string), ret_error(E_RGB_CHARS, current));
+	if(!only_legal_chars(sub_string, LEGAL_CHARS5))
+		return (free(sub_string), ret_error(E_RGB_CHARS, current));
 
 // // check for two commas
 	if (count_commas_between(sub_string) != 2)
@@ -50,14 +50,14 @@ printf("current->s = %s\n", current->s);
 // split into three strings?
     rgb = ft_split(sub_string, ',');
 	if (!rgb)
-		return (free(sub_string), ret_error(E_SPLIT, current));   
+		return (free(sub_string), ret_error(E_SPLIT, current));
 	current->rgb.r = ft_atoi(rgb[0], &atoi_overflow);
 	current->rgb.g = ft_atoi(rgb[1], &atoi_overflow);
 	current->rgb.b = ft_atoi(rgb[2], &atoi_overflow);
 	free_array(rgb);
 
 
-// // // check within range
+// check within range
     if (atoi_overflow
 		|| current->rgb.r < 0 || current->rgb.r > 255
 		|| current->rgb.g < 0 || current->rgb.g > 255

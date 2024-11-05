@@ -20,15 +20,20 @@ int process_fov(t_list *current)
 
 // iscolate argument
     sub_string = ft_substr(current->s, 0, i);
+    if (sub_string == NULL)
+		return (ret_error(E_MALLOC, current));
     printf("substring = %s\n", sub_string);
 
-
 // check if only legal chars
-//   if(!only_legal_chars(sub_string, LEGAL_CHARS6))
-//     return (ret_error(E_UINT_CHARS, current));
+    if(!only_legal_chars(sub_string, LEGAL_CHARS6))
+        return (free(sub_string), ret_error(E_UINT_CHARS, current));
 
-// convert argument to float
+// convert argument to int
     current->fov = ft_atoi(sub_string, &atoi_overflow);
+    if (atoi_overflow
+        || current->fov < 0
+        || current->fov > 180)
+        return (free(sub_string), ret_error(E_FOV_RANGE, current));
 printf("-----------------fov = %d\n", current->fov);
 // // check within range 0-180
 //     if (!current->fov < 0 || !current->fov > 180)

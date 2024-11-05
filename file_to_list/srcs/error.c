@@ -81,6 +81,7 @@ static char	*ft_strerror(t_error error)
 int	ret_error(t_error error, t_list *l)
 {
 	(void)l;
+	(void)ft_strerror(error);
 	// if (l)
 	// {
 	// 	// if (l->s)
@@ -92,10 +93,10 @@ int	ret_error(t_error error, t_list *l)
 	// }
 	if (error != E_SUCCESS)
 	{
-		printf("Hold your horses, Error!!\n");
-		write(2, ft_strerror(error), ft_strlen(ft_strerror(error)));
-		write(2, "\n", 1);
-		return (0);
+		printf("%sHold your horses, Error!!%s\n", YELLOW, ENDCLR);
+		// write(2, ft_strerror(error), ft_strlen(ft_strerror(error)));
+		// write(2, "\n", 1);
+		return ((int)error);
 	}
-	return (1);
+	return (0);
 }
