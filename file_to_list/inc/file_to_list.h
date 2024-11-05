@@ -38,7 +38,9 @@ typedef enum e_error
 	E_XYZ_3D_CHARS,
 	E_XYZ_3D_COMMA,
 	E_SPLIT,
-	E_MALLOC
+	E_MALLOC,
+	E_WRONG_TYPE,
+	E_AMBIANT_EXTRA
 }			t_error;
 
 typedef enum e_type

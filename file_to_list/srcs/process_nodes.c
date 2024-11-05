@@ -16,9 +16,11 @@ int process_ambiant(t_list *current)
 	status = process_rgb(current);
 	if (status != E_SUCCESS)
 		return (status);
-	printf("current->s = %s\n", current->s);
-	return (E_SUCCESS);
 	// ft_anything_else_in_string_say_no(current->s);
+	if (current->s[0] != '\0' && current->s[0] != '\n')
+		return (ret_error(E_AMBIANT_EXTRA, current));
+	printf("current->s=%s\n", current->s);
+	return (E_SUCCESS);
 }
 
 void process_camera(t_list *current)
