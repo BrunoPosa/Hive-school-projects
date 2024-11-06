@@ -104,7 +104,10 @@ typedef struct s_list
 #ifndef WINSIZE
 # define WINSIZE 900
 #endif
-#define EPSILON 0.00001
+
+#ifndef EPSILON
+# define EPSILON 0.00001
+#endif
 
 //	  A L I A S E S
 
