@@ -152,7 +152,7 @@ void	process_node(t_list *current);
 int		process_camera(t_list *current);
 void	process_cylinder(t_list *current);
 void	process_plane(t_list *current);
-void	process_light(t_list *current);
+int		process_light(t_list *current);
 void	process_sphere(t_list *current);
 int		process_ambiant(t_list *current);
 int		process_alr(t_list *current);

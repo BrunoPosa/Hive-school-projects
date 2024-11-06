@@ -90,21 +90,31 @@ void process_plane(t_list *current)
 	// ft_anything_else_in_string_say_no(current->s);
 }
 
-void process_light(t_list *current)
+int process_light(t_list *current)
 {
+	int	status;
+
+	status = 0;
 	printf("\nPROCESS LIGHT\n");
 	printf("data = %s\n", current->s);
 
 	// xyz - [f], [f], [f]
-	process_xyz(current);
-
+	status = process_xyz(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
 	// lbr - [0-1]
-	process_lbr(current);
-
+	status = process_lbr(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
 	// rgb - [0-255], [0-255], [0-255]
-	process_rgb(current);
+	status = process_rgb(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
 
 	// ft_anything_else_in_string_say_no(current->s);
+	if (current->s[0] != '\0' && current->s[0] != '\n')
+		return (ret_error(E_EXTRA_CHARS, current));
+	return (E_SUCCESS);
 }
 
 void process_sphere(t_list *current)
@@ -141,7 +151,8 @@ void process_node(t_list *current)
 	else if (current->type == light)
 	{
 		printf("\n>> we have a light\n");
-		process_light(current);
+		if (process_light(current) != E_SUCCESS)
+			printf(">> !!! Error: Light failed  !!! <<\n");
 	}
 	else if (current->type == plane)
 	{
