@@ -53,7 +53,7 @@ int	process_camera(t_list *current)
 void process_cylinder(t_list *current)
 {
 	printf("\nPROCESS CYLINDER\n");
-	 printf("data = %s\n", current->s);
+	printf("data = %s\n", current->s);
 
 	// xyz - [f], [f], [f]
 	process_xyz(current);
@@ -134,25 +134,25 @@ void process_sphere(t_list *current)
 	// ft_anything_else_in_string_say_no(current->s);
 }
 
-void process_node(t_list *current)
+int	process_node(t_list *current)
 {
 	if (current->type == ambiant)
 	{
 		printf("\n>> we have an ambiant\n");
 		if (process_ambiant(current) != E_SUCCESS)
-			printf(">> !!! Error: ambiant failed  !!! <<\n");
+			return(printf(">> !!! Error: ambiant failed  !!! <<\n"));
 	}
 	else if (current->type == camera)
 	{
 		printf("\n>> we have a camera\n");
 		if (process_camera(current) != E_SUCCESS)
-			printf(">> !!! Error: camera failed  !!! <<\n");
+			return (printf(">> !!! Error: camera failed  !!! <<\n"));
 	}
 	else if (current->type == light)
 	{
 		printf("\n>> we have a light\n");
 		if (process_light(current) != E_SUCCESS)
-			printf(">> !!! Error: Light failed  !!! <<\n");
+			return (printf(">> !!! Error: Light failed  !!! <<\n"));
 	}
 	else if (current->type == plane)
 	{
@@ -171,18 +171,21 @@ void process_node(t_list *current)
 	}
 	else
 	{
-		printf("\n\n>> Error: has a blank line slipped through??\n\n");
+		return (printf("\n\n>> Error: has a blank line slipped through??\n\n"));
 	}
+	return (E_SUCCESS);
 }
 
 
-void process_nodes(t_list **l)
+int	process_nodes(t_list **l)
 {
 	t_list *current = *l;
 
 	while (current)
 	{
-		process_node(current);
+		if (process_node(current) != E_SUCCESS)
+			return (-1);
 		current = current->next;
 	}
+	return (E_SUCCESS);
 }

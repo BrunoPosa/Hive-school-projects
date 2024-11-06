@@ -7,10 +7,11 @@
 
 #define LEGAL_CHARS1 "0123456789.CALplcysp-, \n" //input
 #define LEGAL_CHARS2 "0123456789.-, \n" //after assign type
-#define LEGAL_CHARS3 "0123456789.-," //3dxyz, xyz, cd, ch, sd
+#define LEGAL_CHARS3 "0123456789.-," //3dxyz, xyz
 #define LEGAL_CHARS4 "0123456789." //alr, lbr
 #define LEGAL_CHARS5 "0123456789," //rgb
 #define LEGAL_CHARS6 "0123456789" //fov
+#define LEGAL_CHARS7 "0123456789.-" //cd, ch, sd
 #ifndef TRUE
 # define TRUE 1
 #endif
@@ -147,8 +148,8 @@ int		does_file_end_with_rt(char *filename);
 void	init_node(t_list **l);
 
 // 	PROCESS NODES
-void	process_nodes(t_list **l);
-void	process_node(t_list *current);
+int		process_nodes(t_list **l);
+int		process_node(t_list *current);
 int		process_camera(t_list *current);
 void	process_cylinder(t_list *current);
 void	process_plane(t_list *current);

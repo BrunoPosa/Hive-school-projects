@@ -11,8 +11,10 @@ int process_sd(t_list *current)
 	printf("process sd\n");
 
 	int i;
+	int	atoi_overflow;
 	char *sub_string;
 
+	atoi_overflow = 0;
 // find len until space
 	i = len_until_space(current->s);
 // printf("LEN UNITL SPACE = %d\n", i);
@@ -23,12 +25,12 @@ int process_sd(t_list *current)
 
 
 // check if only legal chars
-	if(!only_legal_chars(sub_string, LEGAL_CHARS3))
+	if(!only_legal_chars(sub_string, LEGAL_CHARS7) || !is_number_valid(sub_string))
 		return (ret_error(E_FLOAT_CHARS, current));
 
 // convert argument to float
-	current->sd = 2.4;
-	// current-> sd = ft_atof(current->s);
+	current->sd = ft_atod(sub_string, &atoi_overflow);
+printf("current->sd=%f\n", current->sd);
 
 // // check within range
 //     if (current->sd < 0.0 || current->sd > 1.0)

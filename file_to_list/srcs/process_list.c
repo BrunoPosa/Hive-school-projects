@@ -14,7 +14,8 @@ int	process_list(t_list **l)
 	move_pointers_to_args(l);
 	assign_node_type(l);
 	list_legality_check(l, LEGAL_CHARS2); //now there should be only numbers and , etc
-	process_nodes(l);
+	if (process_nodes(l) != E_SUCCESS)
+		return (-1);
 	check_count_of_types(l);
 
 

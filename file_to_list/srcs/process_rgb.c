@@ -63,7 +63,7 @@ printf("current->s = %s\n", current->s);
 		|| current->rgb.g < 0 || current->rgb.g > 255
 		|| current->rgb.b < 0 || current->rgb.b > 255)
         return (free(sub_string), ret_error(E_RGB_RANGE, current));
-printf("rgb = %d, %d, %d\n", current->rgb.r, current->rgb.g, current->rgb.b);
+printf("parsed rgb ints= %d, %d, %d\n", current->rgb.r, current->rgb.g, current->rgb.b);
 // move pointner past argument
 	current->s = current->s + i;
 

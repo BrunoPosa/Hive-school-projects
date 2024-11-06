@@ -12,8 +12,10 @@ int process_ch(t_list *current)
 	printf("process ch\n");
 
 	int i;
+	int	atoi_overflow;
 	char *sub_string;
 
+	atoi_overflow = 0;
 // find len until space
 	i = len_until_space(current->s);
 // printf("LEN UNITL SPACE = %d\n", i);
@@ -28,9 +30,8 @@ int process_ch(t_list *current)
 		return (ret_error(E_FLOAT_CHARS, current));
 
 // convert argument to float
-	current->ch = 2.4;
-	// current-> ch = ft_atof(current->s);
-
+	current->ch = ft_atod(sub_string, &atoi_overflow);
+printf("current->ch=%f\n", current->ch);
 // // check within range
 //     if (current->ch < 0.0 || current->ch > 1.0)
 //         return (ret_error(E_ALR_RANGE, current));
