@@ -23,8 +23,8 @@ void	map_coordinates(float *x, float *y, int wsize)
 	int i = 0;
 	while (i < wsize)
 	{
-		x[i] = (2.0f * i / (wsize - 1)) - 1.0f;;
-		y[i] = (2.0f * i / (wsize - 1)) - 1.0f;;
+		x[i] = i * 2.0f / wsize - 1.0f;
+		y[i] = i * 2.0f / wsize - 1.0f;
 		i++;
 	}
 }
@@ -51,9 +51,9 @@ int	color_sphere(float z)
 int	sphere_intersect(float x, float y, float center, float radius)
 {
 	float camera_z = -1.732;
-	t_tuple *ray_origin = create_tuple(0, 0, camera_z, 1);
-	t_tuple *sphere_center = create_tuple(center, center, 0.5, 1);
-	t_tuple *ray_direction = create_tuple(x, y, -0.5, 0);
+	t_tuple *ray_origin = create_point(0, 0, camera_z);
+	t_tuple *sphere_center = create_point(center, center, 0.75);
+	t_tuple *ray_direction = create_vector(x, y, -0.5);
 	
 	t_tuple *ray_origin_to_sphere_center = subtract(ray_origin, sphere_center);
 	float a = dot(ray_direction, ray_direction);
@@ -63,7 +63,7 @@ int	sphere_intersect(float x, float y, float center, float radius)
 	if (discriminant < 0)
 		return (0x00000000);
 	else
-		return (color_sphere(-b + sqrt(discriminant) / (2 * a)));
+		return (color_sphere(3 * sqrt(discriminant)));
 }
 
 int	render_pixels(mlx_image_t *img, t_function f)
