@@ -1,6 +1,7 @@
 #include "../inc/file_to_list.h"
+#include "../inc/minirt.h"
 
-void    check_count_of_types(t_list **l)
+void    check_count_of_types(t_list **l, t_rt *rt)
 {
     t_list *current = *l;
     int count_camera = 0;
@@ -29,6 +30,17 @@ void    check_count_of_types(t_list **l)
 
 //    add counts to rt struct
 
+    if (count_camera != 1)
+        printf("Error: There must be exactly 1 cameras\n");
+    if (count_ambiant != 1)
+        printf("Error: There must be exactly 1 ambiant light\n");
+    if (count_light < 1)
+        printf("Error: There must be at least 1 light\n");
+    
+    rt->n_sphere = count_sphere;
+    rt->n_plane = count_plane;
+    rt->n_cylinder = count_cylinder;
+
     printf("\n\n\n");
     printf("count_camera = %d\n", count_camera);
     printf("count_cylinder = %d\n", count_cylinder);
@@ -36,4 +48,6 @@ void    check_count_of_types(t_list **l)
     printf("count_light = %d\n", count_light);
     printf("count_sphere = %d\n", count_sphere);
     printf("count_ambiant = %d\n", count_ambiant);
+
+
 }
