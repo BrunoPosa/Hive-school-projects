@@ -5,6 +5,8 @@ typedef stuct s_rt
     mlx_t *mlx;
     mlx_image_t *img;
 
+    int width;
+    int height;
     float aspect_ratio;
 
     t_list light;
@@ -19,10 +21,6 @@ typedef stuct s_rt
     int n_sphere;
     int n_plane
 
-    int width;
-    int height;
 
-    t_error error;
+
 } t_rt;
-
-
