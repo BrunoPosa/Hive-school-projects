@@ -26,6 +26,9 @@ void    check_count_of_types(t_list **l)
             count_ambiant++;
         current = current->next;
     }
+
+//    add counts to rt struct
+
     printf("\n\n\n");
     printf("count_camera = %d\n", count_camera);
     printf("count_cylinder = %d\n", count_cylinder);
