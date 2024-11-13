@@ -5,6 +5,8 @@
 #include <fcntl.h>
 #include "../../libft/libft.h"
 
+// #ifndef
+
 #define LEGAL_CHARS1 "0123456789.CALplcysp-, \n" //input
 #define LEGAL_CHARS2 "0123456789.-, \n" //after assign type
 #define LEGAL_CHARS3 "0123456789.-," //3dxyz, xyz
@@ -12,12 +14,43 @@
 #define LEGAL_CHARS5 "0123456789," //rgb
 #define LEGAL_CHARS6 "0123456789" //fov
 #define LEGAL_CHARS7 "0123456789.-" //cd, ch, sd
-#ifndef TRUE
+
+// #ifndef TRUE
 # define TRUE 1
-#endif
-#ifndef FALSE
+// #endif
+
+// #ifndef FALSE
 # define FALSE 0
+// #endif
+
+
+//	  C O N S T A N T S
+
+#ifndef WINSIZE
+# define WINSIZE 900
 #endif
+
+#ifndef EPSILON
+# define EPSILON 0.00001
+#endif
+
+//	  A L I A S E S
+
+#define POINT 1
+#define VECTOR 0
+#define SUCCESS 0
+#define ERROR -1
+
+//	  C O L O U R S
+
+#define YELLOW	"\033[1;33m"
+#define GREEN	"\033[1;32m"
+#define RED		"\033[0;31m"
+#define PINK	"\033[1;95m"
+#define ENDCLR	"\033[0m"
+
+
+
 
 //should this be called exit status? return codes?
 typedef enum e_error
@@ -50,6 +83,8 @@ typedef enum e_error
 	E_EXTRA_CHARS,
 	E_XYZ_RANGE
 }			t_error;
+// #endif
+
 
 typedef enum e_type
 {
@@ -99,30 +134,8 @@ typedef struct s_list
 	struct s_list	*next;
 }	t_list;
 
-//	  C O N S T A N T S
 
-#ifndef WINSIZE
-# define WINSIZE 900
-#endif
 
-#ifndef EPSILON
-# define EPSILON 0.00001
-#endif
-
-//	  A L I A S E S
-
-#define POINT 1
-#define VECTOR 0
-#define SUCCESS 0
-#define ERROR -1
-
-//	  C O L O U R S
-
-#define YELLOW	"\033[1;33m"
-#define GREEN	"\033[1;32m"
-#define RED		"\033[0;31m"
-#define PINK	"\033[1;95m"
-#define ENDCLR	"\033[0m"
 
 // Linked list
 
@@ -189,6 +202,10 @@ int	list_legality_check(t_list **l, char *legal);
 
 // ERRORS
 int	ret_error(t_error error, t_list *l);
+
+
+
+
 
 
 //      T E S T S

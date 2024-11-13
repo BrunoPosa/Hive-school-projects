@@ -1,6 +1,6 @@
 #include "../inc/file_to_list.h"
 #include "../../libft/libft.h"
-#include "../inc/minirt.h"
+// #include "../inc/minirt.h"
 
 int	main(int argc, char **argv)
 {
@@ -35,13 +35,14 @@ int	main(int argc, char **argv)
 	// validate: checkif there are two camera, if camera >1 retuirn erroro
 	// assign_scene_object(l);
 
-	t_rt rt; // this is for our general program info
+	// t_rt rt; // this is for our general program info
 
-	check_count_of_types(l, &rt); // analyse the linked list and store those values in the general program info
+	check_count_of_types(&l); // analyse the linked list and store those values in the general program info
 
+	// check_count_of_types(l, &rt); // analyse the linked list and store those values in the general program info
 
 	// init_camera(&rt); 	// camera calculations
-	init_mlx(&rt);		// mlx general setup
+	// init_mlx(&rt);		// mlx general setup
 	// render_scene(&rt);	// render scene
 	//  mlx_loop(rt.mlx->mlx); // mlx loop
 
