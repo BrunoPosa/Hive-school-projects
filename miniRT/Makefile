@@ -32,7 +32,11 @@ SRCS 		=	main.c \
 				process_sd.c \
 				process_xyz.c \
 				process_utils.c \
-				process_fov.c
+				process_fov.c \
+				rt_free_rt.c \
+				rt_init_camera.c \
+				rt_init_mlx.c \
+				rt_render_scene.c
 
 HEADER = ./inc/file_to_list.h
 

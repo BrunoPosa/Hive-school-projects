@@ -41,7 +41,7 @@ int	main(int argc, char **argv)
 
 
 	// init_camera(&rt); 	// camera calculations
-	// init_mlx(&rt);		// mlx general setup
+	init_mlx(&rt);		// mlx general setup
 	// render_scene(&rt);	// render scene
 	//  mlx_loop(rt.mlx->mlx); // mlx loop
 

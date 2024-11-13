@@ -79,7 +79,9 @@ static char	*ft_strerror(t_error error)
 
 
 int	ret_error(t_error error, t_list *l)
+// int	ret_error(t_error error, t_list *l, t_rt *rt)
 {
+	// (void)rt;	
 	(void)l;
 	(void)ft_strerror(error);
 	// if (l)
