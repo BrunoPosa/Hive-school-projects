@@ -1,3 +1,5 @@
+#include "../inc/minirt.h"
+
 void	render_scene(t_rt rt)
 {
 	t_render	r;

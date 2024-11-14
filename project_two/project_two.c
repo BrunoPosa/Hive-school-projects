@@ -102,8 +102,7 @@ int main(void)
 	if (!img || mlx_image_to_window(mlx, img, 0, 0) < 0)
 		return (mlx_terminate(mlx), ERROR);
 	
-	t_function function = {	circle,
-							sphere_intersect};
+
 	render_pixels(img, function);
 	
 	mlx_loop(mlx);

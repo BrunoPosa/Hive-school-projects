@@ -5,8 +5,6 @@
 #include <fcntl.h>
 #include "../../libft/libft.h"
 
-// #ifndef
-
 #define LEGAL_CHARS1 "0123456789.CALplcysp-, \n" //input
 #define LEGAL_CHARS2 "0123456789.-, \n" //after assign type
 #define LEGAL_CHARS3 "0123456789.-," //3dxyz, xyz
@@ -189,8 +187,6 @@ int	is_number_valid(char *num);
 void	free_array(char **s);
 
 
-
-void    check_count_of_types(t_list **l);
 
 
 // list legality

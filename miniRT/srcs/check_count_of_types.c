@@ -1,4 +1,3 @@
-#include "../inc/file_to_list.h"
 #include "../inc/minirt.h"
 
 void    check_count_of_types(t_list **l, t_rt *rt)

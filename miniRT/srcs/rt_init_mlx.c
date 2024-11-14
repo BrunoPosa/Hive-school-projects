@@ -1,3 +1,5 @@
+#include "../inc/minirt.h"
+
 void	init_mlx(t_rt *rt)
 {
 	rt->mlx = mlx_init(rt->width, rt->height, "miniRT", true);

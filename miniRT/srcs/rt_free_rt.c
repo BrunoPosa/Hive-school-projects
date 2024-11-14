@@ -1,4 +1,4 @@
-#include "./file_to_list.h"
+#include "../inc/minirt.h"
 
 
 // if we keep the list as one list, we can free like that?
@@ -19,7 +19,7 @@ void free_rt(t_rt *rt)
     free(rt->img);
     free(rt->light);
     free(rt->camera);
-    free(rt->ambiant);
+    free(((void*)rt->ambiant));
     free_list(rt->cylinder);
     free_list(rt->plane);
     free_list(rt->sphere);
