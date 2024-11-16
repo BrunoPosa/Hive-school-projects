@@ -69,7 +69,7 @@ int	populate_scene(t_list **l, t_scene *scene)
 int	parse(int argc, char **argv, t_scene *scene)
 {
 	t_list	*l;
-	//t_scene *scene this is for our general program info
+	//t_scene *scene is for our general program info
 	// t_error		exit_code;
 
 	l = NULL;
@@ -90,9 +90,7 @@ int	parse(int argc, char **argv, t_scene *scene)
 	}
 	// assign_scene_object(l);
 
-	scene = ft_calloc(1, sizeof(t_scene));
-	if (!scene)
-		return (ret_error(E_MALLOC, l));
+	
 
 	if (check_count_of_types(&l, scene) != SUCCESS) // analyse the linked list and store those values in the general program info
 		return (ret_error(E_OBJECT_COUNT, l));

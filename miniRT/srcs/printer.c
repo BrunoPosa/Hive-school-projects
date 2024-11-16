@@ -13,9 +13,9 @@ void	ft_list_print(t_list **l)
 		printf("s = %s", tmp->s);
 		printf("      type = %d\n", tmp->type);
 		printf("       alr = %f\n", tmp->alr);
-		printf("     rgb-r = %d\n", tmp->rgb.r);
-		printf("     rgb-g = %d\n", tmp->rgb.g);
-		printf("     rgb-b = %d\n", tmp->rgb.b);
+		printf("     rgb-r = %f\n", tmp->rgb.r);
+		printf("     rgb-g = %f\n", tmp->rgb.g);
+		printf("     rgb-b = %f\n", tmp->rgb.b);
 		printf("     xyz-x = %f\n", tmp->xyz.x);
 		printf("     xyz-y = %f\n", tmp->xyz.y);
 		printf("     xyz-z = %f\n", tmp->xyz.z);

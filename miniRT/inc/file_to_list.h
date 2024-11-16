@@ -101,12 +101,12 @@ typedef enum e_type
 	ambiant
 } t_type;
 
-typedef struct s_rgb
-{
-	unsigned int r;
-	unsigned int g;
-	unsigned int b;
-} t_rgb;
+// typedef struct s_rgb
+// {
+// 	float r;
+// 	float g;
+// 	float b;
+// } t_rgb;
 
 typedef struct s_xyz
 {
@@ -156,7 +156,7 @@ typedef struct s_list
 	char			*s;
 	t_type			type;
 	float			alr;
-	t_rgb			rgb;
+	t_colour		rgb;
 	t_xyz			xyz;
 	t_xyz_3d		xyz_3d;
 	unsigned int	fov;
@@ -187,9 +187,9 @@ typedef struct s_scene
 // or another way would be to reconnect the nodes to new linked lists
 // -Suggestion: make cy, pl, and sp objects all part of a single Objects[] array, calloc'd to the right size
 //	t_obj	*objects;
-	t_cy *cylinder;
-	t_pl *plane;
-	t_sp *sphere;
+	t_cy *cylinders;
+	t_pl *planes;
+	t_sp *spheres;
 
 	int n_cylinder;
 	int n_sphere;
