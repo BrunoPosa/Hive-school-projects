@@ -4,7 +4,19 @@
 
 #define SPH_X 0
 #define SPH_Y 0
-#define SPH_Z 3
+#define SPH_Z 2
+//light purpleish pinkish 0xFFC673FF
+#define SP_R 198
+#define SP_G 115
+#define SP_B 255
+
+#define CAM_X 0
+#define CAM_Y 0
+#define CAM_Z 0
+
+#define LIG_X 0
+#define LIG_Y 10
+#define LIG_Z 2
 
 t_tuple *multiply_vec_by_scalar(t_tuple *vec, float scalar);
 void	map_coordinates(float *x, float *y, int wsize);
@@ -14,8 +26,8 @@ int		sphere_intersect(float x, float y, float center, float radius);
 int		color_sphere(float z);
 float	fsphere(t_tuple *ray, t_tuple *ray_origin);
 t_tuple *calculate_sphere_normal(t_tuple *hit_point, t_tuple *sphere_center);
-t_tuple *calculate_hit_point(t_tuple *ray, float t);
 int		trace(t_tuple *ray);
+int clamp(float n);
 
 void	map_coordinates(float *x, float *y, int wsize)
 {
@@ -38,86 +50,23 @@ int	circle(int x, int y, int center, int radius)
 		return (0x00000000);
 }
 
-int	color_sphere(float t)
+int	color_sphere(float n)
 {
-	return (((int)(t*40) << 24 | (int)(t*50) << 16 | 22 << 8 | 255));
+	return ((clamp(n * SP_R) << 24 | clamp(n * SP_G) << 16 | clamp(n * SP_B) << 8 | 255));
 }
 
-/*
-	x and y are the normalized coordinates of the pixel on the screen.
-	x and y are also members of the camera's ray.
-	THIS IS v0.1 OF THE SPHERE INTERSECTION FUNCTION
-*/
-int	sphere_intersect(float x, float y, float center, float radius)
+int clamp(float n)
 {
-	float camera_z = -1.732;
-	t_tuple *ray_origin = create_point(0, 0, camera_z);//camera point
-	t_tuple *sphere_center = create_point(center, center, 0.75);
-	t_tuple *ray_direction = create_vector(x, y, -0.5);
-	t_tuple *ray_origin_to_sphere_center = subtract(ray_origin, sphere_center);
-	float a = dot(ray_direction, ray_direction);
-	float b = 2 * dot(ray_direction, ray_origin_to_sphere_center);
-	float c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - radius * radius;
-	float discriminant = b * b - 4 * a * c;
-	if (discriminant < 0)
-		return (0x00000000);
-	else
-		return (color_sphere(3 * sqrt(discriminant)));
-}
-
-int	trace(t_tuple *ray)
-{
-	t_tuple	*lightpos = create_point(1, 20, 3);
-	t_tuple *hitpoint;
-	float	t;
-
-	hitpoint = NULL;
-	t = fsphere(ray, create_point(0, 0, -1.732));//camera origin point
-	if (t <= 0)
-		return (0xFFFFFFFF);// bg
-
-	hitpoint = calculate_hit_point(ray, t);
-	t_tuple	*shadow_ray = normalize(subtract(lightpos, hitpoint));
-	shadow_ray->w = VECTOR;
-	t_tuple	*normal = normalize(subtract(hitpoint, create_point(SPH_X, SPH_Y, SPH_Z)));
-	float lit = dot(normal, shadow_ray);
-	if (lit < 0)
-		return (0xFF000000);
-	// if ()
-	return (color_sphere(t));//0xFF00FFFF blue
-}
-
-/* v0.2 of sphere intersection function */
-float fsphere(t_tuple *ray, t_tuple *ray_origin)
-{
-	float radius = 0.5;
-	t_tuple *sphere_center = create_point(SPH_X, SPH_Y, SPH_Z);
-	t_tuple *ray_origin_to_sphere_center = subtract(ray_origin, sphere_center);
-	float a = dot(ray, ray);
-	float b = 2 * dot(ray, ray_origin_to_sphere_center);
-	float c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - radius * radius;
-	float discriminant = b * b - 4 * a * c;
-	if (discriminant < 0)
-		return (0);
-	float t1 = (-b - sqrt(discriminant)) / (2 * a);
-	float t2 = (-b + sqrt(discriminant)) / (2 * a);
-	float t = t2;
-	if (t1 < t2)
-		t = t1;
-	// if (t < 0)
-	// 	return (0);
-	return (t);
-}
-
-t_tuple *multiply_vec_by_scalar(t_tuple *vec, float scalar)
-{
-	t_tuple *result = create_tuple(vec->x * scalar, vec->y * scalar, vec->z * scalar, vec->w * scalar);
-	return (result);
+	if (n > 255)
+		return 255;
+	if (n < 0)
+		return 0;
+	return n;
 }
 
 t_tuple *calculate_hit_point(t_tuple *ray, float t)
 {
-	t_tuple *scaled_direction = multiply_vec_by_scalar(ray, t);
+	t_tuple *scaled_direction = multiply_tuple(ray, t);
 	t_tuple *hit_point = add(ray, scaled_direction);
 	free(scaled_direction);
 
@@ -188,9 +137,55 @@ for (int j = 0; j < imageHeight; ++j) {
 
 
 
+/* v0.2 of sphere intersection function */
+float fsphere(t_tuple *ray, t_tuple *ray_origin)
+{
+	float radius = 0.5;
+	t_tuple *sphere_center = create_point(SPH_X, SPH_Y, SPH_Z);
+	t_tuple *ray_origin_to_sphere_center = subtract(ray_origin, sphere_center);
+	float a = dot(ray, ray);
+	float b = 2 * dot(ray, ray_origin_to_sphere_center);
+	float c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - radius * radius;
+	float discriminant = b * b - 4 * a * c;
+	if (discriminant < 0)
+		return (0);
+	float t1 = (-b - sqrt(discriminant)) / (2 * a);
+	float t2 = (-b + sqrt(discriminant)) / (2 * a);
+	//this is also different now, returning the positive despite a negative being smaller
+	if (t1 > 0 && t2 > 0)
+		return fminf(t1, t2); // Return the smallest positive t
+	else if (t1 > 0)
+		return t1;
+	else if (t2 > 0)
+		return t2;
+	return (0);
+}
 
 
-//camera is at (0, 0, -1.732) where -1.732 is roughly fov of 60 degrees
+int	trace(t_tuple *ray)
+{
+	t_tuple	*lightpos = create_point(LIG_X, LIG_Y, LIG_Z);
+	t_tuple *hitpoint;
+	float	t;
+
+	hitpoint = NULL;
+	t = fsphere(ray, create_point(CAM_X, CAM_Y, CAM_Z));//camera origin point
+	if (t <= 0)
+		return (0xFFFFFFFF);// bg
+
+	hitpoint = multiply_tuple(ray, t);//this was causing problems with sphere -light orientations..
+	hitpoint->w = POINT;// this, too
+
+	t_tuple	*shadow_ray = normalize(subtract(lightpos, hitpoint));
+	shadow_ray->w = VECTOR;
+	t_tuple	*normal = normalize(subtract(hitpoint, create_point(SPH_X, SPH_Y, SPH_Z)));
+	float lit = dot(normal, shadow_ray);
+	if (lit <= 0)
+		return (0xFF000000);
+	return (color_sphere(lit));
+}
+
+
 int	render_pixels(mlx_image_t *img)
 {
 	float	*x = ft_calloc(WINSIZE, sizeof(float));
@@ -206,8 +201,10 @@ int	render_pixels(mlx_image_t *img)
 		j = 0;
 		while (j < WINSIZE)
 		{
-			t_tuple *ray = normalize(create_vector(x[i], y[j], 1.732));//direction = normalize((x, y, 0) - (camera_x, camera_y, camera_z)), so simply x, y, -z
-			((uint32_t *)img->pixels)[(WINSIZE - j) * WINSIZE + i] = trace(ray);// f.sphere(x[i], y[j], 0, 1); // f.circle(x, y, 500, 300);
+			//viewing plane is focal length away from camera's view point
+			float focal_len = 1.732;
+			t_tuple *ray = normalize(subtract(create_vector(x[i], y[WINSIZE - j], CAM_Z + focal_len), create_vector(CAM_X, CAM_Y, CAM_Z)));
+			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(ray);
 			j++;
 		}
 		i++;
@@ -221,7 +218,7 @@ int main(void)
 {
 	mlx_t		*mlx;
 	mlx_image_t	*img;
-	mlx = mlx_init(WINSIZE, WINSIZE, "circle", false);
+	mlx = mlx_init(WINSIZE, WINSIZE, "project_two", false);
 	if (!(mlx))
 		return (ERROR);
 	img = mlx_new_image(mlx, WINSIZE, WINSIZE);
