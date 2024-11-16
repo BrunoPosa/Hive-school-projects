@@ -1,53 +1,37 @@
-#include "../inc/minirt.h"
+#include "../inc/file_to_list.h"
+#include "../../MLX42/include/MLX42/MLX42.h"
+
+
+static void scene_print(t_scene *scene)
+{
+	printf("", scene->ambiant->alr);
+
+}
 
 int	main(int argc, char **argv)
 {
-	t_list		*l;
-	// t_error		exit_code;
+	mlx_t		*mlx;
+	mlx_image_t	*img;
+	t_scene		*scene;
 
-	l = NULL;
+	mlx = NULL;
+	img = NULL;
+	scene = NULL;
+	if (parse(argc, argv, scene) != SUCCESS)
+		return (free(scene), ERROR);
+	mlx = mlx_init(WINSIZE, WINSIZE, "minirt", false);
+	if (!(mlx))
+		return (ERROR);
+	img = mlx_new_image(mlx, WINSIZE, WINSIZE);
+	if (!img || mlx_image_to_window(mlx, img, 0, 0) < 0)
+		return (mlx_terminate(mlx), ERROR);
 
-	// if (argc != 2)
-	// {
-	// 	printf("Useful Error message\n"); // not correct if there were 3 file names
-	// 	return (1);
-	// }
+	scene_print(scene);
 
-// >>>> if GNL returns \n, skip it
+	// if (render_pixels(img, scene) == ERROR)
+	// 	return (mlx_terminate(mlx), ERROR);
 
-
-	if (argc != 2)
-		return(ret_error(E_ARGS, NULL));
-
-	if (does_file_end_with_rt(argv[1]) == 0)
-		return(ret_error(E_FILE_NAME, NULL));
-
-	if (file_to_list(argv[1], &l))
-		return (ret_error(E_MALLOC, l));
-
-	if (process_list(&l) == ERROR)
-	{
-		printf("======================== FILE VALIDATION FAILED ========================");
-		return (-1);
-	}
-	// validate: checkif there are two camera, if camera >1 retuirn erroro
-	// assign_scene_object(l);
-
-	t_rt rt; // this is for our general program info
-
-	// check_count_of_types(&l); // analyse the linked list and store those values in the general program info
-
-	check_count_of_types(&l, &rt); // analyse the linked list and store those values in the general program info
-
-	// init_camera(&rt); 	// camera calculations
-	// init_mlx(&rt);		// mlx general setup
-	// render_scene(&rt);	// render scene
-	// mlx_loop(rt.mlx->mlx); // mlx loop
-
-	// ft_list_print(&l);
-	// free_all(&l); // l is a linked list, that holds input data,
-	// and rt holds env data?
-
-	return (0);
+	mlx_loop(mlx);
+	mlx_terminate(mlx);
+	return(SUCCESS);
 }
-

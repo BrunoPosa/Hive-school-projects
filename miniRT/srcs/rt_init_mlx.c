@@ -1,6 +1,6 @@
-#include "../inc/minirt.h"
+#include "../inc/file_to_list.h"
 
-void	init_mlx(t_rt *rt)
+void	init_mlx(t_scene *rt)
 {
 	rt->mlx = mlx_init(rt->width, rt->height, "miniRT", true);
 	if (!rt->mlx)

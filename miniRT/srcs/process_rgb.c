@@ -19,7 +19,7 @@ only allowed characters are numbers and commas
 
 int process_rgb(t_list *current)
 {
-	printf("process rgb\n");
+	// printf("process rgb\n");
 
 	int i;
 	int	atoi_overflow;
@@ -33,11 +33,11 @@ int process_rgb(t_list *current)
 // printf("LEN UNITL SPACE = %d\n", i);
 
 // iscolate argument
-printf("current->s = %s\n", current->s);
+// printf("current->s = %s\n", current->s);
 	sub_string = ft_substr(current->s, 0, i);
 	if (sub_string == NULL)
 		return (ret_error(E_MALLOC, current));
-	printf("substring = %s\n", sub_string);
+	// printf("substring = %s\n", sub_string);
 
 // check if only legal chars !!!!SEGFAULT HERE!!!!
 	if(!only_legal_chars(sub_string, LEGAL_CHARS5))
@@ -48,7 +48,7 @@ printf("current->s = %s\n", current->s);
 		return (free(sub_string), ret_error(E_RGB_COMMA, current));
 
 // split into three strings?
-    rgb = ft_split(sub_string, ',');
+	rgb = ft_split(sub_string, ',');
 	if (!rgb)
 		return (free(sub_string), ret_error(E_SPLIT, current));
 	current->rgb.r = ft_atoi(rgb[0], &atoi_overflow);
@@ -58,12 +58,12 @@ printf("current->s = %s\n", current->s);
 
 
 // check within range
-    if (atoi_overflow
+	if (atoi_overflow
 		|| current->rgb.r < 0 || current->rgb.r > 255
 		|| current->rgb.g < 0 || current->rgb.g > 255
 		|| current->rgb.b < 0 || current->rgb.b > 255)
-        return (free(sub_string), ret_error(E_RGB_RANGE, current));
-printf("parsed rgb ints= %d, %d, %d\n", current->rgb.r, current->rgb.g, current->rgb.b);
+		return (free(sub_string), ret_error(E_RGB_RANGE, current));
+// printf("parsed rgb ints= %d, %d, %d\n", current->rgb.r, current->rgb.g, current->rgb.b);
 // move pointner past argument
 	current->s = current->s + i;
 

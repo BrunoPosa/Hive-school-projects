@@ -7,7 +7,7 @@ int
 
 int process_fov(t_list *current)
 {
-    printf("process fov\n");
+    // printf("process fov\n");
 
     int i;
     int atoi_overflow;
@@ -22,7 +22,7 @@ int process_fov(t_list *current)
     sub_string = ft_substr(current->s, 0, i);
     if (sub_string == NULL)
 		return (ret_error(E_MALLOC, current));
-    printf("substring = %s\n", sub_string);
+    // printf("substring = %s\n", sub_string);
 
 // check if only legal chars
     if(!only_legal_chars(sub_string, LEGAL_CHARS6))
@@ -34,7 +34,7 @@ int process_fov(t_list *current)
         || current->fov < 0
         || current->fov > 180)
         return (free(sub_string), ret_error(E_FOV_RANGE, current));
-printf("-----------------fov = %d\n", current->fov);
+// printf("-----------------fov = %d\n", current->fov);
 // // check within range 0-180
 //     if (!current->fov < 0 || !current->fov > 180)
 //         return (ret_error(E_FOV_RANGE, current));

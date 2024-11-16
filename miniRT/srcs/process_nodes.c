@@ -5,8 +5,8 @@
 int process_ambiant(t_list *current)
 {
 	int status;
-	printf("\nPROCESS AMBIANT\n");
-	printf("data = %s\n", current->s);
+	// printf("\nPROCESS AMBIANT\n");
+	// printf("data = %s\n", current->s);
 
 	// alr - 0.0 - 1.0
 	status = process_alr(current);
@@ -19,14 +19,14 @@ int process_ambiant(t_list *current)
 	// ft_anything_else_in_string_say_no(current->s);
 	if (current->s[0] != '\0' && current->s[0] != '\n')
 		return (ret_error(E_EXTRA_CHARS, current));
-	printf("current->s=%s\n", current->s);
+	// printf("current->s=%s\n", current->s);
 	return (E_SUCCESS);
 }
 
 int	process_camera(t_list *current)
 {
-	printf("\nPROCESS CAMERA\n");
-	printf("data =%s\n", current->s);
+	// printf("\nPROCESS CAMERA\n");
+	// printf("data =%s\n", current->s);
 	int	status;
 
 	status = 0;
@@ -52,8 +52,8 @@ int	process_camera(t_list *current)
 
 void process_cylinder(t_list *current)
 {
-	printf("\nPROCESS CYLINDER\n");
-	printf("data = %s\n", current->s);
+	// printf("\nPROCESS CYLINDER\n");
+	// printf("data = %s\n", current->s);
 
 	// xyz - [f], [f], [f]
 	process_xyz(current);
@@ -75,8 +75,8 @@ void process_cylinder(t_list *current)
 
 void process_plane(t_list *current)
 {
-	printf("\nPROCESS PLANE\n");
-	printf("data = %s\n", current->s);
+	// printf("\nPROCESS PLANE\n");
+	// printf("data = %s\n", current->s);
 
 	// xyz - [f], [f], [f]
 	process_xyz(current);
@@ -95,8 +95,8 @@ int process_light(t_list *current)
 	int	status;
 
 	status = 0;
-	printf("\nPROCESS LIGHT\n");
-	printf("data = %s\n", current->s);
+	// printf("\nPROCESS LIGHT\n");
+	// printf("data = %s\n", current->s);
 
 	// xyz - [f], [f], [f]
 	status = process_xyz(current);
@@ -119,8 +119,8 @@ int process_light(t_list *current)
 
 void process_sphere(t_list *current)
 {
-	printf("\nPROCESS SHPERE\n");
-	printf("data = %s\n", current->s);
+	// printf("\nPROCESS SHPERE\n");
+	// printf("data = %s\n", current->s);
 
 	// xyz - [f], [f], [f]
 	process_xyz(current);
@@ -138,35 +138,35 @@ int	process_node(t_list *current)
 {
 	if (current->type == ambiant)
 	{
-		printf("\n>> we have an ambiant\n");
+		// printf("\n>> we have an ambiant\n");
 		if (process_ambiant(current) != E_SUCCESS)
 			return(printf(">> !!! Error: ambiant failed  !!! <<\n"));
 	}
 	else if (current->type == camera)
 	{
-		printf("\n>> we have a camera\n");
+		// printf("\n>> we have a camera\n");
 		if (process_camera(current) != E_SUCCESS)
 			return (printf(">> !!! Error: camera failed  !!! <<\n"));
 	}
 	else if (current->type == light)
 	{
-		printf("\n>> we have a light\n");
+		// printf("\n>> we have a light\n");
 		if (process_light(current) != E_SUCCESS)
 			return (printf(">> !!! Error: Light failed  !!! <<\n"));
 	}
 	else if (current->type == plane)
 	{
-		printf("\n>> we have a plane\n");
+		// printf("\n>> we have a plane\n");
 		process_plane(current);
 	}
 	else if (current->type == sphere)
 	{
-		printf("\n>> we have a sphere\n");
+		// printf("\n>> we have a sphere\n");
 		process_sphere(current);
 	}
 	else if (current->type == cylinder)
 	{
-		printf("\n>> we have a cylinder\n");
+		// printf("\n>> we have a cylinder\n");
 		process_cylinder(current);
 	}
 	else

@@ -4,7 +4,7 @@
 // needs to be between 0.0. and 1.0
 int process_lbr(t_list *current)
 {
-	printf("process lbr\n");
+	// printf("process lbr\n");
 
 	int i;
 	int	atoi_overflow;
@@ -18,7 +18,7 @@ int process_lbr(t_list *current)
 	sub_string = ft_substr(current->s, 0, i);
 	if (sub_string == NULL)
 		return (ret_error(E_MALLOC, current));
-	printf("substring = %s\n", sub_string);
+	// printf("substring = %s\n", sub_string);
 
 
 // check if only legal chars
@@ -29,7 +29,7 @@ int process_lbr(t_list *current)
 	current->lbr = ft_atod(current->s, &atoi_overflow);
 	if (current->lbr < 0 || current->lbr > 1 || atoi_overflow)
 		return (free(sub_string), ret_error(E_ALR_RANGE, current));
-printf("lbr=%lf\n", current->lbr);
+// printf("lbr=%lf\n", current->lbr);
 // move pointner past argument
 	current->s = current->s + i;
 

@@ -9,7 +9,7 @@ same as sd, cd, ch
 
 int process_cd(t_list *current)
 {
-	printf("process cd\n");
+	// printf("process cd\n");
 
 	int i;
 	int	atoi_overflow;
@@ -22,7 +22,7 @@ int process_cd(t_list *current)
 
 // iscolate argument
 	sub_string = ft_substr(current->s, 0, i);
-	printf("substring = %s\n", sub_string);
+	// printf("substring = %s\n", sub_string);
 
 
 // check if only legal chars
@@ -31,7 +31,7 @@ int process_cd(t_list *current)
 
 // convert argument to float
 	current->cd = ft_atod(sub_string, &atoi_overflow);
-printf("current->cd=%f\n", current->cd);
+// printf("current->cd=%f\n", current->cd);
 // // check within range
 //     if (current->cd < 0.0 || current->cd > 1.0)
 //         return (ret_error(E_ALR_RANGE, current));

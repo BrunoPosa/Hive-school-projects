@@ -1,9 +1,14 @@
+#ifndef FILE_TO_LIST_H
+# define FILE_TO_LIST_H
+
+#include "../../MLX42/include/MLX42/MLX42.h"
+#include "../../libft/libft.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <fcntl.h>
-#include "../../libft/libft.h"
+
 
 #define LEGAL_CHARS1 "0123456789.CALplcysp-, \n" //input
 #define LEGAL_CHARS2 "0123456789.-, \n" //after assign type
@@ -79,7 +84,8 @@ typedef enum e_error
 	E_MALLOC,
 	E_WRONG_TYPE,
 	E_EXTRA_CHARS,
-	E_XYZ_RANGE
+	E_XYZ_RANGE,
+	E_OBJECT_COUNT
 }			t_error;
 // #endif
 
@@ -116,6 +122,35 @@ typedef struct s_xyz_3d
 	double z;
 } t_xyz_3d;
 
+typedef struct s_colour
+{
+	float r;
+	float g;
+	float b;
+} t_colour;
+
+typedef struct s_cy
+{
+	t_xyz		xyz;
+	t_xyz_3d	xyz3d;
+	t_colour	rgb;//different from t_rgb
+	float		cd;
+	float		ch;
+} t_cy;
+
+typedef struct	s_pl
+{
+	t_xyz_3d	xyz3d;
+	t_colour	rgb;//or t_rgb
+} t_pl;
+
+typedef struct	s_sp
+{
+	t_xyz		xyz;
+	float		sd;
+	t_colour	rgb;
+}	t_sp;
+
 typedef struct s_list
 {
 	char			*s;
@@ -132,7 +167,47 @@ typedef struct s_list
 	struct s_list	*next;
 }	t_list;
 
+// general program info
+typedef struct s_scene
+{
+	// mlx_t *mlx;
+	// mlx_image_t *img;
 
+	int width;
+	int height;
+	float aspect_ratio;
+
+// all of these items are in a linked list already
+	t_list *light;
+	t_list *camera;
+	t_list *ambiant;
+
+// can we use a link2 to connect objects of the same type?
+// then to free we can rip through all the linked list,
+// or another way would be to reconnect the nodes to new linked lists
+// -Suggestion: make cy, pl, and sp objects all part of a single Objects[] array, calloc'd to the right size
+//	t_obj	*objects;
+	t_cy *cylinder;
+	t_pl *plane;
+	t_sp *sphere;
+
+	int n_cylinder;
+	int n_sphere;
+	int n_plane;
+
+} t_scene;
+
+// render struct for information of the pixel to be rendered
+// typedef struct s_render
+// {
+// 	// t_vec	color;
+// 	int		rgba;
+// 	int		x;
+// 	int		y;
+// 	// t_vec	px_center;
+// 	// t_vec	ray_direction;
+// 	// t_ray	ray;
+// }	t_render;
 
 
 // Linked list
@@ -141,8 +216,12 @@ void ft_lstadd_back(t_list **lst, t_list *new);
 t_list *ft_lstlast(t_list *lst);
 t_list *ft_lstnew(void *content);
 
-// 	F U N C T I O N S
 
+//////////////////////////////////////////////////
+/*		P A R S I N G    F U N C T I O N S		*/
+//////////////////////////////////////////////////
+
+int	parse(int argc, char **argv, t_scene *scene);
 int	file_to_list(char *file_name, t_list **l);
 // int		ft_list_push_back(t_list *l, char *content);
 void 	ft_list_print(t_list **l);
@@ -183,6 +262,8 @@ int		process_rgb(t_list *current);
 int count_commas(char *s, int target);
 int	count_commas_between(char *s);
 int	is_number_valid(char *num);
+int    check_count_of_types(t_list **l, t_scene *rt);
+int	populate_scene(t_list **l, t_scene *scene);
 
 void	free_array(char **s);
 
@@ -199,79 +280,18 @@ int	list_legality_check(t_list **l, char *legal);
 // ERRORS
 int	ret_error(t_error error, t_list *l);
 
+/// free all the memory allocated for the rt struct
+void free_rt(t_scene *rt);
+
+
+
+
+/////////////////////////////////////////////////////////
+/*      R A Y   T R A C I N G   F U N C T I O N S      */
+/////////////////////////////////////////////////////////
 
 
 
 
 
-//      T E S T S
-
-// void	tests_tuples(void);
-// void	tests_colours(void);
-// void	tests_canvas(void);
-// int		project_one(mlx_image_t *img);
-// int		project_one_mlx();
-// void	tests_matrix(void);
-
-// //      P R I N T E R S
-
-// void	ft_tuple_print(t_tuple *t);
-// void	ft_colour_printer(t_colour *c);
-// void	ft_print_line(char c);
-// void	print_y(char *s);
-// void	print_r(char *s);
-// void	print_g(char *s);
-// void 	canvas_to_print(t_colour **canvas, int x, int y);
-
-// /*         C R E A T E         */
-
-// t_tuple		*create_tuple(float x, float y, float z, float w);
-// t_colour	*create_colour(float r, float g, float b);
-// t_tuple		*create_point(float x, float y, float z);
-// t_tuple		*create_vector(float x, float y, float z);
-
-// //         F U N C T I O N S (TUPLE?)
-
-// int			diff(t_tuple *t1, t_tuple *t2);
-// t_tuple		*add(t_tuple *t1, t_tuple *t2);
-// t_tuple		*subtract(t_tuple *t1, t_tuple *t2);
-// t_tuple		*negate_tuple(t_tuple *t);
-// t_tuple		*multiply_tuple(t_tuple *t, float multiplier);
-// t_tuple		*divide_tuple(t_tuple *t, float divisor);
-// float		magnitude(t_tuple *t);
-// t_tuple		*normalize(t_tuple *t);
-// float		dot(t_tuple *a, t_tuple *b);
-// t_tuple		*cross(t_tuple *a, t_tuple *b);
-// unsigned int float_to_uint(float value);
-
-
-
-// //			C O L O U R S
-
-// t_colour   *add_colours(t_colour *a, t_colour *b);
-// t_colour   *subtract_colours(t_colour *a, t_colour *b);
-// t_colour   *multiply_colour_by(t_colour *a, float scaler);
-// t_colour   *hadamard_product(t_colour *a, t_colour *b);
-// void		write_pixel(t_colour **canvas, int x, int y, t_colour *colour);
-
-// //			C A N V A S
-
-// t_colour	**create_canvas(int x, int y);
-// // size_t 		x_of_canvas(t_colour **canvas);
-// // size_t		y_of_canvas(t_colour **canvas);
-// int			init_canvas(t_colour **canvas, int x, int y, t_colour *init_value);
-// void		canvas_to_ppm(char* filename, t_colour **canvas, int x, int y);
-
-// //			M L X   D R A W I N G
-
-// uint32_t	ft_colour_to_uint32(t_colour *colour);
-// void		ft_color_screen(mlx_image_t *img, uint32_t colour);
-
-// 	M A T R I C E S
-
-// float	**matrix_create(int x, int y);
-// void	matrix_assign(float **matrix, int x, int y, float f);
-// void	matrix_print(float **matrix, int x, int y);
-// void	matrix_fill(float **matrix, int x, int y, float f);
-// int		matrix_compare(float **matrix1, float **matrix2, int x, int y);
-// float	**matrix_multiply(float **matrix1, float **matrix2, int x, int y);
+#endif
