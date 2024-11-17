@@ -29,6 +29,8 @@ int    check_count_of_types(t_list **l, t_scene *scene)
 
     if (count_camera != 1 || count_light != 1 || count_ambiant != 1)
         return (printf("Error\nThere must be exactly 1 camera, 1 ambiant, and 1 light in scene\n"));
+    if (count_sphere + count_plane + count_cylinder == 0)
+        return (printf("Error\nThere must be at least 1 sphere, plane, or cylinder in scene\n"));
 
 //    add counts to rt struct
     scene->n_sphere = count_sphere;

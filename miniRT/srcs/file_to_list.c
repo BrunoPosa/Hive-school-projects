@@ -1,6 +1,4 @@
 #include "../inc/file_to_list.h"
-#include "../inc/file_to_list.h"
-
 
 // int	check_filename(char *filename)
 // {
@@ -46,11 +44,59 @@ int	file_to_list(char *filename, t_list **l)
 	return (0);
 }
 
+int	allocate_scene_shapes(t_scene *scene)
+{
+	int shape_count;
+
+	shape_count = scene->n_sphere + scene->n_plane + scene->n_cylinder;
+	if (shape_count > 0)
+	{
+		scene->shapes = ft_calloc(shape_count, sizeof(t_shape));
+		if (!scene->shapes)
+			return (ERROR);
+	}
+	return (SUCCESS);
+}
+
+void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
+{
+	t_list *current;
+	int 	i;
+
+	current = *l;
+	//indexing starts from 0 for spheres, then come planes, then cylinders
+	i = 0;
+	if (type == plane)
+		i = scene->n_sphere;
+	else if (type == cylinder)
+		i = scene->n_sphere + scene->n_plane;
+	while (current)
+	{
+		if (current->type == type)
+		{
+			scene->shapes[i].type = type;
+			scene->shapes[i].xyz = current->xyz;
+			scene->shapes[i].xyz3d = current->xyz_3d;
+			scene->shapes[i].rgb = current->rgb;
+			scene->shapes[i].sd = current->sd;
+			scene->shapes[i].cd = current->cd;
+			scene->shapes[i].ch = current->ch;
+			i++;
+		}
+		current = current->next;
+	}
+}
+
 int	populate_scene(t_list **l, t_scene *scene)
 {
 	t_list *current;
 
 	current = *l;
+	if (allocate_scene_shapes(scene) == ERROR)
+		return (ERROR);
+	move_shapes_into_scene(l, scene, sphere);
+	move_shapes_into_scene(l, scene, plane);
+	move_shapes_into_scene(l, scene, cylinder);
 	while (current)
 	{
 		if (current->type == ambiant)
@@ -59,8 +105,6 @@ int	populate_scene(t_list **l, t_scene *scene)
 			scene->light = current;
 		else if (current->type == camera)
 			scene->camera = current;
-		else
-			printf("parsing sp, pl, cy into t_rt scene struct not yet implemented\n");
 		current = current->next;
 	}
 	return (SUCCESS);

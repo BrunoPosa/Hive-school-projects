@@ -129,27 +129,16 @@ typedef struct s_colour
 	float b;
 } t_colour;
 
-typedef struct s_cy
+typedef struct	s_shape
 {
+	t_type		type;
 	t_xyz		xyz;
 	t_xyz_3d	xyz3d;
-	t_colour	rgb;//different from t_rgb
+	t_colour	rgb;
+	float		sd;
 	float		cd;
 	float		ch;
-} t_cy;
-
-typedef struct	s_pl
-{
-	t_xyz_3d	xyz3d;
-	t_colour	rgb;//or t_rgb
-} t_pl;
-
-typedef struct	s_sp
-{
-	t_xyz		xyz;
-	float		sd;
-	t_colour	rgb;
-}	t_sp;
+}	t_shape;
 
 typedef struct s_list
 {
@@ -185,11 +174,12 @@ typedef struct s_scene
 // can we use a link2 to connect objects of the same type?
 // then to free we can rip through all the linked list,
 // or another way would be to reconnect the nodes to new linked lists
-// -Suggestion: make cy, pl, and sp objects all part of a single Objects[] array, calloc'd to the right size
-//	t_obj	*objects;
-	t_cy *cylinders;
-	t_pl *planes;
-	t_sp *spheres;
+	// t_cy *cylinders;
+	// t_pl *planes;
+	// t_sp *spheres;
+
+// -Suggestion: make cy, pl, and sp objects all part of a single Shapes[] array, calloc'd to the right size
+	t_shape *shapes;
 
 	int n_cylinder;
 	int n_sphere;
