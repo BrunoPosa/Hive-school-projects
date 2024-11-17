@@ -29,12 +29,12 @@ int process_rgb(t_list *current)
 	rgb = NULL;
 	atoi_overflow = 0;
 // find len until space
-	i = len_until_space(current->s);
+	i = len_until_space(current->p);
 // printf("LEN UNITL SPACE = %d\n", i);
 
 // iscolate argument
-// printf("current->s = %s\n", current->s);
-	sub_string = ft_substr(current->s, 0, i);
+// printf("current->p = %s\n", current->p);
+	sub_string = ft_substr(current->p, 0, i);
 	if (sub_string == NULL)
 		return (ret_error(E_MALLOC, current));
 	// printf("substring = %s\n", sub_string);
@@ -65,11 +65,11 @@ int process_rgb(t_list *current)
 		return (free(sub_string), ret_error(E_RGB_RANGE, current));
 // printf("parsed rgb ints= %d, %d, %d\n", current->rgb.r, current->rgb.g, current->rgb.b);
 // move pointner past argument
-	current->s = current->s + i;
+	current->p = current->p + i;
 
 // move pointer to next argument
-	current->s = skip_space(current->s);
-	// printf("data = %s\n", current->s);
+	current->p = skip_space(current->p);
+	// printf("data = %s\n", current->p);
 free(sub_string);
 
 return (E_SUCCESS);

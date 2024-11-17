@@ -6,7 +6,7 @@ int process_ambiant(t_list *current)
 {
 	int status;
 	// printf("\nPROCESS AMBIANT\n");
-	// printf("data = %s\n", current->s);
+	// printf("data = %s\n", current->p);
 
 	// alr - 0.0 - 1.0
 	status = process_alr(current);
@@ -16,17 +16,17 @@ int process_ambiant(t_list *current)
 	status = process_rgb(current);
 	if (status != E_SUCCESS)
 		return (status);
-	// ft_anything_else_in_string_say_no(current->s);
-	if (current->s[0] != '\0' && current->s[0] != '\n')
+	// ft_anything_else_in_string_say_no(current->p);
+	if (current->p[0] != '\0' && current->p[0] != '\n')
 		return (ret_error(E_EXTRA_CHARS, current));
-	// printf("current->s=%s\n", current->s);
+	// printf("current->p=%s\n", current->p);
 	return (E_SUCCESS);
 }
 
 int	process_camera(t_list *current)
 {
 	// printf("\nPROCESS CAMERA\n");
-	// printf("data =%s\n", current->s);
+	// printf("data =%s\n", current->p);
 	int	status;
 
 	status = 0;
@@ -44,8 +44,8 @@ int	process_camera(t_list *current)
 	if (status != E_SUCCESS)
 		return (ret_error(status, current));
 
-	// ft_anything_else_in_string_say_no(current->s);
-	if (current->s[0] != '\0' && current->s[0] != '\n')
+	// ft_anything_else_in_string_say_no(current->p);
+	if (current->p[0] != '\0' && current->p[0] != '\n')
 		return (ret_error(E_EXTRA_CHARS, current));
 	return (E_SUCCESS);
 }
@@ -53,7 +53,7 @@ int	process_camera(t_list *current)
 void process_cylinder(t_list *current)
 {
 	// printf("\nPROCESS CYLINDER\n");
-	// printf("data = %s\n", current->s);
+	// printf("data = %s\n", current->p);
 
 	// xyz - [f], [f], [f]
 	process_xyz(current);
@@ -70,13 +70,13 @@ void process_cylinder(t_list *current)
 	// rgb - [0-255], [0-255], [0-255]
 	process_rgb(current);
 
-	// ft_anything_else_in_string_say_no(current->s);
+	// ft_anything_else_in_string_say_no(current->p);
 }
 
 void process_plane(t_list *current)
 {
 	// printf("\nPROCESS PLANE\n");
-	// printf("data = %s\n", current->s);
+	// printf("data = %s\n", current->p);
 
 	// xyz - [f], [f], [f]
 	process_xyz(current);
@@ -87,7 +87,7 @@ void process_plane(t_list *current)
 	// rgb - [0-255], [0-255], [0-255]
 	process_rgb(current);
 
-	// ft_anything_else_in_string_say_no(current->s);
+	// ft_anything_else_in_string_say_no(current->p);
 }
 
 int process_light(t_list *current)
@@ -96,7 +96,7 @@ int process_light(t_list *current)
 
 	status = 0;
 	// printf("\nPROCESS LIGHT\n");
-	// printf("data = %s\n", current->s);
+	// printf("data = %s\n", current->p);
 
 	// xyz - [f], [f], [f]
 	status = process_xyz(current);
@@ -111,8 +111,8 @@ int process_light(t_list *current)
 	if (status != E_SUCCESS)
 		return (ret_error(status, current));
 
-	// ft_anything_else_in_string_say_no(current->s);
-	if (current->s[0] != '\0' && current->s[0] != '\n')
+	// ft_anything_else_in_string_say_no(current->p);
+	if (current->p[0] != '\0' && current->p[0] != '\n')
 		return (ret_error(E_EXTRA_CHARS, current));
 	return (E_SUCCESS);
 }
@@ -120,7 +120,7 @@ int process_light(t_list *current)
 void process_sphere(t_list *current)
 {
 	// printf("\nPROCESS SHPERE\n");
-	// printf("data = %s\n", current->s);
+	// printf("data = %s\n", current->p);
 
 	// xyz - [f], [f], [f]
 	process_xyz(current);
@@ -131,7 +131,7 @@ void process_sphere(t_list *current)
 	// rgb - [0-255], [0-255], [0-255]
 	process_rgb(current);
 
-	// ft_anything_else_in_string_say_no(current->s);
+	// ft_anything_else_in_string_say_no(current->p);
 }
 
 int	process_node(t_list *current)

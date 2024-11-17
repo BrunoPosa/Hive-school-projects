@@ -17,7 +17,6 @@ SRCS 		=	main.c \
 				linked_list.c \
 				process_list.c \
 				utils.c \
-				init.c \
 				error.c \
 				assign_node_type.c \
 				process_nodes.c \
@@ -34,9 +33,9 @@ SRCS 		=	main.c \
 				process_utils.c \
 				process_fov.c \
 
+# rt_free_rt.c \
 # rt_render_scene.c \
 # rt_init_camera.c \
-# rt_free_rt.c \
 # rt_init_mlx.c don't need this if mlx runs in the main()
 
 HEADER = ./inc/file_to_list.h

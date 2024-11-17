@@ -34,7 +34,7 @@ void move_pointers_to_args(t_list **l)
 
     while (current)
 	{
-		current->s = skip_space(current->s);
+		current->p = skip_space(current->p);
 		current = current->next;
 	}
 }

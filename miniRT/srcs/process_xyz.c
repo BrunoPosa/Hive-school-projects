@@ -18,11 +18,11 @@ int process_xyz(t_list *current)
 	xyz = NULL;
 	atoi_overflow = 0;
 // find len until space
-	i = len_until_space(current->s);
+	i = len_until_space(current->p);
 // printf("LEN UNITL SPACE = %d\n", i);
 
 // iscolate argument
-	sub_string = ft_substr(current->s, 0, i);
+	sub_string = ft_substr(current->p, 0, i);
 	// printf("substring =%s\n", sub_string);
 
 
@@ -51,11 +51,11 @@ int process_xyz(t_list *current)
 // printf("	current->xyz.y = %lf\n", current->xyz.y);
 // printf("	current->xyz.z = %lf\n", current->xyz.z);
 // move pointner past argument
-	current->s = current->s + i;
+	current->p = current->p + i;
 
 // move pointer to next argument
-	current->s = skip_space(current->s);
-	// printf("data = %s\n", current->s);
+	current->p = skip_space(current->p);
+	// printf("data = %s\n", current->p);
 free(sub_string);
 
 return (E_SUCCESS);

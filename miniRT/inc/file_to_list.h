@@ -29,8 +29,18 @@
 
 //	  C O N S T A N T S
 
+//this is the width of the window in pixels
 #ifndef WINSIZE
 # define WINSIZE 900
+#endif
+
+//this is the width of the window in rt world coordinates
+#ifndef WRLD_WINWIDTH
+# define WRLD_WINWIDTH 2
+#endif
+
+#ifndef M_PI
+# define M_PI 3.14159265358979323846
 #endif
 
 #ifndef EPSILON
@@ -115,12 +125,12 @@ typedef struct s_xyz
 	double z;
 } t_xyz;
 
-typedef struct s_xyz_3d
-{
-	double x;
-	double y;
-	double z;
-} t_xyz_3d;
+// typedef struct s_xyz_3d
+// {
+// 	double x;
+// 	double y;
+// 	double z;
+// } t_xyz_3d;
 
 typedef struct s_colour
 {
@@ -133,21 +143,25 @@ typedef struct	s_shape
 {
 	t_type		type;
 	t_xyz		xyz;
-	t_xyz_3d	xyz3d;
+	t_xyz		xyz3d;
 	t_colour	rgb;
 	float		sd;
 	float		cd;
 	float		ch;
 }	t_shape;
 
+/*
+	-s is the string, p is the pointer to the string, which will be moved through the string
+*/
 typedef struct s_list
 {
 	char			*s;
+	char			*p;
 	t_type			type;
 	float			alr;
 	t_colour		rgb;
 	t_xyz			xyz;
-	t_xyz_3d		xyz_3d;
+	t_xyz			xyz_3d;
 	unsigned int	fov;
 	float			lbr;
 	float			sd;
@@ -155,6 +169,18 @@ typedef struct s_list
 	float			ch;
 	struct s_list	*next;
 }	t_list;
+
+//this is for camera, light, and ambiant
+typedef struct s_elements
+{
+	t_type		type;
+	t_colour	rgb;
+	t_xyz		xyz;
+	t_xyz		xyz3d;
+	float		alr;
+	float		focal_length;
+	float		lbr;
+}	t_elem;
 
 // general program info
 typedef struct s_scene
@@ -167,9 +193,9 @@ typedef struct s_scene
 	float aspect_ratio;
 
 // all of these items are in a linked list already
-	t_list *light;
-	t_list *camera;
-	t_list *ambiant;
+	t_elem light;
+	t_elem camera;
+	t_elem ambiant;
 
 // can we use a link2 to connect objects of the same type?
 // then to free we can rip through all the linked list,
@@ -200,11 +226,12 @@ typedef struct s_scene
 // }	t_render;
 
 
-// Linked list
-
+// Linked list functions
 void ft_lstadd_back(t_list **lst, t_list *new);
 t_list *ft_lstlast(t_list *lst);
 t_list *ft_lstnew(void *content);
+void	ft_lstclear(t_list **lst, void (*del)(void *));
+void	ft_lstdelone(t_list *lst, void (*del)(void *));
 
 
 //////////////////////////////////////////////////
@@ -253,9 +280,12 @@ int count_commas(char *s, int target);
 int	count_commas_between(char *s);
 int	is_number_valid(char *num);
 int    check_count_of_types(t_list **l, t_scene *rt);
-int	populate_scene(t_list **l, t_scene *scene);
 
-void	free_array(char **s);
+//	SCENE CREATION
+int	populate_scene(t_list **l, t_scene *scene);
+t_elem	move_element_into_scene(t_list *current);
+float	calculate_focal_len(unsigned int fov);
+
 
 
 
@@ -272,6 +302,7 @@ int	ret_error(t_error error, t_list *l);
 
 /// free all the memory allocated for the rt struct
 void free_rt(t_scene *rt);
+void	free_array(char **s);
 
 
 
@@ -280,7 +311,7 @@ void free_rt(t_scene *rt);
 /*      R A Y   T R A C I N G   F U N C T I O N S      */
 /////////////////////////////////////////////////////////
 
-
+void	esc_keyhook(mlx_key_data_t keydata, void *param);
 
 
 
