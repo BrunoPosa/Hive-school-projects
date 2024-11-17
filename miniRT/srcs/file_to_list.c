@@ -148,7 +148,7 @@ int	parse(int argc, char **argv, t_scene *scene)
 		printf("======================== FILE VALIDATION FAILED ========================");
 		return (-1);
 	}
-ft_list_print(&l);
+// ft_list_print(&l);
 	// assign_scene_object(l);
 
 

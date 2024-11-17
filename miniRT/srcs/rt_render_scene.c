@@ -6,57 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/16 22:41:08 by bposa            ###   ########.fr       */
+/*   Updated: 2024/11/17 21:55:03 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
-
-// void	render_scene(t_rt rt)
-// {
-// 	t_render	r;
-
-// 	r.y = -1;
-// 	while (++r.y < rt.height)
-// 	{
-// 		r.x = -1;
-// 		while (++r.x < rt.width)
-// 		{
-
-// 		}
-// 	}
-// }
-
-
-#include "../ray_tracer_challenge/inc/ray_tracer.h"
-#include "../file_to_list/inc/file_to_list.h"
-
-#define SPH_X 0
-#define SPH_Y 0
-#define SPH_Z 2
-//light purpleish pinkish 0xFFC673FF
-#define SP_R 198
-#define SP_G 115
-#define SP_B 255
-
-#define CAM_X 0
-#define CAM_Y 0
-#define CAM_Z 0
-
-#define LIG_X 0
-#define LIG_Y 10
-#define LIG_Z 2
-
-t_tuple *multiply_vec_by_scalar(t_tuple *vec, float scalar);
-void	map_coordinates(float *x, float *y, int wsize);
-int 	render_pixels(mlx_image_t *img);
-int		circle(int x, int y, int center, int radius);
-int		sphere_intersect(float x, float y, float center, float radius);
-int		color_sphere(float z);
-float	fsphere(t_tuple *ray, t_tuple *ray_origin);
-t_tuple *calculate_sphere_normal(t_tuple *hit_point, t_tuple *sphere_center);
-int		trace(t_tuple *ray);
-int clamp(float n);
 
 void	map_coordinates(float *x, float *y, int wsize)
 {
@@ -81,7 +35,7 @@ int	circle(int x, int y, int center, int radius)
 
 int	color_sphere(float n)
 {
-	return ((clamp(n * SP_R) << 24 | clamp(n * SP_G) << 16 | clamp(n * SP_B) << 8 | 255));
+	return ((clamp(n * 100) << 24 | clamp(n * 100) << 16 | clamp(n * 100) << 8 | 255));
 }
 
 int clamp(float n)
@@ -119,59 +73,58 @@ t_tuple *calculate_sphere_normal(t_tuple *hit_point, t_tuple *sphere_center)
 /*
 color Trace(const Ray &ray, int depth) 
 { 
-    Object *object = NULL; 
-    float minDistance = INFINITY;
-    Point pHit; 
-    Normal nHit; 
-    for (int k = 0; k < objects.size(); ++k) { 
-        if (Intersect(objects[k], ray, &pHit, &nHit)) { 
-            float distance = Distance(ray.origin, pHit); 
-            if (distance < minDistance) { 
-                object = objects[k];
-                minDistance = distance;
-            } 
-        } 
-    } 
-    if (object == NULL) 
-        return backgroundColor; // Returning a background color instead of 0
+	Object *object = NULL; 
+	float minDistance = INFINITY;
+	Point pHit; 
+	Normal nHit; 
+	for (int k = 0; k < objects.size(); ++k) { 
+		if (Intersect(objects[k], ray, &pHit, &nHit)) { 
+			float distance = Distance(ray.origin, pHit); 
+			if (distance < minDistance) { 
+				object = objects[k];
+				minDistance = distance;
+			} 
+		} 
+	} 
+	if (object == NULL) 
+		return backgroundColor; // Returning a background color instead of 0
 
-    } else if (!object->isGlass) { // Check if object is not glass (diffuse/opaque)
-        // Compute illumination only if object is not in shadow
-        Ray shadowRay; 
-        shadowRay.origin = pHit + nHit * bias; // Adding a small bias to avoid self-intersection
-        shadowRay.direction = Normalize(lightPosition - pHit); 
-        bool isInShadow = false; 
-        for (int k = 0; k < objects.size(); ++k) { 
-            if (Intersect(objects[k], shadowRay)) { 
-                isInShadow = true; 
-                break; 
-            } 
-        } 
-        if (!isInShadow) {
-            return object->color * light.brightness; // point is illuminated
-        }
-    } 
-    return backgroundColor; // Return background color if no interaction
+	} else if (!object->isGlass) { // Check if object is not glass (diffuse/opaque)
+		// Compute illumination only if object is not in shadow
+		Ray shadowRay; 
+		shadowRay.origin = pHit + nHit * bias; // Adding a small bias to avoid self-intersection
+		shadowRay.direction = Normalize(lightPosition - pHit); 
+		bool isInShadow = false; 
+		for (int k = 0; k < objects.size(); ++k) { 
+			if (Intersect(objects[k], shadowRay)) { 
+				isInShadow = true; 
+				break; 
+			} 
+		} 
+		if (!isInShadow) {
+			return object->color * light.brightness; // point is illuminated
+		}
+	} 
+	return backgroundColor; // Return background color if no interaction
 } 
  
 // Render loop for each pixel of the image
 for (int j = 0; j < imageHeight; ++j) { 
-    for (int i = 0; i < imageWidth; ++i) { 
-        Ray primRay; 
-        computePrimRay(i, j, &primRay); // Assume computePrimRay correctly sets the ray origin and direction
-        pixels[i][j] = Trace(primRay, 0); 
-    } 
+	for (int i = 0; i < imageWidth; ++i) { 
+		Ray primRay; 
+		computePrimRay(i, j, &primRay); // Assume computePrimRay correctly sets the ray origin and direction
+		pixels[i][j] = Trace(primRay, 0); 
+	} 
 }
 */
 
 
 
 /* v0.2 of sphere intersection function */
-float fsphere(t_tuple *ray, t_tuple *ray_origin)
+float fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere)
 {
-	float radius = 0.5;
-	t_tuple *sphere_center = create_point(SPH_X, SPH_Y, SPH_Z);
-	t_tuple *ray_origin_to_sphere_center = subtract(ray_origin, sphere_center);
+	float radius = sphere.sd / 2;
+	t_tuple *ray_origin_to_sphere_center = subtract(ray_origin, create_point(sphere.xyz.x, sphere.xyz.y, sphere.xyz.z));
 	float a = dot(ray, ray);
 	float b = 2 * dot(ray, ray_origin_to_sphere_center);
 	float c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - radius * radius;
@@ -191,14 +144,14 @@ float fsphere(t_tuple *ray, t_tuple *ray_origin)
 }
 
 
-int	trace(t_tuple *ray)
+int	trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
 {
-	t_tuple	*lightpos = create_point(LIG_X, LIG_Y, LIG_Z);
+	t_tuple	*lightpos = create_point(scene->light.xyz.x, scene->light.xyz.y, scene->light.xyz.z);
 	t_tuple *hitpoint;
 	float	t;
 
 	hitpoint = NULL;
-	t = fsphere(ray, create_point(CAM_X, CAM_Y, CAM_Z));//camera origin point
+	t = fsphere(ray, camera, scene->shapes[0]);//for now, only one shape
 	if (t <= 0)
 		return (0xFFFFFFFF);// bg
 
@@ -207,7 +160,8 @@ int	trace(t_tuple *ray)
 
 	t_tuple	*shadow_ray = normalize(subtract(lightpos, hitpoint));
 	shadow_ray->w = VECTOR;
-	t_tuple	*normal = normalize(subtract(hitpoint, create_point(SPH_X, SPH_Y, SPH_Z)));
+	t_tuple	*sphere_center = create_point(scene->shapes[0].xyz.x, scene->shapes[0].xyz.y, scene->shapes[0].xyz.z);//this may be tricky to write for multiple shapes
+	t_tuple	*normal = normalize(subtract(hitpoint, sphere_center));
 	float lit = dot(normal, shadow_ray);
 	if (lit <= 0)
 		return (0xFF000000);
@@ -215,14 +169,21 @@ int	trace(t_tuple *ray)
 }
 
 
-int	render_pixels(mlx_image_t *img)
+/*
+	-remap WINSIZE onto a -1 to 1 geometric viewing plane
+	-viewing plane is focal length away from camera's view point,
+		so we add focal length to camera's z when making the ray
+*/
+int	render_pixels(mlx_image_t *img, t_scene *scene)
 {
 	float	*x = ft_calloc(WINSIZE, sizeof(float));
 	float	*y = ft_calloc(WINSIZE, sizeof(float));
 	int		i = 0;
 	int		j = 0;
+	t_tuple	*camera;
 
-	if (!x || !y)
+	camera = create_point(scene->camera.xyz.x, scene->camera.xyz.y, scene->camera.xyz.z);
+	if (!x || !y || !camera)
 		return (free(x), free(y), ERROR);
 	map_coordinates(x, y, WINSIZE);
 	while (i < WINSIZE)
@@ -230,10 +191,20 @@ int	render_pixels(mlx_image_t *img)
 		j = 0;
 		while (j < WINSIZE)
 		{
-			//viewing plane is focal length away from camera's view point
-			float focal_len = 1.732;
-			t_tuple *ray = normalize(subtract(create_vector(x[i], y[WINSIZE - j], CAM_Z + focal_len), create_vector(CAM_X, CAM_Y, CAM_Z)));
-			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(ray);
+			//the following lines until trace() can be t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera)
+			t_tuple	*ray;
+			t_tuple	*cam_viewplane;
+			cam_viewplane = create_point(x[i], y[WINSIZE - j], camera->z + scene->camera.focal_length);
+			if (!cam_viewplane)
+				return (free(x), free(y), free(camera), ERROR);
+			ray = subtract(cam_viewplane, camera);
+			if (!ray)
+				return (free(x), free(y), free(camera), free(cam_viewplane), ERROR);
+			ray = normalize(ray);
+			if (!ray)
+				return (free(x), free(y), free(camera), free(cam_viewplane), ERROR);
+			
+			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(ray, scene, camera);
 			j++;
 		}
 		i++;

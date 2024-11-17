@@ -111,26 +111,13 @@ typedef enum e_type
 	ambiant
 } t_type;
 
-// typedef struct s_rgb
-// {
-// 	float r;
-// 	float g;
-// 	float b;
-// } t_rgb;
-
-typedef struct s_xyz
+typedef struct s_tuple
 {
-	double x;
-	double y;
-	double z;
-} t_xyz;
-
-// typedef struct s_xyz_3d
-// {
-// 	double x;
-// 	double y;
-// 	double z;
-// } t_xyz_3d;
+	float x;
+	float y;
+	float z;
+	float w;
+} t_tuple;
 
 typedef struct s_colour
 {
@@ -139,11 +126,18 @@ typedef struct s_colour
 	float b;
 } t_colour;
 
+typedef struct s_xyz
+{
+	double x;
+	double y;
+	double z;
+} t_xyz;
+
 typedef struct	s_shape
 {
 	t_type		type;
-	t_xyz		xyz;
-	t_xyz		xyz3d;
+	t_xyz		xyz;//should this be a tuple?
+	t_xyz		xyz3d;//should this be a tuple?
 	t_colour	rgb;
 	float		sd;
 	float		cd;
@@ -170,7 +164,7 @@ typedef struct s_list
 	struct s_list	*next;
 }	t_list;
 
-//this is for camera, light, and ambiant
+//s_elements is for camera, light, and ambiant
 typedef struct s_elements
 {
 	t_type		type;
@@ -204,7 +198,7 @@ typedef struct s_scene
 	// t_pl *planes;
 	// t_sp *spheres;
 
-// -Suggestion: make cy, pl, and sp objects all part of a single Shapes[] array, calloc'd to the right size
+// cy, pl, and sp objects are all part of a single Shapes[] array, calloc'd to the right size
 	t_shape *shapes;
 
 	int n_cylinder;
@@ -234,6 +228,7 @@ void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstdelone(t_list *lst, void (*del)(void *));
 
 
+
 //////////////////////////////////////////////////
 /*		P A R S I N G    F U N C T I O N S		*/
 //////////////////////////////////////////////////
@@ -255,7 +250,7 @@ char    *skip_space(char *s);
 void	move_pointers_to_args(t_list **l);
 int		assign_node_type(t_list **l);
 int		does_file_end_with_rt(char *filename);
-void	init_node(t_list **l);
+// void	init_node(t_list **l); //ft_calloc initializes to 0 automatically, we can use that instead
 
 // 	PROCESS NODES
 int		process_nodes(t_list **l);
@@ -281,20 +276,16 @@ int	count_commas_between(char *s);
 int	is_number_valid(char *num);
 int    check_count_of_types(t_list **l, t_scene *rt);
 
-//	SCENE CREATION
-int	populate_scene(t_list **l, t_scene *scene);
-t_elem	move_element_into_scene(t_list *current);
-float	calculate_focal_len(unsigned int fov);
-
-
-
-
 
 // list legality
 
 int	only_legal_chars(char *s, char *legal);
 int	list_legality_check(t_list **l, char *legal);
 
+//	SCENE CREATION
+int	populate_scene(t_list **l, t_scene *scene);
+t_elem	move_element_into_scene(t_list *current);
+float	calculate_focal_len(unsigned int fov);
 
 
 // ERRORS
@@ -308,11 +299,56 @@ void	free_array(char **s);
 
 
 /////////////////////////////////////////////////////////
-/*      R A Y   T R A C I N G   F U N C T I O N S      */
+/*         R T - P A R T    F U N C T I O N S          */
 /////////////////////////////////////////////////////////
 
+void	map_coordinates(float *x, float *y, int wsize);
 void	esc_keyhook(mlx_key_data_t keydata, void *param);
+int		render_pixels(mlx_image_t *img, t_scene *scene);
+int		circle(int x, int y, int center, int radius);
+int		color_sphere(float z);
+float	fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere);
+int		trace(t_tuple *ray, t_scene *scene, t_tuple *camera);
+int		clamp(float n);
 
+
+
+/*         C R E A T E         */
+
+t_tuple		*create_tuple(float x, float y, float z, float w);
+t_colour	*create_colour(float r, float g, float b);
+t_tuple		*create_point(float x, float y, float z);
+t_tuple		*create_vector(float x, float y, float z);
+
+//         T U P L E S
+
+int			diff(t_tuple *t1, t_tuple *t2);
+t_tuple		*add(t_tuple *t1, t_tuple *t2);
+t_tuple		*subtract(t_tuple *t1, t_tuple *t2);
+t_tuple		*negate_tuple(t_tuple *t);
+t_tuple		*multiply_tuple(t_tuple *t, float multiplier);
+t_tuple		*divide_tuple(t_tuple *t, float divisor);
+float		magnitude(t_tuple *t);
+t_tuple		*normalize(t_tuple *t);
+float		dot(t_tuple *a, t_tuple *b);
+t_tuple		*cross(t_tuple *a, t_tuple *b);
+unsigned int float_to_uint(float value);
+uint32_t	ft_colour_to_uint32(t_colour *colour);
+
+//			C O L O U R S
+
+t_colour   *add_colours(t_colour *a, t_colour *b);
+t_colour   *subtract_colours(t_colour *a, t_colour *b);
+t_colour   *multiply_colour_by(t_colour *a, float scaler);
+t_colour   *hadamard_product(t_colour *a, t_colour *b);
+
+
+//      P R I N T E R S
+
+void	ft_tuple_print(t_tuple *t);
+void	ft_colour_printer(t_colour *c);
+void	print_y(char *s);
+void 	scene_print(t_scene *scene);
 
 
 #endif
