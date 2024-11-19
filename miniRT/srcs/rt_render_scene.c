@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/17 21:55:03 by bposa            ###   ########.fr       */
+/*   Updated: 2024/11/19 22:04:19 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,36 +143,47 @@ float fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere)
 	return (0);
 }
 
-
+// TODO: maybe revert the tuple function changes relating to EPSILON swapping of 0 values
 int	trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
 {
-	t_tuple	*lightpos = create_point(scene->light.xyz.x, scene->light.xyz.y, scene->light.xyz.z);
-	t_tuple *hitpoint;
-	float	t;
+	t_tuple		*lightpos;
+	t_tuple 	*hitpoint;
+	t_tuple		*shadow_ray;
+	t_colour	*shape_ambient_blend;
+	float	t;//t represents the distance along the ray from its origin where it intersects the sphere: t>0 means there is an intersection, and the ray hits the sphere at t units from the ray origin
 
 	hitpoint = NULL;
-	t = fsphere(ray, camera, scene->shapes[0]);//for now, only one shape
+	shadow_ray = NULL;
+	lightpos = create_point(scene->light.xyz.x, scene->light.xyz.y, scene->light.xyz.z);
+	shape_ambient_blend = hadamard_product(&scene->shapes[0].rgb, &scene->ambiant);
+	
+	//calculate closest intersection, if no intersection, return background color. 
+	//shoudl cycle through all shapes nd pick the closest hitpoint
+	t = fsphere(ray, camera, scene->shapes[0]);//for now only one shape
 	if (t <= 0)
-		return (0xFFFFFFFF);// bg
+		return (ft_colour_to_uint32(&scene->ambiant));// bg
 
-	hitpoint = multiply_tuple(ray, t);//this was causing problems with sphere -light orientations..
-	hitpoint->w = POINT;// this, too
+	hitpoint = multiply_tuple(ray, t);
+	hitpoint->w = POINT;
 
-	t_tuple	*shadow_ray = normalize(subtract(lightpos, hitpoint));
+	shadow_ray = normalize(subtract(lightpos, hitpoint));
 	shadow_ray->w = VECTOR;
-	t_tuple	*sphere_center = create_point(scene->shapes[0].xyz.x, scene->shapes[0].xyz.y, scene->shapes[0].xyz.z);//this may be tricky to write for multiple shapes
+	t_tuple	*sphere_center = create_point(scene->shapes[0].xyz.x, scene->shapes[0].xyz.y, scene->shapes[0].xyz.z);//this has to work for multiple shapes later
 	t_tuple	*normal = normalize(subtract(hitpoint, sphere_center));
-	float lit = dot(normal, shadow_ray);
-	if (lit <= 0)
-		return (0xFF000000);
-	return (color_sphere(lit));
+	float diffuse_amount = dot(normal, shadow_ray);
+	if (diffuse_amount < 0)
+		diffuse_amount = 0;
+
+t_colour *diffuse_color = multiply_colour_by(multiply_colour_by(&scene->shapes[0].rgb, scene->light.lbr), diffuse_amount);
+
+	return (ft_colour_to_uint32(add_colours(diffuse_color, shape_ambient_blend)));
 }
 
 
 /*
-	-remap WINSIZE onto a -1 to 1 geometric viewing plane
-	-viewing plane is focal length away from camera's view point,
-		so we add focal length to camera's z when making the ray
+	here we remap WINSIZE onto a -1 to 1 geometric viewing plane.
+	as the viewing plane is focal_length away from camera's view point,
+		we add focal_length to camera's z when making the camera's ray
 */
 int	render_pixels(mlx_image_t *img, t_scene *scene)
 {
@@ -191,18 +202,18 @@ int	render_pixels(mlx_image_t *img, t_scene *scene)
 		j = 0;
 		while (j < WINSIZE)
 		{
-			//the following lines until trace() can be t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera)
+			//the following lines until trace() can be t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int x, int y)
 			t_tuple	*ray;
-			t_tuple	*cam_viewplane;
-			cam_viewplane = create_point(x[i], y[WINSIZE - j], camera->z + scene->camera.focal_length);
-			if (!cam_viewplane)
+			t_tuple	*ray_viewplane;
+			ray_viewplane = create_point(x[i], y[WINSIZE - j], camera->z + scene->camera.focal_length);
+			if (!ray_viewplane)
 				return (free(x), free(y), free(camera), ERROR);
-			ray = subtract(cam_viewplane, camera);
+			ray = subtract(ray_viewplane, camera);
 			if (!ray)
-				return (free(x), free(y), free(camera), free(cam_viewplane), ERROR);
+				return (free(x), free(y), free(camera), free(ray_viewplane), ERROR);
 			ray = normalize(ray);
 			if (!ray)
-				return (free(x), free(y), free(camera), free(cam_viewplane), ERROR);
+				return (free(x), free(y), free(camera), free(ray_viewplane), ERROR);
 			
 			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(ray, scene, camera);
 			j++;

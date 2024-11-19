@@ -71,13 +71,13 @@ void	ft_colour_printer(t_colour *c)
 void scene_print(t_scene *scene)
 {
 	printf("\nParsed into scene:\n"
-		" A: alr=%.3f, rgb=%.2f|%.2f|%.2f\n"
+		" A: rgb=%.2f|%.2f|%.2f\n"
 		" L: lbr=%.3f, xyz=%.2f|%.2f|%.2f\n"
 		" C: focl=%f, xyz=%.2f|%.2f|%.2f\n"
 		"sp: type=%d, sd=%.2f, xyz=%.2f|%.2f|%.2f, rgb=%.1f|%.1f|%.1f\n",
 		// "sp: type=%d, sd=%.2f, xyz=%.2f|%.2f|%.2f, rgb=%.1f|%.1f|%.1f\n"
 		// "cy: type=%d, xyz=%.2f|%.2f|%.2f, xyz3d=%.2f|%.2f|%.2f, cd=%.2f, ch=%.2f, rgb=%.1f|%.1f|%.1f\n",
-		scene->ambiant.alr, scene->ambiant.rgb.r, scene->ambiant.rgb.g, scene->ambiant.rgb.b,
+		scene->ambiant.r, scene->ambiant.g, scene->ambiant.b,
 		scene->light.lbr, scene->light.xyz.x, scene->light.xyz.y, scene->light.xyz.z,
 		scene->camera.focal_length, scene->camera.xyz.x, scene->camera.xyz.y, scene->camera.xyz.z,
 		scene->shapes[0].type, scene->shapes[0].sd, scene->shapes[0].xyz.x, scene->shapes[0].xyz.y, scene->shapes[0].xyz.z,

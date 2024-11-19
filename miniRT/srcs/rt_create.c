@@ -33,6 +33,13 @@ t_colour	*create_colour(float r, float g, float b)
 {
 	t_colour *c;
 
+	c = NULL;
+	// if (r == 0)
+	// 	r = EPSILON;
+	// if (g == 0)
+	// 	g = EPSILON;
+	// if (b == 0)
+	// 	b = EPSILON;
 	c = malloc(1 * sizeof(t_colour));
 	if (!c)
 		return (NULL);

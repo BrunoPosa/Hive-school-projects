@@ -189,7 +189,7 @@ typedef struct s_scene
 // all of these items are in a linked list already
 	t_elem light;
 	t_elem camera;
-	t_elem ambiant;
+	t_colour ambiant;
 
 // can we use a link2 to connect objects of the same type?
 // then to free we can rip through all the linked list,
@@ -333,7 +333,6 @@ t_tuple		*normalize(t_tuple *t);
 float		dot(t_tuple *a, t_tuple *b);
 t_tuple		*cross(t_tuple *a, t_tuple *b);
 unsigned int float_to_uint(float value);
-uint32_t	ft_colour_to_uint32(t_colour *colour);
 
 //			C O L O U R S
 
@@ -341,6 +340,7 @@ t_colour   *add_colours(t_colour *a, t_colour *b);
 t_colour   *subtract_colours(t_colour *a, t_colour *b);
 t_colour   *multiply_colour_by(t_colour *a, float scaler);
 t_colour   *hadamard_product(t_colour *a, t_colour *b);
+uint32_t	ft_colour_to_uint32(t_colour *colour);
 
 
 //      P R I N T E R S

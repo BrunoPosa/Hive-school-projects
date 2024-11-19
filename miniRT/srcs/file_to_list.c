@@ -105,9 +105,11 @@ t_elem	move_element_into_scene(t_list *current)
 
 int	populate_scene(t_list **l, t_scene *scene)
 {
-	t_list *current;
+	t_list		*current;
+	t_colour	*ambiant_tmp;
 
 	current = *l;
+	ambiant_tmp = NULL;
 	if (allocate_scene_shapes(scene) == ERROR)
 		return (ERROR);
 	move_shapes_into_scene(l, scene, sphere);
@@ -116,13 +118,19 @@ int	populate_scene(t_list **l, t_scene *scene)
 	while (current)
 	{
 		if (current->type == ambiant)
-			scene->ambiant = move_element_into_scene(current);
+		{
+			ambiant_tmp = multiply_colour_by(&current->rgb, current->alr);
+			scene->ambiant.r = ambiant_tmp->r;
+			scene->ambiant.g = ambiant_tmp->g;
+			scene->ambiant.b = ambiant_tmp->b;
+		}
 		else if (current->type == light)
 			scene->light = move_element_into_scene(current);
 		else if (current->type == camera)
 			scene->camera = move_element_into_scene(current);
 		current = current->next;
 	}
+	free(ambiant_tmp);
 	return (SUCCESS);
 }
 

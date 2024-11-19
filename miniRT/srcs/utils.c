@@ -43,3 +43,15 @@ float	calculate_focal_len(unsigned int fov)
 	focal_len = (WRLD_WINWIDTH / 2.0) / tan(fov_radians / 2.0);
 	return focal_len;
 }
+
+//should we be clamping here?
+uint32_t	ft_colour_to_uint32(t_colour *colour)
+{
+	uint32_t color;
+
+	color = 255 << 24
+			| (uint32_t)(clamp(colour->b)) << 16
+			| (uint32_t)(clamp(colour->g)) << 8
+			| (uint32_t)(clamp(colour->r));
+	return (color);
+}
