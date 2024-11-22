@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/22 16:02:48 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/11/22 16:35:45 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,8 +181,7 @@ int	trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
 
 	shadow_ray = normalize(subtract(&scene->lightpos, hitpoint));
 	shadow_ray->w = VECTOR;
-	t_tuple	*sphere_center = create_point(scene->shapes[0].xyz.x, scene->shapes[0].xyz.y, scene->shapes[0].xyz.z);//this has to work for multiple shapes later
-	t_tuple	*normal = normalize(subtract(hitpoint, sphere_center));
+	t_tuple	*normal = normalize(subtract(hitpoint, &scene->shapes[0].xyz));
 	
 	
 	//shading the lit side
