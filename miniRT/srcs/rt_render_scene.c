@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt_render_scene.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/22 16:35:45 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/11/22 20:47:53 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ color Trace(const Ray &ray, int depth)
 	if (object == NULL) 
 		return backgroundColor; // Returning a background color instead of 0
 
-	} else if (!object->isGlass) { // Check if object is not glass (diffuse/opaque)
+	} else if (!object->isGlass) {
 		// Compute illumination only if object is not in shadow
 		Ray shadowRay; 
 		shadowRay.origin = pHit + nHit * bias; // Adding a small bias to avoid self-intersection
@@ -107,24 +107,14 @@ color Trace(const Ray &ray, int depth)
 	} 
 	return backgroundColor; // Return background color if no interaction
 } 
- 
-// Render loop for each pixel of the image
-for (int j = 0; j < imageHeight; ++j) { 
-	for (int i = 0; i < imageWidth; ++i) { 
-		Ray primRay; 
-		computePrimRay(i, j, &primRay); // Assume computePrimRay correctly sets the ray origin and direction
-		pixels[i][j] = Trace(primRay, 0); 
-	} 
-}
 */
-
 
 
 /* v0.2 of sphere intersection function */
 float fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere)
 {
 	float radius = sphere.sd / 2;
-	t_tuple *ray_origin_to_sphere_center = subtract(ray_origin, create_point(sphere.xyz.x, sphere.xyz.y, sphere.xyz.z));
+	t_tuple *ray_origin_to_sphere_center = subtract(ray_origin, &sphere.xyz);
 	float a = dot(ray, ray);
 	float b = 2 * dot(ray, ray_origin_to_sphere_center);
 	float c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - radius * radius;
@@ -141,54 +131,55 @@ float fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere)
 	else if (t2 > 0)
 		return t2;
 	return (0);
-}
+}		
 
 
-// trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
-// {
-	
-// 	t_shape *shape = NULL;
-// 	t_tuple *shadow_ray = NULL;
-// 	t_tuple	*p_hit = NULL;
-// 	t_tuple	*n_hit = NULL;
-// 	int	i = 0;
-
-// 	while (i < scene->n_cylinder + scene->n_plane + scene->n_sphere)
-// 	{
-// 		if ()
-// 	}
-// }
-
+/*
+	t represents the distance along the ray from its origin where it intersects the sphere:
+	t>0 means there is an intersection, and the ray hits the sphere at t units from the ray origin
+*/
 int	trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
 {
+	t_shape		*obj;
 	t_tuple 	*hitpoint;
 	t_tuple		*shadow_ray;
 	t_colour	*shape_ambient_blend;
-	float	t;//t represents the distance along the ray from its origin where it intersects the sphere: t>0 means there is an intersection, and the ray hits the sphere at t units from the ray origin
+	float	t = 0;
+	float tmin;
+	int i = 0;
 
+	obj = NULL;
 	hitpoint = NULL;
 	shadow_ray = NULL;
-	shape_ambient_blend = hadamard_product(&scene->shapes[0].rgb, &scene->ambiant);
+	tmin = (float)INT16_MAX;
+
+	while (i < scene->n_sphere + scene->n_plane + scene->n_cylinder)
+	{
+		t = fsphere(ray, camera, scene->shapes[i]);
+		if (t > 0 && t < tmin)
+		{
+			tmin = t;
+			obj = &scene->shapes[i];
+		}
+		i++;
+	}
+
+	if (!obj)
+		return (ft_colour_to_uint32(&scene->ambiant));
 	
-	//calculate closest intersection, if no intersection, return background color. 
-	//shoudl cycle through all shapes nd pick the closest hitpoint
-	t = fsphere(ray, camera, scene->shapes[0]);//for now only one shape
-	if (t <= 0)
-		return (ft_colour_to_uint32(&scene->ambiant));// bg
-	hitpoint = multiply_tuple(ray, t);
+	shape_ambient_blend = hadamard_product(&obj->rgb, &scene->ambiant);
+	hitpoint = multiply_tuple(ray, tmin);
 	hitpoint->w = POINT;
 
-
 	shadow_ray = normalize(subtract(&scene->lightpos, hitpoint));
-	shadow_ray->w = VECTOR;
-	t_tuple	*normal = normalize(subtract(hitpoint, &scene->shapes[0].xyz));
-	
-	
+	t_tuple	*normal = normalize(subtract(hitpoint, &obj->xyz));
+
+
 	//shading the lit side
 	float diffuse_amount = dot(normal, shadow_ray);
 	if (diffuse_amount < 0)
 		diffuse_amount = 0;
-	t_colour *diffuse_color = multiply_colour_by(multiply_colour_by(&scene->shapes[0].rgb, scene->lbr), diffuse_amount);
+	t_colour *diffuse_color = multiply_colour_by(multiply_colour_by(&obj->rgb, scene->lbr), diffuse_amount);
 
 	return (ft_colour_to_uint32(add_colours(diffuse_color, shape_ambient_blend)));
 }
