@@ -122,7 +122,13 @@ int	populate_scene(t_list **l, t_scene *scene)
 			scene->ambiant.b = current->rgb.b * current->alr;
 		}
 		else if (current->type == light)
-			scene->light = move_element_into_scene(current);
+		{
+			scene->lightpos.w = POINT;
+			scene->lightpos.x = current->xyz.x;
+			scene->lightpos.y = current->xyz.y;
+			scene->lightpos.z = current->xyz.z;
+			scene->lbr = current->lbr;
+		}
 		else if (current->type == camera)
 			scene->camera = move_element_into_scene(current);
 		current = current->next;

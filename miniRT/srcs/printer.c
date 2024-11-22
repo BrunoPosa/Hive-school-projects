@@ -68,23 +68,23 @@ void	ft_colour_printer(t_colour *c)
 
 
 // //stupid way of printing the scene, .rt file has to have C, L, A, sp, sp, cy
-void scene_print(t_scene *scene)
-{
-	printf("\nParsed into scene:\n"
-		" A: rgb=%.2f|%.2f|%.2f\n"
-		" L: lbr=%.3f, xyz=%.2f|%.2f|%.2f\n"
-		" C: focl=%f, xyz=%.2f|%.2f|%.2f\n"
-		"sp: type=%d, sd=%.2f, xyz=%.2f|%.2f|%.2f, rgb=%.1f|%.1f|%.1f\n",
-		// "sp: type=%d, sd=%.2f, xyz=%.2f|%.2f|%.2f, rgb=%.1f|%.1f|%.1f\n"
-		// "cy: type=%d, xyz=%.2f|%.2f|%.2f, xyz3d=%.2f|%.2f|%.2f, cd=%.2f, ch=%.2f, rgb=%.1f|%.1f|%.1f\n",
-		scene->ambiant.r, scene->ambiant.g, scene->ambiant.b,
-		scene->light.lbr, scene->light.xyz.x, scene->light.xyz.y, scene->light.xyz.z,
-		scene->camera.focal_length, scene->camera.xyz.x, scene->camera.xyz.y, scene->camera.xyz.z,
-		scene->shapes[0].type, scene->shapes[0].sd, scene->shapes[0].xyz.x, scene->shapes[0].xyz.y, scene->shapes[0].xyz.z,
-			scene->shapes[0].rgb.r, scene->shapes[0].rgb.g, scene->shapes[0].rgb.b);
-		// scene->shapes[1].type, scene->shapes[1].sd, scene->shapes[1].xyz.x, scene->shapes[1].xyz.y, scene->shapes[1].xyz.z,
-		// 	scene->shapes[1].rgb.r, scene->shapes[1].rgb.g, scene->shapes[1].rgb.b,
-		// scene->shapes[2].type, scene->shapes[2].xyz.x, scene->shapes[2].xyz.y, scene->shapes[2].xyz.z,
-		// 	scene->shapes[2].xyz3d.x, scene->shapes[2].xyz3d.y, scene->shapes[2].xyz3d.z,
-		// 	scene->shapes[2].cd, scene->shapes[2].ch, scene->shapes[2].rgb.r, scene->shapes[2].rgb.g, scene->shapes[2].rgb.b);
-}
+// void scene_print(t_scene *scene)
+// {
+// 	printf("\nParsed into scene:\n"
+// 		" A: rgb=%.2f|%.2f|%.2f\n"
+// 		" L: lbr=%.3f, xyz=%.2f|%.2f|%.2f\n"
+// 		" C: focl=%f, xyz=%.2f|%.2f|%.2f\n"
+// 		"sp: type=%d, sd=%.2f, xyz=%.2f|%.2f|%.2f, rgb=%.1f|%.1f|%.1f\n",
+// 		// "sp: type=%d, sd=%.2f, xyz=%.2f|%.2f|%.2f, rgb=%.1f|%.1f|%.1f\n"
+// 		// "cy: type=%d, xyz=%.2f|%.2f|%.2f, xyz3d=%.2f|%.2f|%.2f, cd=%.2f, ch=%.2f, rgb=%.1f|%.1f|%.1f\n",
+// 		scene->ambiant.r, scene->ambiant.g, scene->ambiant.b,
+// 		scene->light.lbr, scene->light.xyz.x, scene->light.xyz.y, scene->light.xyz.z,
+// 		scene->camera.focal_length, scene->camera.xyz.x, scene->camera.xyz.y, scene->camera.xyz.z,
+// 		scene->shapes[0].type, scene->shapes[0].sd, scene->shapes[0].xyz.x, scene->shapes[0].xyz.y, scene->shapes[0].xyz.z,
+// 			scene->shapes[0].rgb.r, scene->shapes[0].rgb.g, scene->shapes[0].rgb.b);
+// 		// scene->shapes[1].type, scene->shapes[1].sd, scene->shapes[1].xyz.x, scene->shapes[1].xyz.y, scene->shapes[1].xyz.z,
+// 		// 	scene->shapes[1].rgb.r, scene->shapes[1].rgb.g, scene->shapes[1].rgb.b,
+// 		// scene->shapes[2].type, scene->shapes[2].xyz.x, scene->shapes[2].xyz.y, scene->shapes[2].xyz.z,
+// 		// 	scene->shapes[2].xyz3d.x, scene->shapes[2].xyz3d.y, scene->shapes[2].xyz3d.z,
+// 		// 	scene->shapes[2].cd, scene->shapes[2].ch, scene->shapes[2].rgb.r, scene->shapes[2].rgb.g, scene->shapes[2].rgb.b);
+// }

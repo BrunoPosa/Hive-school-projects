@@ -128,9 +128,9 @@ typedef struct s_colour
 
 typedef struct s_xyz
 {
-	double x;
-	double y;
-	double z;
+	float x;
+	float y;
+	float z;
 } t_xyz;
 
 typedef struct	s_shape
@@ -187,7 +187,8 @@ typedef struct s_scene
 	float aspect_ratio;
 
 // all of these items are in a linked list already
-	t_elem light;
+	float 	lbr;
+	t_tuple lightpos;
 	t_elem camera;
 	t_colour ambiant;
 
