@@ -77,7 +77,9 @@ void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
 		if (current->type == type)
 		{
 			scene->shapes[i].type = type;
-			scene->shapes[i].xyz = current->xyz;
+			scene->shapes[i].xyz.x = current->xyz.x;
+			scene->shapes[i].xyz.y = current->xyz.y;
+			scene->shapes[i].xyz.z = current->xyz.z;
 			scene->shapes[i].xyz3d = current->xyz_3d;
 			scene->shapes[i].rgb = current->rgb;
 			scene->shapes[i].sd = current->sd;

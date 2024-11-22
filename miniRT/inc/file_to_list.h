@@ -136,7 +136,7 @@ typedef struct s_xyz
 typedef struct	s_shape
 {
 	t_type		type;
-	t_xyz		xyz;//should this be a tuple?
+	t_tuple		xyz;//should this be a tuple?
 	t_xyz		xyz3d;//should this be a tuple?
 	t_colour	rgb;
 	float		sd;
