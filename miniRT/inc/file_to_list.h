@@ -311,7 +311,8 @@ int		color_sphere(float z);
 float	fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere);
 int		trace(t_tuple *ray, t_scene *scene, t_tuple *camera);
 int		clamp(float n);
-
+float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape);
+int		is_in_shadow(t_tuple *shadow_ray, t_scene *scene, t_tuple *camera, t_shape *obj);
 
 
 /*         C R E A T E         */

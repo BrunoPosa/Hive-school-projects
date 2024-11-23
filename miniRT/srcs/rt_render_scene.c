@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/22 20:47:53 by bposa            ###   ########.fr       */
+/*   Updated: 2024/11/23 16:56:21 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,15 @@
 
 void	map_coordinates(float *x, float *y, int wsize)
 {
-	int i = 0;
+	int 	i;
+	float	new_wsize;
+
+	i = 0;
+	new_wsize = 2.0f;
 	while (i < wsize)
 	{
-		x[i] = i * 2.0f / wsize - 1.0f;
-		y[i] = i * 2.0f / wsize - 1.0f;
+		x[i] = i * new_wsize / wsize - (new_wsize / 2);
+		y[i] = i * new_wsize / wsize - (new_wsize / 2);
 		i++;
 	}
 }
@@ -133,6 +137,57 @@ float fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere)
 	return (0);
 }		
 
+t_colour	*calculate_lit_side_color(t_tuple *ray, t_scene *scene, t_shape *obj, float t)
+{
+	t_tuple		*hitpoint;
+	t_tuple		*shadow_ray;
+	t_colour	*diffuse_color;
+	float		diffuse_amount;
+
+	diffuse_color = NULL;
+	diffuse_amount = 0;
+	hitpoint = multiply_tuple(ray, t);
+	hitpoint->w = POINT;
+	shadow_ray = normalize(subtract(&scene->lightpos, hitpoint));
+	if (!shadow_ray)
+		return (NULL);
+	diffuse_amount = dot(normalize(subtract(hitpoint, &obj->xyz)), shadow_ray);
+	if (diffuse_amount < 0)
+		diffuse_amount = 0;
+	diffuse_color = multiply_colour_by(multiply_colour_by(&obj->rgb, scene->lbr), diffuse_amount);
+	return (diffuse_color);
+}
+
+int	is_in_shadow(t_tuple *shadow_ray, t_scene *scene, t_tuple *hitpoint, t_shape *obj)
+{
+	float		t;
+	float		tmin;
+	int			i;
+
+	i = 0;
+	tmin = (float)INT16_MAX;
+	while (i < scene->n_sphere + scene->n_plane + scene->n_cylinder)
+	{
+		if (obj != &scene->shapes[i])
+		{
+			t = shape_intersect(shadow_ray, hitpoint, scene->shapes[i]);
+			if (t > 0)
+			{
+				if (t <= tmin)
+					return (1);
+			}
+		}
+		i++;
+	}
+	return (0);
+}
+
+float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape)
+{
+	if (shape.type == sphere)
+		return (fsphere(ray, ray_origin, shape));
+	return (0);
+}
 
 /*
 	t represents the distance along the ray from its origin where it intersects the sphere:
@@ -141,21 +196,24 @@ float fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere)
 int	trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
 {
 	t_shape		*obj;
-	t_tuple 	*hitpoint;
 	t_tuple		*shadow_ray;
-	t_colour	*shape_ambient_blend;
+	int			tmp;
+	t_colour	*shade_color;
+	t_colour	*diffuse_color;
+	t_tuple		*hitpoint;
 	float	t = 0;
 	float tmin;
 	int i = 0;
-
+	tmp = 0;
 	obj = NULL;
-	hitpoint = NULL;
 	shadow_ray = NULL;
+	hitpoint = NULL;
 	tmin = (float)INT16_MAX;
-
+	shade_color = NULL;
+//look for closest object's distance t, and calculate its color to return
 	while (i < scene->n_sphere + scene->n_plane + scene->n_cylinder)
 	{
-		t = fsphere(ray, camera, scene->shapes[i]);
+		t = shape_intersect(ray, camera, scene->shapes[i]);
 		if (t > 0 && t < tmin)
 		{
 			tmin = t;
@@ -163,30 +221,34 @@ int	trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
 		}
 		i++;
 	}
-
 	if (!obj)
-		return (ft_colour_to_uint32(&scene->ambiant));
-	
-	shape_ambient_blend = hadamard_product(&obj->rgb, &scene->ambiant);
+		return (ft_colour_to_uint32(&scene->ambiant));//if no object is hit, return background color
+	shade_color = hadamard_product(&obj->rgb, &scene->ambiant);
+	if (!shade_color)
+		return (free(shadow_ray), ERROR);
 	hitpoint = multiply_tuple(ray, tmin);
 	hitpoint->w = POINT;
-
 	shadow_ray = normalize(subtract(&scene->lightpos, hitpoint));
-	t_tuple	*normal = normalize(subtract(hitpoint, &obj->xyz));
+	if (!shadow_ray)
+		return (ERROR);
+//with the t and obj, check if the hitpoint is in shadow by casting a ray from the hitpoint to the light source and cycling through
+// all objects for intersection. if in shadow, return shape_ambient_blend(?)
+	tmp = is_in_shadow(shadow_ray, scene, hitpoint, obj);
+	if (tmp == 1)
+		return (ft_colour_to_uint32(shade_color));
+	else if (tmp == -1)
+		return (free(shadow_ray), ERROR);
 
-
-	//shading the lit side
-	float diffuse_amount = dot(normal, shadow_ray);
-	if (diffuse_amount < 0)
-		diffuse_amount = 0;
-	t_colour *diffuse_color = multiply_colour_by(multiply_colour_by(&obj->rgb, scene->lbr), diffuse_amount);
-
-	return (ft_colour_to_uint32(add_colours(diffuse_color, shape_ambient_blend)));
+//if hitpoint is NOT in shadow, shade the lit side of the object using normal
+	diffuse_color = calculate_lit_side_color(ray, scene, obj, tmin);
+	if (!diffuse_color)
+		return (free(shadow_ray), ERROR);
+	return (ft_colour_to_uint32(add_colours(shade_color, diffuse_color)));//are we adding object's color twice? once in shade_color and once in diffuse_color?
 }
 
 
 /*
-	here we remap WINSIZE onto a -1 to 1 geometric viewing plane.
+	here we remap WINSIZE onto a custom size (-2 to 2) geometric viewing plane.
 	as the viewing plane is focal_length away from camera's view point,
 		we add focal_length to camera's z when making the camera's ray
 */
