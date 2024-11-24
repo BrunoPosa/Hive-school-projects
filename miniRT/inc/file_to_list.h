@@ -182,12 +182,13 @@ typedef struct s_scene
 	// mlx_t *mlx;
 	// mlx_image_t *img;
 
-	int width;
-	int height;
-	float aspect_ratio;
+	// int width;
+	// int height;
+	// float aspect_ratio;
 
 // all of these items are in a linked list already
 	float 	lbr;
+
 	t_tuple lightpos;
 	t_elem camera;
 	t_colour ambiant;
@@ -313,17 +314,15 @@ int		trace(t_tuple *ray, t_scene *scene, t_tuple *camera);
 int		clamp(float n);
 float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape);
 int		is_in_shadow(t_tuple *shadow_ray, t_scene *scene, t_tuple *camera, t_shape *obj);
+t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, float x, float y);
+int		init_coordinates_camera(float **x, float **y, t_scene *scene, t_tuple **camera);
 
-
-/*         C R E A T E         */
+/*         T U P L E S         */
 
 t_tuple		*create_tuple(float x, float y, float z, float w);
 t_colour	*create_colour(float r, float g, float b);
 t_tuple		*create_point(float x, float y, float z);
 t_tuple		*create_vector(float x, float y, float z);
-
-//         T U P L E S
-
 int			diff(t_tuple *t1, t_tuple *t2);
 t_tuple		*add(t_tuple *t1, t_tuple *t2);
 t_tuple		*subtract(t_tuple *t1, t_tuple *t2);

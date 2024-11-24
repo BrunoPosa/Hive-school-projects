@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/23 16:56:21 by bposa            ###   ########.fr       */
+/*   Updated: 2024/11/24 17:19:57 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,6 +246,23 @@ int	trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
 	return (ft_colour_to_uint32(add_colours(shade_color, diffuse_color)));//are we adding object's color twice? once in shade_color and once in diffuse_color?
 }
 
+int	init_coordinates_camera(float **x, float **y, t_scene *scene, t_tuple **camera)
+{
+	*x = ft_calloc(WINSIZE, sizeof(float));
+	if (!*x)
+		return (ERROR);
+	*y = ft_calloc(WINSIZE, sizeof(float));
+	if (!*y)
+		return (free(*x), ERROR);
+	*camera = create_point(scene->camera.xyz.x, scene->camera.xyz.y, scene->camera.xyz.z);
+	if (!*camera)
+		return (free(*x), free(*y), ERROR);
+	map_coordinates(*x, *y, WINSIZE);
+	x = NULL;
+	y = NULL;
+	camera = NULL;
+	return (SUCCESS);
+}
 
 /*
 	here we remap WINSIZE onto a custom size (-2 to 2) geometric viewing plane.
@@ -254,40 +271,29 @@ int	trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
 */
 int	render_pixels(mlx_image_t *img, t_scene *scene)
 {
-	float	*x = ft_calloc(WINSIZE, sizeof(float));
-	float	*y = ft_calloc(WINSIZE, sizeof(float));
-	int		i = 0;
-	int		j = 0;
+	float	*x;
+	float	*y;
+	int		i;
+	int		j;
 	t_tuple	*camera;
+	t_tuple	*ray;
 
-	camera = create_point(scene->camera.xyz.x, scene->camera.xyz.y, scene->camera.xyz.z);
-	if (!x || !y || !camera)
-		return (free(x), free(y), ERROR);
-	map_coordinates(x, y, WINSIZE);
-	while (i < WINSIZE)
+	i = -1;
+	j = -1;
+	camera = NULL;
+	ray = NULL;
+	if (init_coordinates_camera(&x, &y, scene, &camera) == ERROR)
+		return (ERROR);
+	while (++i < WINSIZE)
 	{
-		j = 0;
-		while (j < WINSIZE)
+		j = -1;
+		while (++j < WINSIZE)
 		{
-			//the following lines until trace() can be t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int x, int y)
-			t_tuple	*ray;
-			t_tuple	*ray_viewplane;
-			ray_viewplane = create_point(x[i], y[WINSIZE - j], camera->z + scene->camera.focal_length);
-			if (!ray_viewplane)
+			ray = calculate_camera_ray(scene, camera, x[i], y[WINSIZE - j]);
+			if (!ray)
 				return (free(x), free(y), free(camera), ERROR);
-			ray = subtract(ray_viewplane, camera);
-			if (!ray)
-				return (free(x), free(y), free(camera), free(ray_viewplane), ERROR);
-			ray = normalize(ray);
-			if (!ray)
-				return (free(x), free(y), free(camera), free(ray_viewplane), ERROR);
-			
 			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(ray, scene, camera);
-			j++;
 		}
-		i++;
 	}
-	free(x);
-	free(y);
-	return (SUCCESS);
+	return (free(x), free(y), SUCCESS);
 }

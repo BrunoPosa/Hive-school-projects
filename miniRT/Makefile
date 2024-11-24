@@ -17,6 +17,7 @@ SRCS 		=	main.c \
 				linked_list.c \
 				process_list.c \
 				utils.c \
+				utils2.c \
 				error.c \
 				assign_node_type.c \
 				process_nodes.c \
