@@ -31,12 +31,12 @@
 
 //this is the width of the window in pixels
 #ifndef WINSIZE
-# define WINSIZE 900
+# define WINSIZE 700
 #endif
 
 //this is the width of the window in rt world coordinates
 #ifndef WRLD_WINWIDTH
-# define WRLD_WINWIDTH 2
+# define WRLD_WINWIDTH 2.0f
 #endif
 
 #ifndef M_PI
@@ -136,7 +136,7 @@ typedef struct s_xyz
 typedef struct	s_shape
 {
 	t_type		type;
-	t_tuple		xyz;//should this be a tuple?
+	t_tuple		xyz;
 	t_xyz		xyz3d;//should this be a tuple?
 	t_colour	rgb;
 	float		sd;
@@ -179,19 +179,17 @@ typedef struct s_elements
 // general program info
 typedef struct s_scene
 {
-	// mlx_t *mlx;
-	// mlx_image_t *img;
-
-	// int width;
-	// int height;
-	// float aspect_ratio;
-
-// all of these items are in a linked list already
 	float 	lbr;
-
 	t_tuple lightpos;
 	t_elem camera;
 	t_colour ambiant;
+// cy, pl, and sp objects are all part of a single Shapes[] array, calloc'd to the right size
+	t_shape *shapes;
+	int n_cylinder;
+	int n_sphere;
+	int n_plane;
+	float	world_scale;//used for optimization
+	float	half_new_winsize;//used for optimization
 
 // can we use a link2 to connect objects of the same type?
 // then to free we can rip through all the linked list,
@@ -199,14 +197,6 @@ typedef struct s_scene
 	// t_cy *cylinders;
 	// t_pl *planes;
 	// t_sp *spheres;
-
-// cy, pl, and sp objects are all part of a single Shapes[] array, calloc'd to the right size
-	t_shape *shapes;
-
-	int n_cylinder;
-	int n_sphere;
-	int n_plane;
-
 } t_scene;
 
 // render struct for information of the pixel to be rendered
@@ -288,7 +278,7 @@ int	list_legality_check(t_list **l, char *legal);
 int	populate_scene(t_list **l, t_scene *scene);
 t_elem	move_element_into_scene(t_list *current);
 float	calculate_focal_len(unsigned int fov);
-
+void	precalculate(t_scene *scene);
 
 // ERRORS
 int	ret_error(t_error error, t_list *l);
@@ -314,7 +304,8 @@ int		trace(t_tuple *ray, t_scene *scene, t_tuple *camera);
 int		clamp(float n);
 float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape);
 int		is_in_shadow(t_tuple *shadow_ray, t_scene *scene, t_tuple *camera, t_shape *obj);
-t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, float x, float y);
+// t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, float x, float y);
+t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j);
 int		init_coordinates_camera(float **x, float **y, t_scene *scene, t_tuple **camera);
 
 /*         T U P L E S         */

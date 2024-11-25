@@ -31,7 +31,6 @@ int process_fov(t_list *current)
 // convert argument to int
     current->fov = ft_atoi(sub_string, &atoi_overflow);
     if (atoi_overflow
-        || current->fov < 0
         || current->fov > 180)
         return (free(sub_string), ret_error(E_FOV_RANGE, current));
 // printf("-----------------fov = %d\n", current->fov);

@@ -246,24 +246,6 @@ int	trace(t_tuple *ray, t_scene *scene, t_tuple *camera)
 	return (ft_colour_to_uint32(add_colours(shade_color, diffuse_color)));//are we adding object's color twice? once in shade_color and once in diffuse_color?
 }
 
-int	init_coordinates_camera(float **x, float **y, t_scene *scene, t_tuple **camera)
-{
-	*x = ft_calloc(WINSIZE, sizeof(float));
-	if (!*x)
-		return (ERROR);
-	*y = ft_calloc(WINSIZE, sizeof(float));
-	if (!*y)
-		return (free(*x), ERROR);
-	*camera = create_point(scene->camera.xyz.x, scene->camera.xyz.y, scene->camera.xyz.z);
-	if (!*camera)
-		return (free(*x), free(*y), ERROR);
-	map_coordinates(*x, *y, WINSIZE);
-	x = NULL;
-	y = NULL;
-	camera = NULL;
-	return (SUCCESS);
-}
-
 /*
 	here we remap WINSIZE onto a custom size (-2 to 2) geometric viewing plane.
 	as the viewing plane is focal_length away from camera's view point,
@@ -271,8 +253,6 @@ int	init_coordinates_camera(float **x, float **y, t_scene *scene, t_tuple **came
 */
 int	render_pixels(mlx_image_t *img, t_scene *scene)
 {
-	float	*x;
-	float	*y;
 	int		i;
 	int		j;
 	t_tuple	*camera;
@@ -282,18 +262,19 @@ int	render_pixels(mlx_image_t *img, t_scene *scene)
 	j = -1;
 	camera = NULL;
 	ray = NULL;
-	if (init_coordinates_camera(&x, &y, scene, &camera) == ERROR)
+	camera = create_point(scene->camera.xyz.x, scene->camera.xyz.y, scene->camera.xyz.z);
+	if (!camera)
 		return (ERROR);
 	while (++i < WINSIZE)
 	{
 		j = -1;
 		while (++j < WINSIZE)
 		{
-			ray = calculate_camera_ray(scene, camera, x[i], y[WINSIZE - j]);
+			ray = calculate_camera_ray(scene, camera, i, WINSIZE - j);
 			if (!ray)
-				return (free(x), free(y), free(camera), ERROR);
+				return (free(camera), ERROR);
 			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(ray, scene, camera);
 		}
 	}
-	return (free(x), free(y), SUCCESS);
+	return (SUCCESS);
 }

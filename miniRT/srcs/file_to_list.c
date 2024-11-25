@@ -172,7 +172,7 @@ int	parse(int argc, char **argv, t_scene *scene)
 		return (ret_error(E_MALLOC, l));
 	// init_camera(&rt); 	// camera calculations
 	// render_scene(&rt);	// render scene
-
+	precalculate(scene);
 	// ft_list_print(&l);
 	ft_lstclear(&l, free);
 // free_all(l); // l is a linked list, that holds input data,
