@@ -5,3 +5,5 @@ ray_tracer_challenge/ray_tracer
 /MLX42/
 *.a
 *.ppm
+miniRT/miniRT
+examples/

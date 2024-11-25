@@ -16,7 +16,7 @@ int	process_list(t_list **l)
 	list_legality_check(l, LEGAL_CHARS2); //now there should be only numbers and , etc
 	if (process_nodes(l) != E_SUCCESS)
 		return (-1);
-	check_count_of_types(l);
+
 
 
 	// check count of camera, ambiant, light.()
@@ -34,7 +34,7 @@ void move_pointers_to_args(t_list **l)
 
     while (current)
 	{
-		current->s = skip_space(current->s);
+		current->p = skip_space(current->p);
 		current = current->next;
 	}
 }

@@ -4,13 +4,11 @@ t_list *ft_lstnew(void *s)
 {
 	t_list *new_node;
 
-	new_node = (t_list *)malloc(sizeof(t_list));
+	new_node = (t_list *)ft_calloc(1, sizeof(t_list));
 
 	if (!new_node)
 		return (NULL);
-	init_node(&new_node);
 	new_node->s = s;
-	// new_node->alr = 2.4;
 	new_node->next = NULL;
 	return (new_node);
 }
@@ -77,4 +75,67 @@ int	ft_lstsize(t_list *lst)
 		i++;
 	}
 	return ((int)i);
+}
+
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstclear_bonus.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtu <jtu@student.hive.fi>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 14:27:27 by jtu               #+#    #+#             */
+/*   Updated: 2023/11/10 17:05:27 by jtu              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
+/**
+ * Deletes and frees the given node and every
+ * successor of that node, using the function ’del’
+ * and free(3).
+ * Finally, the pointer to the list must be set to
+ * NULL.
+ * @param lst - The address of a pointer to a node.
+ * @param del - The address of the function used to
+ *              delete the content of the node.
+ * @return None
+ */
+void	ft_lstclear(t_list **lst, void (*del)(void *))
+{
+	if (!lst || !(*lst))
+		return ;
+	ft_lstclear(&((*lst)->next), del);
+	ft_lstdelone(*lst, del);
+	*lst = NULL;
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstdelone_bonus.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtu <jtu@student.hive.fi>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/02 14:53:41 by jtu               #+#    #+#             */
+/*   Updated: 2023/11/14 18:17:03 by jtu              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/**
+ * Takes as a parameter a node and frees the memory of
+ * the node’s content using the function ’del’ given
+ * as a parameter and free the node. The memory of
+ * ’next’ must not be freed.
+ * @param lst - The node to free.
+ * @param del - The address of the function used to delete
+ * the content.
+ */
+void	ft_lstdelone(t_list *lst, void (*del)(void *))
+{
+	if (!lst || !del)
+		return ;
+	del(lst->s);
+	free(lst);
 }

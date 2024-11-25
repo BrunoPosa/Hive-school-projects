@@ -12,12 +12,12 @@ CFLAGS		=	-Wall -Wextra -Werror
 RM			=	rm -rf
 
 SRCS 		=	main.c \
+				file_to_list.c \
 				printer.c \
 				linked_list.c \
-				file_to_list.c \
 				process_list.c \
 				utils.c \
-				init.c \
+				utils2.c \
 				error.c \
 				assign_node_type.c \
 				process_nodes.c \
@@ -32,9 +32,22 @@ SRCS 		=	main.c \
 				process_sd.c \
 				process_xyz.c \
 				process_utils.c \
-				process_fov.c
+				process_fov.c \
+				rt_render_scene.c \
+				rt_create.c \
+				rt_colours.c \
+				rt_tuples.c \
+
+# rt_free_rt.c \
+# rt_init_camera.c \
+# rt_init_mlx.c don't need this if mlx runs in the main()
 
 HEADER = ./inc/file_to_list.h
+
+MLXDIR      = ../MLX42/
+MLXLIB      = $(MLXDIR)build/libmlx42.a
+MLXFLAGS    = -ldl -lglfw -pthread -L "$$HOME/.brew/opt/glfw/lib/"
+MLXHEADERS  = -I $(MLXDIR)include
 
 MANPATH = $(addprefix ./srcs/, $(SRCS))
 
@@ -46,9 +59,12 @@ LIBHEADER = ../libft/libft.h
 
 all:			$(NAME)
 
-$(NAME):		$(OBJS) $(LIBFT)
-			@$(CC) $(CFLAGS) $(OBJS) -lm -o $(NAME) $(LIBFT) -I $(LIBHEADER) -g
+$(NAME):		$(MLXLIB) $(OBJS) $(LIBFT)
+			@$(CC) $(CFLAGS) $(OBJS) -lm $(MLXLIB) $(MLXFLAGS) $(MLXHEADERS) $(LIBFT) -I $(LIBHEADER) -o $(NAME) -g
 			@echo "$(GREEN) Files compiled $(END)"
+
+$(MLXLIB):
+	cmake $(MLXDIR) -B $(MLXDIR)build && make -C $(MLXDIR)build -j4
 
 $(LIBFT):
 			@make -C ../libft && make -C ../libft make clean

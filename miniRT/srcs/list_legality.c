@@ -49,8 +49,9 @@ int	list_legality_check(t_list **l, char *legal)
     while (current)
 	{	
 			
-		if(!only_legal_chars(current->s, legal))
+		if(!only_legal_chars(current->p, legal))
 		{
+			printf("%s\n", current->p);
 			printf("KO - illegal char!\n");
 			return 0;
 		}
