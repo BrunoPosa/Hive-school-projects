@@ -28,7 +28,7 @@ int	main(int argc, char **argv)
 		return (free(scene), mlx_terminate(mlx), ERROR);
 
 	//render scene
-	if (render_pixels(img, scene) == ERROR)
+	if (render_pixels(scene, img) == ERROR)
 		return (mlx_terminate(mlx), ERROR);
 
 	//mlx hooks and cleanup

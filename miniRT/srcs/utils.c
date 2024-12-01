@@ -40,7 +40,7 @@ float	calculate_focal_len(unsigned int fov)
 	fov_radians = (fov * M_PI) / 180.0;
 
 	// Calculate the focal length using half of the FOV in radians
-	focal_len = (WRLD_WINWIDTH / 2.0) / tan(fov_radians / 2.0);
+	focal_len = (WRLD_WINSIZE / 2.0) / tan(fov_radians / 2.0);
 	return focal_len;
 }
 
@@ -49,6 +49,8 @@ uint32_t	ft_colour_to_uint32(t_colour *colour)
 {
 	uint32_t color;
 
+	if (!colour)
+		return (0);
 	color = 255 << 24
 			| (uint32_t)(clamp(colour->b)) << 16
 			| (uint32_t)(clamp(colour->g)) << 8

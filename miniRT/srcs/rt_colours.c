@@ -46,13 +46,8 @@ t_colour   *hadamard_product(t_colour *a, t_colour *b)
 	p = malloc(sizeof(t_colour));
 	if(!a || !b || !p)
 		return NULL;
-	//normalize
-	p->r = (a->r / 255.0) * (b->r / 255.0) * 255.0;
-	p->g = (a->g / 255.0) * (b->g / 255.0) * 255.0;
-	p->b = (a->b / 255.0) * (b->b / 255.0) * 255.0;
-	//chatgpt suggests following instead, as it's more efficient:
-	//     p->r = fmax(fmin(a->r * b->r / 255.0, 255.0), 0.01);
-    // p->g = fmax(fmin(a->g * b->g / 255.0, 255.0), 0.01);
-    // p->b = fmax(fmin(a->b * b->b / 255.0, 255.0), 0.01);
+	p->r = clamp((a->r * b->r) / 255.0);
+	p->g = clamp((a->g * b->g) / 255.0);
+	p->b = clamp((a->b * b->b) / 255.0);
 	return p;
 }

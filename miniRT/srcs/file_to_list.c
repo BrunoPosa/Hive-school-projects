@@ -46,14 +46,12 @@ int	file_to_list(char *filename, t_list **l)
 	return (0);
 }
 
-int	allocate_scene_shapes(t_scene *scene)
+int	allocate_scene_arrays(t_scene *scene)
 {
-	int shape_count;
-
-	shape_count = scene->n_sphere + scene->n_plane + scene->n_cylinder;
-	if (shape_count > 0)
+	scene->shape_count = scene->n_sphere + scene->n_plane + scene->n_cylinder;
+	if (scene->shape_count > 0)
 	{
-		scene->shapes = ft_calloc(shape_count, sizeof(t_shape));
+		scene->shapes = ft_calloc(scene->shape_count, sizeof(t_shape));
 		if (!scene->shapes)
 			return (ERROR);
 	}
@@ -98,7 +96,10 @@ t_elem	move_element_into_scene(t_list *current)
 
 	elem.type = current->type;
 	elem.rgb = current->rgb;
-	elem.xyz = current->xyz;
+	elem.pos.w = POINT;
+	elem.pos.x = current->xyz.x;
+	elem.pos.y = current->xyz.y;
+	elem.pos.z = current->xyz.z;
 	elem.xyz3d = current->xyz_3d;
 	elem.alr = current->alr;
 	elem.lbr = current->lbr;
@@ -111,7 +112,7 @@ int	populate_scene(t_list **l, t_scene *scene)
 	t_list		*current;
 
 	current = *l;
-	if (allocate_scene_shapes(scene) == ERROR)
+	if (allocate_scene_arrays(scene) == ERROR)
 		return (ERROR);
 	move_shapes_into_scene(l, scene, sphere);
 	move_shapes_into_scene(l, scene, plane);

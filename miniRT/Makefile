@@ -37,8 +37,8 @@ SRCS 		=	main.c \
 				rt_create.c \
 				rt_colours.c \
 				rt_tuples.c \
+				rt_free_rt.c \
 
-# rt_free_rt.c \
 # rt_init_camera.c \
 # rt_init_mlx.c don't need this if mlx runs in the main()
 

@@ -1,5 +1,28 @@
 #include "../inc/file_to_list.h"
 
+void free_data(t_data *data)
+{
+	if (!data)
+		return;
+	if (data->hitp)
+		free(data->hitp);
+	if (data->shadow_ray)
+		free(data->shadow_ray);
+	if (data->normal)
+		free(data->normal);
+	if (data->diffuse_color)
+		free(data->diffuse_color);
+	if (data->shade_color)
+		free(data->shade_color);
+	data->shape = NULL;
+	data->diffuse_color = NULL;
+	data->shade_color = NULL;
+	data->hitp = NULL;
+	data->shadow_ray = NULL;
+	data->normal = NULL;
+	free(data);
+	data = NULL;
+}
 
 // if we keep the list as one list, we can free like that?
 

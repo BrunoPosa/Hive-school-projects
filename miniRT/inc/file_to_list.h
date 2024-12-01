@@ -29,14 +29,14 @@
 
 //	  C O N S T A N T S
 
-//this is the width of the window in pixels
+//this is the width of the window in screen pixels
 #ifndef WINSIZE
 # define WINSIZE 700
 #endif
 
-//this is the width of the window in rt world coordinates
-#ifndef WRLD_WINWIDTH
-# define WRLD_WINWIDTH 2.0f
+//this is the width of the window in minirt world coordinates
+#ifndef WRLD_WINSIZE
+# define WRLD_WINSIZE 2.0f
 #endif
 
 #ifndef M_PI
@@ -169,12 +169,23 @@ typedef struct s_elements
 {
 	t_type		type;
 	t_colour	rgb;
-	t_xyz		xyz;
+	t_tuple		pos;
 	t_xyz		xyz3d;
 	float		alr;
 	float		focal_length;
 	float		lbr;
 }	t_elem;
+
+typedef struct	s_data
+{
+	t_shape		*shape;
+	t_tuple		*hitp;
+	t_tuple		*shadow_ray;
+	t_tuple		*normal;
+	t_colour	*shade_color;
+	t_colour	*diffuse_color;
+	float		hitmin;
+} t_data;
 
 // general program info
 typedef struct s_scene
@@ -184,12 +195,15 @@ typedef struct s_scene
 	t_elem camera;
 	t_colour ambiant;
 // cy, pl, and sp objects are all part of a single Shapes[] array, calloc'd to the right size
-	t_shape *shapes;
+	t_shape	*shapes;
+	t_data	*data;
+	int	shape_count;
 	int n_cylinder;
 	int n_sphere;
 	int n_plane;
 	float	world_scale;//used for optimization
 	float	half_new_winsize;//used for optimization
+	int		err_status;
 
 // can we use a link2 to connect objects of the same type?
 // then to free we can rip through all the linked list,
@@ -199,8 +213,8 @@ typedef struct s_scene
 	// t_sp *spheres;
 } t_scene;
 
-// render struct for information of the pixel to be rendered
-// typedef struct s_render
+// data struct for temporary calculation storage for the pixel to be rendered
+// typedef struct s_renderdata
 // {
 // 	// t_vec	color;
 // 	int		rgba;
@@ -209,7 +223,7 @@ typedef struct s_scene
 // 	// t_vec	px_center;
 // 	// t_vec	ray_direction;
 // 	// t_ray	ray;
-// }	t_render;
+// }	t_data;
 
 
 // Linked list functions
@@ -294,19 +308,20 @@ void	free_array(char **s);
 /*         R T - P A R T    F U N C T I O N S          */
 /////////////////////////////////////////////////////////
 
-void	map_coordinates(float *x, float *y, int wsize);
 void	esc_keyhook(mlx_key_data_t keydata, void *param);
-int		render_pixels(mlx_image_t *img, t_scene *scene);
-int		circle(int x, int y, int center, int radius);
-int		color_sphere(float z);
-float	fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere);
-int		trace(t_tuple *ray, t_scene *scene, t_tuple *camera);
-int		clamp(float n);
-float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape);
-int		is_in_shadow(t_tuple *shadow_ray, t_scene *scene, t_tuple *camera, t_shape *obj);
-// t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, float x, float y);
+int		render_pixels(t_scene *scene, mlx_image_t *img);
+int		trace(t_scene *scene, t_tuple *ray);
 t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j);
-int		init_coordinates_camera(float **x, float **y, t_scene *scene, t_tuple **camera);
+int		find_closest_shape(t_scene *scene, t_tuple *ray);
+float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape);
+float	fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere);
+int	calculate_hitpoint_shadow_ray(t_scene *scene, t_tuple *ray);
+t_colour	*calculate_colour(t_scene *scene, t_shape *shape);
+int	calculate_diffuse_colour(t_scene *scene, t_shape *shape);
+int		shadow_check(t_scene *scene, t_tuple *shadowray, t_shape *shape);
+int		init_trace_data(t_scene *scene);
+int		clamp(float n);
+int		circle(int x, int y, int center, int radius);
 
 /*         T U P L E S         */
 
@@ -342,5 +357,8 @@ void	ft_colour_printer(t_colour *c);
 void	print_y(char *s);
 void 	scene_print(t_scene *scene);
 
+
+// C L E A N U P
+void free_data(t_data *data);
 
 #endif
