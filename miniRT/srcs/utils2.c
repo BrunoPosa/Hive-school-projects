@@ -15,6 +15,7 @@
 t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j)
 {
     t_tuple *ray;
+	t_tuple *norm_ray;
     t_tuple *ray_viewplane;
     float x;
     float y;
@@ -22,16 +23,17 @@ t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j)
     x = scene->world_scale * i - scene->half_new_winsize;
     y = scene->world_scale * j - scene->half_new_winsize;
 	ray = NULL;
+	norm_ray = NULL;
 	ray_viewplane = create_point(x, y, camera->z + scene->camera.focal_length);
 	if (!ray_viewplane)
-		return (free(camera), ray);
+		return (NULL);
 	ray = subtract(ray_viewplane, camera);
 	if (!ray)
-		return (free(ray_viewplane), ray);
-	ray = normalize(ray);
-	if (!ray)
-		free(ray_viewplane);
-	return (ray);
+		return (free(ray_viewplane), NULL);
+	norm_ray = normalize(ray);
+	free(ray_viewplane);
+	free(ray);
+	return (norm_ray);
 }
 
 void	precalculate(t_scene *scene)

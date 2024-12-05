@@ -2,17 +2,17 @@
 #include "../file_to_list/inc/file_to_list.h"
 #include "../MLX42/include/MLX42/MLX42.h"
 
-#define SPH_X 0
+#define SPH_X 1
 #define SPH_Y 0
-#define SPH_Z 2
+#define SPH_Z 0
 //light purpleish pinkish 0xFFC673FF
 #define SP_R 198
 #define SP_G 115
 #define SP_B 255
 
 #define CAM_X 0
-#define CAM_Y 0
-#define CAM_Z 0
+#define CAM_Y -0.5
+#define CAM_Z -2
 
 #define LIG_X 0
 #define LIG_Y 10

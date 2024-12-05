@@ -81,11 +81,13 @@ int	shadow_check(t_scene *scene, t_tuple *shadowray, t_shape *shape)
 			if (t > 0)
 			{
 				if (t <= tmin)
-					return (1);
+					tmin = t;
 			}
 		}
 		i++;
 	}
+	if (tmin < (float)INT32_MAX)
+		return (1);
 	return (0);
 }
 
@@ -187,7 +189,7 @@ int	find_closest_shape(t_scene *scene, t_tuple *ray)
 		i++;
 	}
 	if (scene->data->shape)
-		return (TRUE);
+		return (1);
 	return (0);
 }
 
@@ -202,7 +204,7 @@ int trace(t_scene *scene, t_tuple *ray)
 	colour_uint = 0;
 	if (init_trace_data(scene) != SUCCESS)
 		return (ERROR);
-	if (find_closest_shape(scene, ray) != TRUE)
+	if (find_closest_shape(scene, ray) != 1)
 		colour_uint = ft_colour_to_uint32(&scene->ambiant);
 	else if (calculate_hitpoint_shadow_ray(scene, ray) != SUCCESS)
 		scene->err_status = ERROR;

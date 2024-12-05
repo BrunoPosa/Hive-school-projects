@@ -164,16 +164,13 @@ typedef struct s_list
 	struct s_list	*next;
 }	t_list;
 
-//s_elements is for camera, light, and ambiant
+//s_elements is for camera
 typedef struct s_elements
 {
 	t_type		type;
-	t_colour	rgb;
 	t_tuple		pos;
 	t_xyz		xyz3d;
-	float		alr;
 	float		focal_length;
-	float		lbr;
 }	t_elem;
 
 typedef struct	s_data

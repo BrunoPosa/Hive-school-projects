@@ -95,14 +95,11 @@ t_elem	move_element_into_scene(t_list *current)
 	t_elem elem;
 
 	elem.type = current->type;
-	elem.rgb = current->rgb;
 	elem.pos.w = POINT;
 	elem.pos.x = current->xyz.x;
 	elem.pos.y = current->xyz.y;
 	elem.pos.z = current->xyz.z;
 	elem.xyz3d = current->xyz_3d;
-	elem.alr = current->alr;
-	elem.lbr = current->lbr;
 	elem.focal_length = calculate_focal_len(current->fov);
 	return (elem);
 }
