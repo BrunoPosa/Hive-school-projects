@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/24 17:19:57 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/05 21:47:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,29 @@ float fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere)
 	else if (t2 > 0)
 		return t2;
 	return (0);
-}		
+}
+
+float	fplane(t_tuple *ray, t_tuple *ray_origin, t_shape plane)
+{
+	float	dividend;
+	float	divisor;
+	t_tuple	*origin_to_plane;
+
+	dividend = 0.0;
+	divisor = 0.0;
+	origin_to_plane = subtract(&plane.xyz, ray_origin);
+	if (origin_to_plane == NULL)
+		return (ERROR);
+	dividend = dot(&plane.xyz3d, origin_to_plane);
+	if (dividend == ERROR)
+		return (ERROR);
+	divisor = dot(ray, &plane.xyz3d);
+	if (divisor == ERROR)
+		return (ERROR);
+	// if (divisor < EPSILON)
+	// 	return (-EPSILON);
+	return (dividend / divisor);
+}
 
 int	shadow_check(t_scene *scene, t_tuple *shadowray, t_shape *shape)
 {
@@ -95,6 +117,8 @@ float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape)
 {
 	if (shape.type == sphere)
 		return (fsphere(ray, ray_origin, shape));
+	else if (shape.type == plane)
+		return (fplane(ray, ray_origin, shape));
 	return (0);
 }
 
@@ -118,6 +142,7 @@ int	calculate_hitpoint_shadow_ray(t_scene *scene, t_tuple *ray)
 	return (SUCCESS);
 }
 
+//fix in case of planes so there is no recalculating
 int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 {
 	float		diffuse_amount;
@@ -134,6 +159,8 @@ int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 	if (!scene->data->normal)
 		return (ERROR);
 	diffuse_amount = dot(scene->data->normal, scene->data->shadow_ray);
+	if (shape->type == plane)
+		diffuse_amount = dot(&shape->xyz3d, scene->data->shadow_ray);
 	if (diffuse_amount < 0)
 		diffuse_amount = 0;
 	diffuse_color = multiply_colour_by(&shape->rgb, scene->lbr);
@@ -157,7 +184,7 @@ t_colour	*calculate_colour(t_scene *scene, t_shape *shape)
 		return (NULL);
 	if (in_shadow)
 		return (scene->data->shade_color);
-	if (calculate_diffuse_colour(scene, shape) != SUCCESS)
+	else if (calculate_diffuse_colour(scene, shape) != SUCCESS)
 	{
 		scene->err_status = ERROR;
 		return (NULL);
@@ -204,7 +231,7 @@ int trace(t_scene *scene, t_tuple *ray)
 	colour_uint = 0;
 	if (init_trace_data(scene) != SUCCESS)
 		return (ERROR);
-	if (find_closest_shape(scene, ray) != 1)
+	if (!find_closest_shape(scene, ray))
 		colour_uint = ft_colour_to_uint32(&scene->ambiant);
 	else if (calculate_hitpoint_shadow_ray(scene, ray) != SUCCESS)
 		scene->err_status = ERROR;

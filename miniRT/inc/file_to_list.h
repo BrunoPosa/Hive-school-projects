@@ -137,7 +137,7 @@ typedef struct	s_shape
 {
 	t_type		type;
 	t_tuple		xyz;
-	t_xyz		xyz3d;//should this be a tuple?
+	t_tuple		xyz3d;
 	t_colour	rgb;
 	float		sd;
 	float		cd;
@@ -308,13 +308,14 @@ void	free_array(char **s);
 void	esc_keyhook(mlx_key_data_t keydata, void *param);
 int		render_pixels(t_scene *scene, mlx_image_t *img);
 int		trace(t_scene *scene, t_tuple *ray);
-t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j);
+t_tuple	*calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j);
 int		find_closest_shape(t_scene *scene, t_tuple *ray);
 float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape);
 float	fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere);
-int	calculate_hitpoint_shadow_ray(t_scene *scene, t_tuple *ray);
+float	fplane(t_tuple *ray, t_tuple *ray_origin, t_shape plane);
+int		calculate_hitpoint_shadow_ray(t_scene *scene, t_tuple *ray);
 t_colour	*calculate_colour(t_scene *scene, t_shape *shape);
-int	calculate_diffuse_colour(t_scene *scene, t_shape *shape);
+int		calculate_diffuse_colour(t_scene *scene, t_shape *shape);
 int		shadow_check(t_scene *scene, t_tuple *shadowray, t_shape *shape);
 int		init_trace_data(t_scene *scene);
 int		clamp(float n);

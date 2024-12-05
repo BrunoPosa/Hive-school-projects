@@ -79,7 +79,10 @@ void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
 			scene->shapes[i].xyz.y = current->xyz.y;
 			scene->shapes[i].xyz.z = current->xyz.z;
 			scene->shapes[i].xyz.w = POINT;
-			scene->shapes[i].xyz3d = current->xyz_3d;
+			scene->shapes[i].xyz3d.x = current->xyz_3d.x;
+			scene->shapes[i].xyz3d.y = current->xyz_3d.y;
+			scene->shapes[i].xyz3d.z = current->xyz_3d.z;
+			scene->shapes[i].xyz3d.w = VECTOR;
 			scene->shapes[i].rgb = current->rgb;
 			scene->shapes[i].sd = current->sd;
 			scene->shapes[i].cd = current->cd;
