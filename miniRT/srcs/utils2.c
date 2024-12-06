@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/11/24 17:19:18 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/06 21:24:25 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,27 @@
 
 t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j)
 {
-    t_tuple *ray;
-	t_tuple *norm_ray;
-    t_tuple *ray_viewplane;
-    float x;
-    float y;
+	t_tuple *ray;
+	t_tuple	*cam_forward;
+	t_tuple	*cam_right;
+	t_tuple	*cam_up;
+	t_tuple	*viewcenter;
+	t_tuple	*viewcorner;
+	t_tuple	*pixel_step_x;
+	t_tuple	*pixel_step_y;
+	t_tuple	*pixel;
 
-    x = scene->world_scale * i - scene->half_new_winsize;
-    y = scene->world_scale * j - scene->half_new_winsize;
-	ray = NULL;
-	norm_ray = NULL;
-	ray_viewplane = create_point(x, y, camera->z + scene->camera.focal_length);
-	if (!ray_viewplane)
-		return (NULL);
-	ray = subtract(ray_viewplane, camera);
-	if (!ray)
-		return (free(ray_viewplane), NULL);
-	norm_ray = normalize(ray);
-	free(ray_viewplane);
-	free(ray);
-	return (norm_ray);
+	cam_forward = normalize(&scene->camera.xyz3d);
+	cam_right = normalize(cross(cam_forward, create_vector(0, 1, 0)));
+	cam_up = normalize(cross(cam_right, cam_forward));
+	viewcenter = add(camera, multiply_tuple(cam_forward, scene->camera.focal_length));
+	viewcorner = subtract(subtract(viewcenter, multiply_tuple(cam_right, scene->half_new_winsize)), multiply_tuple(cam_up, scene->half_new_winsize));
+	pixel_step_x = multiply_tuple(cam_right, scene->world_scale);
+	pixel_step_y = multiply_tuple(cam_up, scene->world_scale);
+	pixel = add(viewcorner, add(multiply_tuple(pixel_step_x, i), multiply_tuple(pixel_step_y, j)));
+	ray = normalize(subtract(pixel, camera));
+	ray->w = VECTOR;
+	return (ray);
 }
 
 void	precalculate(t_scene *scene)
