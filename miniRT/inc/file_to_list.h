@@ -169,7 +169,7 @@ typedef struct s_elements
 {
 	t_type		type;
 	t_tuple		pos;
-	t_xyz		xyz3d;
+	t_tuple		xyz3d;
 	float		focal_length;
 }	t_elem;
 

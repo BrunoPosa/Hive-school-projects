@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/05 21:47:35 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/06 18:45:10 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 		return (ERROR);
 	diffuse_amount = dot(scene->data->normal, scene->data->shadow_ray);
 	if (shape->type == plane)
-		diffuse_amount = dot(&shape->xyz3d, scene->data->shadow_ray);
+		diffuse_amount = dot(&shape->xyz3d, scene->data->shadow_ray);//how do we color if plane is looking away from light/diffuse_amount < 0?
 	if (diffuse_amount < 0)
 		diffuse_amount = 0;
 	diffuse_color = multiply_colour_by(&shape->rgb, scene->lbr);
@@ -254,10 +254,10 @@ int	render_pixels(t_scene *scene, mlx_image_t *img)
 	i = -1;
 	j = -1;
 	ray = NULL;
-	while (++i < WINSIZE && scene->err_status == SUCCESS)
+	while (scene->err_status == SUCCESS && ++i < WINSIZE)
 	{
 		j = -1;
-		while (++j < WINSIZE && scene->err_status == SUCCESS)
+		while (scene->err_status == SUCCESS && ++j < WINSIZE)
 		{
 			ray = calculate_camera_ray(scene, &scene->camera.pos, i, WINSIZE - j);
 			if (!ray)

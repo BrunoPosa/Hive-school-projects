@@ -102,7 +102,10 @@ t_elem	move_element_into_scene(t_list *current)
 	elem.pos.x = current->xyz.x;
 	elem.pos.y = current->xyz.y;
 	elem.pos.z = current->xyz.z;
-	elem.xyz3d = current->xyz_3d;
+	elem.xyz3d.x = current->xyz_3d.x;
+	elem.xyz3d.y = current->xyz_3d.y;
+	elem.xyz3d.z = current->xyz_3d.z;
+	elem.xyz3d.w = VECTOR;
 	elem.focal_length = calculate_focal_len(current->fov);
 	return (elem);
 }
