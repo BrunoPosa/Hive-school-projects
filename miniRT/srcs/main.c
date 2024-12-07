@@ -9,17 +9,13 @@ int	main(int argc, char **argv)
 
 	mlx = NULL;
 	img = NULL;
-	//allocate scene
 	scene = ft_calloc(1, sizeof(t_scene));
 	if (!scene)
 		return (ret_error(E_MALLOC, NULL));
 
-	//parse file into scene
 	if (parse(argc, argv, scene) != SUCCESS)
 		return (free(scene), ERROR);
-	// scene_print(scene);
 
-	//initialize mlx
 	mlx = mlx_init(WINSIZE, WINSIZE, "minirt", false);
 	if (!(mlx))
 		return (free(scene), ERROR);
@@ -27,11 +23,9 @@ int	main(int argc, char **argv)
 	if (!img || mlx_image_to_window(mlx, img, 0, 0) < 0)
 		return (free(scene), mlx_terminate(mlx), ERROR);
 
-	//render scene
 	if (render_pixels(scene, img) != SUCCESS)
 		return (mlx_terminate(mlx), ERROR);
 
-	//mlx hooks and cleanup
 	mlx_key_hook(mlx, &esc_keyhook, mlx);
 	mlx_loop(mlx);
 	mlx_terminate(mlx);

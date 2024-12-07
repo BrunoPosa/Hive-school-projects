@@ -111,13 +111,12 @@ typedef enum e_type
 	ambiant
 } t_type;
 
-typedef struct s_tuple
+typedef struct s_vec
 {
 	float x;
 	float y;
 	float z;
-	float w;
-} t_tuple;
+} t_vec;
 
 typedef struct s_colour
 {
@@ -136,8 +135,8 @@ typedef struct s_xyz
 typedef struct	s_shape
 {
 	t_type		type;
-	t_tuple		xyz;
-	t_tuple		xyz3d;
+	t_vec		xyz;
+	t_vec		xyz3d;
 	t_colour	rgb;
 	float		sd;
 	float		cd;
@@ -168,17 +167,17 @@ typedef struct s_list
 typedef struct s_elements
 {
 	t_type		type;
-	t_tuple		pos;
-	t_tuple		xyz3d;
+	t_vec		pos;
+	t_vec		xyz3d;
 	float		focal_length;
 }	t_elem;
 
 typedef struct	s_data
 {
 	t_shape		*shape;
-	t_tuple		*hitp;
-	t_tuple		*shadow_ray;
-	t_tuple		*normal;
+	t_vec		hitp;
+	t_vec		shadow_ray;
+	t_vec		normal;
 	t_colour	*shade_color;
 	t_colour	*diffuse_color;
 	float		hitmin;
@@ -187,20 +186,20 @@ typedef struct	s_data
 // general program info
 typedef struct s_scene
 {
-	float 	lbr;
-	t_tuple lightpos;
-	t_elem camera;
-	t_colour ambiant;
+	float		lbr;
+	t_vec		lightpos;
+	t_elem		camera;
+	t_colour	ambiant;
 // cy, pl, and sp objects are all part of a single Shapes[] array, calloc'd to the right size
-	t_shape	*shapes;
-	t_data	*data;
-	int	shape_count;
-	int n_cylinder;
-	int n_sphere;
-	int n_plane;
-	float	world_scale;//used for optimization
-	float	half_new_winsize;//used for optimization
-	int		err_status;
+	t_shape		*shapes;
+	t_data		*data;
+	int			shape_count;
+	int			n_cylinder;
+	int			n_sphere;
+	int			n_plane;
+	float		world_scale;
+	float		half_new_winsize;
+	int			err_status;
 
 // can we use a link2 to connect objects of the same type?
 // then to free we can rip through all the linked list,
@@ -307,36 +306,36 @@ void	free_array(char **s);
 
 void	esc_keyhook(mlx_key_data_t keydata, void *param);
 int		render_pixels(t_scene *scene, mlx_image_t *img);
-int		trace(t_scene *scene, t_tuple *ray);
-t_tuple	*calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j);
-int		find_closest_shape(t_scene *scene, t_tuple *ray);
-float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape);
-float	fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere);
-float	fplane(t_tuple *ray, t_tuple *ray_origin, t_shape plane);
-int		calculate_hitpoint_shadow_ray(t_scene *scene, t_tuple *ray);
+int		trace(t_scene *scene, t_vec ray);
+t_vec	calculate_camera_ray(t_scene *scene, t_vec camera, int i, int j);
+int		find_closest_shape(t_scene *scene, t_vec ray);
+float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape shape);
+float	fsphere(t_vec ray, t_vec ray_origin, t_shape sphere);
+float	fplane(t_vec ray, t_vec ray_origin, t_shape plane);
+int		calculate_hitpoint_shadow_ray(t_scene *scene, t_vec ray);
 t_colour	*calculate_colour(t_scene *scene, t_shape *shape);
 int		calculate_diffuse_colour(t_scene *scene, t_shape *shape);
-int		shadow_check(t_scene *scene, t_tuple *shadowray, t_shape *shape);
+int		shadow_check(t_scene *scene, t_vec shadowray, t_shape *shape);
 int		init_trace_data(t_scene *scene);
 int		clamp(float n);
 int		circle(int x, int y, int center, int radius);
 
 /*         T U P L E S         */
 
-t_tuple		*create_tuple(float x, float y, float z, float w);
+t_vec		create_vec(float x, float y, float z);
 t_colour	*create_colour(float r, float g, float b);
-t_tuple		*create_point(float x, float y, float z);
-t_tuple		*create_vector(float x, float y, float z);
-int			diff(t_tuple *t1, t_tuple *t2);
-t_tuple		*add(t_tuple *t1, t_tuple *t2);
-t_tuple		*subtract(t_tuple *t1, t_tuple *t2);
-t_tuple		*negate_tuple(t_tuple *t);
-t_tuple		*multiply_tuple(t_tuple *t, float multiplier);
-t_tuple		*divide_tuple(t_tuple *t, float divisor);
-float		magnitude(t_tuple *t);
-t_tuple		*normalize(t_tuple *t);
-float		dot(t_tuple *a, t_tuple *b);
-t_tuple		*cross(t_tuple *a, t_tuple *b);
+// t_vec		create_point(float x, float y, float z);
+// t_vec		create_vector(float x, float y, float z);
+int			diff(t_vec a, t_vec b);
+t_vec		add(t_vec a, t_vec b);
+t_vec		subtract(t_vec a, t_vec b);
+t_vec		negate_tuple(t_vec t);
+t_vec		multiply_tuple(t_vec t, float multiplier);
+t_vec		divide_tuple(t_vec t, float divisor);
+float		magnitude(t_vec t);
+t_vec		normalize(t_vec t);
+float		dot(t_vec a, t_vec b);
+t_vec		cross(t_vec a, t_vec b);
 unsigned int float_to_uint(float value);
 
 //			C O L O U R S
@@ -350,7 +349,7 @@ uint32_t	ft_colour_to_uint32(t_colour *colour);
 
 //      P R I N T E R S
 
-void	ft_tuple_print(t_tuple *t);
+void	ft_vec_print(t_vec t);
 void	ft_colour_printer(t_colour *c);
 void	print_y(char *s);
 void 	scene_print(t_scene *scene);

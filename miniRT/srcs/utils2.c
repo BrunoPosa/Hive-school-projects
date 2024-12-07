@@ -6,26 +6,26 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/06 21:24:25 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/07 16:41:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
-t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j)
+t_vec calculate_camera_ray(t_scene *scene, t_vec camera, int i, int j)
 {
-	t_tuple *ray;
-	t_tuple	*cam_forward;
-	t_tuple	*cam_right;
-	t_tuple	*cam_up;
-	t_tuple	*viewcenter;
-	t_tuple	*viewcorner;
-	t_tuple	*pixel_step_x;
-	t_tuple	*pixel_step_y;
-	t_tuple	*pixel;
+	t_vec	ray;
+	t_vec	cam_forward;
+	t_vec	cam_right;
+	t_vec	cam_up;
+	t_vec	viewcenter;
+	t_vec	viewcorner;
+	t_vec	pixel_step_x;
+	t_vec	pixel_step_y;
+	t_vec	pixel;
 
-	cam_forward = normalize(&scene->camera.xyz3d);
-	cam_right = normalize(cross(cam_forward, create_vector(0, 1, 0)));
+	cam_forward = normalize(scene->camera.xyz3d);
+	cam_right = normalize(cross(cam_forward, create_vec(0, 1, 0)));
 	cam_up = normalize(cross(cam_right, cam_forward));
 	viewcenter = add(camera, multiply_tuple(cam_forward, scene->camera.focal_length));
 	viewcorner = subtract(subtract(viewcenter, multiply_tuple(cam_right, scene->half_new_winsize)), multiply_tuple(cam_up, scene->half_new_winsize));
@@ -33,7 +33,7 @@ t_tuple *calculate_camera_ray(t_scene *scene, t_tuple *camera, int i, int j)
 	pixel_step_y = multiply_tuple(cam_up, scene->world_scale);
 	pixel = add(viewcorner, add(multiply_tuple(pixel_step_x, i), multiply_tuple(pixel_step_y, j)));
 	ray = normalize(subtract(pixel, camera));
-	ray->w = VECTOR;
+	// ray->w = VECTOR;
 	return (ray);
 }
 
