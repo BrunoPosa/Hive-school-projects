@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/07 19:45:12 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/07 21:16:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,14 @@ t_vec calculate_camera_ray(t_scene *scene, t_vec camera, int i, int j)
 	t_vec	pixel_step_x;
 	t_vec	pixel_step_y;
 	t_vec	pixel;
+	t_vec	up;
 
-	cam_forward = normalize(scene->camera.xyz3d);
-	cam_right = normalize(cross(cam_forward, create_vec(0, 1, 0)));
-	cam_up = normalize(cross(cam_right, cam_forward));
+	cam_forward = scene->camera.xyz3d;
+	up = create_vec(0, 1, 0);
+	if (fabs(dot(cam_forward, up)) > 0.99)
+        up = create_vec(1, 0, 0);
+	cam_right = normalize(cross(up, cam_forward));
+	cam_up = normalize(cross(cam_forward, cam_right));
 	viewcenter = add(camera, multiply_tuple(cam_forward, scene->camera.focal_length));
 	viewcorner = subtract(subtract(viewcenter, multiply_tuple(cam_right, scene->half_new_winsize)), multiply_tuple(cam_up, scene->half_new_winsize));
 	pixel_step_x = multiply_tuple(cam_right, scene->world_scale);

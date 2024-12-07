@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/07 19:41:47 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/07 21:24:12 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,8 @@ int trace(t_scene *scene, t_vec ray)
 	if (!find_closest_shape(scene, ray))
 		return(ft_colour_to_uint32(&scene->ambiant));
 	shadow_ray = create_vec(0, 0, 0);
-	scene->data->hitp = multiply_tuple(ray, scene->data->hitmin);
+	scene->data->hitp = add(scene->camera.pos, multiply_tuple(ray, scene->data->hitmin));
+	// scene->data->hitp = multiply_tuple(ray, scene->data->hitmin);
 	shadow_ray = subtract(scene->lightpos, scene->data->hitp);
 	scene->data->shadow_ray = normalize(shadow_ray);
 	colour_uint = ft_colour_to_uint32(calculate_colour(scene, scene->data->shape));
@@ -217,10 +218,10 @@ int	render_pixels(t_scene *scene, mlx_image_t *img)
 	i = -1;
 	j = -1;
 	ray = create_vec(0, 0, 0);
-	while (scene->err_status == SUCCESS && ++i < WINSIZE)
+	while (++i < WINSIZE)
 	{
 		j = -1;
-		while (scene->err_status == SUCCESS && ++j < WINSIZE)
+		while (++j < WINSIZE)
 		{
 			ray = calculate_camera_ray(scene, scene->camera.pos, i, WINSIZE - j);
 			if (!diff(ray, create_vec(0, 0, 0)))//do we need to check for this?
