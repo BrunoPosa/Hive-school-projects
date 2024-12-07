@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/05 21:47:35 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/07 19:41:47 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,11 @@ int clamp(float n)
 
 /*
 	v0.2 of sphere intersection function
-	-Returns ERROR if malloc fails
 */
-float fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere)
+float fsphere(t_vec ray, t_vec ray_origin, t_shape sphere)
 {
 	float radius = sphere.sd / 2;
-	t_tuple *ray_origin_to_sphere_center = subtract(ray_origin, &sphere.xyz);
-	if (!ray_origin_to_sphere_center)
-		return (ERROR);
+	t_vec ray_origin_to_sphere_center = subtract(ray_origin, sphere.xyz);
 	float a = dot(ray, ray);
 	float b = 2 * dot(ray, ray_origin_to_sphere_center);
 	float c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - radius * radius;
@@ -60,29 +57,23 @@ float fsphere(t_tuple *ray, t_tuple *ray_origin, t_shape sphere)
 	return (0);
 }
 
-float	fplane(t_tuple *ray, t_tuple *ray_origin, t_shape plane)
+float	fplane(t_vec ray, t_vec ray_origin, t_shape plane)
 {
 	float	dividend;
 	float	divisor;
-	t_tuple	*origin_to_plane;
+	t_vec	origin_to_plane;
 
 	dividend = 0.0;
 	divisor = 0.0;
-	origin_to_plane = subtract(&plane.xyz, ray_origin);
-	if (origin_to_plane == NULL)
-		return (ERROR);
-	dividend = dot(&plane.xyz3d, origin_to_plane);
-	if (dividend == ERROR)
-		return (ERROR);
-	divisor = dot(ray, &plane.xyz3d);
-	if (divisor == ERROR)
-		return (ERROR);
+	origin_to_plane = subtract(plane.xyz, ray_origin);
+	dividend = dot(plane.xyz3d, origin_to_plane);
+	divisor = dot(ray, plane.xyz3d);
 	// if (divisor < EPSILON)
 	// 	return (-EPSILON);
 	return (dividend / divisor);
 }
 
-int	shadow_check(t_scene *scene, t_tuple *shadowray, t_shape *shape)
+int	shadow_check(t_scene *scene, t_vec shadowray, t_shape *shape)
 {
 	float		t;
 	float		tmin;
@@ -95,11 +86,6 @@ int	shadow_check(t_scene *scene, t_tuple *shadowray, t_shape *shape)
 		if (shape != &scene->shapes[i])
 		{
 			t = shape_intersect(shadowray, scene->data->hitp, scene->shapes[i]);
-			if (t == ERROR)
-			{
-				scene->err_status = ERROR;
-				return (ERROR);
-			}
 			if (t > 0)
 			{
 				if (t <= tmin)
@@ -113,7 +99,7 @@ int	shadow_check(t_scene *scene, t_tuple *shadowray, t_shape *shape)
 	return (0);
 }
 
-float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape)
+float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape shape)
 {
 	if (shape.type == sphere)
 		return (fsphere(ray, ray_origin, shape));
@@ -122,45 +108,20 @@ float	shape_intersect(t_tuple *ray, t_tuple *ray_origin, t_shape shape)
 	return (0);
 }
 
-
-int	calculate_hitpoint_shadow_ray(t_scene *scene, t_tuple *ray)
-{
-	t_tuple		*shadow_ray;
-
-	shadow_ray = NULL;
-	scene->data->hitp = multiply_tuple(ray, scene->data->hitmin);
-	if (!scene->data->hitp)
-		return (ERROR);
-	scene->data->hitp->w = POINT;
-	shadow_ray = subtract(&scene->lightpos, scene->data->hitp);
-	if (!shadow_ray)
-		return (ERROR);
-	scene->data->shadow_ray = normalize(shadow_ray);
-	free(shadow_ray);
-	if (!scene->data->shadow_ray)
-		return (ERROR);
-	return (SUCCESS);
-}
-
 //fix in case of planes so there is no recalculating
 int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 {
 	float		diffuse_amount;
 	t_colour	*diffuse_color;
-	t_tuple		*normal;
+	t_vec		normal;
 
 	diffuse_amount = 0;
 	diffuse_color = NULL;
-	normal = subtract(scene->data->hitp, &shape->xyz);
-	if (!normal)
-		return (ERROR);
+	normal = subtract(scene->data->hitp, shape->xyz);
 	scene->data->normal = normalize(normal);
-	free(normal);
-	if (!scene->data->normal)
-		return (ERROR);
 	diffuse_amount = dot(scene->data->normal, scene->data->shadow_ray);
 	if (shape->type == plane)
-		diffuse_amount = dot(&shape->xyz3d, scene->data->shadow_ray);
+		diffuse_amount = dot(shape->xyz3d, scene->data->shadow_ray);//how do we color if plane is looking away from light/diffuse_amount < 0?
 	if (diffuse_amount < 0)
 		diffuse_amount = 0;
 	diffuse_color = multiply_colour_by(&shape->rgb, scene->lbr);
@@ -192,7 +153,7 @@ t_colour	*calculate_colour(t_scene *scene, t_shape *shape)
 	return (add_colours(scene->data->shade_color, scene->data->diffuse_color));
 }
 
-int	find_closest_shape(t_scene *scene, t_tuple *ray)
+int	find_closest_shape(t_scene *scene, t_vec ray)
 {
 	float	hit;
 	int		i;
@@ -202,7 +163,7 @@ int	find_closest_shape(t_scene *scene, t_tuple *ray)
 	scene->data->hitmin = (float)INT32_MAX;
 	while (i < scene->shape_count && scene->err_status == SUCCESS)
 	{
-		hit = shape_intersect(ray, &scene->camera.pos, scene->shapes[i]);
+		hit = shape_intersect(ray, scene->camera.pos, scene->shapes[i]);
 		if (hit == ERROR)
 		{
 			scene->err_status = ERROR;
@@ -224,19 +185,21 @@ int	find_closest_shape(t_scene *scene, t_tuple *ray)
 	t represents the distance along the ray from its origin where it intersects the sphere:
 	t>0 means there is an intersection, and the ray hits the sphere at t units from the ray origin
 */
-int trace(t_scene *scene, t_tuple *ray)
+int trace(t_scene *scene, t_vec ray)
 {
 	uint32_t	colour_uint;
+	t_vec		shadow_ray;
 
 	colour_uint = 0;
 	if (init_trace_data(scene) != SUCCESS)
 		return (ERROR);
 	if (!find_closest_shape(scene, ray))
-		colour_uint = ft_colour_to_uint32(&scene->ambiant);
-	else if (calculate_hitpoint_shadow_ray(scene, ray) != SUCCESS)
-		scene->err_status = ERROR;
-	else
-		colour_uint = ft_colour_to_uint32(calculate_colour(scene, scene->data->shape));
+		return(ft_colour_to_uint32(&scene->ambiant));
+	shadow_ray = create_vec(0, 0, 0);
+	scene->data->hitp = multiply_tuple(ray, scene->data->hitmin);
+	shadow_ray = subtract(scene->lightpos, scene->data->hitp);
+	scene->data->shadow_ray = normalize(shadow_ray);
+	colour_uint = ft_colour_to_uint32(calculate_colour(scene, scene->data->shape));
 	free_data(scene->data);
 	return (colour_uint);
 }
@@ -249,22 +212,21 @@ int	render_pixels(t_scene *scene, mlx_image_t *img)
 {
 	int		i;
 	int		j;
-	t_tuple	*ray;
+	t_vec	ray;
 
 	i = -1;
 	j = -1;
-	ray = NULL;
-	while (++i < WINSIZE && scene->err_status == SUCCESS)
+	ray = create_vec(0, 0, 0);
+	while (scene->err_status == SUCCESS && ++i < WINSIZE)
 	{
 		j = -1;
-		while (++j < WINSIZE && scene->err_status == SUCCESS)
+		while (scene->err_status == SUCCESS && ++j < WINSIZE)
 		{
-			ray = calculate_camera_ray(scene, &scene->camera.pos, i, WINSIZE - j);
-			if (!ray)
+			ray = calculate_camera_ray(scene, scene->camera.pos, i, WINSIZE - j);
+			if (!diff(ray, create_vec(0, 0, 0)))//do we need to check for this?
 				return (ERROR);
 			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(scene, ray);
 		}
 	}
-	free (ray);
 	return (scene->err_status);
 }

@@ -78,11 +78,9 @@ void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
 			scene->shapes[i].xyz.x = current->xyz.x;
 			scene->shapes[i].xyz.y = current->xyz.y;
 			scene->shapes[i].xyz.z = current->xyz.z;
-			scene->shapes[i].xyz.w = POINT;
 			scene->shapes[i].xyz3d.x = current->xyz_3d.x;
 			scene->shapes[i].xyz3d.y = current->xyz_3d.y;
 			scene->shapes[i].xyz3d.z = current->xyz_3d.z;
-			scene->shapes[i].xyz3d.w = VECTOR;
 			scene->shapes[i].rgb = current->rgb;
 			scene->shapes[i].sd = current->sd;
 			scene->shapes[i].cd = current->cd;
@@ -98,11 +96,12 @@ t_elem	move_element_into_scene(t_list *current)
 	t_elem elem;
 
 	elem.type = current->type;
-	elem.pos.w = POINT;
 	elem.pos.x = current->xyz.x;
 	elem.pos.y = current->xyz.y;
 	elem.pos.z = current->xyz.z;
-	elem.xyz3d = current->xyz_3d;
+	elem.xyz3d.x = current->xyz_3d.x;
+	elem.xyz3d.y = current->xyz_3d.y;
+	elem.xyz3d.z = current->xyz_3d.z;
 	elem.focal_length = calculate_focal_len(current->fov);
 	return (elem);
 }
@@ -127,7 +126,6 @@ int	populate_scene(t_list **l, t_scene *scene)
 		}
 		else if (current->type == light)
 		{
-			scene->lightpos.w = POINT;
 			scene->lightpos.x = current->xyz.x;
 			scene->lightpos.y = current->xyz.y;
 			scene->lightpos.z = current->xyz.z;

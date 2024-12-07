@@ -37,16 +37,10 @@ void	ft_list_print(t_list **l)
 }
 
 
-void	ft_tuple_print(t_tuple *t)
+void	ft_vec_print(t_vec t)
 {
-	if (!t)
-	{
-		printf("%sError: tuple is NULL%s\n", RED, ENDCLR);
-		return ;
-	}
-	printf("x: %.3f | y: %.3f | z: %.3f | w: %.1f %s\n",
-			t->x, t->y, t->z, t->w,
-			t->w == 0 ? "(VECTOR)" : t->w == 1 ? "(POINT)" : "(neither)");
+	printf("x: %.3f | y: %.3f | z: %.3f\n",
+			t.x, t.y, t.z);
 }
 
 
