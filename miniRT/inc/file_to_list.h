@@ -312,7 +312,6 @@ int		find_closest_shape(t_scene *scene, t_vec ray);
 float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape shape);
 float	fsphere(t_vec ray, t_vec ray_origin, t_shape sphere);
 float	fplane(t_vec ray, t_vec ray_origin, t_shape plane);
-int		calculate_hitpoint_shadow_ray(t_scene *scene, t_vec ray);
 t_colour	*calculate_colour(t_scene *scene, t_shape *shape);
 int		calculate_diffuse_colour(t_scene *scene, t_shape *shape);
 int		shadow_check(t_scene *scene, t_vec shadowray, t_shape *shape);

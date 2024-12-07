@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/07 17:01:50 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/07 19:41:47 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ int clamp(float n)
 
 /*
 	v0.2 of sphere intersection function
-	-Returns ERROR if malloc fails
 */
 float fsphere(t_vec ray, t_vec ray_origin, t_shape sphere)
 {
@@ -87,11 +86,6 @@ int	shadow_check(t_scene *scene, t_vec shadowray, t_shape *shape)
 		if (shape != &scene->shapes[i])
 		{
 			t = shape_intersect(shadowray, scene->data->hitp, scene->shapes[i]);
-			if (t == ERROR)
-			{
-				scene->err_status = ERROR;
-				return (ERROR);
-			}
 			if (t > 0)
 			{
 				if (t <= tmin)
@@ -112,18 +106,6 @@ float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape shape)
 	else if (shape.type == plane)
 		return (fplane(ray, ray_origin, shape));
 	return (0);
-}
-
-
-int	calculate_hitpoint_shadow_ray(t_scene *scene, t_vec ray)
-{
-	t_vec	shadow_ray;
-
-	shadow_ray = create_vec(0, 0, 0);
-	scene->data->hitp = multiply_tuple(ray, scene->data->hitmin);
-	shadow_ray = subtract(scene->lightpos, scene->data->hitp);
-	scene->data->shadow_ray = normalize(shadow_ray);
-	return (SUCCESS);
 }
 
 //fix in case of planes so there is no recalculating
@@ -206,16 +188,18 @@ int	find_closest_shape(t_scene *scene, t_vec ray)
 int trace(t_scene *scene, t_vec ray)
 {
 	uint32_t	colour_uint;
+	t_vec		shadow_ray;
 
 	colour_uint = 0;
 	if (init_trace_data(scene) != SUCCESS)
 		return (ERROR);
 	if (!find_closest_shape(scene, ray))
-		colour_uint = ft_colour_to_uint32(&scene->ambiant);
-	else if (calculate_hitpoint_shadow_ray(scene, ray) != SUCCESS)
-		scene->err_status = ERROR;
-	else
-		colour_uint = ft_colour_to_uint32(calculate_colour(scene, scene->data->shape));
+		return(ft_colour_to_uint32(&scene->ambiant));
+	shadow_ray = create_vec(0, 0, 0);
+	scene->data->hitp = multiply_tuple(ray, scene->data->hitmin);
+	shadow_ray = subtract(scene->lightpos, scene->data->hitp);
+	scene->data->shadow_ray = normalize(shadow_ray);
+	colour_uint = ft_colour_to_uint32(calculate_colour(scene, scene->data->shape));
 	free_data(scene->data);
 	return (colour_uint);
 }

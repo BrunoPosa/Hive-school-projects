@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/07 16:41:35 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/07 19:45:12 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ t_vec calculate_camera_ray(t_scene *scene, t_vec camera, int i, int j)
 	pixel_step_y = multiply_tuple(cam_up, scene->world_scale);
 	pixel = add(viewcorner, add(multiply_tuple(pixel_step_x, i), multiply_tuple(pixel_step_y, j)));
 	ray = normalize(subtract(pixel, camera));
-	// ray->w = VECTOR;
 	return (ray);
 }
 
