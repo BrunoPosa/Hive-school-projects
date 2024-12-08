@@ -13,6 +13,7 @@ RM			=	rm -rf
 
 SRCS 		=	main.c \
 				file_to_list.c \
+				file_to_list_scene.c \
 				printer.c \
 				linked_list.c \
 				process_list.c \
