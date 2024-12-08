@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/08 22:13:40 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/08 23:06:16 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,16 @@ int	allocate_scene_arrays(t_scene *scene)
 	return (SUCCESS);
 }
 
+//indexing starts from 0 for spheres, then come planes, then cylinders
 
 void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
 {
-	t_list *current;
-	int 	i;
+	t_list	*current;
+	int		i;
 
 	current = *l;
-	//indexing starts from 0 for spheres, then come planes, then cylinders
 	i = 0;
-	if (type == plane)
+	if (type == plane) // if it is a plane, then work with cyl?
 		i = scene->n_sphere;
 	else if (type == cylinder)
 		i = scene->n_sphere + scene->n_plane;
@@ -60,7 +60,7 @@ void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
 
 t_elem	move_element_into_scene(t_list *current)
 {
-	t_elem elem;
+	t_elem	elem;
 
 	elem.type = current->type;
 	elem.pos.x = current->xyz.x;

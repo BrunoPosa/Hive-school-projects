@@ -1,22 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   list_legality.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/08 23:11:44 by jwadding          #+#    #+#             */
+/*   Updated: 2024/12/08 23:15:31 by jwadding         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/file_to_list.h"
 
-int	only_legal_chars_n(char *s, char *legal, int n)
-{
-	int	i;
+// int	only_legal_chars_n(char *s, char *legal, int n)
+// {
+// 	int	i;
 
-	i = -1;
-	while(s[++i] && i < n)
-	{
-		if (ft_strchr(legal, s[i]) == NULL)
-		{
-			printf("i=%d\n", i);
-            printf("%s\n", s);
-			return (0);
-		}
-		n--;
-	}
-	return (1);
-}
+// 	i = -1;
+// 	while (s[++i] && i < n)
+// 	{
+// 		if (ft_strchr(legal, s[i]) == NULL)
+// 		{
+// 			printf("i=%d\n", i);
+// 			printf("%s\n", s);
+// 			return (0);
+// 		}
+// 		n--;
+// 	}
+// 	return (1);
+// }
 
 int	only_legal_chars(char *s, char *legal)
 {
@@ -25,14 +37,10 @@ int	only_legal_chars(char *s, char *legal)
 	i = 0;
 	if (!s)
 		return (0);
-	while(s[i])
+	while (s[i])
 	{
 		if (ft_strchr(legal, s[i]) == NULL)
-		{
-			printf("i=%d\n", i);
-            printf("%s\n", s);
 			return (0);
-		}
 		i++;
 	}
 	return (1);
@@ -44,20 +52,19 @@ int	only_legal_chars(char *s, char *legal)
 */
 int	list_legality_check(t_list **l, char *legal)
 {
-    t_list *current = *l;
+	t_list	*current;
 
-    while (current)
+	current = *l;
+	while (current)
 	{	
-			
-		if(!only_legal_chars(current->p, legal))
+		if (!only_legal_chars(current->p, legal))
 		{
 			printf("%s\n", current->p);
 			printf("KO - illegal char!\n");
-			return 0;
+			return (0);
 		}
 		current = current->next;
 	}
 	printf("OK - File has only legal chars.\n");
-	return 1;
+	return (1);
 }
-

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   process_3d_xyz.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/08 23:16:58 by jwadding          #+#    #+#             */
+/*   Updated: 2024/12/08 23:25:08 by jwadding         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/file_to_list.h"
 
 /*
@@ -11,7 +23,6 @@ maximum = 1
 
 int	process_xyz_3d(t_list *current)
 {
-	// printf("process xyz_3d\n");
 	int		i;
 	char	**xyz;
 	char	*sub_string;
@@ -19,50 +30,25 @@ int	process_xyz_3d(t_list *current)
 
 	xyz = NULL;
 	atoi_overflow = 0;
-// find len until space
 	i = len_until_space(current->p);
-// printf("LEN UNITL SPACE = %d\n", i);
-
-// iscolate argument
 	sub_string = ft_substr(current->p, 0, i);
-	// printf("substring = %s\n", sub_string);
-
-
-// check if only legal chars
-	if(!only_legal_chars(sub_string, LEGAL_CHARS3))
+	if (!only_legal_chars(sub_string, LEGAL_CHARS3))
 		return (free(sub_string), ret_error(E_XYZ_3D_CHARS, current));
-
-// check for two commas
 	if (count_commas_between(sub_string) != 2)
 		return (free(sub_string), ret_error(E_XYZ_3D_COMMA, current));
-
-// split into three strings
-    xyz = ft_split(sub_string, ',');
+		xyz = ft_split(sub_string, ',');
 	if (!xyz)
 		return (free(sub_string), ret_error(E_SPLIT, current));
 	if (!is_number_valid(xyz[0]) || !is_number_valid(xyz[1]) || !is_number_valid(xyz[2]))
 		return (free(sub_string), ret_error(E_XYZ_3D_CHARS, current));
-	// printf("xyz_3d[0] = %s\n", xyz[0]);
-	// printf("xyz_3d[1] = %s\n", xyz[1]);
-	// printf("xyz_3d[2] = %s\n", xyz[2]);
 	current->xyz_3d.x = ft_atod(xyz[0], &atoi_overflow);
 	current->xyz_3d.y = ft_atod(xyz[1], &atoi_overflow);
 	current->xyz_3d.z = ft_atod(xyz[2], &atoi_overflow);
 	free_array(xyz);
-
-
-// check within range
 	if (atoi_overflow)
         return (free(sub_string), ret_error(E_XYZ_RANGE, current));
-// printf("	current->xyz_3d.x = %lf\n", current->xyz_3d.x);
-// printf("	current->xyz_3d.y = %lf\n", current->xyz_3d.y);
-// printf("	current->xyz_3d.z = %lf\n", current->xyz_3d.z);
-// move pointner past argument
 	current->p = current->p + i;
-
-// move pointer to next argument
 	current->p = skip_space(current->p);
-	// printf("data = %s\n", current->p);
 free(sub_string);
 
 return (E_SUCCESS);
