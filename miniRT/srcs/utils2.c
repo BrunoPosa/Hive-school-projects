@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/07 21:16:40 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/08 15:00:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_vec calculate_camera_ray(t_scene *scene, t_vec camera, int i, int j)
 	cam_forward = scene->camera.xyz3d;
 	up = create_vec(0, 1, 0);
 	if (fabs(dot(cam_forward, up)) > 0.99)
-        up = create_vec(1, 0, 0);
+		up = create_vec(0, 0, 1);
 	cam_right = normalize(cross(up, cam_forward));
 	cam_up = normalize(cross(cam_forward, cam_right));
 	viewcenter = add(camera, multiply_tuple(cam_forward, scene->camera.focal_length));
