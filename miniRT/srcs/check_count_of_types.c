@@ -1,49 +1,41 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   check_count_of_types.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/08 21:29:02 by jwadding          #+#    #+#             */
+/*   Updated: 2024/12/08 21:41:14 by jwadding         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/file_to_list.h"
 
-int    check_count_of_types(t_list **l, t_scene *scene)
+int	check_count_of_types(t_list **l, t_scene *scene)
 {
-    t_list *current = *l;
-    int count_camera = 0;
-    int count_cylinder = 0;
-    int count_plane = 0;
-    int count_light = 0;
-    int count_sphere = 0;
-    int count_ambiant = 0;
+	t_list	*current;
 
-    while (current)
-    {
-        if (current->type == camera)
-            count_camera++;
-        else if (current->type == cylinder)
-            count_cylinder++;
-        else if (current->type == plane)
-            count_plane++;
-        else if (current->type == light)
-            count_light++;
-        else if (current->type == sphere)
-            count_sphere++;
-        else if (current->type == ambiant)
-            count_ambiant++;
-        current = current->next;
-    }
-
-    if (count_camera != 1 || count_light != 1 || count_ambiant != 1)
-        return (printf("Error\nThere must be exactly 1 camera, 1 ambiant, and 1 light in scene\n"));
-    if (count_sphere + count_plane + count_cylinder == 0)
-        return (printf("Error\nThere must be at least 1 sphere, plane, or cylinder in scene\n"));
-
-//    add counts to rt struct
-    scene->n_sphere = count_sphere;
-    scene->n_plane = count_plane;
-    scene->n_cylinder = count_cylinder;
-
-    // printf("\n\n\n");
-    // printf("count_camera = %d\n", count_camera);
-    // printf("count_cylinder = %d\n", count_cylinder);
-    // printf("count_plane = %d\n", count_plane);
-    // printf("count_light = %d\n", count_light);
-    // printf("count_sphere = %d\n", count_sphere);
-    // printf("count_ambiant = %d\n", count_ambiant);
-
-    return (SUCCESS);
+	current = *l;
+	while (current)
+	{
+		if (current->type == camera)
+			scene->n_camera++;
+		else if (current->type == sphere)
+			scene->n_sphere++;
+		else if (current->type == cylinder)
+			scene->n_cylinder++;
+		else if (current->type == plane)
+			scene->n_plane++;
+		else if (current->type == light)
+			scene->n_light++;
+		else if (current->type == ambiant)
+			scene->n_ambient++;
+		current = current->next;
+	}
+	if (scene->n_camera != 1 || scene->n_light != 1 || scene->n_ambient != 1)
+		return (printf("Error\nThere must be exactly 1 camera, 1 ambiant, and 1 light in scene\n"));
+	if (scene->n_sphere + scene->n_plane + scene->n_cylinder == 0)
+		return (printf("Error\nThere must be at least 1 sphere, plane, or cylinder in scene\n"));
+	return (SUCCESS);
 }

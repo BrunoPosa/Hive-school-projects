@@ -194,6 +194,9 @@ typedef struct s_scene
 	t_shape		*shapes;
 	t_data		*data;
 	int			shape_count;
+	int			n_camera;
+	int			n_light;
+	int			n_ambient;
 	int			n_cylinder;
 	int			n_sphere;
 	int			n_plane;
@@ -351,7 +354,7 @@ uint32_t	ft_colour_to_uint32(t_colour *colour);
 void	ft_vec_print(t_vec t);
 void	ft_colour_printer(t_colour *c);
 void	print_y(char *s);
-void 	scene_print(t_scene *scene);
+void 	ft_scene_print(t_scene *scene);
 
 
 // C L E A N U P

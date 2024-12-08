@@ -1,5 +1,10 @@
 #include "../inc/file_to_list.h"
 
+void	ft_scene_print(t_scene *scene)
+{
+	printf("spheres = %d\n", scene->n_sphere);
+}
+
 void	ft_list_print(t_list **l)
 {
 	int i;
