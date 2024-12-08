@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/07 21:24:12 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/08 17:50:27 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ float fsphere(t_vec ray, t_vec ray_origin, t_shape sphere)
 	float t1 = (-b - sqrt(discriminant)) / (2 * a);
 	float t2 = (-b + sqrt(discriminant)) / (2 * a);
 	//this is also different now, returning the positive despite a negative being smaller
-	if (t1 > 0 && t2 > 0)
+	if (t1 > EPSILON && t2 > EPSILON)
 		return fminf(t1, t2); // Return the smallest positive t
-	else if (t1 > 0)
+	else if (t1 > EPSILON)
 		return t1;
-	else if (t2 > 0)
+	else if (t2 > EPSILON)
 		return t2;
 	return (0);
 }
@@ -61,6 +61,7 @@ float	fplane(t_vec ray, t_vec ray_origin, t_shape plane)
 {
 	float	dividend;
 	float	divisor;
+	float	t;
 	t_vec	origin_to_plane;
 
 	dividend = 0.0;
@@ -68,47 +69,16 @@ float	fplane(t_vec ray, t_vec ray_origin, t_shape plane)
 	origin_to_plane = subtract(plane.xyz, ray_origin);
 	dividend = dot(plane.xyz3d, origin_to_plane);
 	divisor = dot(ray, plane.xyz3d);
-	// if (divisor < EPSILON)
-	// 	return (-EPSILON);
-	return (dividend / divisor);
+	if (fabs(divisor) < EPSILON)
+		return (0);
+	t = dividend / divisor;
+	if (t < EPSILON)
+		return (0);
+	return (t);
 }
 
-int	shadow_check(t_scene *scene, t_vec shadowray, t_shape *shape)
-{
-	float		t;
-	float		tmin;
-	int			i;
-
-	i = 0;
-	tmin = (float)INT32_MAX;
-	while (i < scene->shape_count && scene->err_status == SUCCESS)
-	{
-		if (shape != &scene->shapes[i])
-		{
-			t = shape_intersect(shadowray, scene->data->hitp, scene->shapes[i]);
-			if (t > 0)
-			{
-				if (t <= tmin)
-					tmin = t;
-			}
-		}
-		i++;
-	}
-	if (tmin < (float)INT32_MAX)
-		return (1);
-	return (0);
-}
-
-float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape shape)
-{
-	if (shape.type == sphere)
-		return (fsphere(ray, ray_origin, shape));
-	else if (shape.type == plane)
-		return (fplane(ray, ray_origin, shape));
-	return (0);
-}
-
-//fix in case of planes so there is no recalculating
+//fix in case of planes so the surface is smootly shaded, instead of chopped like now
+//fix in case of planes so there is no recalculating #efficiency.
 int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 {
 	float		diffuse_amount;
@@ -121,9 +91,9 @@ int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 	scene->data->normal = normalize(normal);
 	diffuse_amount = dot(scene->data->normal, scene->data->shadow_ray);
 	if (shape->type == plane)
-		diffuse_amount = dot(shape->xyz3d, scene->data->shadow_ray);//how do we color if plane is looking away from light/diffuse_amount < 0?
-	if (diffuse_amount < 0)
-		diffuse_amount = 0;
+		diffuse_amount = fabs(dot(shape->xyz3d, scene->data->shadow_ray));//how do we color if plane is looking away from light/diffuse_amount < 0?
+	// if (diffuse_amount < 0)
+	// 	diffuse_amount = 0;
 	diffuse_color = multiply_colour_by(&shape->rgb, scene->lbr);
 	if (!diffuse_color)
 		return (ERROR);
@@ -153,6 +123,43 @@ t_colour	*calculate_colour(t_scene *scene, t_shape *shape)
 	return (add_colours(scene->data->shade_color, scene->data->diffuse_color));
 }
 
+int	shadow_check(t_scene *scene, t_vec shadowray, t_shape *shape)
+{
+	float		t;
+	float		tmin;
+	int			i;
+	float		light_distance;
+
+	i = 0;
+	light_distance = fabs(magnitude(subtract(scene->lightpos, scene->data->hitp)));
+	tmin = light_distance;
+	while (i < scene->shape_count)
+	{
+		if (shape != &scene->shapes[i])
+		{
+			t = shape_intersect(shadowray, scene->data->hitp, scene->shapes[i]);
+			if (t > 0)
+			{
+				if (t < tmin)
+					tmin = t;
+			}
+		}
+		i++;
+	}
+	if (tmin < light_distance)
+		return (1);
+	return (0);
+}
+
+float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape shape)
+{
+	if (shape.type == sphere)
+		return (fsphere(ray, ray_origin, shape));
+	else if (shape.type == plane)
+		return (fplane(ray, ray_origin, shape));
+	return (0);
+}
+
 int	find_closest_shape(t_scene *scene, t_vec ray)
 {
 	float	hit;
@@ -164,12 +171,7 @@ int	find_closest_shape(t_scene *scene, t_vec ray)
 	while (i < scene->shape_count && scene->err_status == SUCCESS)
 	{
 		hit = shape_intersect(ray, scene->camera.pos, scene->shapes[i]);
-		if (hit == ERROR)
-		{
-			scene->err_status = ERROR;
-			return (ERROR);
-		}
-		if (hit > 0 && hit < scene->data->hitmin)
+		if (hit > 0.0 && hit < scene->data->hitmin)
 		{
 			scene->data->hitmin = hit;
 			scene->data->shape = &scene->shapes[i];
@@ -197,7 +199,6 @@ int trace(t_scene *scene, t_vec ray)
 		return(ft_colour_to_uint32(&scene->ambiant));
 	shadow_ray = create_vec(0, 0, 0);
 	scene->data->hitp = add(scene->camera.pos, multiply_tuple(ray, scene->data->hitmin));
-	// scene->data->hitp = multiply_tuple(ray, scene->data->hitmin);
 	shadow_ray = subtract(scene->lightpos, scene->data->hitp);
 	scene->data->shadow_ray = normalize(shadow_ray);
 	colour_uint = ft_colour_to_uint32(calculate_colour(scene, scene->data->shape));
