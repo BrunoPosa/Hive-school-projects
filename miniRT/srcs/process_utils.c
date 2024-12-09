@@ -1,37 +1,47 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   process_utils.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/09 23:24:03 by jwadding          #+#    #+#             */
+/*   Updated: 2024/12/09 23:26:41 by jwadding         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/file_to_list.h"
 
-int len_until_space(char *s)
+int	len_until_space(char *s)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    if (!s)
-        return (0);
-    while (s[i] && s[i] != ' '
-                    && s[i] != '\n'
-                    && s[i] != '\0')
-        i++;
-    return (i);
+	i = 0;
+	if (!s)
+		return (0);
+	while (s[i] && s[i] != ' ' && s[i] != '\n' && s[i] != '\0')
+		i++;
+	return (i);
 }
 
-int count_commas(char *s, int target)
+int	count_commas(char *s, int target)
 {
-    int i;
-    int count;
+	int	i;
+	int	count;
 
-    i = 0;
-    count = 0;
-    while (s[i])
-    {
-        if (s[i] == ',')
-            count++;
-        i++;
-    }
-    if (target == -1)
-        return (count);
-    if (count != target)
-        return (0);
-    return (1);
+	i = 0;
+	count = 0;
+	while (s[i])
+	{
+		if (s[i] == ',')
+			count++;
+		i++;
+	}
+	if (target == -1)
+		return (count);
+	if (count != target)
+		return (0);
+	return (1);
 }
 
 /**
@@ -44,7 +54,7 @@ int count_commas(char *s, int target)
 int	count_commas_between(char *s)
 {
 	int	comma;
-	int i;
+	int	i;
 
 	comma = 0;
 	i = 0;
