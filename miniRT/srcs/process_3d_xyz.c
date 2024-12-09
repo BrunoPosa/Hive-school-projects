@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_3d_xyz.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 23:16:58 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/08 23:25:08 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/09 13:35:44 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	process_xyz_3d(t_list *current)
 		return (free(sub_string), ret_error(E_XYZ_3D_CHARS, current));
 	if (count_commas_between(sub_string) != 2)
 		return (free(sub_string), ret_error(E_XYZ_3D_COMMA, current));
-		xyz = ft_split(sub_string, ',');
+	xyz = ft_split(sub_string, ',');
 	if (!xyz)
 		return (free(sub_string), ret_error(E_SPLIT, current));
 	if (!is_number_valid(xyz[0]) || !is_number_valid(xyz[1]) || !is_number_valid(xyz[2]))

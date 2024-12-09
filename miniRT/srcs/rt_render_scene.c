@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/08 23:28:07 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/09 18:35:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,39 +22,40 @@ int clamp(float n)
 }
 
 /*
-	v0.2 of sphere intersection function
+	-'a' of the quadratic formula is 1, as 'ray' is a normalized vector, so we leave it out
+	TODO:
+		- move the sphere's radius to the shape struct and precalculate it
 */
 float fsphere(t_vec ray, t_vec ray_origin, t_shape sphere)
 {
-	float radius = sphere.sd / 2;
-	t_vec ray_origin_to_sphere_center = subtract(ray_origin, sphere.xyz);
-	float a = dot(ray, ray);
-	float b = 2 * dot(ray, ray_origin_to_sphere_center);
-	float c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - radius * radius;
-	float discriminant = b * b - 4 * a * c;
+	t_vec ray_origin_to_sphere_center;
+	float	t;
+	float	rsquared;
+	float	b;
+	float	c;
+	float	discriminant;
+
+	ray_origin_to_sphere_center = subtract(ray_origin, sphere.xyz);
+	t = -1.0f;
+	rsquared = sphere.sd / 2 * sphere.sd / 2;//move into shape struct and precalculate
+	b = 2 * dot(ray, ray_origin_to_sphere_center);
+	c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - rsquared;
+	discriminant = b * b - 4 * c;
 	if (discriminant < 0)
-		return (0);//shoudl we return -1?
-	float t1 = (-b - sqrt(discriminant)) / (2 * a);
-	float t2 = (-b + sqrt(discriminant)) / (2 * a);
-	//this is also different now, returning the positive despite a negative being smaller
-	if (t1 > EPSILON && t2 > EPSILON)
-		return fminf(t1, t2); // Return the smallest positive t
-	else if (t1 > EPSILON)
-		return t1;
-	else if (t2 > EPSILON)
-		return t2;
-	return (0);
+		return (-1);
+	t = (-b - sqrt(discriminant)) / 2;
+	if (t < EPSILON)
+		t = (-b + sqrt(discriminant)) / 2;
+	return (t);
 }
 
 float	fplane(t_vec ray, t_vec ray_origin, t_shape plane)
 {
+	t_vec	origin_to_plane;
 	float	dividend;
 	float	divisor;
 	float	t;
-	t_vec	origin_to_plane;
 
-	dividend = 0.0;
-	divisor = 0.0;
 	origin_to_plane = subtract(plane.xyz, ray_origin);
 	dividend = dot(plane.xyz3d, origin_to_plane);
 	divisor = dot(ray, plane.xyz3d);
@@ -199,7 +200,10 @@ int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 
 	diffuse_amount = 0;
 	diffuse_color = NULL;
-	normal = subtract(scene->data->hitp, shape->xyz);
+	if (shape->type != cylinder)
+		normal = subtract(scene->data->hitp, shape->xyz);
+	else
+		normal = subtract(scene->data->hitp, add(shape->xyz, multiply_tuple(shape->xyz3d, shape->ch / 2))); // how to calculate normal for cylinder hitpoint?
 	scene->data->normal = normalize(normal);
 	diffuse_amount = dot(scene->data->normal, scene->data->shadow_ray);
 	if (shape->type == plane)
@@ -285,7 +289,7 @@ int	find_closest_shape(t_scene *scene, t_vec ray)
 	while (i < scene->shape_count && scene->err_status == SUCCESS)
 	{
 		hit = shape_intersect(ray, scene->camera.pos, scene->shapes[i]);
-		if (hit > 0.0 && hit < scene->data->hitmin)
+		if (hit >= EPSILON && hit < scene->data->hitmin)
 		{
 			scene->data->hitmin = hit;
 			scene->data->shape = &scene->shapes[i];
@@ -307,11 +311,11 @@ int trace(t_scene *scene, t_vec ray)
 	t_vec		shadow_ray;
 
 	colour_uint = 0;
+	ft_bzero(&shadow_ray, sizeof(t_vec));
 	if (init_trace_data(scene) != SUCCESS)
 		return (ERROR);
 	if (!find_closest_shape(scene, ray))
 		return(ft_colour_to_uint32(&scene->ambiant));
-	shadow_ray = create_vec(0, 0, 0);
 	scene->data->hitp = add(scene->camera.pos, multiply_tuple(ray, scene->data->hitmin));
 	shadow_ray = subtract(scene->lightpos, scene->data->hitp);
 	scene->data->shadow_ray = normalize(shadow_ray);
