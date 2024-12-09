@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rt_create.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/09 23:48:37 by jwadding          #+#    #+#             */
+/*   Updated: 2024/12/09 23:49:34 by jwadding         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/file_to_list.h"
 
 /*
 	allocates, fills and returns a new tuple, or NULL on errors.
 	pass in VECTOR or POINT macro as 'w' parameter to specify the type of tuple.
 */
-t_vec create_vec(float x, float y, float z)
+t_vec	create_vec(float x, float y, float z)
 {
-	t_vec t;
+	t_vec	t;
 
 	t.x = x;
 	t.y = y;
@@ -24,10 +36,9 @@ t_vec create_vec(float x, float y, float z)
 // 	return (create_tuple(x, y, z, VECTOR));
 // }
 
-
 t_colour	*create_colour(float r, float g, float b)
 {
-	t_colour *c;
+	t_colour	*c;
 
 	c = NULL;
 	// if (r == 0)

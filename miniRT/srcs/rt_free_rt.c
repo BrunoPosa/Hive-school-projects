@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rt_free_rt.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/09 23:49:50 by jwadding          #+#    #+#             */
+/*   Updated: 2024/12/09 23:50:24 by jwadding         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/file_to_list.h"
 
-void free_data(t_data *data)
+void	free_data(t_data *data)
 {
 	if (!data)
-		return;
+		return ;
 	if (data->diffuse_color)
 		free(data->diffuse_color);
 	if (data->shade_color)
@@ -25,8 +37,8 @@ void free_data(t_data *data)
 // free that, go back?
 // recursive?
 // }
-
-
+//
+//
 /// free all the memory allocated for the rt struct
 // void free_rt(t_scene *rt)
 // {
