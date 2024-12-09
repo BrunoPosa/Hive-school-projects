@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   process_ch.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/09 20:30:09 by jwadding          #+#    #+#             */
+/*   Updated: 2024/12/09 20:30:53 by jwadding         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/file_to_list.h"
 
 /*
@@ -7,42 +19,20 @@ float
 same as sd, cd, ch
 */
 
-int process_ch(t_list *current)
+int	process_ch(t_list *current)
 {
-	// printf("process ch\n");
-
-	int i;
-	int	atoi_overflow;
-	char *sub_string;
+	int		i;
+	int		atoi_overflow;
+	char	*sub_string;
 
 	atoi_overflow = 0;
-// find len until space
 	i = len_until_space(current->p);
-// printf("LEN UNITL SPACE = %d\n", i);
-
-// iscolate argument
 	sub_string = ft_substr(current->p, 0, i);
-	// printf("substring = %s\n", sub_string);
-
-
-// check if only legal chars
-	if(!only_legal_chars(sub_string, LEGAL_CHARS3))
+	if (!only_legal_chars(sub_string, LEGAL_CHARS3))
 		return (ret_error(E_FLOAT_CHARS, current));
-
-// convert argument to float
 	current->ch = ft_atod(sub_string, &atoi_overflow);
-// printf("current->ch=%f\n", current->ch);
-// // check within range
-//     if (current->ch < 0.0 || current->ch > 1.0)
-//         return (ret_error(E_ALR_RANGE, current));
-
-// move pointner past argument
 	current->p = current->p + i;
-
-// move pointer to next argument
 	current->p = skip_space(current->p);
-	// printf("data = %s\n", current->p);
-free(sub_string);
-
-return (E_SUCCESS);
+	free(sub_string);
+	return (E_SUCCESS);
 }

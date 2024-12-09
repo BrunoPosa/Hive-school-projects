@@ -28,6 +28,8 @@ SRCS 		=	main.c \
 				process_alr.c \
 				process_cd.c \
 				process_ch.c \
+				process_elements1.c \
+				process_elements2.c \
 				process_lbr.c \
 				process_rgb.c \
 				process_sd.c \
