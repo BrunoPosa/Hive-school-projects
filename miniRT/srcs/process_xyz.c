@@ -37,7 +37,7 @@ int process_xyz(t_list *current)
 	xyz = ft_split(sub_string, ',');
 	if (!xyz)
 		return (free(sub_string), ret_error(E_SPLIT, current));
-	if (!is_number_valid(xyz[0]) || !is_number_valid(xyz[1]) || !is_number_valid(xyz[2]))
+	if (!is_n_valid(xyz[0]) || !is_n_valid(xyz[1]) || !is_n_valid(xyz[2]))
 		return (free(sub_string), ret_error(E_XYZ_CHARS, current));
 	current->xyz.x = ft_atod(xyz[0], &atoi_overflow);
 	current->xyz.y = ft_atod(xyz[1], &atoi_overflow);

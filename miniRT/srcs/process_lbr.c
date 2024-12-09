@@ -22,7 +22,7 @@ int process_lbr(t_list *current)
 
 
 // check if only legal chars
-	if(!only_legal_chars(sub_string, LEGAL_CHARS4) || !is_number_valid(sub_string))
+	if(!only_legal_chars(sub_string, LEGAL_CHARS4) || !is_n_valid(sub_string))
 		return (free(sub_string), ret_error(E_ALR_CHARS, current));
 
 // convert argument to float and check if it's in range

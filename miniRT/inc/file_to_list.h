@@ -282,7 +282,7 @@ int		process_rgb(t_list *current);
 
 int count_commas(char *s, int target);
 int	count_commas_between(char *s);
-int	is_number_valid(char *num);
+int	is_n_valid(char *num);
 int    check_count_of_types(t_list **l, t_scene *rt);
 
 

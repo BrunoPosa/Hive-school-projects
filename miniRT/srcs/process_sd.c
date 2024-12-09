@@ -25,7 +25,7 @@ int process_sd(t_list *current)
 
 
 // check if only legal chars
-	if(!only_legal_chars(sub_string, LEGAL_CHARS7) || !is_number_valid(sub_string))
+	if(!only_legal_chars(sub_string, LEGAL_CHARS7) || !is_n_valid(sub_string))
 		return (ret_error(E_FLOAT_CHARS, current));
 
 // convert argument to float

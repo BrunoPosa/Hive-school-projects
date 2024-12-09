@@ -10,7 +10,6 @@ int len_until_space(char *s)
     while (s[i] && s[i] != ' '
                     && s[i] != '\n'
                     && s[i] != '\0')
-                    // or EOF?
         i++;
     return (i);
 }
@@ -73,7 +72,7 @@ int	count_commas_between(char *s)
  * - there is more than one '.'
  * - the last character is a '.'
  */
-int	is_number_valid(char *num)
+int	is_n_valid(char *num)
 {
 	int	i;
 	int	dot;
