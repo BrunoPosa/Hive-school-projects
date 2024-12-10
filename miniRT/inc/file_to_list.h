@@ -31,7 +31,7 @@
 
 //this is the width of the window in screen pixels
 #ifndef WINSIZE
-# define WINSIZE 700
+# define WINSIZE 800
 #endif
 
 //this is the width of the window in minirt world coordinates
@@ -44,7 +44,7 @@
 #endif
 
 #ifndef EPSILON
-# define EPSILON 0.00001
+# define EPSILON 0.001
 #endif
 
 //	  A L I A S E S

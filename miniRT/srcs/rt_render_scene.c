@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/09 18:35:35 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/10 16:38:14 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,21 +245,21 @@ int	shadow_check(t_scene *scene, t_vec shadowray, t_shape *shape)
 	float		tmin;
 	int			i;
 	float		light_distance;
-
+(void)shape;
 	i = 0;
 	light_distance = magnitude(subtract(scene->lightpos, scene->data->hitp));
 	tmin = light_distance;
 	while (i < scene->shape_count)
 	{
-		if (shape != &scene->shapes[i])
-		{
+		// if (shape != &scene->shapes[i])
+		// {
 			t = shape_intersect(shadowray, scene->data->hitp, scene->shapes[i]);
-			if (t > 0)
+			if (t > EPSILON * 10)
 			{
 				if (t < tmin)
 					tmin = t;
 			}
-		}
+		// }
 		i++;
 	}
 	if (tmin < light_distance)
@@ -289,7 +289,7 @@ int	find_closest_shape(t_scene *scene, t_vec ray)
 	while (i < scene->shape_count && scene->err_status == SUCCESS)
 	{
 		hit = shape_intersect(ray, scene->camera.pos, scene->shapes[i]);
-		if (hit >= EPSILON && hit < scene->data->hitmin)
+		if (hit > EPSILON * 100 && hit < scene->data->hitmin)
 		{
 			scene->data->hitmin = hit;
 			scene->data->shape = &scene->shapes[i];
