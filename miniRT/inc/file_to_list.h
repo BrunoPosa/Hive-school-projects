@@ -322,7 +322,7 @@ float	fplane(t_vec ray, t_vec ray_origin, t_shape plane);
 float	fcylinder(t_vec ray, t_vec ray_origin, t_shape cylinder);
 t_colour	*calculate_colour(t_scene *scene, t_shape *shape);
 int		calculate_diffuse_colour(t_scene *scene, t_shape *shape);
-int		shadow_check(t_scene *scene, t_vec shadowray, t_shape *shape);
+int		shadow_check(t_scene *scene, t_vec shadowray);
 int		init_trace_data(t_scene *scene);
 int		clamp(float n);
 int		circle(int x, int y, int center, int radius);

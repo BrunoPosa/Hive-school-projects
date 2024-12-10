@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/10 16:38:14 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/10 20:52:02 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,117 +80,115 @@ int	circle(int x, int y, int center, int radius)
 
 float top_bottom_cyl(t_vec ray, t_vec ray_origin, t_shape cylinder)
 {
-    t_shape top;
-    t_shape bottom;
-    float t_top;
-    float t_bottom;
-    t_vec hit_point_top;
-    t_vec hit_point_bottom;
+	t_shape top;
+	t_shape bottom;
+	float t_top;
+	float t_bottom;
+	t_vec hit_point_top;
+	t_vec hit_point_bottom;
 
 	ft_bzero(&top, sizeof(t_shape));
 	ft_bzero(&bottom, sizeof(t_shape));
-    // Define the top and bottom caps as planes
-    top.xyz = add(cylinder.xyz, multiply_tuple(cylinder.xyz3d, cylinder.ch)); // Top center
-    top.xyz3d = cylinder.xyz3d;                                              // Top normal
-    bottom.xyz = cylinder.xyz;                                               // Bottom center
-    bottom.xyz3d = negate_tuple(cylinder.xyz3d);                             // Bottom normal
+	// Define the top and bottom caps as planes
+	top.xyz = add(cylinder.xyz, multiply_tuple(cylinder.xyz3d, cylinder.ch)); // Top center
+	top.xyz3d = cylinder.xyz3d;                                              // Top normal
+	bottom.xyz = cylinder.xyz;                                               // Bottom center
+	bottom.xyz3d = negate_tuple(cylinder.xyz3d);                             // Bottom normal
 
-    // Find intersection t-values with the planes
-    t_top = fplane(ray, ray_origin, top);
-    t_bottom = fplane(ray, ray_origin, bottom);
+	// Find intersection t-values with the planes
+	t_top = fplane(ray, ray_origin, top);
+	t_bottom = fplane(ray, ray_origin, bottom);
 
-    // Check if the intersection point lies within the circular cap area
-    if (t_top > 0)
-    {
-        hit_point_top = add(ray_origin, multiply_tuple(ray, t_top)); // Intersection point
-        if (magnitude(subtract(hit_point_top, top.xyz)) > cylinder.cd / 2)
-            t_top = 0; // Intersection point is outside the top cap radius
-    }
-    if (t_bottom > 0)
-    {
-        hit_point_bottom = add(ray_origin, multiply_tuple(ray, t_bottom)); // Intersection point
-        if (magnitude(subtract(hit_point_bottom, bottom.xyz)) > cylinder.cd / 2)
-            t_bottom = 0; // Intersection point is outside the bottom cap radius
-    }
+	// Check if the intersection point lies within the circular cap area
+	if (t_top > 0)
+	{
+		hit_point_top = add(ray_origin, multiply_tuple(ray, t_top)); // Intersection point
+		if (magnitude(subtract(hit_point_top, top.xyz)) > cylinder.cd / 2)
+			t_top = 0; // Intersection point is outside the top cap radius
+	}
+	if (t_bottom > 0)
+	{
+		hit_point_bottom = add(ray_origin, multiply_tuple(ray, t_bottom)); // Intersection point
+		if (magnitude(subtract(hit_point_bottom, bottom.xyz)) > cylinder.cd / 2)
+			t_bottom = 0; // Intersection point is outside the bottom cap radius
+	}
 
-    // Return the smallest positive t (if any)
-    if (t_top > 0 && t_bottom > 0)
-        return fminf(t_top, t_bottom);
-    else if (t_top > 0)
-        return t_top;
-    else if (t_bottom > 0)
-        return t_bottom;
+	// Return the smallest positive t (if any)
+	if (t_top > 0 && t_bottom > 0)
+		return fminf(t_top, t_bottom);
+	else if (t_top > 0)
+		return t_top;
+	else if (t_bottom > 0)
+		return t_bottom;
 
-    return 0; // No valid intersection with the caps
+	return 0; // No valid intersection with the caps
 }
 
 
 float fcylinder(t_vec ray, t_vec ray_origin, t_shape cylinder)
 {
-    t_vec origin_to_cylinder;  // Vector from cylinder center to ray origin
-    t_vec cylinder_axis;       // Cylinder's direction vector (normalized)
-    t_vec ray_perpendicular;   // Ray direction perpendicular to cylinder's axis
-    t_vec origin_perpendicular; // Origin-to-cylinder perpendicular to axis
-    float quadratic_a, quadratic_b, quadratic_c; // Quadratic coefficients
-    float discriminant;
-    float intersection1, intersection2;
-    float intersection3; // Intersection with cylinder caps
-    float y1, y2;        // Projections for surface intersections
+	float	rsquared =  (cylinder.cd / 2) * (cylinder.cd / 2);
+	t_vec	origin_to_cylinder;
+	// t_vec ray_perpendicular;   // Ray direction perpendicular to cylinder's axis
+	// t_vec origin_perpendicular; // Origin-to-cylinder perpendicular to axis
+	float a, b, c;
+	float discriminant;
+	float t1, t2, t3;
+	// float intersection3; // Intersection with cylinder caps
+	float y1, y2;        // Projections for surface intersections
+cylinder.xyz3d = normalize(cylinder.xyz3d);
+	origin_to_cylinder = subtract(ray_origin, cylinder.xyz); // Vector from ray origin to cylinder center
+	// ray_perpendicular = subtract(ray, multiply_tuple(cylinder.xyz3d, dot(ray, cylinder.xyz3d))); // Perpendicular component of ray direction
+	// origin_perpendicular = subtract(origin_to_cylinder, multiply_tuple(cylinder.xyz3d, dot(origin_to_cylinder, cylinder.xyz3d))); // Perpendicular component of origin-to-cylinder vector
 
-    origin_to_cylinder = subtract(ray_origin, cylinder.xyz); // Vector from ray origin to cylinder center
-    cylinder_axis = normalize(cylinder.xyz3d);              // Normalized cylinder axis direction
-    ray_perpendicular = subtract(ray, multiply_tuple(cylinder_axis, dot(ray, cylinder_axis))); // Perpendicular component of ray direction
-    origin_perpendicular = subtract(origin_to_cylinder, multiply_tuple(cylinder_axis, dot(origin_to_cylinder, cylinder_axis))); // Perpendicular component of origin-to-cylinder vector
+	// Quadratic coefficients
+	a = dot(ray, ray) - (pow(dot(ray, cylinder.xyz3d), 2));
+	b = 2 * (dot(ray, origin_to_cylinder) - (dot(ray, cylinder.xyz3d) * dot(origin_to_cylinder, cylinder.xyz3d)));
+	c = dot(origin_to_cylinder, origin_to_cylinder) - pow(dot(origin_to_cylinder, cylinder.xyz3d), 2) - rsquared;
 
-    // Quadratic coefficients
-    quadratic_a = dot(ray_perpendicular, ray_perpendicular);
-    quadratic_b = 2 * dot(ray_perpendicular, origin_perpendicular);
-    quadratic_c = dot(origin_perpendicular, origin_perpendicular) - (cylinder.cd / 2) * (cylinder.cd / 2);
+	// Discriminant
+	discriminant = b * b - 4 * a * c;
+	if (discriminant < 0)
+		return 0; // No intersection
 
-    // Discriminant
-    discriminant = quadratic_b * quadratic_b - 4 * quadratic_a * quadratic_c;
-    if (discriminant < 0)
-        return 0; // No intersection
+	// Solve quadratic equation
+	t1 = (-b - sqrt(discriminant)) / (2 * a);
+	t2 = (-b + sqrt(discriminant)) / (2 * a);
 
-    // Solve quadratic equation
-    intersection1 = (-quadratic_b - sqrt(discriminant)) / (2 * quadratic_a);
-    intersection2 = (-quadratic_b + sqrt(discriminant)) / (2 * quadratic_a);
+	// Check intersection with top/bottom caps
+t3 = top_bottom_cyl(ray, ray_origin, cylinder);
 
-    // Check intersection with top/bottom caps
-    intersection3 = top_bottom_cyl(ray, ray_origin, cylinder);
+	// Check if intersections with the infinite cylinder are within the bounds
+	if (t1 > 0)
+	{
+		t_vec hit_point1 = add(ray_origin, multiply_tuple(ray, t1));
+		y1 = dot(subtract(hit_point1, cylinder.xyz), cylinder.xyz3d); // Projection onto the cylinder axis
+		if (y1 < 0 || y1 > cylinder.ch) // Outside the height range
+			t1 = 0;
+	}
 
-    // Check if intersections with the infinite cylinder are within the bounds
-    if (intersection1 > 0)
-    {
-        t_vec hit_point1 = add(ray_origin, multiply_tuple(ray, intersection1));
-        y1 = dot(subtract(hit_point1, cylinder.xyz), cylinder_axis); // Projection onto the cylinder axis
-        if (y1 < 0 || y1 > cylinder.ch) // Outside the height range
-            intersection1 = 0;
-    }
+	if (t2 > 0)
+	{
+		t_vec hit_point2 = add(ray_origin, multiply_tuple(ray, t2));
+		y2 = dot(subtract(hit_point2, cylinder.xyz), cylinder.xyz3d); // Projection onto the cylinder axis
+		if (y2 < 0 || y2 > cylinder.ch) // Outside the height range
+			t2 = 0;
+	}
 
-    if (intersection2 > 0)
-    {
-        t_vec hit_point2 = add(ray_origin, multiply_tuple(ray, intersection2));
-        y2 = dot(subtract(hit_point2, cylinder.xyz), cylinder_axis); // Projection onto the cylinder axis
-        if (y2 < 0 || y2 > cylinder.ch) // Outside the height range
-            intersection2 = 0;
-    }
+	// Return the smallest positive t (if any)
+	float closest_intersection = 0;
 
-    // Return the smallest positive t (if any)
-    float closest_intersection = 0;
+	// Check all valid positive intersections and find the smallest
+	if (t1 > 0)
+		closest_intersection = t1;
+	if (t2 > 0 && (closest_intersection == 0 || t2 < closest_intersection))
+		closest_intersection = t2;
+	if (t3 > 0 && (closest_intersection == 0 || t3 < closest_intersection))
+		closest_intersection = t3;
 
-    // Check all valid positive intersections and find the smallest
-    if (intersection1 > 0)
-        closest_intersection = intersection1;
-    if (intersection2 > 0 && (closest_intersection == 0 || intersection2 < closest_intersection))
-        closest_intersection = intersection2;
-    if (intersection3 > 0 && (closest_intersection == 0 || intersection3 < closest_intersection))
-        closest_intersection = intersection3;
-
-    return closest_intersection; // Return the closest valid intersection (or 0 if none)
+	return closest_intersection; // Return the closest valid intersection (or 0 if none)
 }
 
-//fix in case of planes so the surface is smootly shaded, instead of chopped like now
 //fix in case of planes so there is no recalculating #efficiency.
 int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 {
@@ -226,7 +224,7 @@ t_colour	*calculate_colour(t_scene *scene, t_shape *shape)
 	scene->data->shade_color = hadamard_product(&shape->rgb, &scene->ambiant);
 	if (!scene->data->shade_color)
 		return (NULL);
-	in_shadow = shadow_check(scene, scene->data->shadow_ray, shape);
+	in_shadow = shadow_check(scene, scene->data->shadow_ray);
 	if (scene->err_status != SUCCESS)
 		return (NULL);
 	if (in_shadow)
@@ -239,27 +237,21 @@ t_colour	*calculate_colour(t_scene *scene, t_shape *shape)
 	return (add_colours(scene->data->shade_color, scene->data->diffuse_color));
 }
 
-int	shadow_check(t_scene *scene, t_vec shadowray, t_shape *shape)
+int	shadow_check(t_scene *scene, t_vec shadowray)
 {
 	float		t;
 	float		tmin;
 	int			i;
 	float		light_distance;
-(void)shape;
+
 	i = 0;
 	light_distance = magnitude(subtract(scene->lightpos, scene->data->hitp));
 	tmin = light_distance;
 	while (i < scene->shape_count)
 	{
-		// if (shape != &scene->shapes[i])
-		// {
-			t = shape_intersect(shadowray, scene->data->hitp, scene->shapes[i]);
-			if (t > EPSILON * 10)
-			{
-				if (t < tmin)
-					tmin = t;
-			}
-		// }
+		t = shape_intersect(shadowray, scene->data->hitp, scene->shapes[i]);
+		if (t > EPSILON && t < tmin)
+				tmin = t;
 		i++;
 	}
 	if (tmin < light_distance)
@@ -289,7 +281,7 @@ int	find_closest_shape(t_scene *scene, t_vec ray)
 	while (i < scene->shape_count && scene->err_status == SUCCESS)
 	{
 		hit = shape_intersect(ray, scene->camera.pos, scene->shapes[i]);
-		if (hit > EPSILON * 100 && hit < scene->data->hitmin)
+		if (hit > EPSILON && hit < scene->data->hitmin)
 		{
 			scene->data->hitmin = hit;
 			scene->data->shape = &scene->shapes[i];
