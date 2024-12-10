@@ -238,7 +238,7 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *));
 /*		P A R S I N G    F U N C T I O N S		*/
 //////////////////////////////////////////////////
 
-int	parse(int argc, char **argv, t_scene *scene);
+int	import(int argc, char **argv, t_scene *scene);
 int	file_to_list(char *file_name, t_list **l);
 // int		ft_list_push_back(t_list *l, char *content);
 void 	ft_list_print(t_list **l);

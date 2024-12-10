@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/08 22:57:41 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/10 22:07:43 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int	populate_scene(t_list **l, t_scene *scene)
 	return (SUCCESS);
 }
 
-int	parse(int argc, char **argv, t_scene *scene)
+int	import(int argc, char **argv, t_scene *scene)
 {
 	t_list	*l;
 

@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/08 21:37:31 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/10 22:07:52 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	main(int argc, char **argv)
 	if (!scene)
 		return (ret_error(E_MALLOC, NULL));
 	init_scene(scene);
-	if (parse(argc, argv, scene) != SUCCESS)
+	if (import(argc, argv, scene) != SUCCESS)
 		return (free(scene), ERROR);
 	mlx = mlx_init(WINSIZE, WINSIZE, "minirt", false);
 	if (!(mlx))
