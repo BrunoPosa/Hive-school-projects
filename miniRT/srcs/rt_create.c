@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt_create.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:48:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/09 23:49:34 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/11 17:09:11 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,18 @@ t_vec	create_vec(float x, float y, float z)
 // 	return (create_tuple(x, y, z, VECTOR));
 // }
 
-t_colour	*create_colour(float r, float g, float b)
+t_colour	create_colour(float r, float g, float b)
 {
-	t_colour	*c;
+	t_colour	c;
 
-	c = NULL;
 	// if (r == 0)
 	// 	r = EPSILON;
 	// if (g == 0)
 	// 	g = EPSILON;
 	// if (b == 0)
 	// 	b = EPSILON;
-	c = malloc(1 * sizeof(t_colour));
-	if (!c)
-		return (NULL);
-	c->r = r;
-	c->g = g;
-	c->b = b;
+	c.r = r;
+	c.g = g;
+	c.b = b;
 	return (c);
 }

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/10 20:52:02 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/11 17:26:16 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,9 +131,9 @@ float fcylinder(t_vec ray, t_vec ray_origin, t_shape cylinder)
 	float t;
 	float tcaps;
 	float axis_projection;
-cylinder.xyz3d = normalize(cylinder.xyz3d);
-	origin_to_cylinder = subtract(ray_origin, cylinder.xyz);
 
+	cylinder.xyz3d = normalize(cylinder.xyz3d);
+	origin_to_cylinder = subtract(ray_origin, cylinder.xyz);
 	coef[a] = dot(ray, ray) - (pow(dot(ray, cylinder.xyz3d), 2));
 	coef[b] = 2 * (dot(ray, origin_to_cylinder) - (dot(ray, cylinder.xyz3d) *
 		dot(origin_to_cylinder, cylinder.xyz3d)));
@@ -162,47 +162,37 @@ cylinder.xyz3d = normalize(cylinder.xyz3d);
 int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 {
 	float		diffuse_amount;
-	t_colour	*diffuse_color;
+	t_colour	diffuse_color;
 	t_vec		normal;
 
 	diffuse_amount = 0;
-	diffuse_color = NULL;
-	if (shape->type != cylinder)
-		normal = subtract(scene->data->hitp, shape->xyz);
-	else
+	diffuse_color = create_colour(0,0,0);
+	if (shape->type == cylinder)
 		normal = subtract(scene->data->hitp, add(shape->xyz, multiply_tuple(shape->xyz3d, shape->h / 2))); // how to calculate normal for cylinder hitpoint?
+	else
+		normal = subtract(scene->data->hitp, shape->xyz);
 	scene->data->normal = normalize(normal);
 	diffuse_amount = dot(scene->data->normal, scene->data->shadow_ray);
 	if (shape->type == plane)
 		diffuse_amount = fabs(dot(shape->xyz3d, scene->data->shadow_ray));//how do we color if plane is looking away from light/diffuse_amount < 0?
 	// if (diffuse_amount < 0)
 	// 	diffuse_amount = 0;
-	diffuse_color = multiply_colour_by(&shape->rgb, scene->lbr);
-	if (!diffuse_color)
-		return (ERROR);
+	diffuse_color = multiply_colour_by(shape->rgb, scene->lbr);
 	scene->data->diffuse_color = multiply_colour_by(diffuse_color, diffuse_amount);
-	free(diffuse_color);
 	return(SUCCESS);
 }
 
-t_colour	*calculate_colour(t_scene *scene, t_shape *shape)
+t_colour	calculate_colour(t_scene *scene, t_shape *shape)
 {
 	int	in_shadow;
 
 	in_shadow = 0;
-	scene->data->shade_color = hadamard_product(&shape->rgb, &scene->ambiant);
-	if (!scene->data->shade_color)
-		return (NULL);
+	scene->data->shade_color = hadamard_product(shape->rgb, scene->ambiant);
 	in_shadow = shadow_check(scene, scene->data->shadow_ray);
-	if (scene->err_status != SUCCESS)
-		return (NULL);
 	if (in_shadow)
 		return (scene->data->shade_color);
-	else if (calculate_diffuse_colour(scene, shape) != SUCCESS)
-	{
-		scene->err_status = ERROR;
-		return (NULL);
-	}
+	else
+		calculate_diffuse_colour(scene, shape);
 	return (add_colours(scene->data->shade_color, scene->data->diffuse_color));
 }
 
@@ -276,7 +266,7 @@ int trace(t_scene *scene, t_vec ray)
 	if (init_trace_data(scene) != SUCCESS)
 		return (ERROR);
 	if (!find_closest_shape(scene, ray))
-		return(ft_colour_to_uint32(&scene->ambiant));
+		return(ft_colour_to_uint32(scene->ambiant));
 	scene->data->hitp = add(scene->camera.pos, multiply_tuple(ray, scene->data->hitmin));
 	shadow_ray = subtract(scene->lightpos, scene->data->hitp);
 	scene->data->shadow_ray = normalize(shadow_ray);

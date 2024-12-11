@@ -181,8 +181,8 @@ typedef struct	s_data
 	t_vec		hitp;
 	t_vec		shadow_ray;
 	t_vec		normal;
-	t_colour	*shade_color;
-	t_colour	*diffuse_color;
+	t_colour	shade_color;
+	t_colour	diffuse_color;
 	float		hitmin;
 } t_data;
 
@@ -323,7 +323,7 @@ float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape shape);
 float	fsphere(t_vec ray, t_vec ray_origin, t_shape sphere);
 float	fplane(t_vec ray, t_vec ray_origin, t_shape plane);
 float	fcylinder(t_vec ray, t_vec ray_origin, t_shape cylinder);
-t_colour	*calculate_colour(t_scene *scene, t_shape *shape);
+t_colour	calculate_colour(t_scene *scene, t_shape *shape);
 int		calculate_diffuse_colour(t_scene *scene, t_shape *shape);
 int		shadow_check(t_scene *scene, t_vec shadowray);
 int		init_trace_data(t_scene *scene);
@@ -333,7 +333,7 @@ int		circle(int x, int y, int center, int radius);
 /*         T U P L E S         */
 
 t_vec		create_vec(float x, float y, float z);
-t_colour	*create_colour(float r, float g, float b);
+t_colour	create_colour(float r, float g, float b);
 // t_vec		create_point(float x, float y, float z);
 // t_vec		create_vector(float x, float y, float z);
 int			diff(t_vec a, t_vec b);
@@ -350,17 +350,17 @@ unsigned int float_to_uint(float value);
 
 //			C O L O U R S
 
-t_colour   *add_colours(t_colour *a, t_colour *b);
-t_colour   *subtract_colours(t_colour *a, t_colour *b);
-t_colour   *multiply_colour_by(t_colour *a, float scaler);
-t_colour   *hadamard_product(t_colour *a, t_colour *b);
-uint32_t	ft_colour_to_uint32(t_colour *colour);
+t_colour	add_colours(t_colour a, t_colour b);
+t_colour	subtract_colours(t_colour a, t_colour b);
+t_colour	multiply_colour_by(t_colour a, float scaler);
+t_colour	hadamard_product(t_colour a, t_colour b);
+uint32_t	ft_colour_to_uint32(t_colour colour);
 
 
 //      P R I N T E R S
 
 void	ft_vec_print(t_vec t);
-void	ft_colour_printer(t_colour *c);
+void	ft_colour_printer(t_colour c);
 void	print_y(char *s);
 void 	ft_scene_print(t_scene *scene);
 

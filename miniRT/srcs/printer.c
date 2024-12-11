@@ -54,14 +54,9 @@ void	ft_vec_print(t_vec t)
 //  }
 
 
-void	ft_colour_printer(t_colour *c)
+void	ft_colour_printer(t_colour c)
 {
-		if (!c)
-	{
-		printf("%sError: colour tuple is NULL%s\n", RED, ENDCLR);
-		return ;
-	}
-	printf("r: %.3f | g: %.3f | b: %.3f\n", c->r, c->g, c->b);
+	printf("r: %.3f | g: %.3f | b: %.3f\n", c.r, c.g, c.b);
 }
 
 

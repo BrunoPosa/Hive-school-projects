@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt_free_rt.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:49:50 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/09 23:50:24 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/11 17:28:41 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,7 @@ void	free_data(t_data *data)
 {
 	if (!data)
 		return ;
-	if (data->diffuse_color)
-		free(data->diffuse_color);
-	if (data->shade_color)
-		free(data->shade_color);
 	data->shape = NULL;
-	data->diffuse_color = NULL;
-	data->shade_color = NULL;
 	free(data);
 	data = NULL;
 }
