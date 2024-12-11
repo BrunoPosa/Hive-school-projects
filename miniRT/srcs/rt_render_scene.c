@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/11 17:26:16 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/11 19:34:45 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,42 +158,41 @@ float fcylinder(t_vec ray, t_vec ray_origin, t_shape cylinder)
 	return (fminf(t, tcaps));
 }
 
+t_vec	calculate_cy_normal(t_scene *scene, t_shape *cy)
+{
+	return (normalize(subtract(scene->data.hitp, add(cy->xyz, multiply_tuple(cy->xyz3d, cy->h / 2)))));
+}
+
 //fix in case of planes so there is no recalculating #efficiency.
+//change to void type
 int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 {
 	float		diffuse_amount;
 	t_colour	diffuse_color;
-	t_vec		normal;
 
 	diffuse_amount = 0;
 	diffuse_color = create_colour(0,0,0);
 	if (shape->type == cylinder)
-		normal = subtract(scene->data->hitp, add(shape->xyz, multiply_tuple(shape->xyz3d, shape->h / 2))); // how to calculate normal for cylinder hitpoint?
+		scene->data.normal = calculate_cy_normal(scene, shape);
 	else
-		normal = subtract(scene->data->hitp, shape->xyz);
-	scene->data->normal = normalize(normal);
-	diffuse_amount = dot(scene->data->normal, scene->data->shadow_ray);
+		scene->data.normal = normalize(subtract(scene->data.hitp, shape->xyz));
+	diffuse_amount = dot(scene->data.normal, scene->data.shadow_ray);
 	if (shape->type == plane)
-		diffuse_amount = fabs(dot(shape->xyz3d, scene->data->shadow_ray));//how do we color if plane is looking away from light/diffuse_amount < 0?
+		diffuse_amount = fabs(dot(shape->xyz3d, scene->data.shadow_ray));//how do we color if plane is looking away from light/diffuse_amount < 0?
 	// if (diffuse_amount < 0)
 	// 	diffuse_amount = 0;
 	diffuse_color = multiply_colour_by(shape->rgb, scene->lbr);
-	scene->data->diffuse_color = multiply_colour_by(diffuse_color, diffuse_amount);
+	scene->data.diffuse_color = multiply_colour_by(diffuse_color, diffuse_amount);
 	return(SUCCESS);
 }
 
 t_colour	calculate_colour(t_scene *scene, t_shape *shape)
 {
-	int	in_shadow;
-
-	in_shadow = 0;
-	scene->data->shade_color = hadamard_product(shape->rgb, scene->ambiant);
-	in_shadow = shadow_check(scene, scene->data->shadow_ray);
-	if (in_shadow)
-		return (scene->data->shade_color);
-	else
-		calculate_diffuse_colour(scene, shape);
-	return (add_colours(scene->data->shade_color, scene->data->diffuse_color));
+	scene->data.shade_color = hadamard_product(shape->rgb, scene->ambiant);
+	if (shadow_check(scene, scene->data.shadow_ray))
+		return (scene->data.shade_color);
+	calculate_diffuse_colour(scene, shape);
+	return (add_colours(scene->data.shade_color, scene->data.diffuse_color));
 }
 
 int	shadow_check(t_scene *scene, t_vec shadowray)
@@ -204,11 +203,11 @@ int	shadow_check(t_scene *scene, t_vec shadowray)
 	float		light_distance;
 
 	i = 0;
-	light_distance = magnitude(subtract(scene->lightpos, scene->data->hitp));
+	light_distance = magnitude(subtract(scene->lightpos, scene->data.hitp));
 	tmin = light_distance;
 	while (i < scene->shape_count)
 	{
-		t = shape_intersect(shadowray, scene->data->hitp, scene->shapes[i]);
+		t = shape_intersect(shadowray, scene->data.hitp, scene->shapes[i]);
 		if (t > EPSILON && t < tmin)
 				tmin = t;
 		i++;
@@ -236,18 +235,18 @@ int	find_closest_shape(t_scene *scene, t_vec ray)
 
 	i = 0;
 	hit = 0.0;
-	scene->data->hitmin = (float)INT32_MAX;
-	while (i < scene->shape_count && scene->err_status == SUCCESS)
+	scene->data.hitmin = (float)INT32_MAX;
+	while (i < scene->shape_count)
 	{
 		hit = shape_intersect(ray, scene->camera.pos, scene->shapes[i]);
-		if (hit > EPSILON && hit < scene->data->hitmin)
+		if (hit > EPSILON && hit < scene->data.hitmin)
 		{
-			scene->data->hitmin = hit;
-			scene->data->shape = &scene->shapes[i];
+			scene->data.hitmin = hit;
+			scene->data.shape = &scene->shapes[i];
 		}
 		i++;
 	}
-	if (scene->data->shape)
+	if (scene->data.hitmin < (float)INT32_MAX)
 		return (1);
 	return (0);
 }
@@ -258,21 +257,12 @@ int	find_closest_shape(t_scene *scene, t_vec ray)
 */
 int trace(t_scene *scene, t_vec ray)
 {
-	uint32_t	colour_uint;
-	t_vec		shadow_ray;
-
-	colour_uint = 0;
-	ft_bzero(&shadow_ray, sizeof(t_vec));
-	if (init_trace_data(scene) != SUCCESS)
-		return (ERROR);
+	ft_bzero(&scene->data, sizeof(t_data));
 	if (!find_closest_shape(scene, ray))
 		return(ft_colour_to_uint32(scene->ambiant));
-	scene->data->hitp = add(scene->camera.pos, multiply_tuple(ray, scene->data->hitmin));
-	shadow_ray = subtract(scene->lightpos, scene->data->hitp);
-	scene->data->shadow_ray = normalize(shadow_ray);
-	colour_uint = ft_colour_to_uint32(calculate_colour(scene, scene->data->shape));
-	free_data(scene->data);
-	return (colour_uint);
+	scene->data.hitp = add(scene->camera.pos, multiply_tuple(ray, scene->data.hitmin));
+	scene->data.shadow_ray = normalize(subtract(scene->lightpos, scene->data.hitp));
+	return (ft_colour_to_uint32(calculate_colour(scene, scene->data.shape)));
 }
 
 /*
@@ -299,5 +289,5 @@ int	render_pixels(t_scene *scene, mlx_image_t *img)
 			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(scene, ray);
 		}
 	}
-	return (scene->err_status);
+	return (SUCCESS);
 }

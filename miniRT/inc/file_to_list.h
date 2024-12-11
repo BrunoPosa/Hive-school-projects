@@ -195,7 +195,7 @@ typedef struct s_scene
 	t_colour	ambiant;
 // cy, pl, and sp objects are all part of a single Shapes[] array, calloc'd to the right size
 	t_shape		*shapes;
-	t_data		*data;
+	t_data		data;
 	int			shape_count;
 	int			n_camera;
 	int			n_light;
@@ -205,7 +205,6 @@ typedef struct s_scene
 	int			n_plane;
 	float		world_scale;
 	float		half_new_winsize;
-	int			err_status;
 
 // can we use a link2 to connect objects of the same type?
 // then to free we can rip through all the linked list,

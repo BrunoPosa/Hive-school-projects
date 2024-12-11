@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/08 15:48:53 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/11 18:23:50 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,11 @@ void	precalculate(t_scene *scene)
 	scene->half_new_winsize = (float)WRLD_WINSIZE / 2;
 }
 
-int	init_trace_data(t_scene *scene)
-{
-	scene->data = ft_calloc(1, sizeof(t_data));
-	if (!scene->data)
-		return (ERROR);
-	scene->data->hitmin = (float)INT32_MAX;
-	return (SUCCESS);
-}
+// int	init_trace_data(t_scene *scene)
+// {
+// 	scene->data = ft_calloc(1, sizeof(t_data));
+// 	if (!scene->data)
+// 		return (ERROR);
+// 	scene->data->hitmin = (float)INT32_MAX;
+// 	return (SUCCESS);
+// }

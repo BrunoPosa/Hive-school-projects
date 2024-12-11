@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:49:50 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/11 17:28:41 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/11 18:21:08 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ void	free_data(t_data *data)
 {
 	if (!data)
 		return ;
-	data->shape = NULL;
 	free(data);
 	data = NULL;
 }
