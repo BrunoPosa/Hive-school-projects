@@ -1,7 +1,10 @@
 #ifndef FILE_TO_LIST_H
 # define FILE_TO_LIST_H
 
+// not going to work well
 #include "../../MLX42/include/MLX42/MLX42.h"
+
+// this is going back too far.
 #include "../../libft/libft.h"
 #include <unistd.h>
 #include <stdlib.h>
@@ -18,6 +21,8 @@
 #define LEGAL_CHARS6 "0123456789" //fov
 #define LEGAL_CHARS7 "0123456789.-" //cd, ch, sd
 
+
+// should we remove?
 // #ifndef TRUE
 # define TRUE 1
 // #endif
@@ -48,11 +53,11 @@
 #endif
 
 //	  A L I A S E S
-
-#define POINT 1
-#define VECTOR 0
-#define SUCCESS 0
-#define ERROR -1
+// not using these any more
+// #define POINT 1
+// #define VECTOR 0
+// #define SUCCESS 0
+// #define ERROR -1
 
 //	  C O L O U R S
 
@@ -71,6 +76,7 @@ typedef enum	e_coef
 } t_coef;
 
 //should this be called exit status? return codes?
+// make an array of strings somehow to print the error
 typedef enum e_error
 {
 	E_SUCCESS,
@@ -104,7 +110,7 @@ typedef enum e_error
 }			t_error;
 // #endif
 
-
+// probably don't need to be capital? check norm
 typedef enum e_type
 {
 	unassigned,
@@ -116,6 +122,7 @@ typedef enum e_type
 	ambiant
 } t_type;
 
+// this could be changed to s_xyz in the code
 typedef struct s_vec
 {
 	float x;
@@ -123,6 +130,7 @@ typedef struct s_vec
 	float z;
 } t_vec;
 
+// might be calle rgb
 typedef struct s_colour
 {
 	float r;
@@ -137,6 +145,7 @@ typedef struct s_xyz
 	float z;
 } t_xyz;
 
+// do we need to make function to free t_vec? etc? no?
 typedef struct	s_shape
 {
 	t_type		type;
@@ -167,6 +176,7 @@ typedef struct s_list
 }	t_list;
 
 //s_elements is for camera
+// call this t_cam
 typedef struct s_elements
 {
 	t_type		type;
@@ -175,6 +185,7 @@ typedef struct s_elements
 	float		focal_length;
 }	t_elem;
 
+// temp data for rays, shouldn't need free'd
 typedef struct	s_data
 {
 	t_shape		*shape;
