@@ -30,7 +30,7 @@ int	process_ch(t_list *current)
 	sub_string = ft_substr(current->p, 0, i);
 	if (!only_legal_chars(sub_string, LEGAL_CHARS3))
 		return (ret_error(E_FLOAT_CHARS, current));
-	current->ch = ft_atod(sub_string, &atoi_overflow);
+	current->h = ft_atod(sub_string, &atoi_overflow);
 	current->p = current->p + i;
 	current->p = skip_space(current->p);
 	free(sub_string);

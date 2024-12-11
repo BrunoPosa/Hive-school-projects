@@ -33,7 +33,7 @@ int	process_sd(t_list *current)
 	sub_string = ft_substr(current->p, 0, i);
 	if (!only_legal_chars(sub_string, LEGAL_CHARS7) || !is_n_valid(sub_string))
 		return (ret_error(E_FLOAT_CHARS, current));
-	current->sd = ft_atod(sub_string, &atoi_overflow);
+	current->d = ft_atod(sub_string, &atoi_overflow);
 	current->p = current->p + i;
 	current->p = skip_space(current->p);
 	free(sub_string);

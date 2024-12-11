@@ -24,7 +24,9 @@ maximum = 1
 static void	p_xyz_3d_helper1(char ***xyz, int *atoi_overflow, int *i, char *p)
 {
 	xyz = NULL;
+	(void)xyz;
 	atoi_overflow = 0;
+	(void)atoi_overflow;
 	*i = len_until_space(p);
 }
 

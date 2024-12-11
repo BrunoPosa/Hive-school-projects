@@ -30,16 +30,14 @@ float fsphere(t_vec ray, t_vec ray_origin, t_shape sphere)
 {
 	t_vec ray_origin_to_sphere_center;
 	float	t;
-	float	rsquared;
 	float	b;
 	float	c;
 	float	discriminant;
 
 	ray_origin_to_sphere_center = subtract(ray_origin, sphere.xyz);
 	t = -1.0f;
-	rsquared = sphere.sd / 2 * sphere.sd / 2;//move into shape struct and precalculate
 	b = 2 * dot(ray, ray_origin_to_sphere_center);
-	c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - rsquared;
+	c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - sphere.r * sphere.r;
 	discriminant = b * b - 4 * c;
 	if (discriminant < 0)
 		return (-1);
@@ -90,7 +88,7 @@ float top_bottom_cyl(t_vec ray, t_vec ray_origin, t_shape cylinder)
 	ft_bzero(&top, sizeof(t_shape));
 	ft_bzero(&bottom, sizeof(t_shape));
 	// Define the top and bottom caps as planes
-	top.xyz = add(cylinder.xyz, multiply_tuple(cylinder.xyz3d, cylinder.ch)); // Top center
+	top.xyz = add(cylinder.xyz, multiply_tuple(cylinder.xyz3d, cylinder.h)); // Top center
 	top.xyz3d = cylinder.xyz3d;                                              // Top normal
 	bottom.xyz = cylinder.xyz;                                               // Bottom center
 	bottom.xyz3d = negate_tuple(cylinder.xyz3d);                             // Bottom normal
@@ -103,13 +101,13 @@ float top_bottom_cyl(t_vec ray, t_vec ray_origin, t_shape cylinder)
 	if (t_top > 0)
 	{
 		hit_point_top = add(ray_origin, multiply_tuple(ray, t_top)); // Intersection point
-		if (magnitude(subtract(hit_point_top, top.xyz)) > cylinder.cd / 2)
+		if (magnitude(subtract(hit_point_top, top.xyz)) > cylinder.r)
 			t_top = 0; // Intersection point is outside the top cap radius
 	}
 	if (t_bottom > 0)
 	{
 		hit_point_bottom = add(ray_origin, multiply_tuple(ray, t_bottom)); // Intersection point
-		if (magnitude(subtract(hit_point_bottom, bottom.xyz)) > cylinder.cd / 2)
+		if (magnitude(subtract(hit_point_bottom, bottom.xyz)) > cylinder.r)
 			t_bottom = 0; // Intersection point is outside the bottom cap radius
 	}
 
@@ -127,66 +125,37 @@ float top_bottom_cyl(t_vec ray, t_vec ray_origin, t_shape cylinder)
 
 float fcylinder(t_vec ray, t_vec ray_origin, t_shape cylinder)
 {
-	float	rsquared =  (cylinder.cd / 2) * (cylinder.cd / 2);
 	t_vec	origin_to_cylinder;
-	// t_vec ray_perpendicular;   // Ray direction perpendicular to cylinder's axis
-	// t_vec origin_perpendicular; // Origin-to-cylinder perpendicular to axis
-	float a, b, c;
+	float coef[3];
 	float discriminant;
-	float t1, t2, t3;
-	// float intersection3; // Intersection with cylinder caps
-	float y1, y2;        // Projections for surface intersections
+	float t;
+	float tcaps;
+	float axis_projection;
 cylinder.xyz3d = normalize(cylinder.xyz3d);
-	origin_to_cylinder = subtract(ray_origin, cylinder.xyz); // Vector from ray origin to cylinder center
-	// ray_perpendicular = subtract(ray, multiply_tuple(cylinder.xyz3d, dot(ray, cylinder.xyz3d))); // Perpendicular component of ray direction
-	// origin_perpendicular = subtract(origin_to_cylinder, multiply_tuple(cylinder.xyz3d, dot(origin_to_cylinder, cylinder.xyz3d))); // Perpendicular component of origin-to-cylinder vector
+	origin_to_cylinder = subtract(ray_origin, cylinder.xyz);
 
-	// Quadratic coefficients
-	a = dot(ray, ray) - (pow(dot(ray, cylinder.xyz3d), 2));
-	b = 2 * (dot(ray, origin_to_cylinder) - (dot(ray, cylinder.xyz3d) * dot(origin_to_cylinder, cylinder.xyz3d)));
-	c = dot(origin_to_cylinder, origin_to_cylinder) - pow(dot(origin_to_cylinder, cylinder.xyz3d), 2) - rsquared;
-
-	// Discriminant
-	discriminant = b * b - 4 * a * c;
+	coef[a] = dot(ray, ray) - (pow(dot(ray, cylinder.xyz3d), 2));
+	coef[b] = 2 * (dot(ray, origin_to_cylinder) - (dot(ray, cylinder.xyz3d) *
+		dot(origin_to_cylinder, cylinder.xyz3d)));
+	coef[c] = dot(origin_to_cylinder, origin_to_cylinder) - 
+		pow(dot(origin_to_cylinder, cylinder.xyz3d), 2) - cylinder.r * cylinder.r;
+	discriminant = coef[b] * coef[b] - 4 * coef[a] * coef[c];
 	if (discriminant < 0)
-		return 0; // No intersection
-
-	// Solve quadratic equation
-	t1 = (-b - sqrt(discriminant)) / (2 * a);
-	t2 = (-b + sqrt(discriminant)) / (2 * a);
-
-	// Check intersection with top/bottom caps
-t3 = top_bottom_cyl(ray, ray_origin, cylinder);
-
-	// Check if intersections with the infinite cylinder are within the bounds
-	if (t1 > 0)
+		return -1;
+	t = (-coef[b] - sqrt(discriminant)) / (2 * coef[a]);
+	if (t < EPSILON)
+		t = (-coef[b] + sqrt(discriminant)) / (2 * coef[a]);
+	tcaps = top_bottom_cyl(ray, ray_origin, cylinder);
+	if (t > EPSILON)
 	{
-		t_vec hit_point1 = add(ray_origin, multiply_tuple(ray, t1));
-		y1 = dot(subtract(hit_point1, cylinder.xyz), cylinder.xyz3d); // Projection onto the cylinder axis
-		if (y1 < 0 || y1 > cylinder.ch) // Outside the height range
-			t1 = 0;
+		t_vec hit_point1 = add(ray_origin, multiply_tuple(ray, t));
+		axis_projection = dot(subtract(hit_point1, cylinder.xyz), cylinder.xyz3d);
+		if (axis_projection < 0 || axis_projection > cylinder.h)
+			t = -1;
 	}
-
-	if (t2 > 0)
-	{
-		t_vec hit_point2 = add(ray_origin, multiply_tuple(ray, t2));
-		y2 = dot(subtract(hit_point2, cylinder.xyz), cylinder.xyz3d); // Projection onto the cylinder axis
-		if (y2 < 0 || y2 > cylinder.ch) // Outside the height range
-			t2 = 0;
-	}
-
-	// Return the smallest positive t (if any)
-	float closest_intersection = 0;
-
-	// Check all valid positive intersections and find the smallest
-	if (t1 > 0)
-		closest_intersection = t1;
-	if (t2 > 0 && (closest_intersection == 0 || t2 < closest_intersection))
-		closest_intersection = t2;
-	if (t3 > 0 && (closest_intersection == 0 || t3 < closest_intersection))
-		closest_intersection = t3;
-
-	return closest_intersection; // Return the closest valid intersection (or 0 if none)
+	if (t < EPSILON || tcaps < EPSILON)
+		return (fmaxf(t, tcaps));
+	return (fminf(t, tcaps));
 }
 
 //fix in case of planes so there is no recalculating #efficiency.
@@ -201,7 +170,7 @@ int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 	if (shape->type != cylinder)
 		normal = subtract(scene->data->hitp, shape->xyz);
 	else
-		normal = subtract(scene->data->hitp, add(shape->xyz, multiply_tuple(shape->xyz3d, shape->ch / 2))); // how to calculate normal for cylinder hitpoint?
+		normal = subtract(scene->data->hitp, add(shape->xyz, multiply_tuple(shape->xyz3d, shape->h / 2))); // how to calculate normal for cylinder hitpoint?
 	scene->data->normal = normalize(normal);
 	diffuse_amount = dot(scene->data->normal, scene->data->shadow_ray);
 	if (shape->type == plane)

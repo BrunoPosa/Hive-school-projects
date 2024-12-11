@@ -31,7 +31,7 @@
 
 //this is the width of the window in screen pixels
 #ifndef WINSIZE
-# define WINSIZE 800
+# define WINSIZE 600
 #endif
 
 //this is the width of the window in minirt world coordinates
@@ -63,7 +63,12 @@
 #define ENDCLR	"\033[0m"
 
 
-
+typedef enum	e_coef
+{
+	a,
+	b,
+	c
+} t_coef;
 
 //should this be called exit status? return codes?
 typedef enum e_error
@@ -138,9 +143,8 @@ typedef struct	s_shape
 	t_vec		xyz;
 	t_vec		xyz3d;
 	t_colour	rgb;
-	float		sd;
-	float		cd;
-	float		ch;
+	float		r;
+	float		h;
 }	t_shape;
 
 /*
@@ -157,9 +161,8 @@ typedef struct s_list
 	t_xyz			xyz_3d;
 	unsigned int	fov;
 	float			lbr;
-	float			sd;
-	float			cd;
-	float			ch;
+	float			d;
+	float			h;
 	struct s_list	*next;
 }	t_list;
 

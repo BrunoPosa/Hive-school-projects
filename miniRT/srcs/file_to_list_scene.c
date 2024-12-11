@@ -49,9 +49,8 @@ void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
 			scene->shapes[i].xyz3d.y = current->xyz_3d.y;
 			scene->shapes[i].xyz3d.z = current->xyz_3d.z;
 			scene->shapes[i].rgb = current->rgb;
-			scene->shapes[i].sd = current->sd;
-			scene->shapes[i].cd = current->cd;
-			scene->shapes[i].ch = current->ch;
+			scene->shapes[i].r = current->d / 2;
+			scene->shapes[i].h = current->h;
 			i++;
 		}
 		current = current->next;

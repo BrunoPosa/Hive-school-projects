@@ -30,9 +30,8 @@ void	ft_list_print(t_list **l)
 		printf("  xyz_3d-z = %f\n", tmp->xyz_3d.z);
 		printf("       fov = %d\n", tmp->fov);
 		printf("       lbr = %f\n", tmp->lbr);
-		printf("        sd = %f\n", tmp->sd);
-		printf("        cd = %f\n", tmp->cd);
-		printf("        ch = %f\n", tmp->ch);
+		printf("        cd = %f\n", tmp->d);
+		printf("        ch = %f\n", tmp->h);
 		printf(      "next = %p\n", tmp->next);
 
 		printf("--- Node %d end ---\n\n\n", i);
