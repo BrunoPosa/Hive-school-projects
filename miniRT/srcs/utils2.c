@@ -50,7 +50,7 @@ void	precalculate(t_scene *scene)
 // {
 // 	scene->data = ft_calloc(1, sizeof(t_data));
 // 	if (!scene->data)
-// 		return (ERROR);
+// 		return (E_ERROR);
 // 	scene->data->hitmin = (float)INT32_MAX;
-// 	return (SUCCESS);
+// 	return (E_SUCCESS);
 // }

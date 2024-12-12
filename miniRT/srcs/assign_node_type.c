@@ -34,7 +34,7 @@ int	move_past_type(t_list **l)
 		current->p = skip_space(current->p);
 		current = current->next;
 	}
-	return (SUCCESS);
+	return (E_SUCCESS);
 }
 
 int	assign_node_type(t_list **l)
@@ -61,7 +61,7 @@ int	assign_node_type(t_list **l)
 		current = current->next;
 	}
 	move_past_type(l);
-	return (SUCCESS);
+	return (E_SUCCESS);
 }
 
 // if current->p[0] == num, ',' 

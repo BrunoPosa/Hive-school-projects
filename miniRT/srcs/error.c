@@ -31,9 +31,9 @@
 // 	if (init_philos(&data))
 // 		return (ret_error(E_THREAD, &data));
 // 	exit_code = start_threads(&data);
-// 	if (exit_code != NO_ERROR)
+// 	if (exit_code != NO_E_ERROR)
 // 		return (exit_code);
-// 	return (ret_error(NO_ERROR, &data));
+// 	return (ret_error(NO_E_ERROR, &data));
 // }
 
 
@@ -62,7 +62,7 @@ static char	*ft_strerror(t_error error)
 	else if (error == E_LBR_RANGE)
 		return ("lbr range");
 	else if (error == E_SUCCESS)
-		return ("Success");
+		return ("E_SUCCESS");
 	return (NULL);
 }
 

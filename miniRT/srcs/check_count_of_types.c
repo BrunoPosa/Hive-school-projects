@@ -37,5 +37,5 @@ int	check_count_of_types(t_list **l, t_scene *scene)
 		return (printf("Error\nThere must be exactly 1 camera, 1 ambiant, and 1 light in scene\n"));
 	if (scene->n_sphere + scene->n_plane + scene->n_cylinder == 0)
 		return (printf("Error\nThere must be at least 1 sphere, plane, or cylinder in scene\n"));
-	return (SUCCESS);
+	return (E_SUCCESS);
 }

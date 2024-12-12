@@ -21,7 +21,7 @@ int	process_list(t_list **l)
 	list_legality_check(l, LEGAL_CHARS2);
 	if (process_nodes(l) != E_SUCCESS)
 		return (-1);
-	return (SUCCESS);
+	return (E_SUCCESS);
 }
 
 void	move_pointers_to_args(t_list **l)

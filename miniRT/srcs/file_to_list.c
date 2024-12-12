@@ -62,8 +62,8 @@ int	populate_scene(t_list **l, t_scene *scene)
 	t_list		*current;
 
 	current = *l;
-	if (allocate_scene_arrays(scene) == ERROR)
-		return (ERROR);
+	if (allocate_scene_arrays(scene) == E_ERROR)
+		return (E_ERROR);
 	move_shapes_into_scene(l, scene, sphere);
 	move_shapes_into_scene(l, scene, plane);
 	move_shapes_into_scene(l, scene, cylinder);
@@ -86,7 +86,7 @@ int	populate_scene(t_list **l, t_scene *scene)
 			scene->camera = move_element_into_scene(current);
 		current = current->next;
 	}
-	return (SUCCESS);
+	return (E_SUCCESS);
 }
 
 int	import(int argc, char **argv, t_scene *scene)
@@ -100,16 +100,16 @@ int	import(int argc, char **argv, t_scene *scene)
 		return (ret_error(E_FILE_NAME, NULL));
 	if (file_to_list(argv[1], &l))
 		return (ret_error(E_MALLOC, l));
-	if (process_list(&l) == ERROR)
+	if (process_list(&l) == E_ERROR)
 	{
 		printf("==== FILE VALIDATION FAILED ====");
 		return (-1);
 	}
-	if (check_count_of_types(&l, scene) != SUCCESS)
+	if (check_count_of_types(&l, scene) != E_SUCCESS)
 		return (ret_error(E_OBJECT_COUNT, l));
-	if (populate_scene(&l, scene) != SUCCESS)
+	if (populate_scene(&l, scene) != E_SUCCESS)
 		return (ret_error(E_MALLOC, l));
 	precalculate(scene);
 	ft_lstclear(&l, free);
-	return (SUCCESS);
+	return (E_SUCCESS);
 }

@@ -7,3 +7,5 @@ ray_tracer_challenge/ray_tracer
 *.ppm
 miniRT/miniRT
 examples/
+Doxyfile
+miniRT/doxydocs/

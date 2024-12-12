@@ -19,9 +19,9 @@ int	allocate_scene_arrays(t_scene *scene)
 	{
 		scene->shapes = ft_calloc(scene->shape_count, sizeof(t_shape));
 		if (!scene->shapes)
-			return (ERROR);
+			return (E_ERROR);
 	}
-	return (SUCCESS);
+	return (E_SUCCESS);
 }
 
 //indexing starts from 0 for spheres, then come planes, then cylinders

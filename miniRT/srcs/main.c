@@ -35,18 +35,18 @@ int	main(int argc, char **argv)
 	if (!scene)
 		return (ret_error(E_MALLOC, NULL));
 	init_scene(scene);
-	if (import(argc, argv, scene) != SUCCESS)
-		return (free(scene), ERROR);
+	if (import(argc, argv, scene) != E_SUCCESS)
+		return (free(scene), E_ERROR);
 	mlx = mlx_init(WINSIZE, WINSIZE, "minirt", false);
 	if (!(mlx))
-		return (free(scene), ERROR);
+		return (free(scene), E_ERROR);
 	img = mlx_new_image(mlx, WINSIZE, WINSIZE);
 	if (!img || mlx_image_to_window(mlx, img, 0, 0) < 0)
-		return (free(scene), mlx_terminate(mlx), ERROR);
-	if (render_pixels(scene, img) != SUCCESS)
-		return (mlx_terminate(mlx), ERROR);
+		return (free(scene), mlx_terminate(mlx), E_ERROR);
+	if (render_pixels(scene, img) != E_SUCCESS)
+		return (mlx_terminate(mlx), E_ERROR);
 	mlx_key_hook(mlx, &esc_keyhook, mlx);
 	mlx_loop(mlx);
 	mlx_terminate(mlx);
-	return (free(scene), SUCCESS);
+	return (free(scene), E_SUCCESS);
 }

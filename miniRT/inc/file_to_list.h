@@ -56,8 +56,8 @@
 // not using these any more
 // #define POINT 1
 // #define VECTOR 0
-// #define SUCCESS 0
-// #define ERROR -1
+// #define E_SUCCESS 0
+// #define E_ERROR -1
 
 //	  C O L O U R S
 
@@ -80,6 +80,7 @@ typedef enum	e_coef
 typedef enum e_error
 {
 	E_SUCCESS,
+	E_ERROR,
 	E_ARGS,
 	E_FILE_NAME,
 	E_ILLEGAL_CHARS1,
@@ -310,7 +311,7 @@ t_elem	move_element_into_scene(t_list *current);
 float	calculate_focal_len(unsigned int fov);
 void	precalculate(t_scene *scene);
 
-// ERRORS
+// E_ERRORS
 int	ret_error(t_error error, t_list *l);
 
 /// free all the memory allocated for the rt struct

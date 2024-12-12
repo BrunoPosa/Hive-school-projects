@@ -183,7 +183,7 @@ int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 	// 	diffuse_amount = 0;
 	diffuse_color = multiply_colour_by(shape->rgb, scene->lbr);
 	scene->data.diffuse_color = multiply_colour_by(diffuse_color, diffuse_amount);
-	return(SUCCESS);
+	return(E_SUCCESS);
 }
 
 t_colour	calculate_colour(t_scene *scene, t_shape *shape)
@@ -285,9 +285,9 @@ int	render_pixels(t_scene *scene, mlx_image_t *img)
 		{
 			ray = calculate_camera_ray(scene, scene->camera.pos, i, WINSIZE - j);
 			if (!diff(ray, create_vec(0, 0, 0)))//do we need to check for this?
-				return (ERROR);
+				return (E_ERROR);
 			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(scene, ray);
 		}
 	}
-	return (SUCCESS);
+	return (E_SUCCESS);
 }
