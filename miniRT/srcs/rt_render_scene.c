@@ -23,10 +23,8 @@ int clamp(float n)
 
 /*
 	-'a' of the quadratic formula is 1, as 'ray' is a normalized vector, so we leave it out
-	TODO:
-		- move the sphere's radius to the shape struct and precalculate it
 */
-float fsphere(t_vec ray, t_vec ray_origin, t_shape sphere)
+float fsphere(t_vec ray, t_vec ray_origin, t_shape *sphere)
 {
 	t_vec ray_origin_to_sphere_center;
 	float	t;
@@ -34,10 +32,10 @@ float fsphere(t_vec ray, t_vec ray_origin, t_shape sphere)
 	float	c;
 	float	discriminant;
 
-	ray_origin_to_sphere_center = subtract(ray_origin, sphere.xyz);
+	ray_origin_to_sphere_center = subtract(ray_origin, sphere->xyz);
 	t = -1.0f;
 	b = 2 * dot(ray, ray_origin_to_sphere_center);
-	c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - sphere.r * sphere.r;
+	c = dot(ray_origin_to_sphere_center, ray_origin_to_sphere_center) - sphere->r * sphere->r;
 	discriminant = b * b - 4 * c;
 	if (discriminant < 0)
 		return (-1);
@@ -47,83 +45,69 @@ float fsphere(t_vec ray, t_vec ray_origin, t_shape sphere)
 	return (t);
 }
 
-float	fplane(t_vec ray, t_vec ray_origin, t_shape plane)
+float	fplane(t_vec ray, t_vec ray_origin, t_shape *plane)
 {
 	t_vec	origin_to_plane;
 	float	dividend;
 	float	divisor;
 	float	t;
 
-	origin_to_plane = subtract(plane.xyz, ray_origin);
-	dividend = dot(plane.xyz3d, origin_to_plane);
-	divisor = dot(ray, plane.xyz3d);
+	origin_to_plane = subtract(plane->xyz, ray_origin);
+	dividend = dot(plane->xyz3d, origin_to_plane);
+	divisor = dot(ray, plane->xyz3d);
 	if (fabs(divisor) < EPSILON)
-		return (0);
+		return (-1);
 	t = dividend / divisor;
 	if (t < EPSILON)
-		return (0);
+		return (-1);
 	return (t);
 }
 
-int	circle(int x, int y, int center, int radius)
+float caps_intersect(t_vec ray, t_vec ray_origin, t_shape *cylinder)
 {
-	int dx = x - center;
-	int dy = y - center;
-	int distance = sqrt(dx * dx + dy * dy);
-	if (distance < radius)
-		return (0xFFFF0000);
-	else
-		return (0x00000000);
-}
-
-float top_bottom_cyl(t_vec ray, t_vec ray_origin, t_shape cylinder)
-{
-	t_shape top;
-	t_shape bottom;
+	t_shape topdisc;
+	t_shape bottomdisc;
 	float t_top;
 	float t_bottom;
 	t_vec hit_point_top;
 	t_vec hit_point_bottom;
 
-	ft_bzero(&top, sizeof(t_shape));
-	ft_bzero(&bottom, sizeof(t_shape));
-	// Define the top and bottom caps as planes
-	top.xyz = add(cylinder.xyz, multiply_tuple(cylinder.xyz3d, cylinder.h)); // Top center
-	top.xyz3d = cylinder.xyz3d;                                              // Top normal
-	bottom.xyz = cylinder.xyz;                                               // Bottom center
-	bottom.xyz3d = negate_tuple(cylinder.xyz3d);                             // Bottom normal
-
-	// Find intersection t-values with the planes
-	t_top = fplane(ray, ray_origin, top);
-	t_bottom = fplane(ray, ray_origin, bottom);
-
-	// Check if the intersection point lies within the circular cap area
-	if (t_top > 0)
+	ft_bzero(&topdisc, sizeof(t_shape));
+	ft_bzero(&bottomdisc, sizeof(t_shape));
+	topdisc.xyz = add(cylinder->xyz, multiply_tuple(cylinder->xyz3d, cylinder->h));
+	topdisc.xyz3d = cylinder->xyz3d;
+	bottomdisc.xyz = cylinder->xyz;
+	bottomdisc.xyz3d = negate_tuple(cylinder->xyz3d);
+	t_top = fplane(ray, ray_origin, &topdisc);
+	t_bottom = fplane(ray, ray_origin, &bottomdisc);
+	if (t_top > EPSILON)
 	{
-		hit_point_top = add(ray_origin, multiply_tuple(ray, t_top)); // Intersection point
-		if (magnitude(subtract(hit_point_top, top.xyz)) > cylinder.r)
-			t_top = 0; // Intersection point is outside the top cap radius
+		hit_point_top = add(ray_origin, multiply_tuple(ray, t_top));
+		if (magnitude(subtract(hit_point_top, topdisc.xyz)) > cylinder->r)
+			t_top = -1;
 	}
-	if (t_bottom > 0)
+	if (t_bottom > EPSILON)
 	{
-		hit_point_bottom = add(ray_origin, multiply_tuple(ray, t_bottom)); // Intersection point
-		if (magnitude(subtract(hit_point_bottom, bottom.xyz)) > cylinder.r)
-			t_bottom = 0; // Intersection point is outside the bottom cap radius
+		hit_point_bottom = add(ray_origin, multiply_tuple(ray, t_bottom));
+		if (magnitude(subtract(hit_point_bottom, bottomdisc.xyz)) > cylinder->r)
+			t_bottom = -1;
 	}
-
-	// Return the smallest positive t (if any)
-	if (t_top > 0 && t_bottom > 0)
-		return fminf(t_top, t_bottom);
-	else if (t_top > 0)
+	if (t_top < EPSILON && t_bottom < EPSILON)
+		return -1;
+	else if (t_top > EPSILON && (t_bottom < EPSILON || t_top < t_bottom))
+	{
+		cylinder->part_hit = top;
 		return t_top;
-	else if (t_bottom > 0)
+	}
+	else
+	{
+		cylinder->part_hit = bottom;
 		return t_bottom;
-
-	return 0; // No valid intersection with the caps
+	}
 }
 
 
-float fcylinder(t_vec ray, t_vec ray_origin, t_shape cylinder)
+float fcylinder(t_vec ray, t_vec ray_origin, t_shape *cylinder)
 {
 	t_vec	origin_to_cylinder;
 	float coef[3];
@@ -132,56 +116,71 @@ float fcylinder(t_vec ray, t_vec ray_origin, t_shape cylinder)
 	float tcaps;
 	float axis_projection;
 
-	cylinder.xyz3d = normalize(cylinder.xyz3d);
-	origin_to_cylinder = subtract(ray_origin, cylinder.xyz);
-	coef[a] = dot(ray, ray) - (pow(dot(ray, cylinder.xyz3d), 2));
-	coef[b] = 2 * (dot(ray, origin_to_cylinder) - (dot(ray, cylinder.xyz3d) *
-		dot(origin_to_cylinder, cylinder.xyz3d)));
+	origin_to_cylinder = subtract(ray_origin, cylinder->xyz);
+	coef[a] = dot(ray, ray) - (pow(dot(ray, cylinder->xyz3d), 2));
+	coef[b] = 2 * (dot(ray, origin_to_cylinder) - (dot(ray, cylinder->xyz3d) *
+		dot(origin_to_cylinder, cylinder->xyz3d)));
 	coef[c] = dot(origin_to_cylinder, origin_to_cylinder) - 
-		pow(dot(origin_to_cylinder, cylinder.xyz3d), 2) - cylinder.r * cylinder.r;
+		pow(dot(origin_to_cylinder, cylinder->xyz3d), 2) - cylinder->r * cylinder->r;
 	discriminant = coef[b] * coef[b] - 4 * coef[a] * coef[c];
 	if (discriminant < 0)
 		return -1;
 	t = (-coef[b] - sqrt(discriminant)) / (2 * coef[a]);
 	if (t < EPSILON)
 		t = (-coef[b] + sqrt(discriminant)) / (2 * coef[a]);
-	tcaps = top_bottom_cyl(ray, ray_origin, cylinder);
 	if (t > EPSILON)
 	{
 		t_vec hit_point1 = add(ray_origin, multiply_tuple(ray, t));
-		axis_projection = dot(subtract(hit_point1, cylinder.xyz), cylinder.xyz3d);
-		if (axis_projection < 0 || axis_projection > cylinder.h)
+		axis_projection = dot(subtract(hit_point1, cylinder->xyz), cylinder->xyz3d);
+		if (axis_projection < 0 || axis_projection > cylinder->h)
 			t = -1;
 	}
-	if (t < EPSILON || tcaps < EPSILON)
-		return (fmaxf(t, tcaps));
-	return (fminf(t, tcaps));
+	tcaps = caps_intersect(ray, ray_origin, cylinder);
+	if (t > EPSILON && (tcaps < EPSILON || t < tcaps))
+	{
+		cylinder->part_hit = body; // Body hit
+		return t;
+	}
+	else if (tcaps > EPSILON && (t < EPSILON || tcaps < t))
+		return tcaps;
+	return -1;
 }
 
+/*
+	a, b, c signify which part of the cylinder was hit
+	and stand for top, body, bottom. They are set in fcylinder.
+*/
 t_vec	calculate_cy_normal(t_scene *scene, t_shape *cy)
 {
-	return (normalize(subtract(scene->data.hitp, add(cy->xyz, multiply_tuple(cy->xyz3d, cy->h / 2)))));
+	t_vec	base_to_hitp;
+	t_vec	projection;
+	float	projection_len;
+
+	base_to_hitp = create_vec(0, 0, 0);
+	projection = create_vec(0, 0, 0);
+	projection_len = 0.0;
+	if (cy->part_hit == top)
+		return (cy->xyz3d);
+	else if (cy->part_hit == bottom)
+		return (negate_tuple(cy->xyz3d));
+	base_to_hitp = subtract(scene->data.hitp, cy->xyz);
+	projection_len = dot(base_to_hitp, cy->xyz3d);
+	projection = multiply_tuple(cy->xyz3d, projection_len);
+	return (normalize(subtract(scene->data.hitp, add(cy->xyz, projection))));
 }
 
-//fix in case of planes so there is no recalculating #efficiency.
 //change to void type
 int	calculate_diffuse_colour(t_scene *scene, t_shape *shape)
 {
-	float		diffuse_amount;
 	t_colour	diffuse_color;
-
-	diffuse_amount = 0;
-	diffuse_color = create_colour(0,0,0);
-	if (shape->type == cylinder)
-		scene->data.normal = calculate_cy_normal(scene, shape);
-	else
-		scene->data.normal = normalize(subtract(scene->data.hitp, shape->xyz));
+	float		diffuse_amount;
+ 
+	diffuse_color = multiply_colour_by(shape->rgb, scene->lbr);
 	diffuse_amount = dot(scene->data.normal, scene->data.shadow_ray);
 	if (shape->type == plane)
-		diffuse_amount = fabs(dot(shape->xyz3d, scene->data.shadow_ray));//how do we color if plane is looking away from light/diffuse_amount < 0?
-	// if (diffuse_amount < 0)
-	// 	diffuse_amount = 0;
-	diffuse_color = multiply_colour_by(shape->rgb, scene->lbr);
+		diffuse_amount = fabs(diffuse_amount);
+	if (diffuse_amount < 0)
+		diffuse_amount = 0;
 	scene->data.diffuse_color = multiply_colour_by(diffuse_color, diffuse_amount);
 	return(E_SUCCESS);
 }
@@ -191,62 +190,70 @@ t_colour	calculate_colour(t_scene *scene, t_shape *shape)
 	scene->data.shade_color = hadamard_product(shape->rgb, scene->ambiant);
 	if (shadow_check(scene, scene->data.shadow_ray))
 		return (scene->data.shade_color);
+	if (shape->type == cylinder)
+		scene->data.normal = calculate_cy_normal(scene, shape);
+	else if (shape->type == plane)
+		scene->data.normal = shape->xyz3d;
+	else if (shape->type == sphere)
+		scene->data.normal = normalize(subtract(scene->data.hitp, shape->xyz));
 	calculate_diffuse_colour(scene, shape);
 	return (add_colours(scene->data.shade_color, scene->data.diffuse_color));
 }
 
 int	shadow_check(t_scene *scene, t_vec shadowray)
 {
-	float		t;
-	float		tmin;
+	float		hit;
+	float		hitmin;
 	int			i;
 	float		light_distance;
 
 	i = 0;
 	light_distance = magnitude(subtract(scene->lightpos, scene->data.hitp));
-	tmin = light_distance;
+	hitmin = light_distance;
 	while (i < scene->shape_count)
 	{
-		t = shape_intersect(shadowray, scene->data.hitp, scene->shapes[i]);
-		if (t > EPSILON && t < tmin)
-				tmin = t;
+		if (scene->data.shape != &scene->shapes[i])
+		{
+			hit = shape_intersect(shadowray, scene->data.hitp, &scene->shapes[i]);
+			if (hit >= EPSILON && hit < scene->data.hitmin)
+				hitmin = hit;
+		}
 		i++;
 	}
-	if (tmin < light_distance)
+	if (hitmin < light_distance)
 		return (1);
 	return (0);
 }
 
-float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape shape)
+float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape *shape)
 {
-	if (shape.type == sphere)
+	if (shape->type == sphere)
 		return (fsphere(ray, ray_origin, shape));
-	else if (shape.type == plane)
+	else if (shape->type == plane)
 		return (fplane(ray, ray_origin, shape));
-	else if (shape.type == cylinder)
+	else
 		return (fcylinder(ray, ray_origin, shape));
-	return (0);
 }
 
-int	find_closest_shape(t_scene *scene, t_vec ray)
+int	find_closest_hitd(t_scene *scene, t_vec ray)
 {
 	float	hit;
 	int		i;
 
 	i = 0;
 	hit = 0.0;
-	scene->data.hitmin = (float)INT32_MAX;
+	// scene->data.hitmin = 9000;
 	while (i < scene->shape_count)
 	{
-		hit = shape_intersect(ray, scene->camera.pos, scene->shapes[i]);
-		if (hit > EPSILON && hit < scene->data.hitmin)
+		hit = shape_intersect(ray, scene->camera.pos, &scene->shapes[i]);
+		if (hit >= EPSILON && hit < scene->data.hitmin)
 		{
 			scene->data.hitmin = hit;
-			scene->data.shape = &scene->shapes[i];
+			scene->data.shape = &(scene->shapes[i]);
 		}
 		i++;
 	}
-	if (scene->data.hitmin < (float)INT32_MAX)
+	if (scene->data.hitmin < 9000)
 		return (1);
 	return (0);
 }
@@ -257,11 +264,16 @@ int	find_closest_shape(t_scene *scene, t_vec ray)
 */
 int trace(t_scene *scene, t_vec ray)
 {
-	ft_bzero(&scene->data, sizeof(t_data));
-	if (!find_closest_shape(scene, ray))
+	ft_memset(&scene->data, 0, sizeof(t_data));
+	// ft_bzero(&scene->data, sizeof(t_data));
+	scene->data.hitmin = 9000;
+	// scene->data.part_hit = a;
+	if (!find_closest_hitd(scene, ray))
 		return(ft_colour_to_uint32(scene->ambiant));
 	scene->data.hitp = add(scene->camera.pos, multiply_tuple(ray, scene->data.hitmin));
 	scene->data.shadow_ray = normalize(subtract(scene->lightpos, scene->data.hitp));
+	// scene->data.shadow_ray = add(scene->data.hitp, multiply_tuple(scene->data.shadow_ray, EPSILON));
+
 	return (ft_colour_to_uint32(calculate_colour(scene, scene->data.shape)));
 }
 

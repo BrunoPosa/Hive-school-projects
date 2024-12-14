@@ -39,18 +39,3 @@ t_vec calculate_camera_ray(t_scene *scene, t_vec camera, int i, int j)
 	ray = normalize(subtract(pixel, camera));
 	return (ray);
 }
-
-void	precalculate(t_scene *scene)
-{
-	scene->world_scale = (float)WRLD_WINSIZE / WINSIZE;
-	scene->half_new_winsize = (float)WRLD_WINSIZE / 2;
-}
-
-// int	init_trace_data(t_scene *scene)
-// {
-// 	scene->data = ft_calloc(1, sizeof(t_data));
-// 	if (!scene->data)
-// 		return (E_ERROR);
-// 	scene->data->hitmin = (float)INT32_MAX;
-// 	return (E_SUCCESS);
-// }

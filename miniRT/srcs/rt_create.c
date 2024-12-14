@@ -12,10 +12,6 @@
 
 #include "../inc/file_to_list.h"
 
-/*
-	allocates, fills and returns a new tuple, or NULL on errors.
-	pass in VECTOR or POINT macro as 'w' parameter to specify the type of tuple.
-*/
 t_vec	create_vec(float x, float y, float z)
 {
 	t_vec	t;

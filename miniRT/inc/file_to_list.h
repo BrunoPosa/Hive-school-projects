@@ -123,6 +123,13 @@ typedef enum e_type
 	ambiant
 } t_type;
 
+typedef enum e_hitpart
+{
+	bottom,
+	body,
+	top
+} t_hpart;
+
 // this could be changed to s_xyz in the code
 typedef struct s_vec
 {
@@ -139,12 +146,17 @@ typedef struct s_colour
 	float b;
 } t_colour;
 
-typedef struct s_xyz
-{
-	float x;
-	float y;
-	float z;
-} t_xyz;
+/*
+	replaced this with t_vec
+	and we can now rename t_vec to t_xyz or triple or whatever we want,
+	as long as now t_list and t_scene have the same data type to store xyz coordinates
+*/
+// typedef struct s_xyz
+// {
+// 	float x;
+// 	float y;
+// 	float z;
+// } t_xyz;
 
 // do we need to make function to free t_vec? etc? no?
 typedef struct	s_shape
@@ -153,6 +165,7 @@ typedef struct	s_shape
 	t_vec		xyz;
 	t_vec		xyz3d;
 	t_colour	rgb;
+	int			part_hit;
 	float		r;
 	float		h;
 }	t_shape;
@@ -167,8 +180,8 @@ typedef struct s_list
 	t_type			type;
 	float			alr;
 	t_colour		rgb;
-	t_xyz			xyz;
-	t_xyz			xyz_3d;
+	t_vec			xyz;
+	t_vec			xyz_3d;
 	unsigned int	fov;
 	float			lbr;
 	float			d;
@@ -195,6 +208,7 @@ typedef struct	s_data
 	t_vec		normal;
 	t_colour	shade_color;
 	t_colour	diffuse_color;
+	// int			cy_part_hit;
 	float		hitmin;
 } t_data;
 
@@ -309,7 +323,6 @@ int	list_legality_check(t_list **l, char *legal);
 int	populate_scene(t_list **l, t_scene *scene);
 t_elem	move_element_into_scene(t_list *current);
 float	calculate_focal_len(unsigned int fov);
-void	precalculate(t_scene *scene);
 
 // E_ERRORS
 int	ret_error(t_error error, t_list *l);
@@ -329,17 +342,15 @@ void	esc_keyhook(mlx_key_data_t keydata, void *param);
 int		render_pixels(t_scene *scene, mlx_image_t *img);
 int		trace(t_scene *scene, t_vec ray);
 t_vec	calculate_camera_ray(t_scene *scene, t_vec camera, int i, int j);
-int		find_closest_shape(t_scene *scene, t_vec ray);
-float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape shape);
-float	fsphere(t_vec ray, t_vec ray_origin, t_shape sphere);
-float	fplane(t_vec ray, t_vec ray_origin, t_shape plane);
-float	fcylinder(t_vec ray, t_vec ray_origin, t_shape cylinder);
+int		find_closest_hitd(t_scene *scene, t_vec ray);
+float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape *shape);
+float	fsphere(t_vec ray, t_vec ray_origin, t_shape *sphere);
+float	fplane(t_vec ray, t_vec ray_origin, t_shape *plane);
+float	fcylinder(t_vec ray, t_vec ray_origin, t_shape *cylinder);
 t_colour	calculate_colour(t_scene *scene, t_shape *shape);
 int		calculate_diffuse_colour(t_scene *scene, t_shape *shape);
-int		shadow_check(t_scene *scene, t_vec shadowray);
-int		init_trace_data(t_scene *scene);
+int		shadow_check(t_scene *scene, t_vec shadowray);//rename to in_shadow
 int		clamp(float n);
-int		circle(int x, int y, int center, int radius);
 
 /*         T U P L E S         */
 

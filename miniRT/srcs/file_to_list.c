@@ -62,24 +62,20 @@ int	populate_scene(t_list **l, t_scene *scene)
 	t_list		*current;
 
 	current = *l;
-	if (allocate_scene_arrays(scene) == E_ERROR)
-		return (E_ERROR);
+	if (allocate_scene_arrays(scene) != E_SUCCESS)
+		return (E_MALLOC);
 	move_shapes_into_scene(l, scene, sphere);
 	move_shapes_into_scene(l, scene, plane);
 	move_shapes_into_scene(l, scene, cylinder);
+	scene->world_scale = (float)WRLD_WINSIZE / WINSIZE;
+	scene->half_new_winsize = (float)WRLD_WINSIZE / 2;
 	while (current)
 	{
 		if (current->type == ambiant)
-		{
-			scene->ambiant.r = current->rgb.r * current->alr;
-			scene->ambiant.g = current->rgb.g * current->alr;
-			scene->ambiant.b = current->rgb.b * current->alr;
-		}
+			scene->ambiant = multiply_colour_by(current->rgb, current->alr);
 		else if (current->type == light)
 		{
-			scene->lightpos.x = current->xyz.x;
-			scene->lightpos.y = current->xyz.y;
-			scene->lightpos.z = current->xyz.z;
+			scene->lightpos = current->xyz;
 			scene->lbr = current->lbr;
 		}
 		else if (current->type == camera)
@@ -100,7 +96,7 @@ int	import(int argc, char **argv, t_scene *scene)
 		return (ret_error(E_FILE_NAME, NULL));
 	if (file_to_list(argv[1], &l))
 		return (ret_error(E_MALLOC, l));
-	if (process_list(&l) == E_ERROR)
+	if (process_list(&l) != E_SUCCESS)
 	{
 		printf("==== FILE VALIDATION FAILED ====");
 		return (-1);
@@ -109,7 +105,6 @@ int	import(int argc, char **argv, t_scene *scene)
 		return (ret_error(E_OBJECT_COUNT, l));
 	if (populate_scene(&l, scene) != E_SUCCESS)
 		return (ret_error(E_MALLOC, l));
-	precalculate(scene);
 	ft_lstclear(&l, free);
 	return (E_SUCCESS);
 }
