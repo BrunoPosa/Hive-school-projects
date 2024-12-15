@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_to_list.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/10 22:07:43 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/15 15:25:28 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	populate_scene(t_list **l, t_scene *scene)
 			scene->lbr = current->lbr;
 		}
 		else if (current->type == camera)
-			scene->camera = move_element_into_scene(current);
+			scene->cam = move_cam_into_scene(current);
 		current = current->next;
 	}
 	return (E_SUCCESS);

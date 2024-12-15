@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_to_list_scene.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/08 23:06:16 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/15 15:25:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
 		{
 			scene->shapes[i].type = type;
 			scene->shapes[i].xyz = current->xyz;
-			scene->shapes[i].xyz3d = normalize(current->xyz_3d);
+			scene->shapes[i].axis = normalize(current->xyz_3d);
 			scene->shapes[i].rgb = current->rgb;
 			scene->shapes[i].r = current->d / 2;
 			scene->shapes[i].h = current->h;
@@ -53,18 +53,13 @@ void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
 	}
 }
 
-//should be called "move cam into scene"
-t_elem	move_element_into_scene(t_list *current)
+t_cam	move_cam_into_scene(t_list *current)
 {
-	t_elem	elem;
+	t_cam	cam;
 
-	elem.type = current->type;
-	elem.pos.x = current->xyz.x;
-	elem.pos.y = current->xyz.y;
-	elem.pos.z = current->xyz.z;
-	elem.xyz3d.x = current->xyz_3d.x;
-	elem.xyz3d.y = current->xyz_3d.y;
-	elem.xyz3d.z = current->xyz_3d.z;
-	elem.focal_length = calculate_focal_len(current->fov);
-	return (elem);
+	ft_memset(&cam, 0, sizeof(t_cam));
+	cam.eye = current->xyz;
+	cam.axis = current->xyz_3d;
+	cam.foc_len = calculate_focal_len(current->fov);
+	return (cam);
 }

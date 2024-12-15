@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/10 22:07:52 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/15 15:34:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ int	main(int argc, char **argv)
 	img = mlx_new_image(mlx, WINSIZE, WINSIZE);
 	if (!img || mlx_image_to_window(mlx, img, 0, 0) < 0)
 		return (free(scene), mlx_terminate(mlx), E_ERROR);
-	if (render_pixels(scene, img) != E_SUCCESS)
-		return (mlx_terminate(mlx), E_ERROR);
+	render_image(scene, img);
 	mlx_key_hook(mlx, &esc_keyhook, mlx);
 	mlx_loop(mlx);
 	mlx_terminate(mlx);

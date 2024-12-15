@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/15 02:21:41 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/15 15:34:47 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ float	fplane(t_vec ray, t_vec ray_origin, t_shape *plane)
 	float	t;
 
 	origin_to_plane = subtract(plane->xyz, ray_origin);
-	dividend = dot(plane->xyz3d, origin_to_plane);
-	divisor = dot(ray, plane->xyz3d);
+	dividend = dot(plane->axis, origin_to_plane);
+	divisor = dot(ray, plane->axis);
 	if (fabs(divisor) < EPSILON)
 		return (-1);
 	t = dividend / divisor;
@@ -78,10 +78,10 @@ float caps_intersect(t_vec ray, t_vec ray_origin, t_shape *cylinder)
 
 	ft_bzero(&topdisc, sizeof(t_shape));
 	ft_bzero(&bottomdisc, sizeof(t_shape));
-	topdisc.xyz = add(cylinder->xyz, multiply_tuple(cylinder->xyz3d, cylinder->h));
-	topdisc.xyz3d = cylinder->xyz3d;
+	topdisc.xyz = add(cylinder->xyz, multiply_tuple(cylinder->axis, cylinder->h));
+	topdisc.axis = cylinder->axis;
 	bottomdisc.xyz = cylinder->xyz;
-	bottomdisc.xyz3d = negate_tuple(cylinder->xyz3d);
+	bottomdisc.axis = negate_tuple(cylinder->axis);
 	t_top = fplane(ray, ray_origin, &topdisc);
 	t_bottom = fplane(ray, ray_origin, &bottomdisc);
 	if (t_top > EPSILON)
@@ -121,11 +121,11 @@ float fcylinder(t_vec ray, t_vec ray_origin, t_shape *cylinder)
 	float axis_projection;
 
 	origin_to_cylinder = subtract(ray_origin, cylinder->xyz);
-	coef[a] = dot(ray, ray) - (pow(dot(ray, cylinder->xyz3d), 2));
-	coef[b] = 2 * (dot(ray, origin_to_cylinder) - (dot(ray, cylinder->xyz3d) *
-		dot(origin_to_cylinder, cylinder->xyz3d)));
+	coef[a] = dot(ray, ray) - (pow(dot(ray, cylinder->axis), 2));
+	coef[b] = 2 * (dot(ray, origin_to_cylinder) - (dot(ray, cylinder->axis) *
+		dot(origin_to_cylinder, cylinder->axis)));
 	coef[c] = dot(origin_to_cylinder, origin_to_cylinder) - 
-		pow(dot(origin_to_cylinder, cylinder->xyz3d), 2) - cylinder->r * cylinder->r;
+		pow(dot(origin_to_cylinder, cylinder->axis), 2) - cylinder->r * cylinder->r;
 	discriminant = coef[b] * coef[b] - 4 * coef[a] * coef[c];
 	if (discriminant < 0)
 		return -1;
@@ -135,7 +135,7 @@ float fcylinder(t_vec ray, t_vec ray_origin, t_shape *cylinder)
 	if (t > EPSILON)
 	{
 		t_vec hit_point1 = add(ray_origin, multiply_tuple(ray, t));
-		axis_projection = dot(subtract(hit_point1, cylinder->xyz), cylinder->xyz3d);
+		axis_projection = dot(subtract(hit_point1, cylinder->xyz), cylinder->axis);
 		if (axis_projection < 0 || axis_projection > cylinder->h)
 			t = -1;
 	}
@@ -160,10 +160,10 @@ int	check_cam_inside_cyl(t_vec point, t_shape *cyl)
 	distance_to_axis = 0.0;
 	projection = create_vec(0,0,0);
 	base_to_ray_orig = subtract(point, cyl->xyz);
-	projection_len = dot(base_to_ray_orig, cyl->xyz3d);
+	projection_len = dot(base_to_ray_orig, cyl->axis);
 	if (projection_len < 0 || projection_len > cyl->h)
 		return (0);
-	projection = add(cyl->xyz, multiply_tuple(cyl->xyz3d, projection_len));
+	projection = add(cyl->xyz, multiply_tuple(cyl->axis, projection_len));
 	distance_to_axis = magnitude(subtract(point, projection));
 	if (distance_to_axis > cyl->r)
 		return (0);
@@ -185,12 +185,12 @@ t_vec	calculate_cy_normal(t_data *ray_data, t_shape *cy)
 	projection = create_vec(0, 0, 0);
 	projection_len = 0.0;
 	if (cy->part_hit == top)
-		return (cy->xyz3d);
+		return (cy->axis);
 	else if (cy->part_hit == bottom)
-		return (negate_tuple(cy->xyz3d));
+		return (negate_tuple(cy->axis));
 	base_to_hitp = subtract(ray_data->hitp, cy->xyz);
-	projection_len = dot(base_to_hitp, cy->xyz3d);
-	projection = multiply_tuple(cy->xyz3d, projection_len);
+	projection_len = dot(base_to_hitp, cy->axis);
+	projection = multiply_tuple(cy->axis, projection_len);
 	return (normalize(subtract(ray_data->hitp, add(cy->xyz, projection))));
 }
 
@@ -217,10 +217,10 @@ t_colour	calculate_colour(t_scene *scene, t_data *ray_data)
 	if (ray_data->shape->type == cylinder)
 	{
 		ray_data->normal = calculate_cy_normal(ray_data, ray_data->shape);
-		check_cam_inside_cyl(scene->camera.pos, ray_data->shape);
+		check_cam_inside_cyl(scene->cam.eye, ray_data->shape);
 	}
 	else if (ray_data->shape->type == plane)
-		ray_data->normal = ray_data->shape->xyz3d;
+		ray_data->normal = ray_data->shape->axis;
 	else if (ray_data->shape->type == sphere)
 		ray_data->normal = normalize(subtract(ray_data->hitp, ray_data->shape->xyz));
 	if (ray_data->shape->part_hit == inside)
@@ -274,7 +274,7 @@ int	find_closest_hitd(t_scene *scene, t_vec ray, t_data *ray_data)
 	ray_data->hitmin = INFINITY;
 	while (i < scene->shape_count)
 	{
-		hit = shape_intersect(ray, scene->camera.pos, &scene->shapes[i]);
+		hit = shape_intersect(ray, scene->cam.eye, &scene->shapes[i]);
 		if (hit >= EPSILON && hit < ray_data->hitmin)
 		{
 			ray_data->hitmin = hit;
@@ -298,32 +298,35 @@ int trace(t_scene *scene, t_vec ray)
 	ft_memset(&ray_data, 0, sizeof(t_data));
 	if (!find_closest_hitd(scene, ray, &ray_data))
 		return(ft_colour_to_uint32(scene->ambiant));
-	ray_data.hitp = add(scene->camera.pos, multiply_tuple(ray, ray_data.hitmin));
+	ray_data.hitp = add(scene->cam.eye, multiply_tuple(ray, ray_data.hitmin));
 	ray_data.shadow_ray = normalize(subtract(scene->lightpos, ray_data.hitp));
 	return (ft_colour_to_uint32(calculate_colour(scene, &ray_data)));
 }
 
 /*
-	as the viewing plane is focal_length away from camera's view point,
-		we add focal_length to camera's z when making the camera's ray
+	img.pixels buffer will display pixels in order from top left to bottom right
+	so we invert the y axis to start bottom left like a cartesian coordinate sys.
 */
-int	render_pixels(t_scene *scene, mlx_image_t *img)
+void	render_image(t_scene *scene, mlx_image_t *img)
 {
-	int		i;
-	int		j;
+	int		x;
+	int		y;
+	t_vec	corner;
 	t_vec	ray;
 
-	i = -1;
-	j = -1;
+	x = -1;
+	y = -1;
+	corner = calculate_viewplane(scene, scene->cam.eye);
 	ray = create_vec(0, 0, 0);
-	while (++i < WINSIZE)
+	while (++x < WINSIZE)
 	{
-		j = -1;
-		while (++j < WINSIZE)
+		y = -1;
+		while (++y < WINSIZE)
 		{
-			ray = calculate_camera_ray(scene, scene->camera.pos, i, WINSIZE - j);
-			((uint32_t *)img->pixels)[j * WINSIZE + i] = trace(scene, ray);
+			ray = add(corner, add(multiply_tuple(scene->cam.x_step, x),
+				multiply_tuple(scene->cam.y_step, WINSIZE - y)));
+			ray = normalize(subtract(ray, scene->cam.eye));
+			((uint32_t *)img->pixels)[y * WINSIZE + x] = trace(scene, ray);
 		}
 	}
-	return (E_SUCCESS);
 }

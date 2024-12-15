@@ -165,7 +165,7 @@ typedef struct	s_shape
 {
 	t_type		type;
 	t_vec		xyz;
-	t_vec		xyz3d;
+	t_vec		axis;
 	t_colour	rgb;
 	int			part_hit;
 	float		r;
@@ -192,14 +192,14 @@ typedef struct s_list
 }	t_list;
 
 //s_elements is for camera
-// call this t_cam
-typedef struct s_elements
+typedef struct s_camera
 {
-	t_type		type;
-	t_vec		pos;
-	t_vec		xyz3d;
-	float		focal_length;
-}	t_elem;
+	t_vec	eye;
+	t_vec	axis;
+	t_vec	x_step;
+	t_vec	y_step;
+	float	foc_len;
+}	t_cam;
 
 // temp data for rays, shouldn't need free'd
 typedef struct	s_data
@@ -218,7 +218,7 @@ typedef struct s_scene
 {
 	float		lbr;
 	t_vec		lightpos;
-	t_elem		camera;
+	t_cam		cam;
 	t_colour	ambiant;
 	t_shape		*shapes;
 	int			shape_count;
@@ -284,7 +284,7 @@ int		assign_node_type(t_list **l);
 int		does_file_end_with_rt(char *filename);
 // void	init_node(t_list **l); //ft_calloc initializes to 0 automatically, we can use that instead
 
-t_elem	move_element_into_scene(t_list *current);
+t_cam	move_cam_into_scene(t_list *current);
 void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type);
 int	allocate_scene_arrays(t_scene *scene);
 
@@ -320,7 +320,7 @@ int	list_legality_check(t_list **l, char *legal);
 
 //	SCENE CREATION
 int	populate_scene(t_list **l, t_scene *scene);
-t_elem	move_element_into_scene(t_list *current);
+t_cam	move_element_into_scene(t_list *current);
 float	calculate_focal_len(unsigned int fov);
 
 // E_ERRORS
@@ -338,9 +338,9 @@ void	free_array(char **s);
 /////////////////////////////////////////////////////////
 
 void	esc_keyhook(mlx_key_data_t keydata, void *param);
-int		render_pixels(t_scene *scene, mlx_image_t *img);
+void		render_image(t_scene *scene, mlx_image_t *img);
 int		trace(t_scene *scene, t_vec ray);
-t_vec	calculate_camera_ray(t_scene *scene, t_vec camera, int i, int j);
+t_vec 	calculate_viewplane(t_scene *scene, t_vec eye);
 int		find_closest_hitd(t_scene *scene, t_vec ray, t_data *ray_data);
 float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape *shape);
 float	fsphere(t_vec ray, t_vec ray_origin, t_shape *sphere);
