@@ -3,6 +3,7 @@
 void	ft_scene_print(t_scene *scene)
 {
 	printf("spheres = %d\n", scene->n_sphere);
+	printf("ambiant.r=%f\n", scene->ambiant.r);
 }
 
 void	ft_list_print(t_list **l)

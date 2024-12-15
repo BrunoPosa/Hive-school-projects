@@ -33,19 +33,16 @@ void	esc_keyhook(mlx_key_data_t keydata, void *param)
 
 float	calculate_focal_len(unsigned int fov)
 {
-	float focal_len;
 	float fov_radians;
+	float focal_len;
 
-	// Convert FOV from degrees to radians
 	fov_radians = (fov * M_PI) / 180.0;
-
-	// Calculate the focal length using half of the FOV in radians
 	focal_len = (WRLD_WINSIZE / 2.0) / tan(fov_radians / 2.0);
-	return focal_len;
+	return (focal_len);
 }
 
 //should we be clamping here?
-uint32_t	ft_colour_to_uint32(t_colour colour)
+uint32_t	to_uint32(t_colour colour)
 {
 	uint32_t c;
 

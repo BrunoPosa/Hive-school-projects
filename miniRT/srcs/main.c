@@ -6,21 +6,21 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/15 15:34:23 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/15 16:03:16 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
-void	init_scene(t_scene *scene)
-{
-	scene->n_sphere = 0;
-	scene->n_plane = 0;
-	scene->n_cylinder = 0;
-	scene->n_camera = 0;
-	scene->n_light = 0;
-	scene->n_ambient = 0;
-}
+// void	init_scene(t_scene *scene)
+// {
+// 	scene->n_sphere = 0;
+// 	scene->n_plane = 0;
+// 	scene->n_cylinder = 0;
+// 	scene->n_camera = 0;
+// 	scene->n_light = 0;
+// 	scene->n_ambient = 0;
+// }
 
 
 int	main(int argc, char **argv)
@@ -34,7 +34,7 @@ int	main(int argc, char **argv)
 	scene = ft_calloc(1, sizeof(t_scene));
 	if (!scene)
 		return (ret_error(E_MALLOC, NULL));
-	init_scene(scene);
+	// init_scene(scene);
 	if (import(argc, argv, scene) != E_SUCCESS)
 		return (free(scene), E_ERROR);
 	mlx = mlx_init(WINSIZE, WINSIZE, "minirt", false);

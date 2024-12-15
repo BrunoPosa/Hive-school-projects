@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/15 15:25:28 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/15 16:58:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,10 @@ int	populate_scene(t_list **l, t_scene *scene)
 	while (current)
 	{
 		if (current->type == ambiant)
-			scene->ambiant = multiply_colour_by(current->rgb, current->alr);
+			scene->ambiant = scale_colour(current->rgb, current->alr);
 		else if (current->type == light)
 		{
-			scene->lightpos = current->xyz;
+			scene->lightxyz = current->xyz;
 			scene->lbr = current->lbr;
 		}
 		else if (current->type == camera)

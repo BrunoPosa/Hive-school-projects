@@ -208,8 +208,8 @@ typedef struct	s_data
 	t_vec		hitp;
 	t_vec		shadow_ray;
 	t_vec		normal;
-	t_colour	shade_color;
-	t_colour	diffuse_color;
+	t_colour	base_color;
+	t_colour	diffuse_part;
 	float		hitmin;
 } t_data;
 
@@ -217,7 +217,7 @@ typedef struct	s_data
 typedef struct s_scene
 {
 	float		lbr;
-	t_vec		lightpos;
+	t_vec		lightxyz;
 	t_cam		cam;
 	t_colour	ambiant;
 	t_shape		*shapes;
@@ -338,18 +338,19 @@ void	free_array(char **s);
 /////////////////////////////////////////////////////////
 
 void	esc_keyhook(mlx_key_data_t keydata, void *param);
-void		render_image(t_scene *scene, mlx_image_t *img);
+void	render_image(t_scene *scene, mlx_image_t *img);
 int		trace(t_scene *scene, t_vec ray);
-t_vec 	calculate_viewplane(t_scene *scene, t_vec eye);
-int		find_closest_hitd(t_scene *scene, t_vec ray, t_data *ray_data);
-float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape *shape);
-float	fsphere(t_vec ray, t_vec ray_origin, t_shape *sphere);
-float	fplane(t_vec ray, t_vec ray_origin, t_shape *plane);
-float	fcylinder(t_vec ray, t_vec ray_origin, t_shape *cylinder);
-int		check_cam_inside_cyl(t_vec ray_origin, t_shape *cyl);
-t_colour	calculate_colour(t_scene *scene, t_data *ray_data);
-void		calculate_diffuse_colour(t_scene *scene, t_data *ray_data);
-int		shadow_check(t_scene *scene, t_data *ray_data);//rename to in_shadow
+t_vec 	viewplane_offsets(t_scene *scene, t_vec eye);
+bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *ray_data);
+float	intersect(t_vec ray, t_vec origin, t_shape *shape);
+float	fsphere(t_vec ray, t_vec origin, t_shape *sphere);
+float	fplane(t_vec ray, t_vec origin, t_shape *plane);
+float	fcylinder(t_vec ray, t_vec origin, t_shape *cyl);
+bool	is_cam_inside_cyl(t_vec origin, t_shape *cyl);
+t_vec	calculate_normal(t_scene *scene, t_shape *shape, t_data *ray_data);
+t_vec	calculate_cyl_normal(t_data *ray_data, t_shape *cyl);
+t_colour	diffuse_colour(t_scene *scene, t_shape *shape, t_data *ray_data);
+bool		in_shadow(t_scene *scene, t_data *ray_data);
 int		clamp(float n);
 
 /*         T U P L E S         */
@@ -361,22 +362,22 @@ t_colour	create_colour(float r, float g, float b);
 int			diff(t_vec a, t_vec b);
 t_vec		add(t_vec a, t_vec b);
 t_vec		subtract(t_vec a, t_vec b);
-t_vec		negate_tuple(t_vec t);
-t_vec		multiply_tuple(t_vec t, float multiplier);
-t_vec		divide_tuple(t_vec t, float divisor);
+t_vec		negate(t_vec t);
+t_vec		scale(t_vec t, float scaler);
+// t_vec		divide_tuple(t_vec t, float divisor);
 float		magnitude(t_vec t);
 t_vec		normalize(t_vec t);
 float		dot(t_vec a, t_vec b);
 t_vec		cross(t_vec a, t_vec b);
-unsigned int float_to_uint(float value);
+// unsigned int float_to_uint(float value);
 
 //			C O L O U R S
 
 t_colour	add_colours(t_colour a, t_colour b);
 t_colour	subtract_colours(t_colour a, t_colour b);
-t_colour	multiply_colour_by(t_colour a, float scaler);
+t_colour	scale_colour(t_colour a, float scaler);
 t_colour	hadamard_product(t_colour a, t_colour b);
-uint32_t	ft_colour_to_uint32(t_colour colour);
+uint32_t	to_uint32(t_colour colour);
 
 
 //      P R I N T E R S

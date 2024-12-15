@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt_tuples.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:52:19 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/09 23:54:59 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/15 15:44:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ t_vec	subtract(t_vec a, t_vec b)
 /*
 	returns an inverted tuple
 */
-t_vec	negate_tuple(t_vec t)
+t_vec	negate(t_vec t)
 {
 	t_vec	res;
 
@@ -65,13 +65,13 @@ t_vec	negate_tuple(t_vec t)
 /*
 	returns a tuple with each member multiplied
 */
-t_vec	multiply_tuple(t_vec t, float multiplier)
+t_vec	scale(t_vec t, float scaler)
 {
 	t_vec	res;
 
-	res.x = t.x * multiplier;
-	res.y = t.y * multiplier;
-	res.z = t.z * multiplier;
+	res.x = t.x * scaler;
+	res.y = t.y * scaler;
+	res.z = t.z * scaler;
 	return (res);
 }
 

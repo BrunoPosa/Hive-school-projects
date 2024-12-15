@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:42:35 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/11 17:12:46 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/15 15:43:58 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ t_colour	subtract_colours(t_colour a, t_colour b)
 	return (c);
 }
 
-t_colour	multiply_colour_by(t_colour a, float scaler)
+t_colour	scale_colour(t_colour a, float scaler)
 {
 	t_colour	c;
 
