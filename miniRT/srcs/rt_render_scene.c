@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/15 18:06:18 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/15 23:25:31 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,89 +67,61 @@ float	fplane(t_vec ray, t_vec origin, t_shape *plane)
 	return (t);
 }
 
-float caps_intersect(t_vec ray, t_vec origin, t_shape *cyl)
+float	intersect_cyl_caps(t_vec ray, t_vec origin, t_shape *cyl)
 {
-	t_shape topdisc;
-	t_shape bottomdisc;
-	float t_top;
-	float t_bottom;
-	t_vec hit_point_top;
-	t_vec hit_point_bottom;
+	t_shape	cap;
+	t_shape	base;
+	float	t_top;
+	float	t_base;
 
-	ft_bzero(&topdisc, sizeof(t_shape));
-	ft_bzero(&bottomdisc, sizeof(t_shape));
-	topdisc.xyz = add(cyl->xyz, scale(cyl->axis, cyl->h));
-	topdisc.axis = cyl->axis;
-	bottomdisc.xyz = cyl->xyz;
-	bottomdisc.axis = negate(cyl->axis);
-	t_top = fplane(ray, origin, &topdisc);
-	t_bottom = fplane(ray, origin, &bottomdisc);
-	if (t_top > EPSILON)
-	{
-		hit_point_top = add(origin, scale(ray, t_top));
-		if (magnitude(subtract(hit_point_top, topdisc.xyz)) > cyl->r)
-			t_top = -1;
-	}
-	if (t_bottom > EPSILON)
-	{
-		hit_point_bottom = add(origin, scale(ray, t_bottom));
-		if (magnitude(subtract(hit_point_bottom, bottomdisc.xyz)) > cyl->r)
-			t_bottom = -1;
-	}	
-	if (t_top < EPSILON && t_bottom < EPSILON)
-		return -1;
-	else if (t_top > EPSILON && (t_bottom < EPSILON || t_top < t_bottom))
+	cap = *cyl;
+	base = *cyl;
+	cap.xyz = add(cyl->xyz, scale(cyl->axis, cyl->h));
+	base.axis = negate(cyl->axis);
+	t_top = cyl_radius_check(ray, origin, fplane(ray, origin, &cap), &cap);
+	t_base = cyl_radius_check(ray, origin, fplane(ray, origin, &base), &base);
+	if (t_top > EPSILON && (t_base < EPSILON || t_top < t_base))
 	{
 		cyl->part_hit = top;
-		return t_top;
+		return (t_top);
 	}
 	else
 	{
 		cyl->part_hit = bottom;
-		return t_bottom;
+		return (t_base);
 	}
 }
 
 /*
-	finds if ray intersects the cylinder and sets 'cyl->part_hit' to top, bottom, or body
+	Returns minimum positive distance t if ray intersects the cylinder;
+	Sets 'shape->part_hit' to top, bottom, or body. Returns < 0 if ray misses.
 */
 float fcylinder(t_vec ray, t_vec origin, t_shape *cyl)
 {
-	t_vec	origin_to_cylinder;
-	float coef[3];
-	float discriminant;
-	float t;
-	float tcaps;
-	float axis_projection;
+	t_vec	oc;
+	float	coef[3];
+	float	discriminant;
+	float	t;
+	float	tcaps;
 
-	origin_to_cylinder = subtract(origin, cyl->xyz);
+	oc = subtract(origin, cyl->xyz);
 	coef[a] = dot(ray, ray) - (pow(dot(ray, cyl->axis), 2));
-	coef[b] = 2 * (dot(ray, origin_to_cylinder) - (dot(ray, cyl->axis) *
-		dot(origin_to_cylinder, cyl->axis)));
-	coef[c] = dot(origin_to_cylinder, origin_to_cylinder) - 
-		pow(dot(origin_to_cylinder, cyl->axis), 2) - cyl->r * cyl->r;
+	coef[b] = 2 * (dot(ray, oc) - (dot(ray, cyl->axis) * dot(oc, cyl->axis)));
+	coef[c] = dot(oc, oc) - pow(dot(oc, cyl->axis), 2) - cyl->r * cyl->r;
 	discriminant = coef[b] * coef[b] - 4 * coef[a] * coef[c];
 	if (discriminant < 0)
-		return -1;
+		return (-1);
 	t = (-coef[b] - sqrt(discriminant)) / (2 * coef[a]);
 	if (t < EPSILON)
 		t = (-coef[b] + sqrt(discriminant)) / (2 * coef[a]);
-	if (t > EPSILON)
-	{
-		t_vec hit_point1 = add(origin, scale(ray, t));
-		axis_projection = dot(subtract(hit_point1, cyl->xyz), cyl->axis);
-		if (axis_projection < 0 || axis_projection > cyl->h)
-			t = -1;
-	}
-	tcaps = caps_intersect(ray, origin, cyl);
+	t = cyl_height_check(ray, origin, t, cyl);
+	tcaps = intersect_cyl_caps(ray, origin, cyl);
 	if (t > EPSILON && (tcaps < EPSILON || t < tcaps))
 	{
-		cyl->part_hit = body; // Body hit
-		return t;
+		cyl->part_hit = body;
+		return (t);
 	}
-	else if (tcaps > EPSILON && (t < EPSILON || tcaps < t))
-		return tcaps;
-	return -1;
+	return (tcaps);
 }
 
 bool	is_cam_inside_cyl(t_vec point, t_shape *cyl)
@@ -169,14 +141,13 @@ bool	is_cam_inside_cyl(t_vec point, t_shape *cyl)
 	distance_to_axis = magnitude(subtract(point, projection));
 	if (distance_to_axis > cyl->r)
 		return (0);
-	cyl->part_hit = inside;
 	return (1);
 }
 
 /*
 	returns normalized surface normal of cylinder
 */
-t_vec	calculate_cyl_normal(t_data *ray_data, t_shape *cyl)
+t_vec	cyl_normal(t_data *ray_data, t_shape *cyl)
 {
 	t_vec	base_to_hitp;
 	t_vec	projection;
@@ -213,7 +184,7 @@ t_colour	diffuse_colour(t_scene *scene, t_shape *shape, t_data *ray_data)
 	return (scale_colour(color, diffuse_amount));
 }
 
-t_vec	calculate_normal(t_scene *scene, t_shape *shape, t_data *ray_data)
+t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *ray_data)
 {
 	if (shape->type == plane)
 		return (shape->axis);
@@ -222,8 +193,8 @@ t_vec	calculate_normal(t_scene *scene, t_shape *shape, t_data *ray_data)
 	else if (shape->type == sphere)
 		return (normalize(subtract(ray_data->hitp, shape->xyz)));
 	else if (is_cam_inside_cyl(scene->cam.eye, ray_data->shape) == TRUE)
-		return (negate(calculate_cyl_normal(ray_data, ray_data->shape)));
-	return (calculate_cyl_normal(ray_data, ray_data->shape));
+		return (negate(cyl_normal(ray_data, ray_data->shape)));
+	return (cyl_normal(ray_data, ray_data->shape));
 }
 
 bool	in_shadow(t_scene *scene, t_data *ray_data)
@@ -262,7 +233,7 @@ float	intersect(t_vec ray, t_vec origin, t_shape *shape)
 }
 
 /*
-	returns TRUE if ray hits a shape, sets ray_data's hitmin (min hit distance)
+	returns 1 if ray hits a shape, sets ray_data's hitmin (min hit distance)
 	and shape pointer to the closest shape. If no shapes intersected, returns 0
 */
 bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *ray_data)
@@ -303,7 +274,7 @@ int trace(t_scene *scene, t_vec ray)
 	ray_data.base_color = hadamard_product(ray_data.shape->rgb, scene->ambiant);
 	if (in_shadow(scene, &ray_data))
 		return(to_uint32(ray_data.base_color));
-	ray_data.normal = calculate_normal(scene, ray_data.shape, &ray_data);
+	ray_data.normal = surface_normal(scene, ray_data.shape, &ray_data);
 	ray_data.diffuse_part = diffuse_colour(scene, ray_data.shape, &ray_data);
 	return (to_uint32(add_colours(ray_data.base_color, ray_data.diffuse_part)));
 }

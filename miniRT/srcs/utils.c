@@ -41,7 +41,6 @@ float	calculate_focal_len(unsigned int fov)
 	return (focal_len);
 }
 
-//should we be clamping here?
 uint32_t	to_uint32(t_colour colour)
 {
 	uint32_t c;

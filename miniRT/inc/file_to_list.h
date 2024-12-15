@@ -49,7 +49,7 @@
 #endif
 
 #ifndef EPSILON
-# define EPSILON 0.001
+# define EPSILON 0.001f
 #endif
 
 //	  A L I A S E S
@@ -129,7 +129,7 @@ typedef enum e_hitpart
 	inside,
 	bottom,
 	body,
-	top,
+	top
 } t_hpart;
 
 // this could be changed to s_xyz in the code
@@ -346,11 +346,14 @@ float	intersect(t_vec ray, t_vec origin, t_shape *shape);
 float	fsphere(t_vec ray, t_vec origin, t_shape *sphere);
 float	fplane(t_vec ray, t_vec origin, t_shape *plane);
 float	fcylinder(t_vec ray, t_vec origin, t_shape *cyl);
+float	intersect_cyl_caps(t_vec ray, t_vec origin, t_shape *cyl);
 bool	is_cam_inside_cyl(t_vec origin, t_shape *cyl);
-t_vec	calculate_normal(t_scene *scene, t_shape *shape, t_data *ray_data);
-t_vec	calculate_cyl_normal(t_data *ray_data, t_shape *cyl);
+float	cyl_height_check(t_vec ray, t_vec origin, float t, t_shape *cyl);
+float	cyl_radius_check(t_vec ray, t_vec origin, float t, t_shape *cap);
+t_vec	cyl_normal(t_data *ray_data, t_shape *cyl);
+t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *ray_data);
 t_colour	diffuse_colour(t_scene *scene, t_shape *shape, t_data *ray_data);
-bool		in_shadow(t_scene *scene, t_data *ray_data);
+bool	in_shadow(t_scene *scene, t_data *ray_data);
 int		clamp(float n);
 
 /*         T U P L E S         */

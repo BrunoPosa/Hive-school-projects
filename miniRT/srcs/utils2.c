@@ -6,12 +6,16 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/15 17:15:38 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/15 23:20:29 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
+/*
+	Returns bottom left corner ray of viewplane. Calculates and saves viewplane
+	step/offset	vectors for x and y into scene->cam.x_step and scene->cam.y_step.
+*/
 t_vec viewplane_offsets(t_scene *scene, t_vec eye)
 {
 	t_vec	forward;
@@ -35,4 +39,40 @@ t_vec viewplane_offsets(t_scene *scene, t_vec eye)
 	scene->cam.x_step = scale(right, scene->world_scale);
 	scene->cam.y_step = scale(up, scene->world_scale);
 	return (corner);
+}
+
+/*
+	Returns 0 if hitpoint at t is out of vertical cylinder bounds, or if
+	t <= EPSILON. Returns unmodified t if within bounds.
+*/
+float	cyl_height_check(t_vec ray, t_vec origin, float t, t_shape *cyl)
+{
+	t_vec	hitpoint;
+	float	projection;
+
+	ft_memset(&hitpoint, 0, sizeof(t_vec));
+	if (t <= EPSILON || !cyl)
+		return (0.0f);
+	hitpoint = add(origin, scale(ray, t));
+	projection = dot(subtract(hitpoint, cyl->xyz), cyl->axis);
+	if (projection < 0 || projection > cyl->h)
+		return (0.0f);
+	return (t);
+}
+
+/*
+	Returns 0 if hitpoint at t is out of bounds of given cylinder top/base disc
+	radius, or if t <= EPSILON. Returns unmodified t if within bounds.
+*/
+float	cyl_radius_check(t_vec ray, t_vec origin, float t, t_shape *cap)
+{
+	t_vec	hitpoint;
+
+	ft_memset(&hitpoint, 0, sizeof(t_vec));
+	if (t <= EPSILON || !cap)
+		return (0.0f);
+	hitpoint = add(origin, scale(ray, t));
+	if (magnitude(subtract(hitpoint, cap->xyz)) > cap->r)
+		return (0.0f);
+	return (t);
 }
