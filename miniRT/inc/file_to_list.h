@@ -125,9 +125,11 @@ typedef enum e_type
 
 typedef enum e_hitpart
 {
+	nothing,
+	inside,
 	bottom,
 	body,
-	top
+	top,
 } t_hpart;
 
 // this could be changed to s_xyz in the code
@@ -208,7 +210,6 @@ typedef struct	s_data
 	t_vec		normal;
 	t_colour	shade_color;
 	t_colour	diffuse_color;
-	// int			cy_part_hit;
 	float		hitmin;
 } t_data;
 
@@ -219,9 +220,7 @@ typedef struct s_scene
 	t_vec		lightpos;
 	t_elem		camera;
 	t_colour	ambiant;
-// cy, pl, and sp objects are all part of a single Shapes[] array, calloc'd to the right size
 	t_shape		*shapes;
-	t_data		data;
 	int			shape_count;
 	int			n_camera;
 	int			n_light;
@@ -342,14 +341,15 @@ void	esc_keyhook(mlx_key_data_t keydata, void *param);
 int		render_pixels(t_scene *scene, mlx_image_t *img);
 int		trace(t_scene *scene, t_vec ray);
 t_vec	calculate_camera_ray(t_scene *scene, t_vec camera, int i, int j);
-int		find_closest_hitd(t_scene *scene, t_vec ray);
+int		find_closest_hitd(t_scene *scene, t_vec ray, t_data *ray_data);
 float	shape_intersect(t_vec ray, t_vec ray_origin, t_shape *shape);
 float	fsphere(t_vec ray, t_vec ray_origin, t_shape *sphere);
 float	fplane(t_vec ray, t_vec ray_origin, t_shape *plane);
 float	fcylinder(t_vec ray, t_vec ray_origin, t_shape *cylinder);
-t_colour	calculate_colour(t_scene *scene, t_shape *shape);
-int		calculate_diffuse_colour(t_scene *scene, t_shape *shape);
-int		shadow_check(t_scene *scene, t_vec shadowray);//rename to in_shadow
+int		check_cam_inside_cyl(t_vec ray_origin, t_shape *cyl);
+t_colour	calculate_colour(t_scene *scene, t_data *ray_data);
+void		calculate_diffuse_colour(t_scene *scene, t_data *ray_data);
+int		shadow_check(t_scene *scene, t_data *ray_data);//rename to in_shadow
 int		clamp(float n);
 
 /*         T U P L E S         */
