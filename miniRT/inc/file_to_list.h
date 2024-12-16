@@ -230,14 +230,17 @@ typedef struct s_scene
 	int			n_plane;
 	float		world_scale;
 	float		half_new_winsize;
+	float		aspect_ratio;
+	float		viewplane_width;
+	float		viewplane_height;
+}	t_scene;
 
-// can we use a link2 to connect objects of the same type?
-// then to free we can rip through all the linked list,
-// or another way would be to reconnect the nodes to new linked lists
-	// t_cy *cylinders;
-	// t_pl *planes;
-	// t_sp *spheres;
-} t_scene;
+typedef struct s_rtdata
+{
+	mlx_t		*mlx;
+	mlx_image_t	*img;
+	t_scene		scene;
+}	t_rt;
 
 // data struct for temporary calculation storage for the pixel to be rendered
 // typedef struct s_renderdata
