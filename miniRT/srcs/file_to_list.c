@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/16 20:02:19 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/17 19:48:43 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,6 @@ int	populate_scene(t_list **l, t_scene *scene)
 	move_shapes_into_scene(l, scene, sphere);
 	move_shapes_into_scene(l, scene, plane);
 	move_shapes_into_scene(l, scene, cylinder);
-	scene->world_scale = (float)WRLD_WINSIZE / WINSIZE;
-	scene->half_new_winsize = (float)WRLD_WINSIZE / 2;
 	while (current)
 	{
 		if (current->type == ambiant)
@@ -79,7 +77,7 @@ int	populate_scene(t_list **l, t_scene *scene)
 			scene->lbr = current->lbr;
 		}
 		else if (current->type == camera)
-			scene->cam = move_cam_into_scene(current);
+			scene->cam = move_cam_into_scene(current, scene);
 		current = current->next;
 	}
 	return (E_SUCCESS);
@@ -106,5 +104,9 @@ int	import(int argc, char **argv, t_scene *scene)
 	if (populate_scene(&l, scene) != E_SUCCESS)
 		return (ret_error(E_MALLOC, l));
 	ft_lstclear(&l, free);
+	scene->viewplane.w = VIEWPLANE_SIZE;
+	scene->viewplane.h = VIEWPLANE_SIZE;
+	scene->window.w = WINSIZE;
+	scene->window.h = WINSIZE;
 	return (E_SUCCESS);
 }

@@ -37,7 +37,7 @@ float	calculate_focal_len(unsigned int fov)
 	float focal_len;
 
 	fov_radians = (fov * M_PI) / 180.0;
-	focal_len = (WRLD_WINSIZE / 2.0) / tan(fov_radians / 2.0);
+	focal_len = (WRLD_WINSIZE / 2.0) / tan(fov_radians / 2.0);//does this need recomputing if window size changes?
 	return (focal_len);
 }
 

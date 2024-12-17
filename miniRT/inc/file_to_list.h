@@ -40,8 +40,8 @@
 #endif
 
 //this is the width of the window in minirt world coordinates
-#ifndef WRLD_WINSIZE
-# define WRLD_WINSIZE 2.0f
+#ifndef VIEWPLANE_SIZE
+# define VIEWPLANE_SIZE 2.0f
 #endif
 
 #ifndef M_PI
@@ -67,6 +67,17 @@
 #define PINK	"\033[1;95m"
 #define ENDCLR	"\033[0m"
 
+typedef struct	s_viewplane
+{
+	float	w;
+	float	h;
+}	t_vp;
+
+typedef	struct	s_window
+{
+	float	w;
+	float	h;
+}	t_win;
 
 typedef enum	e_coef
 {
@@ -194,7 +205,7 @@ typedef struct s_list
 //s_elements is for camera
 typedef struct s_camera
 {
-	t_vec	eye;
+	t_vec	eye;//call this xyz
 	t_vec	axis;
 	t_vec	x_step;
 	t_vec	y_step;
@@ -228,14 +239,12 @@ typedef struct s_scene
 	int			n_cylinder;
 	int			n_sphere;
 	int			n_plane;
-	float		world_scale;
-	float		half_new_winsize;
-	float		aspect_ratio;
-	float		viewplane_width;
-	float		viewplane_height;
+	t_win		window;
+	t_vp		viewplane;
+	float		aspect_r;
 }	t_scene;
 
-typedef struct s_rtdata
+typedef struct s_all_rt_data
 {
 	mlx_t		*mlx;
 	mlx_image_t	*img;

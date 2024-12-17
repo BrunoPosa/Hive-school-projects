@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/15 23:25:31 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/17 19:48:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,15 +294,15 @@ void	render_image(t_scene *scene, mlx_image_t *img)
 	y = -1;
 	ft_memset(&ray, 0, sizeof(t_vec));
 	corner = viewplane_offsets(scene, scene->cam.eye);
-	while (++x < WINSIZE)
+	while (++x < scene->viewplane_width)
 	{
 		y = -1;
-		while (++y < WINSIZE)
+		while (++y < scene->viewplane_height)
 		{
 			ray = add(corner, add(scale(scene->cam.x_step, x),
-				scale(scene->cam.y_step, WINSIZE - y)));
+				scale(scene->cam.y_step, scene->viewplane_height - y)));
 			ray = normalize(subtract(ray, scene->cam.eye));
-			((uint32_t *)img->pixels)[y * WINSIZE + x] = trace(scene, ray);
+			((uint32_t *)img->pixels)[y * scene->viewplane_width + x] = trace(scene, ray);
 		}
 	}
 }
