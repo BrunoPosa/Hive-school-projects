@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/17 19:46:16 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/18 15:50:53 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ t_vec viewplane_offsets(t_scene *scene, t_vec eye)
 	halfwin_x = scale(right, scene->viewplane.w / 2);//do we need to round?
 	halfwin_y = scale(up, scene->viewplane.h / 2);
 	corner = subtract(subtract(center, halfwin_x), halfwin_y);
-	scene->cam.x_step = scale(right, (scene->viewplane.w / scene->window.w));
-	scene->cam.y_step = scale(up, (scene->viewplane.w / scene->window.w));
+	scene->cam.x_step = scale(right, scene->aspect_r * (scene->viewplane.w / scene->window.w));
+	scene->cam.y_step = scale(up, (scene->viewplane.h / scene->window.h));
 	return (corner);
 }
 

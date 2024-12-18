@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/17 19:48:43 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/18 14:01:54 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	populate_scene(t_list **l, t_scene *scene)
 			scene->lbr = current->lbr;
 		}
 		else if (current->type == camera)
-			scene->cam = move_cam_into_scene(current, scene);
+			scene->cam = move_cam_into_scene(current);
 		current = current->next;
 	}
 	return (E_SUCCESS);

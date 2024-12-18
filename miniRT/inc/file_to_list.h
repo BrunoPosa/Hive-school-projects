@@ -75,8 +75,8 @@ typedef struct	s_viewplane
 
 typedef	struct	s_window
 {
-	float	w;
-	float	h;
+	int	w;
+	int	h;
 }	t_win;
 
 typedef enum	e_coef

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/16 21:01:12 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/18 14:41:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,27 @@
 
 void	resize_viewplane(int32_t width, int32_t height, void* param)
 {
-	t_rt	*all;
+	t_rt		*all;
+	mlx_image_t	*tmp;
 
+	tmp = NULL;
 	all = param;
 	if (!param)
 		return ;
+	tmp = all->img;
 	// if (all->mlx->delta_time > 100)
 	// {
-	// all->mlx->width = width;
-	// all->mlx->height = height;
-	// all->img = mlx_new_image(all->mlx, width, height);
-	// printf("w:%d, h:%d\n", all->mlx->width, all->mlx->height);
-	if (!mlx_resize_image(all->img, width, height))
-		printf("resizing error!\n");
-	if (!all->img || mlx_image_to_window(all->mlx, all->img, 0, 0) < 0)
+	all->scene.window.w = width;
+	all->scene.window.h = height;
+	all->scene.aspect_r = width / height;
+	all->scene.viewplane.w = all->scene.viewplane.w * all->scene.aspect_r;
+	all->scene.viewplane.h = all->scene.viewplane.h * all->scene.aspect_r;//?
+	all->img = mlx_new_image(all->mlx, width, height);
+	if (!all->img || mlx_image_to_window(all->mlx, all->img, 0, 0) < 0)//how to handle this?
 		return ;
+	mlx_delete_image(all->mlx, tmp);//?
+	// if (!mlx_resize_image(all->img, width, height))
+	// 	printf("resizing error!\n");
 	render_image(&all->scene, all->img);
 	// }
 }
