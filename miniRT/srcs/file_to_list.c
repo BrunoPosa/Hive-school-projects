@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/18 14:01:54 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/18 19:01:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	populate_scene(t_list **l, t_scene *scene)
 			scene->lbr = current->lbr;
 		}
 		else if (current->type == camera)
-			scene->cam = move_cam_into_scene(current);
+			scene->cam = move_cam_into_scene(current, scene->viewplane.w);
 		current = current->next;
 	}
 	return (E_SUCCESS);
@@ -101,12 +101,13 @@ int	import(int argc, char **argv, t_scene *scene)
 	}
 	if (check_count_of_types(&l, scene) != E_SUCCESS)
 		return (ret_error(E_OBJECT_COUNT, l));
+	scene->viewplane.w = WINSIZE / 300;
+	scene->viewplane.h = WINSIZE / 300;
+	scene->window.w = WINSIZE;
+	scene->window.h = WINSIZE;
+	scene->aspect_r = scene->window.w / scene->window.h;
 	if (populate_scene(&l, scene) != E_SUCCESS)
 		return (ret_error(E_MALLOC, l));
 	ft_lstclear(&l, free);
-	scene->viewplane.w = VIEWPLANE_SIZE;
-	scene->viewplane.h = VIEWPLANE_SIZE;
-	scene->window.w = WINSIZE;
-	scene->window.h = WINSIZE;
 	return (E_SUCCESS);
 }

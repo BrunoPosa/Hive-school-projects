@@ -40,9 +40,9 @@
 #endif
 
 //this is the width of the window in minirt world coordinates
-#ifndef VIEWPLANE_SIZE
-# define VIEWPLANE_SIZE 2.0f
-#endif
+// #ifndef VIEWPLANE_SIZE
+// # define VIEWPLANE_SIZE 2.0f
+// #endif
 
 #ifndef M_PI
 # define M_PI 3.14159265358979323846
@@ -296,7 +296,7 @@ int		assign_node_type(t_list **l);
 int		does_file_end_with_rt(char *filename);
 // void	init_node(t_list **l); //ft_calloc initializes to 0 automatically, we can use that instead
 
-t_cam	move_cam_into_scene(t_list *current);
+t_cam	move_cam_into_scene(t_list *current, float viewplane_w);
 void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type);
 int	allocate_scene_arrays(t_scene *scene);
 
@@ -333,7 +333,7 @@ int	list_legality_check(t_list **l, char *legal);
 //	SCENE CREATION
 int	populate_scene(t_list **l, t_scene *scene);
 t_cam	move_element_into_scene(t_list *current);
-float	calculate_focal_len(unsigned int fov);
+float	calculate_focal_len(unsigned int fov, float viewplane_w);
 
 // E_ERRORS
 int	ret_error(t_error error, t_list *l);

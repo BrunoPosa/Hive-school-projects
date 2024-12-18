@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/15 15:25:07 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/18 18:59:45 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,13 @@ void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
 	}
 }
 
-t_cam	move_cam_into_scene(t_list *current)
+t_cam	move_cam_into_scene(t_list *current, float viewplane_w)
 {
 	t_cam	cam;
 
 	ft_memset(&cam, 0, sizeof(t_cam));
 	cam.eye = current->xyz;
 	cam.axis = current->xyz_3d;
-	cam.foc_len = calculate_focal_len(current->fov);
+	cam.foc_len = calculate_focal_len(current->fov, viewplane_w);
 	return (cam);
 }

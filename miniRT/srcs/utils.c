@@ -31,13 +31,13 @@ void	esc_keyhook(mlx_key_data_t keydata, void *param)
 	(void)param;
 }
 
-float	calculate_focal_len(unsigned int fov)
+float	calculate_focal_len(unsigned int fov, float viewplane_w)
 {
 	float fov_radians;
 	float focal_len;
 
 	fov_radians = (fov * M_PI) / 180.0;
-	focal_len = (VIEWPLANE_SIZE / 2.0) / tan(fov_radians / 2.0);//does this need recomputing if window size changes?
+	focal_len = (viewplane_w / 2.0) / tan(fov_radians / 2.0);//does this need recomputing if window size changes?
 	return (focal_len);
 }
 
