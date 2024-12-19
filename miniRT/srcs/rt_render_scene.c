@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/15 23:25:31 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/19 17:50:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,6 +282,8 @@ int trace(t_scene *scene, t_vec ray)
 /*
 	img.pixels buffer will display pixels in order from top left to bottom right
 	so we invert the y axis to start bottom left like a cartesian coordinate sys.
+	we start from the bottom left corner ray, and add to it offset vectors in x
+	and y directions, as well as 0.5 to make each ray in the middle of the pixel.
 */
 void	render_image(t_scene *scene, mlx_image_t *img)
 {
@@ -294,15 +296,15 @@ void	render_image(t_scene *scene, mlx_image_t *img)
 	y = -1;
 	ft_memset(&ray, 0, sizeof(t_vec));
 	corner = viewplane_offsets(scene, scene->cam.eye);
-	while (++x < WINSIZE)
+	while (++x < scene->window.w)
 	{
 		y = -1;
-		while (++y < WINSIZE)
+		while (++y < scene->window.h)
 		{
-			ray = add(corner, add(scale(scene->cam.x_step, x),
-				scale(scene->cam.y_step, WINSIZE - y)));
+			ray = add(corner, add(scale(scene->cam.x_step, (float)x + 0.5f),
+				scale(scene->cam.y_step, scene->window.h - (float)y + 0.5f)));
 			ray = normalize(subtract(ray, scene->cam.eye));
-			((uint32_t *)img->pixels)[y * WINSIZE + x] = trace(scene, ray);
+			((uint32_t *)img->pixels)[y * scene->window.w + x] = trace(scene, ray);
 		}
 	}
 }

@@ -40,9 +40,9 @@
 #endif
 
 //this is the width of the window in minirt world coordinates
-#ifndef WRLD_WINSIZE
-# define WRLD_WINSIZE 2.0f
-#endif
+// #ifndef VIEWPLANE_SIZE
+// # define VIEWPLANE_SIZE 2.0f
+// #endif
 
 #ifndef M_PI
 # define M_PI 3.14159265358979323846
@@ -67,6 +67,11 @@
 #define PINK	"\033[1;95m"
 #define ENDCLR	"\033[0m"
 
+typedef	struct	s_window
+{
+	int	w;
+	int	h;
+}	t_win;
 
 typedef enum	e_coef
 {
@@ -194,7 +199,7 @@ typedef struct s_list
 //s_elements is for camera
 typedef struct s_camera
 {
-	t_vec	eye;
+	t_vec	eye;//call this xyz
 	t_vec	axis;
 	t_vec	x_step;
 	t_vec	y_step;
@@ -228,16 +233,18 @@ typedef struct s_scene
 	int			n_cylinder;
 	int			n_sphere;
 	int			n_plane;
-	float		world_scale;
-	float		half_new_winsize;
+	t_win		window;
+	float		aspect_r;
+	double		hscale;
+	double		vscale;
+}	t_scene;
 
-// can we use a link2 to connect objects of the same type?
-// then to free we can rip through all the linked list,
-// or another way would be to reconnect the nodes to new linked lists
-	// t_cy *cylinders;
-	// t_pl *planes;
-	// t_sp *spheres;
-} t_scene;
+typedef struct s_all_rt_data
+{
+	mlx_t		*mlx;
+	mlx_image_t	*img;
+	t_scene		scene;
+}	t_rt;
 
 // data struct for temporary calculation storage for the pixel to be rendered
 // typedef struct s_renderdata
@@ -338,6 +345,7 @@ void	free_array(char **s);
 /////////////////////////////////////////////////////////
 
 void	esc_keyhook(mlx_key_data_t keydata, void *param);
+void	resizer(int32_t width, int32_t height, void* param);
 void	render_image(t_scene *scene, mlx_image_t *img);
 int		trace(t_scene *scene, t_vec ray);
 t_vec 	viewplane_offsets(t_scene *scene, t_vec eye);

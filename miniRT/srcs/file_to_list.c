@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/15 16:58:40 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/19 18:15:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,6 @@ int	populate_scene(t_list **l, t_scene *scene)
 	move_shapes_into_scene(l, scene, sphere);
 	move_shapes_into_scene(l, scene, plane);
 	move_shapes_into_scene(l, scene, cylinder);
-	scene->world_scale = (float)WRLD_WINSIZE / WINSIZE;
-	scene->half_new_winsize = (float)WRLD_WINSIZE / 2;
 	while (current)
 	{
 		if (current->type == ambiant)
@@ -103,6 +101,11 @@ int	import(int argc, char **argv, t_scene *scene)
 	}
 	if (check_count_of_types(&l, scene) != E_SUCCESS)
 		return (ret_error(E_OBJECT_COUNT, l));
+	scene->window.w = WINSIZE;
+	scene->window.h = WINSIZE;
+	scene->aspect_r = scene->window.w / scene->window.h;
+	scene->vscale = 2.0f / scene->window.h;
+	scene->hscale = 2.0f / scene->window.w;
 	if (populate_scene(&l, scene) != E_SUCCESS)
 		return (ret_error(E_MALLOC, l));
 	ft_lstclear(&l, free);
