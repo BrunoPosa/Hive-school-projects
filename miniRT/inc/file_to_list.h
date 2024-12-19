@@ -67,12 +67,6 @@
 #define PINK	"\033[1;95m"
 #define ENDCLR	"\033[0m"
 
-typedef struct	s_viewplane
-{
-	float	w;
-	float	h;
-}	t_vp;
-
 typedef	struct	s_window
 {
 	int	w;
@@ -240,8 +234,9 @@ typedef struct s_scene
 	int			n_sphere;
 	int			n_plane;
 	t_win		window;
-	t_vp		viewplane;
 	float		aspect_r;
+	double		hscale;
+	double		vscale;
 }	t_scene;
 
 typedef struct s_all_rt_data
@@ -296,7 +291,7 @@ int		assign_node_type(t_list **l);
 int		does_file_end_with_rt(char *filename);
 // void	init_node(t_list **l); //ft_calloc initializes to 0 automatically, we can use that instead
 
-t_cam	move_cam_into_scene(t_list *current, float viewplane_w);
+t_cam	move_cam_into_scene(t_list *current);
 void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type);
 int	allocate_scene_arrays(t_scene *scene);
 
@@ -333,7 +328,7 @@ int	list_legality_check(t_list **l, char *legal);
 //	SCENE CREATION
 int	populate_scene(t_list **l, t_scene *scene);
 t_cam	move_element_into_scene(t_list *current);
-float	calculate_focal_len(unsigned int fov, float viewplane_w);
+float	calculate_focal_len(unsigned int fov);
 
 // E_ERRORS
 int	ret_error(t_error error, t_list *l);
@@ -350,6 +345,7 @@ void	free_array(char **s);
 /////////////////////////////////////////////////////////
 
 void	esc_keyhook(mlx_key_data_t keydata, void *param);
+void	resizer(int32_t width, int32_t height, void* param);
 void	render_image(t_scene *scene, mlx_image_t *img);
 int		trace(t_scene *scene, t_vec ray);
 t_vec 	viewplane_offsets(t_scene *scene, t_vec eye);

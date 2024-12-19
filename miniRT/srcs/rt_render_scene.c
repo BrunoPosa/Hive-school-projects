@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/18 19:54:59 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/19 17:50:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,30 +290,21 @@ void	render_image(t_scene *scene, mlx_image_t *img)
 	int		x;
 	int		y;
 	t_vec	ray;
-	// t_vec	corner;
+	t_vec	corner;
 
 	x = -1;
 	y = -1;
 	ft_memset(&ray, 0, sizeof(t_vec));
-	// corner = viewplane_offsets(scene, scene->cam.eye);
+	corner = viewplane_offsets(scene, scene->cam.eye);
 	while (++x < scene->window.w)
 	{
 		y = -1;
 		while (++y < scene->window.h)
 		{
-			float Px = (2 * (((x + 0.5) * scene->viewplane.w/scene->window.w) / scene->viewplane.w) - 1) * tan(100 / 2 * M_PI / 180) * scene->aspect_r;
-			float Py = 1+(1 - 2 * (((y + 0.5)* scene->viewplane.h/scene->window.h)) / scene->viewplane.h) * tan(100 / 2 * M_PI / 180);
-			float Pz = scene->cam.eye.z + scene->cam.foc_len;
-			ray = create_vec(Px, Py, Pz);
-			// ray = add(corner, add(scale(scene->cam.x_step, x + 0.5),
-			// 	scale(scene->cam.y_step, scene->window.h - (y + 0.5))));
+			ray = add(corner, add(scale(scene->cam.x_step, (float)x + 0.5f),
+				scale(scene->cam.y_step, scene->window.h - (float)y + 0.5f)));
 			ray = normalize(subtract(ray, scene->cam.eye));
 			((uint32_t *)img->pixels)[y * scene->window.w + x] = trace(scene, ray);
 		}
 	}
 }
-/*
-float Px = (2 * ((x + 0.5) / imageWidth) - 1) * tan(fov / 2 * M_PI / 180) * imageAspectRatio;
-float Py = (1 - 2 * ((y + 0.5) / imageHeight) * tan(fov / 2 * M_PI / 180);
-
-*/

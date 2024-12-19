@@ -6,15 +6,45 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/18 19:42:05 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/19 18:25:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
 /*
+	Called by mlx_resize_hook, adjusts mlx img and variables with new dimensions.
+*/
+void	resizer(int32_t width, int32_t height, void* param)
+{
+	t_rt		*all;
+	mlx_image_t	*tmp;
+
+	tmp = NULL;
+	all = param;
+	if (!param)
+		return ;
+	tmp = all->img;
+	all->mlx->width = width;//maybe not needed?
+	all->mlx->height = height;//maybe not needed?
+	all->scene.window.w = width;
+	all->scene.window.h = height;
+	all->scene.aspect_r = (float)width / (float)height;
+	all->scene.hscale = 2.0f / (float)width;
+	all->scene.vscale = 2.0f / (float)height;
+	if (!mlx_resize_image(all->img, width, height))
+	{
+		printf("resizing error!\n");
+		mlx_close_window(all->mlx);//?
+		return ;
+	}
+	render_image(&all->scene, all->img);
+}
+
+/*
 	Returns bottom left corner ray of viewplane. Calculates and saves viewplane
 	step/offset	vectors for x and y into scene->cam.x_step and scene->cam.y_step.
+	Viewplane is standardized to be -1.0f to 1.0f on both axes.
 */
 t_vec viewplane_offsets(t_scene *scene, t_vec eye)
 {
@@ -22,8 +52,7 @@ t_vec viewplane_offsets(t_scene *scene, t_vec eye)
 	t_vec	up;
 	t_vec	right;
 	t_vec	center;
-	t_vec	halfwin_x;
-	t_vec	halfwin_y;
+	t_vec	half_viewplane_width;
 	t_vec	corner;
 
 	forward = scene->cam.axis;
@@ -32,12 +61,11 @@ t_vec viewplane_offsets(t_scene *scene, t_vec eye)
 		up = create_vec(0, 0, 1);
 	right = normalize(cross(up, forward));
 	up = normalize(cross(forward, right));
-	center = add(eye, scale(forward, scene->cam.foc_len));//maybe focal len needs to change if window size changes?
-	halfwin_x = scale(right, scene->viewplane.w / 2);//do we need to round?
-	halfwin_y = scale(up, scene->viewplane.h / 2);
-	corner = subtract(subtract(center, halfwin_x), halfwin_y);
-	scene->cam.x_step = scale(right, (scene->viewplane.w / scene->window.w));//width / height
-	scene->cam.y_step = scale(up, (scene->viewplane.h / scene->window.h));
+	center = add(eye, scale(forward, scene->cam.foc_len));
+	half_viewplane_width = scale(right, scene->aspect_r);
+	corner = subtract(subtract(center, half_viewplane_width), up);
+	scene->cam.x_step = scale(scale(right, scene->hscale), scene->aspect_r);
+	scene->cam.y_step = scale(up, scene->vscale);
 	return (corner);
 }
 
