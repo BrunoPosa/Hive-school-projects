@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/18 19:35:53 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/19 14:15:27 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	resize_viewplane(int32_t width, int32_t height, void* param)
 	tmp = all->img;
 	all->scene.window.w = width;
 	all->scene.window.h = height;
-	all->scene.aspect_r = width / height;
+	all->scene.aspect_r = (float)width / (float)height;
 	all->scene.viewplane.w *= all->scene.aspect_r;//width / 300;
 	// all->scene.viewplane.h *= all->scene.aspect_r;//?
 	all->img = mlx_new_image(all->mlx, width, height);
