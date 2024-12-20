@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/19 18:25:40 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/20 15:09:29 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	resizer(int32_t width, int32_t height, void* param)
 /*
 	Returns bottom left corner ray of viewplane. Calculates and saves viewplane
 	step/offset	vectors for x and y into scene->cam.x_step and scene->cam.y_step.
-	Viewplane is standardized to be -1.0f to 1.0f on both axes.
+	Viewplane is standardized to be 2.0f units on y axis (and starts as 2.0 on x)
 */
 t_vec viewplane_offsets(t_scene *scene, t_vec eye)
 {

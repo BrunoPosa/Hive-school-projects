@@ -29,6 +29,8 @@ void	esc_keyhook(mlx_key_data_t keydata, void *param)
 	t_rt	*all;
 
 	all = param;
+	if (!param || !all->mlx)
+		return ;
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
 		mlx_close_window(all->mlx);
 	(void)param;
@@ -40,7 +42,7 @@ float	calculate_focal_len(unsigned int fov)
 	float focal_len;
 
 	fov_radians = (fov * M_PI) / 180.0;
-	focal_len = 1 / tan(fov_radians / 2.0);//does this need recomputing if window size changes?
+	focal_len = 1 / tan(fov_radians / 2.0);
 	return (focal_len);
 }
 

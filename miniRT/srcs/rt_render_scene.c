@@ -6,20 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/19 17:50:15 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/20 19:07:52 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
-
-int clamp(float n)
-{
-	if (n > 255)
-		return 255;
-	if (n < 0)
-		return 0;
-	return n;
-}
 
 /*
 	-'a' of the quadratic formula is 1, as 'ray' is a normalized vector, so we leave it out
@@ -174,7 +165,7 @@ t_colour	diffuse_colour(t_scene *scene, t_shape *shape, t_data *ray_data)
 {
 	t_colour	color;
 	float		diffuse_amount;
- 
+
 	color = scale_colour(shape->rgb, scene->lbr);
 	diffuse_amount = dot(ray_data->normal, ray_data->shadow_ray);
 	if (shape->type == plane)
@@ -276,7 +267,7 @@ int trace(t_scene *scene, t_vec ray)
 		return(to_uint32(ray_data.base_color));
 	ray_data.normal = surface_normal(scene, ray_data.shape, &ray_data);
 	ray_data.diffuse_part = diffuse_colour(scene, ray_data.shape, &ray_data);
-	return (to_uint32(add_colours(ray_data.base_color, ray_data.diffuse_part)));
+	return (to_uint32(add_colours(ray_data.base_color, ray_data.diffuse_part)));// return (to_uint32(add_colours(ray_data.base_color, ray_data.diffuse_part)));
 }
 
 /*
@@ -304,7 +295,7 @@ void	render_image(t_scene *scene, mlx_image_t *img)
 			ray = add(corner, add(scale(scene->cam.x_step, (float)x + 0.5f),
 				scale(scene->cam.y_step, scene->window.h - (float)y + 0.5f)));
 			ray = normalize(subtract(ray, scene->cam.eye));
-			((uint32_t *)img->pixels)[y * scene->window.w + x] = trace(scene, ray);
+			((uint32_t *)img->pixels)[y * scene->window.w + x] = trace(scene, ray);//use safer mlx_put_pixel instead
 		}
 	}
 }

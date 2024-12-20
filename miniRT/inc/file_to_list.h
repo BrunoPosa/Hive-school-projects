@@ -362,7 +362,6 @@ t_vec	cyl_normal(t_data *ray_data, t_shape *cyl);
 t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *ray_data);
 t_colour	diffuse_colour(t_scene *scene, t_shape *shape, t_data *ray_data);
 bool	in_shadow(t_scene *scene, t_data *ray_data);
-int		clamp(float n);
 
 /*         T U P L E S         */
 
@@ -389,6 +388,8 @@ t_colour	subtract_colours(t_colour a, t_colour b);
 t_colour	scale_colour(t_colour a, float scaler);
 t_colour	hadamard_product(t_colour a, t_colour b);
 uint32_t	to_uint32(t_colour colour);
+t_colour	scale_colour_channels(t_colour a);
+float		clamp(float n);
 
 
 //      P R I N T E R S
