@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_elements1.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:45:38 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/09 22:13:04 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/21 21:50:25 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,26 @@ int	process_camera(t_list *current)
 	// ch - [f]
 	// rgb - [0-255], [0-255], [0-255]
 
-void	process_cylinder(t_list *current)
+int	process_cylinder(t_list *current)
 {
-	process_xyz(current);
-	process_xyz_3d(current);
-	process_cd(current);
-	process_ch(current);
-	process_rgb(current);
+	int	status;
+
+	status = process_xyz(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
+	status = process_xyz_3d(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
+	status = process_cd(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
+	status = process_ch(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
+	status = process_rgb(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
+	return (status);
 }
 	// xyz - [f], [f], [f]
 	// xyz_3d - [-1,1], [-1,1], [-1,1]

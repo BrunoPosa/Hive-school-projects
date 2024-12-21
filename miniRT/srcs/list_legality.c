@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_legality.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 23:11:44 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/08 23:15:31 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/21 22:57:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	only_legal_chars(char *s, char *legal)
 
 /*
 	Goes through list looking for illegal characters.
-	Returns 0 if found an illegal char.
+	Returns 1 if found an illegal char. 0 if all chars are legal.
 */
 int	list_legality_check(t_list **l, char *legal)
 {
@@ -61,10 +61,10 @@ int	list_legality_check(t_list **l, char *legal)
 		{
 			printf("%s\n", current->p);
 			printf("KO - illegal char!\n");
-			return (0);
+			return (E_ILLEGAL_CHARS_GENERAL);
 		}
 		current = current->next;
 	}
 	printf("OK - File has only legal chars.\n");
-	return (1);
+	return (0);
 }

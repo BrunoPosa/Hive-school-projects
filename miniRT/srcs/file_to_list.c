@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/21 14:14:41 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/21 22:17:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,9 @@ static	int	ft_open(char *filename)
 }
 // check condition "if ((line[0] == '\n' || line[0] == ..."
 //using p pointer to move through the string so s can be freed later
-
+/*
+*	reads the file and creates a linked list of strings
+*/
 int	file_to_list(char *filename, t_list **l)
 {
 	int		fd;
@@ -86,18 +88,22 @@ int	populate_scene(t_list **l, t_scene *scene)
 int	import(int argc, char **argv, t_scene *scene)
 {
 	t_list	*l;
+	int		status;
 
+	status = 0;
 	l = NULL;
 	if (argc != 2)
 		return (ret_error(E_ARGS, NULL));
 	if (does_file_end_with_rt(argv[1]) == 0)
 		return (ret_error(E_FILE_NAME, NULL));
-	if (file_to_list(argv[1], &l))
-		return (ret_error(E_MALLOC, l));
-	if (process_list(&l) != E_SUCCESS)
+	status = file_to_list(argv[1], &l);
+	if (status != E_SUCCESS)
+		return (status);
+	status = process_list(&l);
+	if (status != E_SUCCESS)
 	{
-		printf("==== FILE VALIDATION FAILED ====");
-		return (-1);
+		printf("==== FILE VALIDATION FAILED ====\nerrno: %d\n", status);
+		return (status);
 	}
 	if (check_count_of_types(&l, scene) != E_SUCCESS)
 		return (ret_error(E_OBJECT_COUNT, l));

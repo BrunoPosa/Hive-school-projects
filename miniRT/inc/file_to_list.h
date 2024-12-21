@@ -88,6 +88,7 @@ typedef enum e_error
 	E_ERROR,
 	E_ARGS,
 	E_FILE_NAME,
+	E_ILLEGAL_CHARS_GENERAL,
 	E_ILLEGAL_CHARS1,
 	E_ILLEGAL_CHARS2,
 	E_ILLEGAL_CHARS3,
@@ -112,7 +113,9 @@ typedef enum e_error
 	E_WRONG_TYPE,
 	E_EXTRA_CHARS,
 	E_XYZ_RANGE,
-	E_OBJECT_COUNT
+	E_OBJECT_COUNT,
+	E_SPHERE_SD,
+	E_CYLINDER_CD
 }			t_error;
 // #endif
 
@@ -297,10 +300,10 @@ int	allocate_scene_arrays(t_scene *scene);
 int		process_nodes(t_list **l);
 int		process_node(t_list *current);
 int		process_camera(t_list *current);
-void	process_cylinder(t_list *current);
+int		process_cylinder(t_list *current);
 void	process_plane(t_list *current);
 int		process_light(t_list *current);
-void	process_sphere(t_list *current);
+int		process_sphere(t_list *current);
 int		process_ambiant(t_list *current);
 int		process_alr(t_list *current);
 int		process_xyz(t_list *current);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_nodes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:40:51 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/09 22:04:50 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/21 21:57:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,9 @@ int	process_node(t_list *current)
 			return (printf(">> !!! Error: Light failed  !!! <<\n"));
 	}
 	else if (current->type == plane)
+	{
 		process_plane(current);
+	}
 	else if (current->type == sphere)
 		process_sphere(current);
 	else if (current->type == cylinder)
@@ -45,13 +47,16 @@ int	process_node(t_list *current)
 int	process_nodes(t_list **l)
 {
 	t_list	*current;
+	int		status;
 
+	status = 0;
 	current = *l;
 	while (current)
 	{
-		if (process_node(current) != E_SUCCESS)
-			return (-1);
+		status = process_node(current);
+		if (status != E_SUCCESS)
+			break ;
 		current = current->next;
 	}
-	return (E_SUCCESS);
+	return (status);
 }

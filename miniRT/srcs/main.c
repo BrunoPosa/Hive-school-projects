@@ -6,21 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/19 18:27:14 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/21 22:29:28 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
-
-// void	init_scene(t_scene *scene)
-// {
-// 	scene->n_sphere = 0;
-// 	scene->n_plane = 0;
-// 	scene->n_cylinder = 0;
-// 	scene->n_camera = 0;
-// 	scene->n_light = 0;
-// 	scene->n_ambient = 0;
-// }
 
 int	main(int argc, char **argv)
 {
