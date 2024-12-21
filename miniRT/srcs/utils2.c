@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/20 15:09:29 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/21 14:18:44 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,15 @@
 void	resizer(int32_t width, int32_t height, void* param)
 {
 	t_rt		*all;
-	mlx_image_t	*tmp;
 
-	tmp = NULL;
 	all = param;
-	if (!param)
+	if (!param || width <= 0 || height <= 0)
 		return ;
-	tmp = all->img;
-	all->mlx->width = width;//maybe not needed?
-	all->mlx->height = height;//maybe not needed?
+	all->mlx->width = width;
+	all->mlx->height = height;
 	all->scene.window.w = width;
 	all->scene.window.h = height;
 	all->scene.aspect_r = (float)width / (float)height;
-	all->scene.hscale = 2.0f / (float)width;
-	all->scene.vscale = 2.0f / (float)height;
 	if (!mlx_resize_image(all->img, width, height))
 	{
 		printf("resizing error!\n");
@@ -64,8 +59,9 @@ t_vec viewplane_offsets(t_scene *scene, t_vec eye)
 	center = add(eye, scale(forward, scene->cam.foc_len));
 	half_viewplane_width = scale(right, scene->aspect_r);
 	corner = subtract(subtract(center, half_viewplane_width), up);
-	scene->cam.x_step = scale(scale(right, scene->hscale), scene->aspect_r);
-	scene->cam.y_step = scale(up, scene->vscale);
+	scene->cam.x_step = scale(scale(right, 2.0f / scene->window.w),
+		scene->aspect_r);
+	scene->cam.y_step = scale(up, 2.0f / scene->window.h);
 	return (corner);
 }
 

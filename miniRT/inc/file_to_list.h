@@ -235,8 +235,6 @@ typedef struct s_scene
 	int			n_plane;
 	t_win		window;
 	float		aspect_r;
-	double		hscale;
-	double		vscale;
 }	t_scene;
 
 typedef struct s_all_rt_data
