@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:42:35 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/20 19:06:05 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/21 14:32:32 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ t_colour	scale_colour(t_colour a, float scaler)
 	return (scale_colour_channels(c));
 }
 
-
+//is this function correct?
 t_colour	hadamard_product(t_colour a, t_colour b)
 {
 	t_colour	c;

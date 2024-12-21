@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/21 14:18:44 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/21 14:20:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 /*
 	Called by mlx_resize_hook, adjusts mlx img and variables with new dimensions.
+	Closes window on error.
 */
 void	resizer(int32_t width, int32_t height, void* param)
 {

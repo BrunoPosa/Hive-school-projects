@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/21 14:02:16 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/21 15:33:45 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,17 +185,19 @@ t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *ray_data)
 		return (normalize(subtract(ray_data->hitp, shape->xyz)));
 	else if (is_cam_inside_cyl(scene->cam.eye, ray_data->shape) == TRUE)
 		return (negate(cyl_normal(ray_data, ray_data->shape)));
-	return (cyl_normal(ray_data, ray_data->shape));
+	else
+		return (cyl_normal(ray_data, ray_data->shape));
 }
 
 bool	in_shadow(t_scene *scene, t_data *ray_data)
 {
+	int			i;
 	float		hit;
 	float		distance;
-	int			i;
 	float		light_distance;
 
 	i = 0;
+	hit = 0.0;
 	light_distance = magnitude(subtract(scene->lightxyz, ray_data->hitp));
 	distance = light_distance;
 	while (i < scene->shape_count)
@@ -203,7 +205,7 @@ bool	in_shadow(t_scene *scene, t_data *ray_data)
 		if (ray_data->shape != &scene->shapes[i])//should we be avoiding self comparisons
 		{
 			hit = intersect(ray_data->shadow_ray, ray_data->hitp, &scene->shapes[i]);
-			if (hit >= EPSILON && hit < distance)
+			if (hit > EPSILON && hit < distance)
 				distance = hit;
 		}
 		i++;
@@ -213,6 +215,7 @@ bool	in_shadow(t_scene *scene, t_data *ray_data)
 	return (0);
 }
 
+//should we set shape pointer to NULL here?
 float	intersect(t_vec ray, t_vec origin, t_shape *shape)
 {
 	if (shape->type == sphere)
@@ -267,7 +270,7 @@ int trace(t_scene *scene, t_vec ray)
 		return(to_uint32(ray_data.base_color));
 	ray_data.normal = surface_normal(scene, ray_data.shape, &ray_data);
 	ray_data.diffuse_part = diffuse_colour(scene, ray_data.shape, &ray_data);
-	return (to_uint32(add_colours(ray_data.base_color, ray_data.diffuse_part)));// return (to_uint32(add_colours(ray_data.base_color, ray_data.diffuse_part)));
+	return (to_uint32(add_colours(ray_data.base_color, ray_data.diffuse_part)));
 }
 
 /*
