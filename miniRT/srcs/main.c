@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/21 22:29:28 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/21 23:08:53 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@ int	main(int argc, char **argv)
 	ft_memset(&all, 0, sizeof(t_rt));
 	if (import(argc, argv, &all.scene) != E_SUCCESS)
 		return (free(all.scene.shapes), E_ERROR);//what if import fails bc of malloc fail!
+
+// put in the fuctnion that checks the return vaalue of the inmort and frees if there is problem
+// ret error?
+
 	all.mlx = mlx_init(WINSIZE, WINSIZE, "minirt", true);
 	if (!(all.mlx))
 		return (free(all.scene.shapes), E_ERROR);//?!

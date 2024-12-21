@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:40:51 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/21 21:57:34 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/21 23:06:08 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,24 +19,24 @@ int	process_node(t_list *current)
 	if (current->type == ambiant)
 	{
 		if (process_ambiant(current) != E_SUCCESS)
-			return (printf(">> !!! Error: ambiant failed  !!! <<\n"));
+			return (printf(">> !!! Error: ambiant failed  !!! <<\n"));//TODO Make return value correct
 	}
 	else if (current->type == camera)
 	{
 		if (process_camera(current) != E_SUCCESS)
-			return (printf(">> !!! Error: camera failed  !!! <<\n"));
+			return (printf(">> !!! Error: camera failed  !!! <<\n"));//TODO Make return value correct
 	}
 	else if (current->type == light)
 	{
 		if (process_light(current) != E_SUCCESS)
-			return (printf(">> !!! Error: Light failed  !!! <<\n"));
+			return (printf(">> !!! Error: Light failed  !!! <<\n"));//TODO Make return value correct
 	}
 	else if (current->type == plane)
 	{
-		process_plane(current);
+		process_plane(current);// just return the process_plane() function
 	}
 	else if (current->type == sphere)
-		process_sphere(current);
+		return(process_sphere(current));
 	else if (current->type == cylinder)
 		process_cylinder(current);
 	else
