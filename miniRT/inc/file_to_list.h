@@ -134,7 +134,6 @@ typedef enum e_type
 typedef enum e_hitpart
 {
 	nothing,
-	inside,
 	bottom,
 	body,
 	top
@@ -176,6 +175,7 @@ typedef struct	s_shape
 	t_vec		axis;
 	t_colour	rgb;
 	int			part_hit;
+	bool		inside;
 	float		r;
 	float		h;
 }	t_shape;
@@ -350,19 +350,19 @@ void	resizer(int32_t width, int32_t height, void* param);
 void	render_image(t_scene *scene, mlx_image_t *img);
 int		trace(t_scene *scene, t_vec ray);
 t_vec 	viewplane_offsets(t_scene *scene, t_vec eye);
-bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *ray_data);
-float	intersect(t_vec ray, t_vec origin, t_shape *shape);
+bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *raydata);
+float	intersect_all(t_vec ray, t_vec origin, t_shape *shape);
 float	fsphere(t_vec ray, t_vec origin, t_shape *sphere);
 float	fplane(t_vec ray, t_vec origin, t_shape *plane);
 float	fcylinder(t_vec ray, t_vec origin, t_shape *cyl);
 float	intersect_cyl_caps(t_vec ray, t_vec origin, t_shape *cyl);
-bool	is_cam_inside_cyl(t_vec origin, t_shape *cyl);
+bool	is_point_inside_cyl(t_vec origin, t_shape *cyl);
 float	cyl_height_check(t_vec ray, t_vec origin, float t, t_shape *cyl);
 float	cyl_radius_check(t_vec ray, t_vec origin, float t, t_shape *cap);
-t_vec	cyl_normal(t_data *ray_data, t_shape *cyl);
-t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *ray_data);
-t_colour	diffuse_colour(t_scene *scene, t_shape *shape, t_data *ray_data);
-bool	in_shadow(t_scene *scene, t_data *ray_data);
+t_vec	cyl_normal(t_data *raydata, t_shape *cyl);
+t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *raydata);
+t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_data *raydata);
+bool	in_shadow(t_scene *scene, t_data *raydata);
 
 /*         T U P L E S         */
 
@@ -391,6 +391,7 @@ t_colour	hadamard_product(t_colour a, t_colour b);
 uint32_t	to_uint32(t_colour colour);
 t_colour	scale_colour_channels(t_colour a);
 float		clamp(float n);
+t_colour	black(void);
 
 
 //      P R I N T E R S

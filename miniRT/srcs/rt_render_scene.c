@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/21 15:33:45 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/22 14:21:36 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ float fsphere(t_vec ray, t_vec origin, t_shape *sphere)
 	{
 		t = (-b + sqrt(discriminant)) / 2;
 		if (t > EPSILON)
-			sphere->part_hit = inside;
+			sphere->inside = TRUE;
 	}
 	return (t);
 }
@@ -115,7 +115,7 @@ float fcylinder(t_vec ray, t_vec origin, t_shape *cyl)
 	return (tcaps);
 }
 
-bool	is_cam_inside_cyl(t_vec point, t_shape *cyl)
+bool	is_point_inside_cyl(t_vec point, t_shape *cyl)
 {
 	t_vec	projection;
 	t_vec	base_to_ray_orig;
@@ -138,7 +138,7 @@ bool	is_cam_inside_cyl(t_vec point, t_shape *cyl)
 /*
 	returns normalized surface normal of cylinder
 */
-t_vec	cyl_normal(t_data *ray_data, t_shape *cyl)
+t_vec	cyl_normal(t_data *raydata, t_shape *cyl)
 {
 	t_vec	base_to_hitp;
 	t_vec	projection;
@@ -151,45 +151,61 @@ t_vec	cyl_normal(t_data *ray_data, t_shape *cyl)
 		return (cyl->axis);
 	else if (cyl->part_hit == bottom)
 		return (negate(cyl->axis));
-	base_to_hitp = subtract(ray_data->hitp, cyl->xyz);
+	base_to_hitp = subtract(raydata->hitp, cyl->xyz);
 	projection_len = dot(base_to_hitp, cyl->axis);
 	projection = scale(cyl->axis, projection_len);
-	return (normalize(subtract(ray_data->hitp, add(cyl->xyz, projection))));
+	return (normalize(subtract(raydata->hitp, add(cyl->xyz, projection))));
 }
 
 /*
-	Used to approximate surface shading of lit side	of shape. Unless a plane,
-	it returns 0,0,0 if angle between light and surface normal is >= 90 degrees
+	Used to shade surface of lit side of shape. Returns colour of shape scaled by
+	light brightness and diffuse amount (smaller if surface normal is angled away)
+	Returns black (no contribution) if light and surface normal angle >= 90 deg,
+	and when camera is inside and the light is blocked (spheres or cylinders).
 */
-t_colour	diffuse_colour(t_scene *scene, t_shape *shape, t_data *ray_data)
+t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_data *raydata)
 {
 	t_colour	color;
 	float		diffuse_amount;
+	float		light_distance;
 
+	color = black();
+	diffuse_amount = 0.0;
+	light_distance = magnitude(subtract(scene->lightxyz, shape->xyz));
+	if ((shape->type == sphere && shape->inside && light_distance > shape->r) ||
+		(shape->type == cylinder && shape->inside &&
+		is_point_inside_cyl(scene->lightxyz, shape) == FALSE))
+		return black();
 	color = scale_colour(shape->rgb, scene->lbr);
-	diffuse_amount = dot(ray_data->normal, ray_data->shadow_ray);
-	if (shape->type == plane)
+	diffuse_amount = dot(raydata->normal, raydata->shadow_ray);
+	if (diffuse_amount < 0 && shape->type != plane)
+		return (black());
+	else
 		diffuse_amount = fabs(diffuse_amount);
-	if (diffuse_amount < 0)
-		diffuse_amount = 0;
 	return (scale_colour(color, diffuse_amount));
 }
 
-t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *ray_data)
+t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *raydata)
 {
 	if (shape->type == plane)
 		return (shape->axis);
-	else if (shape->type == sphere && shape->part_hit == inside)
-		return (negate(normalize(subtract(ray_data->hitp, shape->xyz))));
-	else if (shape->type == sphere)
-		return (normalize(subtract(ray_data->hitp, shape->xyz)));
-	else if (is_cam_inside_cyl(scene->cam.eye, ray_data->shape) == TRUE)
-		return (negate(cyl_normal(ray_data, ray_data->shape)));
+	else if (shape->type == sphere && shape->inside == TRUE)
+		return (negate(normalize(subtract(raydata->hitp, shape->xyz))));
+	else if (shape->type == sphere && shape->inside == FALSE)
+		return (normalize(subtract(raydata->hitp, shape->xyz)));
 	else
-		return (cyl_normal(ray_data, ray_data->shape));
+	{
+		if (is_point_inside_cyl(scene->cam.eye, shape) == TRUE)
+		{
+			shape->inside = TRUE;
+			return (negate(cyl_normal(raydata, raydata->shape)));
+		}
+		else
+			return (cyl_normal(raydata, raydata->shape));
+	}
 }
 
-bool	in_shadow(t_scene *scene, t_data *ray_data)
+bool	in_shadow(t_scene *scene, t_data *raydata)
 {
 	int			i;
 	float		hit;
@@ -198,13 +214,13 @@ bool	in_shadow(t_scene *scene, t_data *ray_data)
 
 	i = 0;
 	hit = 0.0;
-	light_distance = magnitude(subtract(scene->lightxyz, ray_data->hitp));
+	light_distance = magnitude(subtract(scene->lightxyz, raydata->hitp));
 	distance = light_distance;
 	while (i < scene->shape_count)
 	{
-		if (ray_data->shape != &scene->shapes[i])//should we be avoiding self comparisons
+		if (raydata->shape != &scene->shapes[i])//should we be avoiding self comparisons
 		{
-			hit = intersect(ray_data->shadow_ray, ray_data->hitp, &scene->shapes[i]);
+			hit = intersect_all(raydata->shadow_ray, raydata->hitp, &scene->shapes[i]);
 			if (hit > EPSILON && hit < distance)
 				distance = hit;
 		}
@@ -216,7 +232,7 @@ bool	in_shadow(t_scene *scene, t_data *ray_data)
 }
 
 //should we set shape pointer to NULL here?
-float	intersect(t_vec ray, t_vec origin, t_shape *shape)
+float	intersect_all(t_vec ray, t_vec origin, t_shape *shape)
 {
 	if (shape->type == sphere)
 		return (fsphere(ray, origin, shape));
@@ -227,28 +243,28 @@ float	intersect(t_vec ray, t_vec origin, t_shape *shape)
 }
 
 /*
-	returns 1 if ray hits a shape, sets ray_data's hitmin (min hit distance)
+	returns 1 if ray hits a shape, sets raydata's hitmin (min hit distance)
 	and shape pointer to the closest shape. If no shapes intersected, returns 0
 */
-bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *ray_data)
+bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *raydata)
 {
 	float	hit;
 	int		i;
 
 	hit = 0.0f;
 	i = 0;
-	ray_data->hitmin = INFINITY;
+	raydata->hitmin = INFINITY;
 	while (i < scene->shape_count)
 	{
-		hit = intersect(ray, scene->cam.eye, &scene->shapes[i]);
-		if (hit >= EPSILON && hit < ray_data->hitmin)
+		hit = intersect_all(ray, scene->cam.eye, &scene->shapes[i]);
+		if (hit >= EPSILON && hit < raydata->hitmin)
 		{
-			ray_data->hitmin = hit;
-			ray_data->shape = &scene->shapes[i];
+			raydata->hitmin = hit;
+			raydata->shape = &scene->shapes[i];
 		}
 		i++;
 	}
-	if (ray_data->hitmin < INFINITY)
+	if (raydata->hitmin < INFINITY)
 		return (1);
 	return (0);
 }
@@ -258,19 +274,19 @@ bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *ray_data)
 */
 int trace(t_scene *scene, t_vec ray)
 {
-	t_data	ray_data;
+	t_data	raydata;
 
-	ft_memset(&ray_data, 0, sizeof(t_data));
-	if (!closest_shape_hit(scene, ray, &ray_data))
+	ft_memset(&raydata, 0, sizeof(t_data));
+	if (!closest_shape_hit(scene, ray, &raydata))
 		return(to_uint32(scene->ambiant));
-	ray_data.hitp = add(scene->cam.eye, scale(ray, ray_data.hitmin));
-	ray_data.shadow_ray = normalize(subtract(scene->lightxyz, ray_data.hitp));
-	ray_data.base_color = hadamard_product(ray_data.shape->rgb, scene->ambiant);
-	if (in_shadow(scene, &ray_data))
-		return(to_uint32(ray_data.base_color));
-	ray_data.normal = surface_normal(scene, ray_data.shape, &ray_data);
-	ray_data.diffuse_part = diffuse_colour(scene, ray_data.shape, &ray_data);
-	return (to_uint32(add_colours(ray_data.base_color, ray_data.diffuse_part)));
+	raydata.hitp = add(scene->cam.eye, scale(ray, raydata.hitmin));
+	raydata.shadow_ray = normalize(subtract(scene->lightxyz, raydata.hitp));
+	raydata.base_color = hadamard_product(raydata.shape->rgb, scene->ambiant);
+	if (in_shadow(scene, &raydata))
+		return(to_uint32(raydata.base_color));
+	raydata.normal = surface_normal(scene, raydata.shape, &raydata);
+	raydata.diffuse_part = calc_diffuse_part(scene, raydata.shape, &raydata);
+	return (to_uint32(add_colours(raydata.base_color, raydata.diffuse_part)));
 }
 
 /*

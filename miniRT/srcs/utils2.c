@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/21 14:20:49 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/22 13:40:31 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,4 +100,9 @@ float	cyl_radius_check(t_vec ray, t_vec origin, float t, t_shape *cap)
 	if (magnitude(subtract(hitpoint, cap->xyz)) > cap->r)
 		return (0.0f);
 	return (t);
+}
+
+t_colour	black(void)
+{
+	return (create_colour(0, 0, 0));
 }
