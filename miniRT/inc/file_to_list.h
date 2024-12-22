@@ -87,6 +87,7 @@ typedef enum e_error
 	E_SUCCESS,
 	E_ERROR,
 	E_ARGS,
+	E_OPEN_CLOSE_ERROR,
 	E_FILE_NAME,
 	E_ILLEGAL_CHARS_GENERAL,
 	E_ILLEGAL_CHARS1,
@@ -94,6 +95,7 @@ typedef enum e_error
 	E_ILLEGAL_CHARS3,
 	E_ILLEGAL_CHARS4,
 	E_ILLEGAL_CHARS5,
+	E_PROCESS_NODE,
 	E_ALR_CHARS,
 	E_ALR_RANGE,
 	E_LBR_CHARS,
@@ -119,7 +121,6 @@ typedef enum e_error
 }			t_error;
 // #endif
 
-// probably don't need to be capital? check norm
 typedef enum e_type
 {
 	unassigned,
@@ -301,15 +302,14 @@ int		process_nodes(t_list **l);
 int		process_node(t_list *current);
 int		process_camera(t_list *current);
 int		process_cylinder(t_list *current);
-void	process_plane(t_list *current);
+int		process_plane(t_list *current);
 int		process_light(t_list *current);
 int		process_sphere(t_list *current);
 int		process_ambiant(t_list *current);
-int		process_alr(t_list *current);
+int		process_ratio(t_list *current);
 int		process_xyz(t_list *current);
 int		process_xyz_3d(t_list *current);
 int		process_fov(t_list *current);
-int		process_lbr(t_list *current);
 int		process_sd(t_list *current);
 int		process_cd(t_list *current);
 int		process_ch(t_list *current);

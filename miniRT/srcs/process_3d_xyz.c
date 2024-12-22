@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 23:16:58 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/09 20:15:49 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/22 18:47:18 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int	process_xyz_3d(t_list *current)
 	free_array(xyz);
 	if (atoi_overflow)
 		return (free(sub_string), ret_error(E_XYZ_RANGE, current));
+	//add a normalization check: sqrt(x^2 + y^2 + z^2) == 1
 	current->p = current->p + i;
 	current->p = skip_space(current->p);
 	free(sub_string);

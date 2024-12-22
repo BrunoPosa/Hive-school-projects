@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_nodes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:40:51 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/21 23:06:08 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/22 18:13:51 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,30 +17,19 @@
 int	process_node(t_list *current)
 {
 	if (current->type == ambiant)
-	{
-		if (process_ambiant(current) != E_SUCCESS)
-			return (printf(">> !!! Error: ambiant failed  !!! <<\n"));//TODO Make return value correct
-	}
+		return (process_ambiant(current));
 	else if (current->type == camera)
-	{
-		if (process_camera(current) != E_SUCCESS)
-			return (printf(">> !!! Error: camera failed  !!! <<\n"));//TODO Make return value correct
-	}
+		return (process_camera(current));
 	else if (current->type == light)
-	{
-		if (process_light(current) != E_SUCCESS)
-			return (printf(">> !!! Error: Light failed  !!! <<\n"));//TODO Make return value correct
-	}
+		return (process_light(current));
 	else if (current->type == plane)
-	{
-		process_plane(current);// just return the process_plane() function
-	}
+		return (process_plane(current));
 	else if (current->type == sphere)
 		return(process_sphere(current));
 	else if (current->type == cylinder)
-		process_cylinder(current);
+		return (process_cylinder(current));
 	else
-		return (printf("\n\n>> Error: has a blank line slipped through??\n\n"));
+		return (E_PROCESS_NODE);
 	return (E_SUCCESS);
 }
 
@@ -54,7 +43,7 @@ int	process_nodes(t_list **l)
 	while (current)
 	{
 		status = process_node(current);
-		if (status != E_SUCCESS)
+		if (status)
 			break ;
 		current = current->next;
 	}

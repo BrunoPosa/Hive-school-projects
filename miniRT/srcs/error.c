@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/08 21:42:51 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/22 17:11:03 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,9 +104,9 @@ int	ret_error(t_error error, t_list *l)
 	// 	// if (l)
 	// 		free(l);
 	// }
-	if (error != E_SUCCESS)
+	if (error)
 	{
-		printf("%sHold your horses, Error!!%s\n", YELLOW, ENDCLR);
+		printf("%s==== Hold your horses! VALIDATION FAILED ====%s\nerrno: %u\n", YELLOW, ENDCLR, error);
 		// write(2, ft_strerror(error), ft_strlen(ft_strerror(error)));
 		// write(2, "\n", 1);
 		return ((int)error);

@@ -25,12 +25,11 @@ SRCS 		=	main.c \
 				check_count_of_types.c \
 				list_legality.c \
 				process_3d_xyz.c \
-				process_alr.c \
+				process_ratio.c \
 				process_cd.c \
 				process_ch.c \
 				process_elements1.c \
 				process_elements2.c \
-				process_lbr.c \
 				process_rgb.c \
 				process_sd.c \
 				process_xyz.c \

@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 04:21:43 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/22 17:13:11 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,25 @@ These are the same:
 
 	if (import(argc, argv, &all.scene) != E_SUCCESS)
 	if (import(argc, argv, &all.scene) != 0)
-	if (!import(argc, argv, &all.scene))
+
+	while (*s)
+	
+	if (import(argc, argv, &all.scene))
+		return (abna)
 
 */
 
 int	main(int argc, char **argv)
 {
 	t_rt		all;
+int status = 0;
 
 	ft_memset(&all, 0, sizeof(t_rt));
-	
-	if (import(argc, argv, &all.scene) != E_SUCCESS)
-
+	status = import(argc, argv, &all.scene);
+	printf("status: %d\n", status);
+	if (status)
 // this is freeing only the shapes, what about the rest of r_rt?
-	
+		// return( status, t_rt)
 		return (free(all.scene.shapes), E_ERROR);//what if import fails bc of malloc fail!
 
 // put in the fucntion that checks the return value of the inmort and frees if there is problem

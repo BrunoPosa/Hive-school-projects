@@ -6,13 +6,13 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:18:55 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/08 19:22:44 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/22 17:59:04 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
-int	move_past_type(t_list **l)
+static void	move_past_type(t_list **l)
 {
 	t_list	*current;
 
@@ -34,7 +34,6 @@ int	move_past_type(t_list **l)
 		current->p = skip_space(current->p);
 		current = current->next;
 	}
-	return (E_SUCCESS);
 }
 
 int	assign_node_type(t_list **l)
@@ -57,22 +56,9 @@ int	assign_node_type(t_list **l)
 		else if (!ft_strncmp(current->p, "cy", 2))
 			current->type = cylinder;
 		else
-			return (ret_error(E_WRONG_TYPE, *l));
+			return (E_WRONG_TYPE);
 		current = current->next;
 	}
 	move_past_type(l);
 	return (E_SUCCESS);
 }
-
-// if current->p[0] == num, ',' 
-//     return error
-// if (!strcmp(current->p[0] && !strcmp(s[1] == ' '))
-// A
-// C
-// L
-// pl
-// sp
-// cy
-// check the first letters of current->p are etc.
-// update the pointer, of the s.
-// update the type enum.
