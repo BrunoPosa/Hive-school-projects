@@ -3,27 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/21 23:08:53 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/22 04:21:43 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
+
+/*
+These are the same:
+
+	if (import(argc, argv, &all.scene) != E_SUCCESS)
+	if (import(argc, argv, &all.scene) != 0)
+	if (!import(argc, argv, &all.scene))
+
+*/
 
 int	main(int argc, char **argv)
 {
 	t_rt		all;
 
 	ft_memset(&all, 0, sizeof(t_rt));
+	
 	if (import(argc, argv, &all.scene) != E_SUCCESS)
+
+// this is freeing only the shapes, what about the rest of r_rt?
+	
 		return (free(all.scene.shapes), E_ERROR);//what if import fails bc of malloc fail!
 
-// put in the fuctnion that checks the return vaalue of the inmort and frees if there is problem
+// put in the fucntion that checks the return value of the inmort and frees if there is problem
 // ret error?
 
 	all.mlx = mlx_init(WINSIZE, WINSIZE, "minirt", true);
+	
 	if (!(all.mlx))
 		return (free(all.scene.shapes), E_ERROR);//?!
 	all.img = mlx_new_image(all.mlx, WINSIZE, WINSIZE);
