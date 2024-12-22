@@ -364,6 +364,7 @@ float	cyl_radius_check(t_vec ray, t_vec origin, float t, t_shape *cap);
 t_vec	cyl_normal(t_data *raydata, t_shape *cyl);
 t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *raydata);
 t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_data *raydata);
+bool	is_backlit(t_scene *scene, t_shape *plane, t_data *raydata);
 bool	in_shadow(t_scene *scene, t_data *raydata);
 
 /*         T U P L E S         */

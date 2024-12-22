@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt_render_scene.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/22 17:29:56 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/22 22:50:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,11 +157,21 @@ t_vec	cyl_normal(t_data *raydata, t_shape *cyl)
 	return (normalize(subtract(raydata->hitp, add(cyl->xyz, projection))));
 }
 
+bool	is_backlit(t_scene *scene, t_shape *plane, t_data *raydata)
+{
+	if ((dot(plane->axis, raydata->shadow_ray) < 0 &&
+		dot(plane->axis, subtract(scene->cam.eye, raydata->hitp)) > 0) ||
+		(dot(plane->axis, raydata->shadow_ray) > 0 &&
+		dot(plane->axis, subtract(scene->cam.eye, raydata->hitp)) < 0))
+		return (TRUE);
+	return (FALSE);
+}
+
 /*
 	Used to shade surface of lit side of shape. Returns colour of shape scaled by
 	light brightness and diffuse amount (smaller if surface normal is angled away)
 	Returns black (no contribution) if light and surface normal angle >= 90 deg,
-	and when camera is inside and the light is blocked (spheres or cylinders).
+	and in special case when camera is in/below a shape and the light is outside.
 */
 t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_data *raydata)
 {
@@ -173,6 +183,7 @@ t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_data *raydata)
 	diffuse_amount = 0.0;
 	light_distance = magnitude(subtract(scene->lightxyz, shape->xyz));
 	if ((shape->type == sphere && shape->inside && light_distance > shape->r) ||
+		(shape->type == plane && is_backlit(scene, shape, raydata) == TRUE) ||
 		(shape->type == cylinder && shape->inside &&
 		is_point_inside_cyl(scene->lightxyz, shape) == FALSE))
 		return black();
