@@ -9,7 +9,7 @@ make clean
 
 # Run the raytracer
 # ./file_to_list test_short.rt
-./miniRT scenes/4_inside_sphere_shading.rt #> log.txt && vim log.txt
+./miniRT scenes/test_1_sphere.rt #> log.txt && vim log.txt
 
 
 # Display the image

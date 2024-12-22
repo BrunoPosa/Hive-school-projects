@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_elements1.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:45:38 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 18:31:55 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/22 21:43:59 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	process_ambiant(t_list *current)
 {
 	int	status;
 
-	status = process_ratio(current);
+	status = process_alr(current);
 	if (status)
 		return (status);
 	status = process_rgb(current);
@@ -104,7 +104,7 @@ int	process_light(t_list *current)
 	status = process_xyz(current);
 	if (status != E_SUCCESS)
 		return (ret_error(status, current));
-	status = process_ratio(current);
+	status = process_lbr(current);
 	if (status != E_SUCCESS)
 		return (ret_error(status, current));
 	status = process_rgb(current);
