@@ -117,7 +117,8 @@ typedef enum e_error
 	E_XYZ_RANGE,
 	E_OBJECT_COUNT,
 	E_SPHERE_SD,
-	E_CYLINDER_CD
+	E_CYLINDER_CD,
+	E_N_OF_TYPES
 }			t_error;
 // #endif
 
