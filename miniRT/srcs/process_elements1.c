@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:45:38 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 21:58:40 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/22 22:02:46 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ int	process_ambiant(t_list *current)
 {
 	int	status;
 
-	status = E_SUCCESS;
-	status = process_ratio(current);
+	status = process_alr(current);
 	if (status)
 		return (status);
 	status = process_rgb(current);
@@ -105,11 +104,19 @@ int	process_light(t_list *current)
 
 	status = E_SUCCESS;
 	status = process_xyz(current);
+<<<<<<< HEAD
 	if (status)
 		return (status);
 	status = process_ratio(current);
 	if (status)
 		return (status);
+=======
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
+	status = process_lbr(current);
+	if (status != E_SUCCESS)
+		return (ret_error(status, current));
+>>>>>>> d6d93b2c0d8fcdcb5b8742c63528edae86bc8c8e
 	status = process_rgb(current);
 	if (status)
 		return (status);
