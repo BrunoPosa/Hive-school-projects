@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:45:38 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 18:31:55 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/22 21:58:40 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int	process_ambiant(t_list *current)
 {
 	int	status;
 
+	status = E_SUCCESS;
 	status = process_ratio(current);
 	if (status)
 		return (status);
@@ -26,7 +27,7 @@ int	process_ambiant(t_list *current)
 		return (status);
 	if (current->p[0] != '\0' && current->p[0] != '\n')
 		return (E_EXTRA_CHARS);
-	return (E_SUCCESS);
+	return (status);
 }
 
 	// xyz - [f], [f], [f]
@@ -36,19 +37,19 @@ int	process_camera(t_list *current)
 {
 	int	status;
 
-	status = 0;
+	status = E_SUCCESS;
 	status = process_xyz(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	status = process_xyz_3d(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	status = process_fov(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	if (current->p[0] != '\0' && current->p[0] != '\n')
-		return (ret_error(E_EXTRA_CHARS, current));
-	return (E_SUCCESS);
+		return (E_EXTRA_CHARS);
+	return (status);
 }
 	// xyz - [f], [f], [f]
 	// xyz_3d - [-1,1], [-1,1], [-1,1]
@@ -60,21 +61,22 @@ int	process_cylinder(t_list *current)
 {
 	int	status;
 
+	status = E_SUCCESS;
 	status = process_xyz(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	status = process_xyz_3d(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	status = process_cd(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	status = process_ch(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	status = process_rgb(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	return (status);
 }
 	// xyz - [f], [f], [f]
@@ -84,7 +86,8 @@ int	process_cylinder(t_list *current)
 int	process_plane(t_list *current)
 {
 	int	status;
-
+	
+	status = E_SUCCESS;
 	status = process_xyz(current);
 	if (!status)
 		status = process_xyz_3d(current);
@@ -100,17 +103,17 @@ int	process_light(t_list *current)
 {
 	int	status;
 
-	status = 0;
+	status = E_SUCCESS;
 	status = process_xyz(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	status = process_ratio(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	status = process_rgb(current);
-	if (status != E_SUCCESS)
-		return (ret_error(status, current));
+	if (status)
+		return (status);
 	if (current->p[0] != '\0' && current->p[0] != '\n')
-		return (ret_error(E_EXTRA_CHARS, current));
-	return (E_SUCCESS);
+		return (E_EXTRA_CHARS);
+	return (status);
 }
