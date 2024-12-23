@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 13:58:50 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 15:33:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	main(int argc, char **argv)
 	status = import(argc, argv, &data);
 	printf("status: %d\n", status);
 	if (status)
-		return(ret_error(status, &data));
+		return(free_printerr_return(status, &data));
 	data.mlx = mlx_init(WINSIZE, WINSIZE, "minirt", true);
 	if (!(data.mlx))
 		return (free(data.scene.shapes), E_ERROR);//?!
@@ -34,5 +34,5 @@ int	main(int argc, char **argv)
 	mlx_resize_hook(data.mlx, &resizer, &data);
 	mlx_loop(data.mlx);
 	mlx_terminate(data.mlx);
-	return(ret_error(status, &data));
+	return(free_printerr_return(status, &data));
 }

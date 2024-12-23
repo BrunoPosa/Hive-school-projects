@@ -324,7 +324,7 @@ t_cam	move_element_into_scene(t_list *current);
 float	calculate_focal_len(unsigned int fov);
 
 // E_ERRORS
-int	ret_error(t_error error, t_rt *data);
+int	free_printerr_return(t_error error, t_rt *data);
 
 /// free all the memory allocated for the rt struct
 void	free_rt(t_scene *rt);
