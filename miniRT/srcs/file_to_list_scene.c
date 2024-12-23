@@ -12,7 +12,7 @@
 
 #include "../inc/file_to_list.h"
 
-int	allocate_scene_arrays(t_scene *scene)
+int	allocate_shape_array(t_scene *scene)
 {
 	scene->shape_count = scene->n_sphere + scene->n_plane + scene->n_cylinder;
 	if (scene->shape_count > 0)

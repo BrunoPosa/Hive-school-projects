@@ -12,8 +12,6 @@
 
 #include "../inc/file_to_list.h"
 
-	// alr - 0.0 - 1.0
-	// rgb - [0-255], [0-255], [0-255]
 int	process_ambiant(t_list *current)
 {
 	int	status;
@@ -29,14 +27,10 @@ int	process_ambiant(t_list *current)
 	return (status);
 }
 
-	// xyz - [f], [f], [f]
-	// xyz_3d - [-1,1], [-1,1], [-1,1]
-	// fov - [0-180]
 int	process_camera(t_list *current)
 {
 	int	status;
 
-	status = E_SUCCESS;
 	status = process_xyz(current);
 	if (status)
 		return (status);
@@ -55,7 +49,6 @@ int	process_camera(t_list *current)
 	// cd - [f]
 	// ch - [f]
 	// rgb - [0-255], [0-255], [0-255]
-
 int	process_cylinder(t_list *current)
 {
 	int	status;
@@ -78,15 +71,11 @@ int	process_cylinder(t_list *current)
 		return (status);
 	return (status);
 }
-	// xyz - [f], [f], [f]
-	// xyz_3d - [-1,1], [-1,1], [-1,1]
-	// rgb - [0-255], [0-255], [0-255]
 
 int	process_plane(t_list *current)
 {
 	int	status;
 	
-	status = E_SUCCESS;
 	status = process_xyz(current);
 	if (status)
 		return (status);
@@ -99,14 +88,10 @@ int	process_plane(t_list *current)
 	return (status);
 }
 
-	// xyz - [f], [f], [f]
-	// lbr - [0-1]
-	// rgb - [0-255], [0-255], [0-255]
 int	process_light(t_list *current)
 {
 	int	status;
 
-	status = E_SUCCESS;
 	status = process_xyz(current);
 	if (status)
 		return (status);

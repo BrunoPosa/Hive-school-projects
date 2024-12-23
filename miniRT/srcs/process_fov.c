@@ -12,29 +12,26 @@
 
 #include "../inc/file_to_list.h"
 
-/*
-// fov - [0-180]
-int
-*/
-
 int	process_fov(t_list *current)
 {
-	int		i;
+	int		len;
 	int		atoi_overflow;
 	char	*sub_string;
 
+	len = len_until_space(current->p);
 	atoi_overflow = 0;
-	i = len_until_space(current->p);
-	sub_string = ft_substr(current->p, 0, i);
-	if (sub_string == NULL)
+	sub_string = ft_substr(current->p, 0, len);
+	if (!sub_string)
 		return (E_MALLOC);
 	if (!only_legal_chars(sub_string, LEGAL_CHARS6))
-		return (free(sub_string), E_UINT_CHARS);
+	{
+		free(sub_string);
+		return (E_UINT_CHARS);
+	}
 	current->fov = ft_atoi(sub_string, &atoi_overflow);
-	if (atoi_overflow || current->fov > 180)
-		return (free(sub_string), E_FOV_RANGE);
-	current->p = current->p + i;
-	current->p = skip_space(current->p);
 	free(sub_string);
+	if (atoi_overflow || current->fov > 180)
+		return (E_FOV_RANGE);
+	current->p = skip_space(current->p + len);
 	return (E_SUCCESS);
 }

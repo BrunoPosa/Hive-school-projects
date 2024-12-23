@@ -38,8 +38,8 @@ int	process_nodes(t_list **l)
 	t_list	*current;
 	int		status;
 
-	status = 0;
 	current = *l;
+	status = 0;
 	while (current)
 	{
 		status = process_node(current);

@@ -298,7 +298,7 @@ int		does_file_end_with_rt(char *filename);
 
 t_cam	move_cam_into_scene(t_list *current);
 void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type);
-int	allocate_scene_arrays(t_scene *scene);
+int		allocate_shape_array(t_scene *scene);
 
 // 	PROCESS NODES
 int		process_nodes(t_list **l);

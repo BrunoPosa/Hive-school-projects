@@ -49,8 +49,11 @@ int	populate_scene(t_list **l, t_scene *scene)
 	t_list		*current;
 
 	current = *l;
-	if (allocate_scene_arrays(scene) != E_SUCCESS)
+	if (allocate_shape_array(scene))
 		return (E_MALLOC);
+	scene->window.w = WINSIZE;
+	scene->window.h = WINSIZE;
+	scene->aspect_r = scene->window.w / scene->window.h;
 	move_shapes_into_scene(l, scene, sphere);
 	move_shapes_into_scene(l, scene, plane);
 	move_shapes_into_scene(l, scene, cylinder);
@@ -93,9 +96,6 @@ int	import(int argc, char **argv, t_scene *scene)
 // start of old code
 	if (check_count_of_types(&l, scene))
 		return (E_OBJECT_COUNT);
-	scene->window.w = WINSIZE;
-	scene->window.h = WINSIZE;
-	scene->aspect_r = scene->window.w / scene->window.h;
 	if (populate_scene(&l, scene))
 		return (E_MALLOC);
 // end of old code

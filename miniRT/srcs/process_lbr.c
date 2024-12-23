@@ -12,25 +12,23 @@
 
 #include "../inc/file_to_list.h"
 
-// needs to be between 0.0. and 1.0
 int	process_lbr(t_list *current)
 {
-	int		i;
+	int		len;
 	int		atoi_overflow;
 	char	*sub_string;
 
-	i = len_until_space(current->p);
+	len = len_until_space(current->p);
 	atoi_overflow = 0;
-	sub_string = ft_substr(current->p, 0, i);
-	if (sub_string == NULL)
+	sub_string = ft_substr(current->p, 0, len);
+	if (!sub_string)
 		return (E_MALLOC);
 	if (!only_legal_chars(sub_string, LEGAL_CHARS4) || !is_n_valid(sub_string))
-		return (free(sub_string), E_ALR_CHARS);
-	current->lbr = ft_atod(current->p, &atoi_overflow);
-	if (current->lbr < 0 || current->lbr > 1 || atoi_overflow)
-		return (free(sub_string), E_ALR_RANGE);
-	current->p = current->p + i;
-	current->p = skip_space(current->p);
+		return (free_return(sub_string, E_ALR_CHARS));
+	current->lbr = ft_atod(sub_string, &atoi_overflow);
 	free(sub_string);
+	if (atoi_overflow || current->lbr < 0.0 || current->lbr > 1.0)
+		return (E_ALR_RANGE);
+	current->p = skip_space(current->p + len);
 	return (E_SUCCESS);
 }
