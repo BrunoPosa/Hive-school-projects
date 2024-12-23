@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 23:16:58 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 21:27:56 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 04:10:28 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,12 @@ static int	p_xyz_3d_helper2(char *sub_string)
 int	process_xyz_3d(t_list *current)
 {
 	int		i;
-	int		status;
+	// int		status;
 	char	**xyz;
 	char	*sub_string;
 	int		atoi_overflow;
 
-	status = 0;
+	// status = 0;
 
 	p_xyz_3d_helper1(&xyz, &atoi_overflow, &i, current->p);
 	sub_string = ft_substr(current->p, 0, i);

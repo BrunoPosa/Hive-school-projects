@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_alr.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 23:28:32 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 21:39:02 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 04:11:12 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	process_alr(t_list *current)
 		return (free(sub_string), E_ALR_CHARS);
 	current->alr = ft_atod(current->p, &atoi_overflow);
 	if (current->alr < 0 || current->alr > 1 || atoi_overflow)
-		return (free(sub_string), ret_error(E_ALR_RANGE, current));
+		return (free(sub_string), E_ALR_RANGE);
 	current->p = current->p + i;
 	current->p = skip_space(current->p);
 	free(sub_string);

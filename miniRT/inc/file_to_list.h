@@ -242,11 +242,12 @@ typedef struct s_scene
 	float		aspect_r;
 }	t_scene;
 
-typedef struct s_all_rt_data
+typedef struct s_rt
 {
+	t_list		*list;
+	t_scene		scene;
 	mlx_t		*mlx;
 	mlx_image_t	*img;
-	t_scene		scene;
 }	t_rt;
 
 // data struct for temporary calculation storage for the pixel to be rendered
@@ -334,7 +335,7 @@ t_cam	move_element_into_scene(t_list *current);
 float	calculate_focal_len(unsigned int fov);
 
 // E_ERRORS
-int	ret_error(t_error error, t_list *l);
+int	ret_error(t_error error, t_rt *data);
 
 /// free all the memory allocated for the rt struct
 void free_rt(t_scene *rt);

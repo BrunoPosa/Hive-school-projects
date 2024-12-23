@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_lbr.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:36:52 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 21:39:39 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 04:12:41 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@ int	process_lbr(t_list *current)
 	atoi_overflow = 0;
 	sub_string = ft_substr(current->p, 0, i);
 	if (sub_string == NULL)
-		return (ret_error(E_MALLOC, current));
+		return (E_MALLOC);
 	if (!only_legal_chars(sub_string, LEGAL_CHARS4) || !is_n_valid(sub_string))
-		return (free(sub_string), ret_error(E_ALR_CHARS, current));
+		return (free(sub_string), E_ALR_CHARS);
 	current->lbr = ft_atod(current->p, &atoi_overflow);
 	if (current->lbr < 0 || current->lbr > 1 || atoi_overflow)
-		return (free(sub_string), ret_error(E_ALR_RANGE, current));
+		return (free(sub_string), E_ALR_RANGE);
 	current->p = current->p + i;
 	current->p = skip_space(current->p);
 	free(sub_string);

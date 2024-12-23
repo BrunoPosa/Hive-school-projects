@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_elements2.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:45:53 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/21 21:53:29 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 04:15:46 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,15 @@
 // sd - [f]
 // rgb - [0-255], [0-255], [0-255]
 
+
 int	process_sphere(t_list *current)
 {
-	if (process_xyz(current) != E_SUCCESS)
-		return (ret_error(E_XYZ_CHARS, current));
-	if (process_sd(current) != E_SUCCESS)
-		return (ret_error(E_SPHERE_SD, current));
-	if (process_rgb(current) != E_SUCCESS)
-		return (ret_error(E_RGB_CHARS, current));
+	// these return values don't make sence - they should be the return of the other function?
+	if (process_xyz(current))
+		return (E_XYZ_CHARS);
+	if (process_sd(current))
+		return (E_SPHERE_SD);
+	if (process_rgb(current))
+		return (69);
 	return (E_SUCCESS);
 }

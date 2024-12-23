@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_xyz.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:27:10 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/21 22:46:03 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 04:19:58 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,18 +42,18 @@ int	process_xyz(t_list *current)
 	xyz = NULL;
 	sub_string = ft_substr(current->p, 0, i);
 	if (!only_legal_chars(sub_string, LEGAL_CHARS3))
-		return (free(sub_string), ret_error(E_XYZ_CHARS, current));
+		return (free(sub_string), E_XYZ_CHARS);
 	if (count_commas_between(sub_string) != 2)
-		return (free(sub_string), ret_error(E_XYZ_COMMA, current));
+		return (free(sub_string), E_XYZ_COMMA);
 	xyz = ft_split(sub_string, ',');
 	if (!xyz)
-		return (free(sub_string), ret_error(E_SPLIT, current));
+		return (free(sub_string), E_SPLIT);
 	if (!is_n_valid(xyz[0]) || !is_n_valid(xyz[1]) || !is_n_valid(xyz[2]))
-		return (free(sub_string), ret_error(E_XYZ_CHARS, current));
+		return (free(sub_string), E_XYZ_CHARS);
 	process_xyz_helper2(current, xyz, &atoi_overflow);
 	free_array(xyz);
 	if (atoi_overflow)
-		return (free(sub_string), ret_error(E_XYZ_RANGE, current));
+		return (free(sub_string), E_XYZ_RANGE);
 	current->p = current->p + i;
 	current->p = skip_space(current->p);
 	free(sub_string);

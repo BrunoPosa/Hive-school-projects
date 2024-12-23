@@ -6,37 +6,33 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 17:13:11 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 04:00:20 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
-/*
-These are the same:
-
-	if (import(argc, argv, &all.scene) != E_SUCCESS)
-	if (import(argc, argv, &all.scene) != 0)
-
-	while (*s)
-	
-	if (import(argc, argv, &all.scene))
-		return (abna)
-
-*/
-
 int	main(int argc, char **argv)
 {
+// usually these are called data?
 	t_rt		all;
+	// we need to be putting the list into the r_rt
+	// so that we can pass it to the error exit function
 int status = 0;
 
 	ft_memset(&all, 0, sizeof(t_rt));
+
+// this should pass in 'all' or 'data', and then only access what it needs from within the functions
 	status = import(argc, argv, &all.scene);
+	
 	printf("status: %d\n", status);
+	
 	if (status)
+		ret_error(status, &all);
+		
 // this is freeing only the shapes, what about the rest of r_rt?
 		// return( status, t_rt)
-		return (free(all.scene.shapes), E_ERROR);//what if import fails bc of malloc fail!
+		// return (free(all.scene.shapes), E_ERROR);//what if import fails bc of malloc fail!
 
 // put in the fucntion that checks the return value of the inmort and frees if there is problem
 // ret error?
@@ -54,4 +50,5 @@ int status = 0;
 	mlx_loop(all.mlx);
 	mlx_terminate(all.mlx);
 	return (free(all.scene.shapes), E_SUCCESS);//!
+	// return(ret_error(status, &all));
 }

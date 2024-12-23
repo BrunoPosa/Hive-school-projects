@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:27:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/09 20:28:00 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 04:13:11 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	process_cd(t_list *current)
 	i = len_until_space(current->p);
 	sub_string = ft_substr(current->p, 0, i);
 	if (!only_legal_chars(sub_string, LEGAL_CHARS3))
-		return (ret_error(E_FLOAT_CHARS, current));
+		return (E_FLOAT_CHARS);
 	current->d = ft_atod(sub_string, &atoi_overflow);
 	current->p = current->p + i;
 	current->p = skip_space(current->p);
