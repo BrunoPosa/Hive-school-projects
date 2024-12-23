@@ -6,15 +6,15 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/23 12:32:08 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 17:18:55 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
 /*
-	Cdataed by mlx_resize_hook, adjusts mlx img and variables with new dimensions.
-	Closes window on error.
+	Called by mlx_resize_hook, adjusts mlx img and variables with new dimensions.
+	Closes window and sets data->errcode to t_error 'E_MLX_RESIZE' on error.
 */
 void	resizer(int32_t width, int32_t height, void* param)
 {
@@ -30,8 +30,8 @@ void	resizer(int32_t width, int32_t height, void* param)
 	data->scene.aspect_r = (float)width / (float)height;
 	if (!mlx_resize_image(data->img, width, height))
 	{
-		printf("resizing error!\n");
-		mlx_close_window(data->mlx);//?
+		data->errcode = E_MLX_RESIZE;
+		mlx_close_window(data->mlx);
 		return ;
 	}
 	render_image(&data->scene, data->img);

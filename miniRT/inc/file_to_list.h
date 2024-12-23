@@ -120,7 +120,10 @@ typedef enum e_error
 	E_SPHERE_SD,
 	E_CYLINDER_CD,
 	E_CYLINDER_CH,
-	E_N_OF_TYPES
+	E_N_OF_TYPES,
+	E_MLX_INIT,
+	E_MLX_IMG,
+	E_MLX_RESIZE
 }			t_error;
 // #endif
 
@@ -250,6 +253,7 @@ typedef struct s_rt
 	t_scene		scene;
 	mlx_t		*mlx;
 	mlx_image_t	*img;
+	t_error		errcode;
 }	t_rt;
 
 // Linked list functions
@@ -324,7 +328,7 @@ t_cam	move_element_into_scene(t_list *current);
 float	calculate_focal_len(unsigned int fov);
 
 // E_ERRORS
-int	free_printerr_return(t_error error, t_rt *data);
+int	clean_return(t_error error, t_rt *data);
 
 /// free all the memory allocated for the rt struct
 void	free_rt(t_scene *rt);

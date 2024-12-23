@@ -33,7 +33,6 @@ void	esc_keyhook(mlx_key_data_t keydata, void *param)
 		return ;
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
 		mlx_close_window(data->mlx);
-	// (void)param;
 }
 
 float	calculate_focal_len(unsigned int fov)

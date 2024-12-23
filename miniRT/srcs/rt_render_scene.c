@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/23 12:32:55 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 17:30:02 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,15 +289,22 @@ int trace(t_scene *scene, t_vec ray)
 
 	ft_memset(&rayd, 0, sizeof(t_raydata));
 	if (!closest_shape_hit(scene, ray, &rayd))
+	{
+		rayd.shape = NULL;
 		return(to_uint32(scene->ambiant));
+	}
 	rayd.hitp = add(scene->cam.eye, scale(ray, rayd.hitmin));
 	rayd.shadow_ray = normalize(subtract(scene->lightxyz, rayd.hitp));
 	rayd.base_color = hadamard_product(rayd.shape->rgb, scene->ambiant);
 	if (in_shadow(scene, &rayd))
-		return(to_uint32( rayd.base_color));
+	{
+		rayd.shape = NULL;
+		return(to_uint32(rayd.base_color));
+	}
 	rayd.normal = surface_normal(scene, rayd.shape, &rayd);
 	rayd.diffuse_part = calc_diffuse_part(scene, rayd.shape, &rayd);
-	return (to_uint32(add_colours( rayd.base_color, rayd.diffuse_part)));
+	rayd.shape = NULL;
+	return (to_uint32(add_colours(rayd.base_color, rayd.diffuse_part)));
 }
 
 /*

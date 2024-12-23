@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 15:13:00 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 17:21:14 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,21 @@ static char	*ft_strerror(t_error error)
 /*
 	frees what still exists, prints error message if error != 0, returns 'error'.
 */
-int	free_printerr_return(t_error error, t_rt *data)
+int	clean_return(t_error error, t_rt *data)
 {
 	if (data->l)
 		ft_lstclear(&data->l, free);
 	if (data->scene.shapes)
 		free (data->scene.shapes);
-	// printf("%s==== Hold your horses! VALIDATION FAILED ====%s\nerrno: %u\n", YELLOW, ENDCLR, error);
+	if (data->mlx)
+		mlx_terminate(data->mlx);
+	data->l = NULL;
+	data->scene.shapes = NULL;
 	if (error)
+	{
+		write(2, "Error\n", 6);
 		write(2, ft_strerror(error), ft_strlen(ft_strerror(error)));
+	// printf("%s==== Hold your horses! VALIDATION FAILED ====%s\nerrno: %u\n", YELLOW, ENDCLR, error);
+	}
 	return (error);
 }
