@@ -12,20 +12,17 @@
 
 #include "../inc/file_to_list.h"
 
+//updated to return error codes
 int	process_list(t_list **l)
 {
-	int	status;
-
-	status = list_legality_check(l, LEGAL_CHARS1);
+	if (list_legality_check(l, LEGAL_CHARS1))
+		return (E_ILLEGAL_CHARS1);
 	move_pointers_to_args(l);
-	status = assign_node_type(l);
-	if (status)
-		return (status);
-	status = list_legality_check(l, LEGAL_CHARS2);
-	if (status)
-		return (status);
-	status = process_nodes(l);
-	return (status);
+	if (assign_node_type(l))
+		return (E_WRONG_TYPE);
+	if (list_legality_check(l, LEGAL_CHARS2))
+		return (E_ILLEGAL_CHARS2);
+	return (process_nodes(l));
 }
 
 void	move_pointers_to_args(t_list **l)

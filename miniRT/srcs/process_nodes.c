@@ -30,7 +30,6 @@ int	process_node(t_list *current)
 		return (process_cylinder(current));
 	else
 		return (E_PROCESS_NODE);
-	return (E_SUCCESS);
 }
 
 int	process_nodes(t_list **l)

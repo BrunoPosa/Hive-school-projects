@@ -61,8 +61,7 @@ int	process_cylinder(t_list *current)
 	status = process_ch(current);
 	if (status)
 		return (status);
-	status = process_rgb(current);
-	return (status);
+	return (process_rgb(current));
 }
 
 int	process_plane(t_list *current)
@@ -75,10 +74,7 @@ int	process_plane(t_list *current)
 	status = process_xyz_3d(current);
 	if (status)
 		return (status);
-	status = process_rgb(current);
-	if (status)
-		return (status);
-	return (status);
+	return (process_rgb(current));
 }
 
 int	process_light(t_list *current)
