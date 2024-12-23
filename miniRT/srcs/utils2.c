@@ -6,35 +6,35 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/22 13:40:31 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 12:32:08 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
 /*
-	Called by mlx_resize_hook, adjusts mlx img and variables with new dimensions.
+	Cdataed by mlx_resize_hook, adjusts mlx img and variables with new dimensions.
 	Closes window on error.
 */
 void	resizer(int32_t width, int32_t height, void* param)
 {
-	t_rt		*all;
+	t_rt		*data;
 
-	all = param;
+	data = param;
 	if (!param || width <= 0 || height <= 0)
 		return ;
-	all->mlx->width = width;
-	all->mlx->height = height;
-	all->scene.window.w = width;
-	all->scene.window.h = height;
-	all->scene.aspect_r = (float)width / (float)height;
-	if (!mlx_resize_image(all->img, width, height))
+	data->mlx->width = width;
+	data->mlx->height = height;
+	data->scene.window.w = width;
+	data->scene.window.h = height;
+	data->scene.aspect_r = (float)width / (float)height;
+	if (!mlx_resize_image(data->img, width, height))
 	{
 		printf("resizing error!\n");
-		mlx_close_window(all->mlx);//?
+		mlx_close_window(data->mlx);//?
 		return ;
 	}
-	render_image(&all->scene, all->img);
+	render_image(&data->scene, data->img);
 }
 
 /*

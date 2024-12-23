@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/22 22:50:39 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 12:32:55 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ bool	is_point_inside_cyl(t_vec point, t_shape *cyl)
 /*
 	returns normalized surface normal of cylinder
 */
-t_vec	cyl_normal(t_data *raydata, t_shape *cyl)
+t_vec	cyl_normal(t_raydata *rayd, t_shape *cyl)
 {
 	t_vec	base_to_hitp;
 	t_vec	projection;
@@ -151,18 +151,18 @@ t_vec	cyl_normal(t_data *raydata, t_shape *cyl)
 		return (cyl->axis);
 	else if (cyl->part_hit == bottom)
 		return (negate(cyl->axis));
-	base_to_hitp = subtract(raydata->hitp, cyl->xyz);
+	base_to_hitp = subtract(rayd->hitp, cyl->xyz);
 	projection_len = dot(base_to_hitp, cyl->axis);
 	projection = scale(cyl->axis, projection_len);
-	return (normalize(subtract(raydata->hitp, add(cyl->xyz, projection))));
+	return (normalize(subtract(rayd->hitp, add(cyl->xyz, projection))));
 }
 
-bool	is_backlit(t_scene *scene, t_shape *plane, t_data *raydata)
+bool	is_backlit(t_scene *scene, t_shape *plane, t_raydata *rayd)
 {
-	if ((dot(plane->axis, raydata->shadow_ray) < 0 &&
-		dot(plane->axis, subtract(scene->cam.eye, raydata->hitp)) > 0) ||
-		(dot(plane->axis, raydata->shadow_ray) > 0 &&
-		dot(plane->axis, subtract(scene->cam.eye, raydata->hitp)) < 0))
+	if ((dot(plane->axis, rayd->shadow_ray) < 0 &&
+		dot(plane->axis, subtract(scene->cam.eye, rayd->hitp)) > 0) ||
+		(dot(plane->axis, rayd->shadow_ray) > 0 &&
+		dot(plane->axis, subtract(scene->cam.eye, rayd->hitp)) < 0))
 		return (TRUE);
 	return (FALSE);
 }
@@ -173,7 +173,7 @@ bool	is_backlit(t_scene *scene, t_shape *plane, t_data *raydata)
 	Returns black (no contribution) if light and surface normal angle >= 90 deg,
 	and in special case when camera is in/below a shape and the light is outside.
 */
-t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_data *raydata)
+t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_raydata *rayd)
 {
 	t_colour	color;
 	float		diffuse_amount;
@@ -183,12 +183,12 @@ t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_data *raydata)
 	diffuse_amount = 0.0;
 	light_distance = magnitude(subtract(scene->lightxyz, shape->xyz));
 	if ((shape->type == sphere && shape->inside && light_distance > shape->r) ||
-		(shape->type == plane && is_backlit(scene, shape, raydata) == TRUE) ||
+		(shape->type == plane && is_backlit(scene, shape, rayd) == TRUE) ||
 		(shape->type == cylinder && shape->inside &&
 		is_point_inside_cyl(scene->lightxyz, shape) == FALSE))
 		return black();
 	color = scale_colour(shape->rgb, scene->lbr);
-	diffuse_amount = dot(raydata->normal, raydata->shadow_ray);
+	diffuse_amount = dot(rayd->normal, rayd->shadow_ray);
 	if (diffuse_amount < 0 && shape->type != plane)
 		return (black());
 	else
@@ -196,27 +196,27 @@ t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_data *raydata)
 	return (scale_colour(color, diffuse_amount));
 }
 
-t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *raydata)
+t_vec	surface_normal(t_scene *scene, t_shape *shape, t_raydata *rayd)
 {
 	if (shape->type == plane)
 		return (shape->axis);
 	else if (shape->type == sphere && shape->inside == TRUE)
-		return (negate(normalize(subtract(raydata->hitp, shape->xyz))));
+		return (negate(normalize(subtract(rayd->hitp, shape->xyz))));
 	else if (shape->type == sphere && shape->inside == FALSE)
-		return (normalize(subtract(raydata->hitp, shape->xyz)));
+		return (normalize(subtract(rayd->hitp, shape->xyz)));
 	else
 	{
 		if (is_point_inside_cyl(scene->cam.eye, shape) == TRUE)
 		{
 			shape->inside = TRUE;
-			return (negate(cyl_normal(raydata, raydata->shape)));
+			return (negate(cyl_normal(rayd, rayd->shape)));
 		}
 		else
-			return (cyl_normal(raydata, raydata->shape));
+			return (cyl_normal(rayd, rayd->shape));
 	}
 }
 
-bool	in_shadow(t_scene *scene, t_data *raydata)
+bool	in_shadow(t_scene *scene, t_raydata *rayd)
 {
 	int			i;
 	float		hit;
@@ -225,13 +225,13 @@ bool	in_shadow(t_scene *scene, t_data *raydata)
 
 	i = 0;
 	hit = 0.0;
-	light_distance = magnitude(subtract(scene->lightxyz, raydata->hitp));
+	light_distance = magnitude(subtract(scene->lightxyz, rayd->hitp));
 	distance = light_distance;
 	while (i < scene->shape_count)
 	{
-		if (raydata->shape != &scene->shapes[i])//should we be avoiding self comparisons
+		if (rayd->shape != &scene->shapes[i])//should we be avoiding self comparisons
 		{
-			hit = intersect_all(raydata->shadow_ray, raydata->hitp, &scene->shapes[i]);
+			hit = intersect_all(rayd->shadow_ray, rayd->hitp, &scene->shapes[i]);
 			if (hit > EPSILON && hit < distance)
 				distance = hit;
 		}
@@ -254,28 +254,28 @@ float	intersect_all(t_vec ray, t_vec origin, t_shape *shape)
 }
 
 /*
-	returns 1 if ray hits a shape, sets raydata's hitmin (min hit distance)
+	returns 1 if ray hits a shape, sets rayd's hitmin (min hit distance)
 	and shape pointer to the closest shape. If no shapes intersected, returns 0
 */
-bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *raydata)
+bool	closest_shape_hit(t_scene *scene, t_vec ray, t_raydata *rayd)
 {
 	float	hit;
 	int		i;
 
 	hit = 0.0f;
 	i = 0;
-	raydata->hitmin = INFINITY;
+	rayd->hitmin = INFINITY;
 	while (i < scene->shape_count)
 	{
 		hit = intersect_all(ray, scene->cam.eye, &scene->shapes[i]);
-		if (hit >= EPSILON && hit < raydata->hitmin)
+		if (hit >= EPSILON && hit < rayd->hitmin)
 		{
-			raydata->hitmin = hit;
-			raydata->shape = &scene->shapes[i];
+			rayd->hitmin = hit;
+			rayd->shape = &scene->shapes[i];
 		}
 		i++;
 	}
-	if (raydata->hitmin < INFINITY)
+	if (rayd->hitmin < INFINITY)
 		return (1);
 	return (0);
 }
@@ -285,19 +285,19 @@ bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *raydata)
 */
 int trace(t_scene *scene, t_vec ray)
 {
-	t_data	raydata;
+	t_raydata	rayd;
 
-	ft_memset(&raydata, 0, sizeof(t_data));
-	if (!closest_shape_hit(scene, ray, &raydata))
+	ft_memset(&rayd, 0, sizeof(t_raydata));
+	if (!closest_shape_hit(scene, ray, &rayd))
 		return(to_uint32(scene->ambiant));
-	raydata.hitp = add(scene->cam.eye, scale(ray, raydata.hitmin));
-	raydata.shadow_ray = normalize(subtract(scene->lightxyz, raydata.hitp));
-	raydata.base_color = hadamard_product(raydata.shape->rgb, scene->ambiant);
-	if (in_shadow(scene, &raydata))
-		return(to_uint32(raydata.base_color));
-	raydata.normal = surface_normal(scene, raydata.shape, &raydata);
-	raydata.diffuse_part = calc_diffuse_part(scene, raydata.shape, &raydata);
-	return (to_uint32(add_colours(raydata.base_color, raydata.diffuse_part)));
+	rayd.hitp = add(scene->cam.eye, scale(ray, rayd.hitmin));
+	rayd.shadow_ray = normalize(subtract(scene->lightxyz, rayd.hitp));
+	rayd.base_color = hadamard_product(rayd.shape->rgb, scene->ambiant);
+	if (in_shadow(scene, &rayd))
+		return(to_uint32( rayd.base_color));
+	rayd.normal = surface_normal(scene, rayd.shape, &rayd);
+	rayd.diffuse_part = calc_diffuse_part(scene, rayd.shape, &rayd);
+	return (to_uint32(add_colours( rayd.base_color, rayd.diffuse_part)));
 }
 
 /*

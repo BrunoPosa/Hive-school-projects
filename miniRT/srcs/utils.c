@@ -26,14 +26,14 @@ int	does_file_end_with_rt(char *filename)
 
 void	esc_keyhook(mlx_key_data_t keydata, void *param)
 {
-	t_rt	*all;
+	t_rt	*data;
 
-	all = param;
-	if (!param || !all->mlx)
+	data = param;
+	if (!param || !data->mlx)
 		return ;
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-		mlx_close_window(all->mlx);
-	(void)param;
+		mlx_close_window(data->mlx);
+	// (void)param;
 }
 
 float	calculate_focal_len(unsigned int fov)

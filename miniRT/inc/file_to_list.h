@@ -214,7 +214,7 @@ typedef struct s_camera
 }	t_cam;
 
 // temp data for rays, shouldn't need free'd
-typedef struct	s_data
+typedef struct	s_raydata
 {
 	t_shape		*shape;
 	t_vec		hitp;
@@ -223,7 +223,7 @@ typedef struct	s_data
 	t_colour	base_color;
 	t_colour	diffuse_part;
 	float		hitmin;
-} t_data;
+} t_raydata;
 
 // general program info
 typedef struct s_scene
@@ -251,19 +251,6 @@ typedef struct s_rt
 	mlx_t		*mlx;
 	mlx_image_t	*img;
 }	t_rt;
-
-// data struct for temporary calculation storage for the pixel to be rendered
-// typedef struct s_renderdata
-// {
-// 	// t_vec	color;
-// 	int		rgba;
-// 	int		x;
-// 	int		y;
-// 	// t_vec	px_center;
-// 	// t_vec	ray_direction;
-// 	// t_ray	ray;
-// }	t_data;
-
 
 // Linked list functions
 void ft_lstadd_back(t_list **lst, t_list *new);
@@ -342,7 +329,7 @@ int	ret_error(t_error error, t_rt *data);
 /// free all the memory allocated for the rt struct
 void	free_rt(t_scene *rt);
 void	free_array(char **s);
-void	free_data(t_data *data);
+void	free_data(t_raydata *data);
 int		free_return(void *ptr, t_error error);
 int		free_arr_return(char **s, int error);
 
@@ -358,7 +345,7 @@ void	resizer(int32_t width, int32_t height, void* param);
 void	render_image(t_scene *scene, mlx_image_t *img);
 int		trace(t_scene *scene, t_vec ray);
 t_vec 	viewplane_offsets(t_scene *scene, t_vec eye);
-bool	closest_shape_hit(t_scene *scene, t_vec ray, t_data *raydata);
+bool	closest_shape_hit(t_scene *scene, t_vec ray, t_raydata *rayd);
 float	intersect_all(t_vec ray, t_vec origin, t_shape *shape);
 float	fsphere(t_vec ray, t_vec origin, t_shape *sphere);
 float	fplane(t_vec ray, t_vec origin, t_shape *plane);
@@ -367,11 +354,11 @@ float	intersect_cyl_caps(t_vec ray, t_vec origin, t_shape *cyl);
 bool	is_point_inside_cyl(t_vec origin, t_shape *cyl);
 float	cyl_height_check(t_vec ray, t_vec origin, float t, t_shape *cyl);
 float	cyl_radius_check(t_vec ray, t_vec origin, float t, t_shape *cap);
-t_vec	cyl_normal(t_data *raydata, t_shape *cyl);
-t_vec	surface_normal(t_scene *scene, t_shape *shape, t_data *raydata);
-t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_data *raydata);
-bool	is_backlit(t_scene *scene, t_shape *plane, t_data *raydata);
-bool	in_shadow(t_scene *scene, t_data *raydata);
+t_vec	cyl_normal(t_raydata *rayd, t_shape *cyl);
+t_vec	surface_normal(t_scene *scene, t_shape *shape, t_raydata *rayd);
+t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_raydata *rayd);
+bool	is_backlit(t_scene *scene, t_shape *plane, t_raydata *rayd);
+bool	in_shadow(t_scene *scene, t_raydata *rayd);
 
 /*         T U P L E S         */
 
