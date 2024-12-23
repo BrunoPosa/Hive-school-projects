@@ -110,6 +110,7 @@ typedef enum e_error
 	E_RGB_RANGE,
 	E_XYZ_3D_CHARS,
 	E_XYZ_3D_COMMA,
+	E_XYZ_3D_NORMALIZE,
 	E_SPLIT,
 	E_MALLOC,
 	E_WRONG_TYPE,
@@ -338,8 +339,11 @@ float	calculate_focal_len(unsigned int fov);
 int	ret_error(t_error error, t_rt *data);
 
 /// free all the memory allocated for the rt struct
-void free_rt(t_scene *rt);
+void	free_rt(t_scene *rt);
 void	free_array(char **s);
+void	free_data(t_data *data);
+int		free_return(void *ptr, t_error error);
+int		free_arr_return(char **s, int error);
 
 
 
@@ -404,9 +408,5 @@ void	ft_vec_print(t_vec t);
 void	ft_colour_printer(t_colour c);
 void	print_y(char *s);
 void 	ft_scene_print(t_scene *scene);
-
-
-// C L E A N U P
-void free_data(t_data *data);
 
 #endif

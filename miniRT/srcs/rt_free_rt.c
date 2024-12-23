@@ -45,3 +45,31 @@ void	free_data(t_data *data)
 // 	free_list(rt->sphere);
 // 	(rt);
 // }
+
+int	free_return(void *ptr, t_error error)
+{
+	if (ptr)
+		free(ptr);
+	return (error);
+}
+
+void	free_array(char **s)
+{
+	int	i;
+
+	i = 0;
+	if (!s)
+		return ;
+	while (s[i])
+	{
+		free(s[i]);
+		i++;
+	}
+	free(s);
+}
+
+int	free_arr_return(char **s, int error)
+{
+	free_array(s);
+	return (error);
+}
