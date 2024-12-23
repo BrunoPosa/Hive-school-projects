@@ -44,16 +44,11 @@ int	process_camera(t_list *current)
 		return (E_EXTRA_CHARS);
 	return (status);
 }
-	// xyz - [f], [f], [f]
-	// xyz_3d - [-1,1], [-1,1], [-1,1]
-	// cd - [f]
-	// ch - [f]
-	// rgb - [0-255], [0-255], [0-255]
+
 int	process_cylinder(t_list *current)
 {
 	int	status;
 
-	status = E_SUCCESS;
 	status = process_xyz(current);
 	if (status)
 		return (status);
@@ -67,8 +62,6 @@ int	process_cylinder(t_list *current)
 	if (status)
 		return (status);
 	status = process_rgb(current);
-	if (status)
-		return (status);
 	return (status);
 }
 

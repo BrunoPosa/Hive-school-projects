@@ -13,26 +13,27 @@
 #include "../inc/file_to_list.h"
 
 /*
-if it allows negative, that means it is not there
-float
+does not allow negative numbers
 
 same as sd, cd, ch
 */
-
 int	process_cd(t_list *current)
 {
-	int		i;
 	int		atoi_overflow;
+	int		len;
 	char	*sub_string;
 
 	atoi_overflow = 0;
-	i = len_until_space(current->p);
-	sub_string = ft_substr(current->p, 0, i);
-	if (!only_legal_chars(sub_string, LEGAL_CHARS3))
-		return (E_FLOAT_CHARS);
+	len = len_until_space(current->p);
+	sub_string = ft_substr(current->p, 0, len);
+	if (!sub_string)
+		return (E_MALLOC);
+	if (!only_legal_chars(sub_string, LEGAL_CHARS4))
+		return (free_return(sub_string, E_FLOAT_CHARS));
 	current->d = ft_atod(sub_string, &atoi_overflow);
-	current->p = current->p + i;
-	current->p = skip_space(current->p);
+	current->p = skip_space(current->p + len);
 	free(sub_string);
+	if (atoi_overflow || current->d <= EPSILON)
+		return (E_CYLINDER_CD);
 	return (E_SUCCESS);
 }

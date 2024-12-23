@@ -12,20 +12,16 @@
 
 #include "../inc/file_to_list.h"
 
-// ONE OF THESE HAS OPTIONAL ARGUMENTS!!!!
-// xyz - [f], [f], [f]
-// sd - [f]
-// rgb - [0-255], [0-255], [0-255]
-
-
 int	process_sphere(t_list *current)
 {
-	// these return values don't make sence - they should be the return of the other function?
-	if (process_xyz(current))
-		return (E_XYZ_CHARS);
-	if (process_sd(current))
-		return (E_SPHERE_SD);
-	if (process_rgb(current))
-		return (69);
-	return (E_SUCCESS);
+	int	status;
+
+	status = process_xyz(current);
+	if (status)
+		return (status);
+	status = process_sd(current);
+	if (status)
+		return (status);
+	status = process_rgb(current);
+	return (status);
 }
