@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 13:29:51 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 13:33:06 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ void	free_rt2(t_rt *data)
 	// 	free(data.scene);
 	// if (data.mlx)
 	// 	free(data.mlx);
+	//if (data.img)
+	//	free(data.img);
 }
 /*
 This function will free anything that exists in the struct
