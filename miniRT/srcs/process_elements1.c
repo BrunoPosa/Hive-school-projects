@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:45:38 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 22:08:37 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 19:34:41 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	process_cylinder(t_list *current)
 int	process_plane(t_list *current)
 {
 	int	status;
-	
+
 	status = process_xyz(current);
 	if (status)
 		return (status);

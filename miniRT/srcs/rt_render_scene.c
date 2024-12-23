@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt_render_scene.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/23 17:30:02 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 19:44:23 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,7 +283,7 @@ bool	closest_shape_hit(t_scene *scene, t_vec ray, t_raydata *rayd)
 /*
 	Sends ray interacting through scene, returns computed uint_32 color for pixel
 */
-int trace(t_scene *scene, t_vec ray)
+int	trace(t_scene *scene, t_vec ray)
 {
 	t_raydata	rayd;
 

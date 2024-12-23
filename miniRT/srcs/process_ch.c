@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:30:09 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 21:45:34 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 19:34:15 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	process_ch(t_list *current)
 	if (!only_legal_chars(sub_string, LEGAL_CHARS4))
 		return (free_return(sub_string, E_FLOAT_CHARS));
 	current->h = ft_atod(sub_string, &atoi_overflow);
-	current->p = skip_space(current->p  + len);
+	current->p = skip_space(current->p + len);
 	free(sub_string);
 	if (atoi_overflow || current->h <= EPSILON)
 		return (E_CYLINDER_CH);

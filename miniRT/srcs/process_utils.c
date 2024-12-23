@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:24:03 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/09 23:26:41 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 19:36:56 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,4 +108,3 @@ int	is_n_valid(char *num)
 		return (FALSE);
 	return (TRUE);
 }
-

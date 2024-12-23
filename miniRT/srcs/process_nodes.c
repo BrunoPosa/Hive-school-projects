@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:40:51 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 18:13:51 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 19:36:05 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	process_node(t_list *current)
 	else if (current->type == plane)
 		return (process_plane(current));
 	else if (current->type == sphere)
-		return(process_sphere(current));
+		return (process_sphere(current));
 	else if (current->type == cylinder)
 		return (process_cylinder(current));
 	else

@@ -3,44 +3,96 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 17:21:14 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 19:19:37 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 #include "../../libft/libft.h"
 
-
-static char	*ft_strerror(t_error error)
+static	char	*ft_strerror(t_error error)
 {
-	if (error == E_ARGS)
+	if (error == E_SUCCESS)
+		return ("Success");
+	else if (error == E_ERROR)
+		return ("General error");
+	else if (error == E_ARGS)
 		return ("Invalid arguments");
 	else if (error == E_FILE_NAME)
-		return ("file name");
+		return ("Invalid filename");
 	else if (error == E_ILLEGAL_CHARS1)
-		return ("chars 1");
+		return ("Illegal characters 1");
 	else if (error == E_ILLEGAL_CHARS2)
-		return ("chars 2");
+		return ("Illegal characters 2");
 	else if (error == E_ILLEGAL_CHARS3)
-		return ("chars 3");
+		return ("Illegal characters 3");
 	else if (error == E_ILLEGAL_CHARS4)
-		return ("chars 4");
+		return ("Illegal characters 4");
 	else if (error == E_ILLEGAL_CHARS5)
-		return ("chars 5");
+		return ("Illegal characters 5");
+	else if (error == E_PROCESS_NODE)
+		return ("Process node error");
 	else if (error == E_ALR_CHARS)
-		return ("alr chars");
+		return ("ALR character error");
 	else if (error == E_ALR_RANGE)
-		return ("alr range");
+		return ("ALR range error");
 	else if (error == E_LBR_CHARS)
-		return ("lbr chars");
+		return ("LBR character error");
 	else if (error == E_LBR_RANGE)
-		return ("lbr range");
-	else if (error)
-		return ("We need to build out the error messages");
-	return ("We need to build out the error messages");
+		return ("LBR range error");
+	else if (error == E_XYZ_CHARS)
+		return ("XYZ character error");
+	else if (error == E_XYZ_COMMA)
+		return ("XYZ comma error");
+	else if (error == E_FLOAT_CHARS)
+		return ("Float character error");
+	else if (error == E_UINT_CHARS)
+		return ("Unsigned int character error");
+	else if (error == E_FOV_RANGE)
+		return ("FOV range error");
+	else if (error == E_RGB_CHARS)
+		return ("RGB character error");
+	else if (error == E_RGB_COMMA)
+		return ("RGB comma error");
+	else if (error == E_RGB_RANGE)
+		return ("RGB range error");
+	else if (error == E_XYZ_3D_CHARS)
+		return ("XYZ 3D character error");
+	else if (error == E_XYZ_3D_COMMA)
+		return ("XYZ 3D comma error");
+	else if (error == E_XYZ_3D_NORMALIZE)
+		return ("XYZ 3D normalization error");
+	else if (error == E_SPLIT)
+		return ("Split error");
+	else if (error == E_MALLOC)
+		return ("Memory allocation error");
+	else if (error == E_WRONG_TYPE)
+		return ("Wrong data type");
+	else if (error == E_EXTRA_CHARS)
+		return ("Extra characters");
+	else if (error == E_XYZ_RANGE)
+		return ("XYZ range error");
+	else if (error == E_OBJECT_COUNT)
+		return ("Object count error");
+	else if (error == E_SPHERE_SD)
+		return ("Sphere SD error");
+	else if (error == E_CYLINDER_CD)
+		return ("Cylinder CD error");
+	else if (error == E_CYLINDER_CH)
+		return ("Cylinder CH error");
+	else if (error == E_N_OF_TYPES)
+		return ("Number of Types error");
+	else if (error == E_MLX_INIT)
+		return ("MLX initialization error");
+	else if (error == E_MLX_IMG)
+		return ("MLX image error");
+	else if (error == E_MLX_RESIZE)
+		return ("MLX resize error");
+	else
+		return ("Unknown error");
 }
 
 /*
@@ -60,7 +112,6 @@ int	clean_return(t_error error, t_rt *data)
 	{
 		write(2, "Error\n", 6);
 		write(2, ft_strerror(error), ft_strlen(ft_strerror(error)));
-	// printf("%s==== Hold your horses! VALIDATION FAILED ====%s\nerrno: %u\n", YELLOW, ENDCLR, error);
 	}
 	return (error);
 }

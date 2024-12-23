@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_list.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:39:21 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 13:28:12 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 19:35:40 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 int	process_list(t_list **l)
 {
 	if (list_legality_check(l, LEGAL_CHARS1))
-		return (E_ILLEGAL_CHARS1);	
+		return (E_ILLEGAL_CHARS1);
 	move_pointers_to_args(l);
 	if (assign_node_type(l))
 		return (E_WRONG_TYPE);

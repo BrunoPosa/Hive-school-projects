@@ -15,9 +15,10 @@ SRCS 		=	main.c \
 				file_to_list.c \
 				file_to_list_scene.c \
 				printer.c \
-				linked_list.c \
+				linked_list1.c \
+				linked_list2.c \
 				process_list.c \
-				utils.c \
+				utils1.c \
 				utils2.c \
 				error.c \
 				assign_node_type.c \
@@ -38,8 +39,10 @@ SRCS 		=	main.c \
 				process_fov.c \
 				rt_render_scene.c \
 				rt_create.c \
-				rt_colours.c \
-				rt_tuples.c \
+				rt_colours1.c \
+				rt_colours2.c \
+				rt_tuples1.c \
+				rt_tuples2.c \
 				rt_free_rt.c \
 
 # rt_init_camera.c \

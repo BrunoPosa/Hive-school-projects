@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_to_list.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 15:16:23 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 19:22:49 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@ int	file_to_list(char *filename, t_list **l)
 
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
-		return(E_OPEN_CLOSE_ERROR);
+		return (E_OPEN_CLOSE_ERROR);
 	line = get_next_line(fd);
 	while (line)
 	{
-		if ((line[0] == '\n' || line[0] == '\0'|| line[0] == '#')) // && ft_strlen(line) == 1)
+		if ((line[0] == '\n' || line[0] == '\0' || line[0] == '#'))
 		{
 			free(line);
 			line = get_next_line(fd);
@@ -83,8 +83,8 @@ int	import(int argc, char **argv, t_rt *data)
 	if (!does_file_end_with_rt(argv[1]))
 		return (E_FILE_NAME);
 	status = file_to_list(argv[1], &data->l);
-	if (status) 
-		return (status);	
+	if (status)
+		return (status);
 	status = process_list(&data->l);
 	if (status)
 		return (status);

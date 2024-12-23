@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/23 17:18:55 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 18:27:19 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 	Called by mlx_resize_hook, adjusts mlx img and variables with new dimensions.
 	Closes window and sets data->errcode to t_error 'E_MLX_RESIZE' on error.
 */
-void	resizer(int32_t width, int32_t height, void* param)
+void	resizer(int32_t width, int32_t height, void *param)
 {
 	t_rt		*data;
 
@@ -42,7 +42,7 @@ void	resizer(int32_t width, int32_t height, void* param)
 	step/offset	vectors for x and y into scene->cam.x_step and scene->cam.y_step.
 	Viewplane is standardized to be 2.0f units on y axis (and starts as 2.0 on x)
 */
-t_vec viewplane_offsets(t_scene *scene, t_vec eye)
+t_vec	viewplane_offsets(t_scene *scene, t_vec eye)
 {
 	t_vec	forward;
 	t_vec	up;
@@ -60,8 +60,8 @@ t_vec viewplane_offsets(t_scene *scene, t_vec eye)
 	center = add(eye, scale(forward, scene->cam.foc_len));
 	half_viewplane_width = scale(right, scene->aspect_r);
 	corner = subtract(subtract(center, half_viewplane_width), up);
-	scene->cam.x_step = scale(scale(right, 2.0f / scene->window.w),
-		scene->aspect_r);
+	scene->cam.x_step = scale(scale(right, 2.0f / scene->window.w), \
+	scene->aspect_r);
 	scene->cam.y_step = scale(up, 2.0f / scene->window.h);
 	return (corner);
 }

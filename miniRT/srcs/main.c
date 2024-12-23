@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 17:17:03 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 19:31:12 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	main(int argc, char **argv)
 	data.errcode = import(argc, argv, &data);
 printf("status upon import: %d\n", data.errcode);
 	if (data.errcode)
-		return(clean_return(data.errcode, &data));
+		return (clean_return(data.errcode, &data));
 	data.mlx = mlx_init(WINSIZE, WINSIZE, "minirt", true);
 	if (!data.mlx)
 		return (clean_return(E_MLX_INIT, &data));
@@ -32,5 +32,5 @@ printf("status upon import: %d\n", data.errcode);
 	mlx_resize_hook(data.mlx, &resizer, &data);
 	mlx_loop(data.mlx);
 printf("end status: %d\n", data.errcode);
-	return(clean_return(data.errcode, &data));
+	return (clean_return(data.errcode, &data));
 }
