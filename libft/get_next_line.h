@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 19:26:54 by bposa             #+#    #+#             */
-/*   Updated: 2024/03/20 16:14:46 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 15:23:19 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #  define BUFFER_SIZE 10
 # endif
 
+# include "libft.h"
 # include <unistd.h>
 # include <stdlib.h>
 

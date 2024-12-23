@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 21:06:37 by bposa             #+#    #+#             */
-/*   Updated: 2024/10/30 15:35:58 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 15:55:33 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,14 +94,12 @@ static char	**array_filler(char const *src, char c, char **array)
 char	**ft_split(char const *s, char c)
 {
 	char	**arr;
-	// size_t	i;
 	size_t	word_count;
 
 	if (!s)
 	{
 		return (NULL);
 	}
-	// i = 0;
 	word_count = word_counter(s, c);
 	arr = malloc((word_count + 1) * sizeof(char *));
 	if (!arr)

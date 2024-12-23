@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 12:46:12 by bposa             #+#    #+#             */
-/*   Updated: 2024/10/30 15:36:28 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 15:56:31 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,9 @@
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	char	*str;
-	// size_t	i;
 	size_t	malloc_len;
 
-	// i = 0;
+	str = NULL;
 	malloc_len = 0;
 	if (!s)
 		return (NULL);

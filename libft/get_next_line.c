@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:34:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/03/20 16:27:33 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 15:53:32 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*my_strjoin(char *rvalue1, char *buffer1, size_t buffer_len)
 		rvalue1_len = my_strlen(rvalue1);
 	else
 		rvalue1_len = 0;
-	joined = malloc(sizeof(char) * (rvalue1_len + buffer_len + 1));
+	joined = ft_calloc(rvalue1_len + buffer_len + 1, sizeof(char));
 	if (!joined)
 	{
 		if (rvalue1)
@@ -60,7 +60,6 @@ char	*my_strjoin(char *rvalue1, char *buffer1, size_t buffer_len)
 		return (NULL);
 	}
 	joined[rvalue1_len + buffer_len] = 0;
-	my_bzero(joined);
 	my_memcpy(joined, rvalue1, rvalue1_len + 1);
 	my_memcpy(joined + rvalue1_len, buffer1, buffer_len + 1);
 	if (rvalue1)
