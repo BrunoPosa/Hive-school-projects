@@ -6,7 +6,7 @@
 /*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 04:09:42 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 13:29:51 by jwadding         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ static char	*ft_strerror(t_error error)
 	else if (error == E_LBR_RANGE)
 		return ("lbr range");
 	else if (error)
-		return ("We need to build ou the error messages");
-	return (NULL);
+		return ("We need to build out the error messages");
+	return ("We need to build out the error messages");
 }
 void	free_rt2(t_rt *data)
 {
