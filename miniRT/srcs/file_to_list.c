@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 13:29:46 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 13:57:33 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,5 @@ int	import(int argc, char **argv, t_rt *data)
 		return (E_OBJECT_COUNT);
 	if (populate_scene(&data->l, &data->scene))
 		return (E_MALLOC);
-	ft_lstclear(&data->l, free);
 	return (E_SUCCESS);
 }

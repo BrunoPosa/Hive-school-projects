@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 13:39:39 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/23 14:13:37 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,33 +42,18 @@ static char	*ft_strerror(t_error error)
 		return ("We need to build out the error messages");
 	return ("We need to build out the error messages");
 }
-void	free_rt2(t_rt *data)
+
+/*
+	frees what still exists, prints error message if error != 0, returns 'error'.
+*/
+int	free_printerr_return(t_error error, t_rt *data)
 {
 	if (data->l)
 		ft_lstclear(&data->l, free);
-		// ft_lstclear(&l, free) // from the other part of the code
-	// if (data.scene)
-	// 	free(data.scene);
-	// if (data.mlx)
-	// 	free(data.mlx);
-	//if (data.img)
-	//	free(data.img);
-}
-/*
-This function will free anything that exists in the struct
-and then print the error message on stderr.
-it will only be called if there is an error in the status.
-*/
-int	ret_error(t_error error, t_rt *data)
-{
-	free_rt2(data);
-	
+	if (data->scene.shapes)
+		free (data->scene.shapes);
+	// printf("%s==== Hold your horses! VALIDATION FAILED ====%s\nerrno: %u\n", YELLOW, ENDCLR, error);
 	if (error)
-	{
-		// printf("%s==== Hold your horses! VALIDATION FAILED ====%s\nerrno: %u\n", YELLOW, ENDCLR, error);
 		write(2, ft_strerror(error), ft_strlen(ft_strerror(error)));
-		write(2, "\n", 1);
-		return ((int)error);
-	}
-	return (0);
+	return (error);
 }
