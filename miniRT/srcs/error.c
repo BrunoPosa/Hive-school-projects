@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 13:33:06 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 13:39:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ static char	*ft_strerror(t_error error)
 }
 void	free_rt2(t_rt *data)
 {
-	if (data->list)
-		ft_lstclear(&data->list, free);
+	if (data->l)
+		ft_lstclear(&data->l, free);
 		// ft_lstclear(&l, free) // from the other part of the code
 	// if (data.scene)
 	// 	free(data.scene);

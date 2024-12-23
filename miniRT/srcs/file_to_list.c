@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_to_list.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 04:04:15 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/23 13:29:46 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,44 +73,25 @@ int	populate_scene(t_list **l, t_scene *scene)
 	return (E_SUCCESS);
 }
 
-int	import(int argc, char **argv, t_scene *scene)
-// int	import(int argc, char **argv, t_rt *data)
+int	import(int argc, char **argv, t_rt *data)
 {
-// make this t_list start from main, in the struct
-	t_list	*l;
-	int		status;
+	int	status;
 
 	status = 0;
-	l = NULL;	
 	if (argc != 2)
 		return (E_ARGS);
 	if (!does_file_end_with_rt(argv[1]))
-		return (E_FILE_NAME);	
-	status = file_to_list(argv[1], &l);
+		return (E_FILE_NAME);
+	status = file_to_list(argv[1], &data->l);
 	if (status) 
 		return (status);	
-	status = process_list(&l);
+	status = process_list(&data->l);
 	if (status)
 		return (status);
-
-// start of old code
-	if (check_count_of_types(&l, scene))
+	if (check_count_of_types(&data->l, &data->scene))
 		return (E_OBJECT_COUNT);
-	if (populate_scene(&l, scene))
+	if (populate_scene(&data->l, &data->scene))
 		return (E_MALLOC);
-// end of old code
-
-
-// start of new proposal
-	// if (check_count_of_types(&l, data->scene))
-	// 	return (E_OBJECT_COUNT);
-	// data->scene->window.w = WINSIZE;
-	// data->scene->window.h = WINSIZE;
-	// data->scene->aspect_r = data->scene->window.w / data->scene->window.h;
-	// if (populate_scene(&l, data->scene))
-	// 	return (E_MALLOC);
-// end of new proposal
-
-	ft_lstclear(&l, free);
+	ft_lstclear(&data->l, free);
 	return (E_SUCCESS);
 }

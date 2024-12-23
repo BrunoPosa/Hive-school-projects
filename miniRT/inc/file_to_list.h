@@ -246,7 +246,7 @@ typedef struct s_scene
 
 typedef struct s_rt
 {
-	t_list		*list;
+	t_list		*l;
 	t_scene		scene;
 	mlx_t		*mlx;
 	mlx_image_t	*img;
@@ -265,7 +265,7 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *));
 /*		P A R S I N G    F U N C T I O N S		*/
 //////////////////////////////////////////////////
 
-int	import(int argc, char **argv, t_scene *scene);
+int	import(int argc, char **argv, t_rt *data);
 int	file_to_list(char *file_name, t_list **l);
 // int		ft_list_push_back(t_list *l, char *content);
 void 	ft_list_print(t_list **l);
@@ -310,7 +310,7 @@ int		process_rgb(t_list *current);
 int count_commas(char *s, int target);
 int	count_commas_between(char *s);
 int	is_n_valid(char *num);
-int    check_count_of_types(t_list **l, t_scene *rt);
+int    check_count_of_types(t_list **l, t_scene *scene);
 
 
 // list legality
