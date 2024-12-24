@@ -6,13 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/24 23:13:05 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/24 23:18:53 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
-int	add_line_to_node_to_list(t_list **l, char *line, int *error)
+static int	add_line_to_node_to_list(t_list **l, char *line, int *error)
 {
 	t_list	*node;
 
