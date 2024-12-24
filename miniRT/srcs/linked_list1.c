@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   linked_list1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 23:06:40 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 19:26:50 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/24 21:30:04 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,9 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *))
 {
 	if (!lst || !del)
 		return ;
-	del(lst->s);
+	if (lst->s)
+		del(lst->s);
+	lst->s = NULL;
+	lst->p = NULL;
 	free(lst);
 }

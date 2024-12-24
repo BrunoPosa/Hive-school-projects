@@ -3,17 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   rt_render_scene.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/23 19:44:23 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/24 18:46:36 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
 /*
-	-'a' of the quadratic formula is 1, as 'ray' is a normalized vector, so we leave it out
+	'a' of the quadratic formula is 1, as 'ray' is a normalized vector,
+	so we leave it out
 */
 float fsphere(t_vec ray, t_vec origin, t_shape *sphere)
 {

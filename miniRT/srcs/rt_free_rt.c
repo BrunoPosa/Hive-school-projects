@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:49:50 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 12:24:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/24 21:15:19 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int	free_return(void *ptr, t_error error)
 {
 	if (ptr)
 		free(ptr);
+	ptr = NULL;
 	return (error);
 }
 

@@ -113,6 +113,7 @@ typedef enum e_error
 	E_XYZ_3D_NORMALIZE,
 	E_SPLIT,
 	E_MALLOC,
+	E_MALLOC_OR_GNL,
 	E_WRONG_TYPE,
 	E_EXTRA_CHARS,
 	E_XYZ_RANGE,
@@ -262,7 +263,6 @@ t_list *ft_lstlast(t_list *lst);
 t_list *ft_lstnew(void *content);
 void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstdelone(t_list *lst, void (*del)(void *));
-
 
 
 //////////////////////////////////////////////////

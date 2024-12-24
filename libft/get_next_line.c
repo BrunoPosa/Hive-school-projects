@@ -6,13 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:34:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/23 15:53:32 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/24 23:06:47 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	*my_mmov(void *dst, void *src, size_t len)
+static void	*my_mmov(void *dst, void *src, size_t len)
 {
 	size_t	i;
 
@@ -40,7 +40,7 @@ void	*my_mmov(void *dst, void *src, size_t len)
 	return (dst);
 }
 
-char	*my_strjoin(char *rvalue1, char *buffer1, size_t buffer_len)
+static char	*my_strjoin(char *rvalue1, char *buffer1, size_t buffer_len)
 {
 	char	*joined;
 	size_t	rvalue1_len;
@@ -67,7 +67,7 @@ char	*my_strjoin(char *rvalue1, char *buffer1, size_t buffer_len)
 	return (joined);
 }
 
-ssize_t	shift_count_setter(char *buffer, int *newline)
+static ssize_t	shift_count_setter(char *buffer, int *newline)
 {
 	ssize_t	i;
 
@@ -85,7 +85,7 @@ ssize_t	shift_count_setter(char *buffer, int *newline)
 	return (i);
 }
 
-int	buffer_handler(char *buffer, char **rvalue, int *error)
+static int	buffer_handler(char *buffer, char **rvalue, int *error)
 {
 	ssize_t	shift_count;
 	int		newline;
@@ -102,30 +102,33 @@ int	buffer_handler(char *buffer, char **rvalue, int *error)
 	return (newline);
 }
 
-char	*get_next_line(int fd)
+/*
+*	*error is -1 on error, or >=0 when a line is successfuly read.
+*	Returns string containing next line, or NULL on error/EOF.
+*/
+char	*get_next_line(int fd, int *error)
 {
 	static char	buffer[BUFFER_SIZE + 1];
 	char		*rvalue;
-	int			err;
 
 	rvalue = NULL;
-	err = 42;
-	while (err != 0 && err != -1)
+	*error = 42;
+	while (*error != 0 && *error != -1)
 	{
-		if (buffer_handler(buffer, &rvalue, &err) == 1)
+		if (buffer_handler(buffer, &rvalue, error) == 1)
 			return (rvalue);
-		if (err == -1)
+		if (*error == -1)
 		{
 			if (rvalue)
 				free(rvalue);
 			my_bzero(buffer);
 			return (NULL);
 		}
-		err = read(fd, buffer, BUFFER_SIZE);
+		*error = read(fd, buffer, BUFFER_SIZE);
 	}
-	if (err == -1 && rvalue)
+	if (*error == -1 && rvalue)
 		return (free(rvalue), NULL);
-	if (rvalue == NULL && (err == 0 || err == -1))
+	if (rvalue == NULL && (*error == 0 || *error == -1))
 		return (NULL);
 	return (rvalue);
 }

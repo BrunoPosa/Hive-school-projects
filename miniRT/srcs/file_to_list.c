@@ -3,45 +3,63 @@
 /*                                                        :::      ::::::::   */
 /*   file_to_list.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 19:22:49 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/24 23:13:05 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
+int	add_line_to_node_to_list(t_list **l, char *line, int *error)
+{
+	t_list	*node;
+
+	node = ft_lstnew(line);
+	if (!node)
+	{
+		*error = -1;
+		return (E_MALLOC);
+	}
+	node->p = node->s;
+	ft_lstadd_back(l, node);
+	node = NULL;
+	return (E_SUCCESS);
+}
+
 /*
-*	reads the file and creates a linked list of strings
+*	Opens, reads, and closes the file, allocating nodes into 'l', each holding a
+*	malloc'd string 's' (the line returned by get-next-line).
+*	Returns error code on errors and frees the line, and returns 0 on success.
 */
 int	file_to_list(char *filename, t_list **l)
 {
-	int		fd;
 	char	*line;
-	t_list	*tmp;
+	int		error;
+	int		fd;
 
+	line = NULL;
+	error = 0;
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
-		return (E_OPEN_CLOSE_ERROR);
-	line = get_next_line(fd);
-	while (line)
+		return (free_return(line, E_OPEN_CLOSE_ERROR));
+	line = get_next_line(fd, &error);
+	while (line && error != -1)
 	{
-		if ((line[0] == '\n' || line[0] == '\0' || line[0] == '#'))
+		if (line[0] == '\n' || line[0] == '#')
 		{
 			free(line);
-			line = get_next_line(fd);
+			line = get_next_line(fd, &error);
+			continue ;
 		}
-		tmp = ft_lstnew(line);
-		if (!tmp)
-			return (E_MALLOC);
-		tmp->p = tmp->s;
-		ft_lstadd_back(l, tmp);
-		line = get_next_line(fd);
+		if (add_line_to_node_to_list(l, line, &error))
+			break ;
+		line = get_next_line(fd, &error);
 	}
-	if (close(fd))
-		return (E_OPEN_CLOSE_ERROR);
-	return (E_SUCCESS);
+	if (error == -1 && !close(fd))
+		return (free_return(line, E_MALLOC_OR_GNL));
+	return (free_return(line, (int)close(fd)));
 }
 
 int	populate_scene(t_list **l, t_scene *scene)
@@ -84,7 +102,12 @@ int	import(int argc, char **argv, t_rt *data)
 		return (E_FILE_NAME);
 	status = file_to_list(argv[1], &data->l);
 	if (status)
-		return (status);
+	{
+		if (status == -1)
+			return (E_OPEN_CLOSE_ERROR);
+		else
+			return (status);
+	}
 	status = process_list(&data->l);
 	if (status)
 		return (status);
