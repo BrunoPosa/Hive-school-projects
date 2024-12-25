@@ -113,7 +113,7 @@ typedef enum e_error
 	E_XYZ_3D_NORMALIZE,
 	E_SPLIT,
 	E_MALLOC,
-	E_MALLOC_OR_GNL,
+	E_GNL,
 	E_WRONG_TYPE,
 	E_EXTRA_CHARS,
 	E_XYZ_RANGE,
@@ -270,7 +270,7 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *));
 //////////////////////////////////////////////////
 
 int	import(int argc, char **argv, t_rt *data);
-int	file_to_list(char *file_name, t_list **l);
+int	file_to_list(char *filename, t_list **l, int *fd_close_check);
 // int		ft_list_push_back(t_list *l, char *content);
 void 	ft_list_print(t_list **l);
 int		process_list(t_list **l);

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/24 23:18:53 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/25 15:31:03 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	add_line_to_node_to_list(t_list **l, char *line, int *error)
 	node = ft_lstnew(line);
 	if (!node)
 	{
-		*error = -1;
+		*error = E_MALLOC;
 		return (E_MALLOC);
 	}
 	node->p = node->s;
@@ -30,10 +30,10 @@ static int	add_line_to_node_to_list(t_list **l, char *line, int *error)
 
 /*
 *	Opens, reads, and closes the file, allocating nodes into 'l', each holding a
-*	malloc'd string 's' (the line returned by get-next-line).
-*	Returns error code on errors and frees the line, and returns 0 on success.
+*	malloc'd string 's' (the line returned by get-next-line). Returns error cod
+*	on error, freeing the line; saves close(fd) return value to *fd_close_check.
 */
-int	file_to_list(char *filename, t_list **l)
+int	file_to_list(char *filename, t_list **l, int *fd_close_check)
 {
 	char	*line;
 	int		error;
@@ -45,7 +45,7 @@ int	file_to_list(char *filename, t_list **l)
 	if (fd == -1)
 		return (free_return(line, E_OPEN_CLOSE_ERROR));
 	line = get_next_line(fd, &error);
-	while (line && error != -1)
+	while (line && !error)
 	{
 		if (line[0] == '\n' || line[0] == '#')
 		{
@@ -57,9 +57,8 @@ int	file_to_list(char *filename, t_list **l)
 			break ;
 		line = get_next_line(fd, &error);
 	}
-	if (error == -1 && !close(fd))
-		return (free_return(line, E_MALLOC_OR_GNL));
-	return (free_return(line, (int)close(fd)));
+	*fd_close_check = close(fd);
+	return (free_return(line, error));
 }
 
 int	populate_scene(t_list **l, t_scene *scene)
@@ -94,18 +93,22 @@ int	populate_scene(t_list **l, t_scene *scene)
 int	import(int argc, char **argv, t_rt *data)
 {
 	int	status;
+	int	fd_close_check;
 
 	status = 0;
+	fd_close_check = 0;
 	if (argc != 2)
 		return (E_ARGS);
 	if (!does_file_end_with_rt(argv[1]))
 		return (E_FILE_NAME);
-	status = file_to_list(argv[1], &data->l);
-	if (status)
+	status = file_to_list(argv[1], &data->l, &fd_close_check);
+	if (status || fd_close_check)
 	{
 		if (status == -1)
+			return (E_GNL);
+		else if (fd_close_check)
 			return (E_OPEN_CLOSE_ERROR);
-		else
+		else 
 			return (status);
 	}
 	status = process_list(&data->l);
@@ -113,7 +116,5 @@ int	import(int argc, char **argv, t_rt *data)
 		return (status);
 	if (check_count_of_types(&data->l, &data->scene))
 		return (E_OBJECT_COUNT);
-	if (populate_scene(&data->l, &data->scene))
-		return (E_MALLOC);
-	return (E_SUCCESS);
+	return (populate_scene(&data->l, &data->scene));
 }
