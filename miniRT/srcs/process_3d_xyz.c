@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_3d_xyz.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 23:16:58 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 19:33:21 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/25 18:01:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ int	process_xyz_3d(t_list *current)
 	if (import_values(current, xyz))
 		return (free_arr_return(xyz, E_XYZ_RANGE));
 	free_array(xyz);
-	if (fabs((pow(current->xyz_3d.x, 2) + pow(current->xyz_3d.y, 2) + \
-		pow(current->xyz_3d.z, 2)) - 1.0f) > EPSILON)
+	if (fabs((pow(current->xyz_3d.x, 2) + pow(current->xyz_3d.y, 2)
+		+ pow(current->xyz_3d.z, 2)) - 1.0f) > 0.05f)
 		return (E_XYZ_3D_NORMALIZE);
 	current->p = skip_space(current->p + len_until_space(current->p));
 	return (E_SUCCESS);

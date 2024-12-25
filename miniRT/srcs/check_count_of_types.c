@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_count_of_types.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:29:02 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 21:05:35 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/25 18:19:44 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ int	check_count_of_types(t_list **l, t_scene *scene)
 			scene->n_ambient++;
 		current = current->next;
 	}
-	if (scene->n_camera != 1 || scene->n_light != 1 || scene->n_ambient != 1)
-		return (E_N_OF_TYPES);
-	if (scene->n_sphere + scene->n_plane + scene->n_cylinder == 0)
-		return (E_N_OF_TYPES);
+	if (scene->n_camera != 1 || scene->n_light != 1 || scene->n_ambient != 1 ||
+		scene->n_sphere + scene->n_plane + scene->n_cylinder <= 0 ||
+		scene->n_sphere + scene->n_plane + scene->n_cylinder >= SHAPE_LIMIT)
+		return (E_OBJECT_COUNT);
 	return (E_SUCCESS);
 }

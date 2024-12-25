@@ -51,13 +51,9 @@
 # define EPSILON 0.001f
 #endif
 
-//	  A L I A S E S
-// not using these any more
-// #define POINT 1
-// #define VECTOR 0
-// #define E_SUCCESS 0
-// #define E_ERROR -1
-
+#ifndef SHAPE_LIMIT
+# define SHAPE_LIMIT 150
+#endif
 //	  C O L O U R S
 
 #define YELLOW	"\033[1;33m"
@@ -120,10 +116,10 @@ typedef enum e_error
 	E_SPHERE_SD,
 	E_CYLINDER_CD,
 	E_CYLINDER_CH,
-	E_N_OF_TYPES,
 	E_MLX_INIT,
 	E_MLX_IMG,
-	E_MLX_RESIZE
+	E_MLX_RESIZE,
+	E_SHAPE_LIMIT
 }			t_error;
 // #endif
 

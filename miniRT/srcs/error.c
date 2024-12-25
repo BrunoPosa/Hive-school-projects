@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/25 15:47:40 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/25 18:18:26 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,15 +78,13 @@ static	char	*ft_strerror(t_error error)
 	else if (error == E_XYZ_RANGE)
 		return ("XYZ range error");
 	else if (error == E_OBJECT_COUNT)
-		return ("Object count error");
+		return ("Scene file needs 1 A, 1 C, 1 L, and 1-SHAPE_LIMIT shapes\n");
 	else if (error == E_SPHERE_SD)
 		return ("Sphere SD error");
 	else if (error == E_CYLINDER_CD)
 		return ("Cylinder CD error");
 	else if (error == E_CYLINDER_CH)
 		return ("Cylinder CH error");
-	else if (error == E_N_OF_TYPES)
-		return ("Number of Types error");
 	else if (error == E_MLX_INIT)
 		return ("MLX initialization error");
 	else if (error == E_MLX_IMG)
