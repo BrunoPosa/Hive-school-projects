@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/25 16:57:22 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/25 20:59:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ float	fplane(t_vec ray, t_vec origin, t_shape *plane)
 	dividend = dot(plane->axis, origin_to_plane);
 	divisor = dot(ray, plane->axis);
 	if (fabs(divisor) < EPSILON)
-		return (-1);
+		return (-1.0);
 	t = dividend / divisor;
 	if (t < EPSILON)
-		return (-1);
+		return (-1.0);
 	return (t);
 }
 
@@ -190,9 +190,9 @@ t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_raydata *rayd)
 		return black();
 	color = scale_colour(shape->rgb, scene->lbr);
 	diffuse_amount = dot(rayd->normal, rayd->shadow_ray);
-	if (diffuse_amount < 0 && shape->type != plane)
+	if (diffuse_amount < EPSILON && shape->type != plane)
 		return (black());
-	else
+	else if (shape->type == plane)
 		diffuse_amount = fabs(diffuse_amount);
 	return (scale_colour(color, diffuse_amount));
 }
@@ -230,7 +230,7 @@ bool	in_shadow(t_scene *scene, t_raydata *rayd)
 	distance = light_distance;
 	while (i < scene->shape_count)
 	{
-		if (rayd->shape != &scene->shapes[i])//should we be avoiding self comparisons
+		if (rayd->shape != &scene->shapes[i])
 		{
 			hit = intersect_all(rayd->shadow_ray, rayd->hitp, &scene->shapes[i]);
 			if (hit > EPSILON && hit < distance)
@@ -295,7 +295,9 @@ int	trace(t_scene *scene, t_vec ray)
 		return(to_uint32(scene->ambiant));
 	}
 	rayd.hitp = add(scene->cam.eye, scale(ray, rayd.hitmin));
-	rayd.shadow_ray = normalize(subtract(scene->lightxyz, rayd.hitp));
+	rayd.shadow_ray = add(scene->lightxyz, scale(scene->cam.up, EPSILON));
+	rayd.shadow_ray = subtract(rayd.shadow_ray, rayd.hitp);
+	rayd.shadow_ray = normalize(rayd.shadow_ray);
 	rayd.base_color = hadamard_product(rayd.shape->rgb, scene->ambiant);
 	if (in_shadow(scene, &rayd))
 	{

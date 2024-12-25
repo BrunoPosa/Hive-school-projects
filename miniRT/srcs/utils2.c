@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/23 18:27:19 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/25 20:54:47 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,24 +45,23 @@ void	resizer(int32_t width, int32_t height, void *param)
 t_vec	viewplane_offsets(t_scene *scene, t_vec eye)
 {
 	t_vec	forward;
-	t_vec	up;
 	t_vec	right;
 	t_vec	center;
 	t_vec	half_viewplane_width;
 	t_vec	corner;
 
 	forward = scene->cam.axis;
-	up = create_vec(0, 1, 0);
-	if (fabs(dot(forward, up)) > 0.99)
-		up = create_vec(0, 0, 1);
-	right = normalize(cross(up, forward));
-	up = normalize(cross(forward, right));
+	scene->cam.up = create_vec(0, 1, 0);
+	if (fabs(dot(forward, scene->cam.up)) > 0.99)
+		scene->cam.up = create_vec(0, 0, 1);
+	right = normalize(cross(scene->cam.up, forward));
+	scene->cam.up = normalize(cross(forward, right));
 	center = add(eye, scale(forward, scene->cam.foc_len));
 	half_viewplane_width = scale(right, scene->aspect_r);
-	corner = subtract(subtract(center, half_viewplane_width), up);
+	corner = subtract(subtract(center, half_viewplane_width), scene->cam.up);
 	scene->cam.x_step = scale(scale(right, 2.0f / scene->window.w), \
 	scene->aspect_r);
-	scene->cam.y_step = scale(up, 2.0f / scene->window.h);
+	scene->cam.y_step = scale(scene->cam.up, 2.0f / scene->window.h);
 	return (corner);
 }
 

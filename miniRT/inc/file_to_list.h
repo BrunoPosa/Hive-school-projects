@@ -209,6 +209,7 @@ typedef struct s_camera
 	t_vec	axis;
 	t_vec	x_step;
 	t_vec	y_step;
+	t_vec	up;
 	float	foc_len;
 }	t_cam;
 
