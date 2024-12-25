@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   process_list.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:39:21 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 19:35:40 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/25 16:29:53 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/file_to_list.h"
 
-//updated to return error codes
 int	process_list(t_list **l)
 {
 	if (list_legality_check(l, LEGAL_CHARS1))

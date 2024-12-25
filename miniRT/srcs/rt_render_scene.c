@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/24 18:46:36 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/25 16:57:22 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -333,7 +333,7 @@ void	render_image(t_scene *scene, mlx_image_t *img)
 			ray = add(corner, add(scale(scene->cam.x_step, (float)x + 0.5f),
 				scale(scene->cam.y_step, scene->window.h - (float)y + 0.5f)));
 			ray = normalize(subtract(ray, scene->cam.eye));
-			((uint32_t *)img->pixels)[y * scene->window.w + x] = trace(scene, ray);//use safer mlx_put_pixel instead
+			mlx_put_pixel(img, x, y, trace(scene, ray));
 		}
 	}
 }

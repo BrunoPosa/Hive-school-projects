@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:28:06 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 18:29:56 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/25 16:55:51 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,9 @@ uint32_t	to_uint32(t_colour colour)
 {
 	uint32_t	c;
 
-	c = 255 << 24
-		| (uint32_t)(clamp(colour.b)) << 16
-		| (uint32_t)(clamp(colour.g)) << 8
-		| (uint32_t)(clamp(colour.r));
+	c = (uint32_t)(clamp(colour.r)) << 24
+		| (uint32_t)(clamp(colour.g)) << 16
+		| (uint32_t)(clamp(colour.b)) << 8
+		| 255;
 	return (c);
 }
