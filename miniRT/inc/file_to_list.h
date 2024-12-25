@@ -21,7 +21,6 @@
 #define LEGAL_CHARS6 "0123456789" //fov
 #define LEGAL_CHARS7 "0123456789.-" //cd, ch, sd
 
-
 // should we remove?
 // #ifndef TRUE
 # define TRUE 1
@@ -320,7 +319,6 @@ int    check_count_of_types(t_list **l, t_scene *scene);
 // list legality
 
 int	only_legal_chars(char *s, char *legal);
-int	list_legality_check(t_list **l, char *legal);
 
 //	SCENE CREATION
 int	populate_scene(t_list **l, t_scene *scene);

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/25 15:31:03 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/25 16:22:57 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static int	add_line_to_node_to_list(t_list **l, char *line, int *error)
 
 /*
 *	Opens, reads, and closes the file, allocating nodes into 'l', each holding a
-*	malloc'd string 's' (the line returned by get-next-line). Returns error cod
+*	malloc'd string 's' (the line returned by get-next-line). Returns error code
 *	on error, freeing the line; saves close(fd) return value to *fd_close_check.
 */
 int	file_to_list(char *filename, t_list **l, int *fd_close_check)
@@ -45,7 +45,7 @@ int	file_to_list(char *filename, t_list **l, int *fd_close_check)
 	if (fd == -1)
 		return (free_return(line, E_OPEN_CLOSE_ERROR));
 	line = get_next_line(fd, &error);
-	while (line && !error)
+	while (line && error != -1 && error != E_MALLOC)
 	{
 		if (line[0] == '\n' || line[0] == '#')
 		{
@@ -108,7 +108,7 @@ int	import(int argc, char **argv, t_rt *data)
 			return (E_GNL);
 		else if (fd_close_check)
 			return (E_OPEN_CLOSE_ERROR);
-		else 
+		else
 			return (status);
 	}
 	status = process_list(&data->l);

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/24 23:02:26 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/25 15:47:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ static	char	*ft_strerror(t_error error)
 		return ("Split error");
 	else if (error == E_MALLOC)
 		return ("Memory allocation error");
-	else if (error == E_MALLOC_OR_GNL)
-		return ("malloc() or read() error during file import");
+	else if (error == E_GNL)
+		return ("malloc() or read() error in GNL\n");
 	else if (error == E_WRONG_TYPE)
 		return ("Wrong data type");
 	else if (error == E_EXTRA_CHARS)
