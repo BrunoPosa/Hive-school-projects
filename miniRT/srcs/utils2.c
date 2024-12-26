@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 02:21:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ float	cyl_radius_check(t_vec ray, t_vec origin, float t, t_shape *cap)
 	return (t);
 }
 
-t_colour	black(void)
+t_rgb	black(void)
 {
 	return (create_colour(0, 0, 0));
 }

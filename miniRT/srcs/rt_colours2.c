@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rt_colours2.c                                      :+:      :+:    :+:   */
+/*   rt_rgbs2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -16,7 +16,7 @@
 	If any channel is > 255.0f we scale each channel down so that the biggest one
 	is 255.0 and other values stay proportional.
 */
-t_colour	scale_colour_channels(t_colour a)
+t_rgb	scale_colour_channels(t_rgb a)
 {
 	float		max_value;
 	float		scale;

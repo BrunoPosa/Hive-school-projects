@@ -6,7 +6,7 @@
 #    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/25 23:06:21 by bposa             #+#    #+#              #
-#    Updated: 2024/12/26 01:58:27 by bposa            ###   ########.fr        #
+#    Updated: 2024/12/26 02:31:27 by bposa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,6 @@ OBJS		= $(addprefix $(SRCS_DIR), $(OBJ))
 SRCS		= 	main.c \
 				file_to_list.c \
 				file_to_list_scene.c \
-				printer.c \
 				linked_list1.c \
 				linked_list2.c \
 				process_list.c \

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:48:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 02:21:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ t_vec	create_vec(float x, float y, float z)
 // 	return (create_tuple(x, y, z, VECTOR));
 // }
 
-t_colour	create_colour(float r, float g, float b)
+t_rgb	create_colour(float r, float g, float b)
 {
-	t_colour	c;
+	t_rgb	c;
 
 	// if (r == 0)
 	// 	r = EPSILON;

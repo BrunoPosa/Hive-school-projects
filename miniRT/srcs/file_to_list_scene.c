@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 02:37:54 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	allocate_shape_array(t_scene *scene)
 
 //indexing starts from 0 for spheres, then come planes, then cylinders
 
-void	move_shapes_into_scene(t_list **l, t_scene *scene, enum e_type type)
+void	move_shapes_into_scene(t_list **l, t_scene *scene, int type)
 {
 	t_list	*current;
 	int		i;

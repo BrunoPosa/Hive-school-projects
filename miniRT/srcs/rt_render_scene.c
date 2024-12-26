@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/26 02:04:55 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 02:21:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,9 +174,9 @@ bool	is_backlit(t_scene *scene, t_shape *plane, t_raydata *rayd)
 	Returns black (no contribution) if light and surface normal angle >= 90 deg,
 	and in special case when camera is in/below a shape and the light is outside.
 */
-t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_raydata *rayd)
+t_rgb	calc_diffuse_part(t_scene *scene, t_shape *shape, t_raydata *rayd)
 {
-	t_colour	color;
+	t_rgb	color;
 	float		diffuse_amount;
 	float		light_distance;
 

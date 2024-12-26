@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:28:06 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 02:21:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ float	calculate_focal_len(unsigned int fov)
 	return (focal_len);
 }
 
-uint32_t	to_uint32(t_colour colour)
+uint32_t	to_uint32(t_rgb colour)
 {
 	uint32_t	c;
 
