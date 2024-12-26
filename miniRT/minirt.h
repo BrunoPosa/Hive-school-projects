@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 02:18:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/26 04:10:56 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 13:38:43 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,9 +227,7 @@ typedef struct s_rt
 
 int			import(int argc, char **argv, t_rt *data);
 int			file_to_list(char *filename, t_list **l, int *fd_close_check);
-void		ft_list_print(t_list **l);
 int			process_list(t_list **l);
-void		remove_spaces(t_list **l);
 int			list_legality_check(t_list **l, char *legal);
 int			only_legal_chars(char *s, char *legal);
 int			len_until_space(char *s);
@@ -259,7 +257,6 @@ int			process_cd(t_list *current);
 int			process_ch(t_list *current);
 int			process_rgb(t_list *current);
 int			populate_scene(t_list **l, t_scene *scene);
-t_cam		move_element_into_scene(t_list *current);
 float		calculate_focal_len(unsigned int fov);
 
 /*			Cleanup functions			*/
