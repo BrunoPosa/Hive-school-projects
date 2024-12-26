@@ -6,7 +6,7 @@
 #    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/25 23:06:21 by bposa             #+#    #+#              #
-#    Updated: 2024/12/26 02:31:27 by bposa            ###   ########.fr        #
+#    Updated: 2024/12/26 04:04:07 by bposa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,11 +30,9 @@ OBJS		= $(addprefix $(SRCS_DIR), $(OBJ))
 SRCS		= 	main.c \
 				file_to_list.c \
 				file_to_list_scene.c \
-				linked_list1.c \
-				linked_list2.c \
+				linked_list.c \
 				process_list.c \
-				utils1.c \
-				utils2.c \
+				utils.c \
 				error.c \
 				assign_node_type.c \
 				process_nodes.c \
@@ -53,9 +51,11 @@ SRCS		= 	main.c \
 				process_utils.c \
 				process_fov.c \
 				rt_render_scene.c \
+				rt_intersections.c \
+				rt_normals_diffuse.c \
+				rt_utils.c \
 				rt_create.c \
-				rt_colours1.c \
-				rt_colours2.c \
+				rt_colours.c \
 				rt_tuples1.c \
 				rt_tuples2.c \
 				rt_free_rt.c
@@ -87,7 +87,7 @@ $(SRCS_DIR)%.o: $(SRCS_DIR)%.c $(HEADER)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 norm:
-	norminette -R CheckForbiddenSourceHeader $(SRCS_DIR) $(HEADER)
+	norminette -R CheckForbiddenSourceHeader $(SRCS_DIR) $(HEADER) $(LIBFT_DIR)
 
 clean:
 	@$(RM) $(OBJS)

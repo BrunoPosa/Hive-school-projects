@@ -6,15 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:40:51 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 03:45:09 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minirt.h"
 
-// why are some functions protected and some not?
-
-int	process_node(t_list *current)
+static int	process_node(t_list *current)
 {
 	if (current->type == ambiant)
 		return (process_ambiant(current));
@@ -29,7 +27,7 @@ int	process_node(t_list *current)
 	else if (current->type == cylinder)
 		return (process_cylinder(current));
 	else
-		return (E_PROCESS_NODE);
+		return (E_ERROR);
 }
 
 int	process_nodes(t_list **l)

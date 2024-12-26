@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 02:18:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/26 02:37:30 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 04:00:43 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ typedef enum e_error
 	E_ILLEGAL_CHARS3,
 	E_ILLEGAL_CHARS4,
 	E_ILLEGAL_CHARS5,
-	E_PROCESS_NODE,
 	E_ALR_CHARS,
 	E_ALR_RANGE,
 	E_LBR_CHARS,
@@ -89,7 +88,7 @@ typedef enum e_error
 	E_MLX_IMG,
 	E_MLX_RESIZE,
 	E_SHAPE_LIMIT
-}			t_error;
+}	t_error;
 
 typedef enum e_coef
 {
@@ -147,7 +146,7 @@ typedef struct s_list
 {
 	char			*s;
 	char			*p;
-	t_type			type;
+	int				type;
 	float			alr;
 	float			lbr;
 	t_rgb			rgb;
@@ -226,18 +225,15 @@ int			list_legality_check(t_list **l, char *legal);
 int			only_legal_chars(char *s, char *legal);
 int			len_until_space(char *s);
 char		*skip_space(char *s);
-void		move_pointers_to_args(t_list **l);
 int			assign_node_type(t_list **l);
 int			does_file_end_with_rt(char *filename);
 t_cam		move_cam_into_scene(t_list *current);
 void		move_shapes_into_scene(t_list **l, t_scene *scene, int type);
-int			allocate_shape_array(t_scene *scene);
 int			count_commas(char *s, int target);
 int			count_commas_between(char *s);
 int			is_n_valid(char *num);
 int			check_count_of_types(t_list **l, t_scene *scene);
 int			process_nodes(t_list **l);
-int			process_node(t_list *current);
 int			process_camera(t_list *current);
 int			process_cylinder(t_list *current);
 int			process_plane(t_list *current);
@@ -259,7 +255,6 @@ float		calculate_focal_len(unsigned int fov);
 int			clean_return(t_error error, t_rt *data);
 void		free_rt(t_scene *rt);
 void		free_array(char **s);
-void		free_data(t_raydata *data);
 int			free_return(void *ptr, t_error error);
 int			free_arr_return(char **s, int error);
 
@@ -281,24 +276,20 @@ void		render_image(t_scene *scene, mlx_image_t *img);
 int			trace(t_scene *scene, t_vec ray);
 t_vec		viewplane_offsets(t_scene *scene, t_vec eye);
 bool		closest_shape_hit(t_scene *scene, t_vec ray, t_raydata *rayd);
-float		intersect_all(t_vec ray, t_vec origin, t_shape *shape);
+float		intersectall(t_vec ray, t_vec origin, t_shape *shape);
 float		fsphere(t_vec ray, t_vec origin, t_shape *sphere);
 float		fplane(t_vec ray, t_vec origin, t_shape *plane);
 float		fcylinder(t_vec ray, t_vec origin, t_shape *cyl);
 float		intersect_cyl_caps(t_vec ray, t_vec origin, t_shape *cyl);
-bool		is_point_inside_cyl(t_vec origin, t_shape *cyl);
 float		cyl_height_check(t_vec ray, t_vec origin, float t, t_shape *cyl);
 float		cyl_radius_check(t_vec ray, t_vec origin, float t, t_shape *cap);
-t_vec		cyl_normal(t_raydata *rayd, t_shape *cyl);
 t_vec		surface_normal(t_scene *scene, t_shape *shape, t_raydata *rayd);
 t_rgb		calc_diffuse_part(t_scene *scene, t_shape *shape, t_raydata *rayd);
-bool		is_backlit(t_scene *scene, t_shape *plane, t_raydata *rayd);
 bool		in_shadow(t_scene *scene, t_raydata *rayd);
 
 /*         T U P L E S         */
 
 t_vec		create_vec(float x, float y, float z);
-int			diff(t_vec a, t_vec b);
 t_vec		add(t_vec a, t_vec b);
 t_vec		subtract(t_vec a, t_vec b);
 t_vec		negate(t_vec t);
@@ -312,11 +303,9 @@ t_vec		cross(t_vec a, t_vec b);
 
 t_rgb		create_colour(float r, float g, float b);
 t_rgb		add_colours(t_rgb a, t_rgb b);
-t_rgb		subtract_colours(t_rgb a, t_rgb b);
 t_rgb		scale_colour(t_rgb a, float scaler);
 t_rgb		hadamard_product(t_rgb a, t_rgb b);
 uint32_t	to_uint32(t_rgb colour);
-t_rgb		scale_colour_channels(t_rgb a);
 float		clamp(float n);
 t_rgb		black(void);
 

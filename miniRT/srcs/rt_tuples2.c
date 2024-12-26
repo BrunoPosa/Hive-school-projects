@@ -6,28 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:52:19 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 04:00:31 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minirt.h"
-
-/*
-	returns number of differences between the two vectors/points, 0 if identical
-*/
-int	diff(t_vec a, t_vec b)
-{
-	int	diff_count;
-
-	diff_count = 0;
-	if (fabs(a.x - b.x) > EPSILON)
-		diff_count++;
-	if (fabs(a.y - b.y) > EPSILON)
-		diff_count++;
-	if (fabs(a.z - b.z) > EPSILON)
-		diff_count++;
-	return (diff_count);
-}
 
 t_vec	add(t_vec a, t_vec b)
 {

@@ -6,26 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:52:19 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 04:00:58 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minirt.h"
-
-/*
-	returns a tuple with each member divided, or same tuple if divisor is 0
-*/
-t_vec	divide_tuple(t_vec t, float divisor)
-{
-	t_vec	res;
-
-	if (divisor == 0)
-		return (t);
-	res.x = t.x / divisor;
-	res.y = t.y / divisor;
-	res.z = t.z / divisor;
-	return (res);
-}
 
 float	magnitude(t_vec t)
 {

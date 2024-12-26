@@ -6,11 +6,23 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 02:37:59 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 03:36:31 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minirt.h"
+
+static int	allocate_shape_array(t_scene *scene)
+{
+	scene->shape_count = scene->n_sphere + scene->n_plane + scene->n_cylinder;
+	if (scene->shape_count > 0)
+	{
+		scene->shapes = ft_calloc(scene->shape_count, sizeof(t_shape));
+		if (!scene->shapes)
+			return (E_MALLOC);
+	}
+	return (E_SUCCESS);
+}
 
 static int	add_line_to_node_to_list(t_list **l, char *line, int *error)
 {

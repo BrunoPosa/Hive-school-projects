@@ -6,12 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:28:06 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 02:21:07 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 04:02:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minirt.h"
-#include <math.h>
 
 char	*skip_space(char *s)
 {
@@ -36,17 +35,6 @@ int	does_file_end_with_rt(char *filename)
 	return (1);
 }
 
-void	esc_keyhook(mlx_key_data_t keydata, void *param)
-{
-	t_rt	*data;
-
-	data = param;
-	if (!param || !data->mlx)
-		return ;
-	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-		mlx_close_window(data->mlx);
-}
-
 float	calculate_focal_len(unsigned int fov)
 {
 	float	fov_radians;
@@ -57,13 +45,7 @@ float	calculate_focal_len(unsigned int fov)
 	return (focal_len);
 }
 
-uint32_t	to_uint32(t_rgb colour)
+t_rgb	black(void)
 {
-	uint32_t	c;
-
-	c = (uint32_t)(clamp(colour.r)) << 24
-		| (uint32_t)(clamp(colour.g)) << 16
-		| (uint32_t)(clamp(colour.b)) << 8
-		| 255;
-	return (c);
+	return (create_colour(0, 0, 0));
 }

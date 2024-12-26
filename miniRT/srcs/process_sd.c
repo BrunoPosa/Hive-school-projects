@@ -6,17 +6,12 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:23:39 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 03:45:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minirt.h"
 
-/*
-not allowing negatives as of 23.12 #hashtag occam's razor
-float
-same as sd, cd, ch
-*/
 int	process_sd(t_list *current)
 {
 	int		atoi_overflow;

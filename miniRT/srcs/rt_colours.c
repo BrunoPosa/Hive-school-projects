@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rt_rgbs2.c                                      :+:      :+:    :+:   */
+/*   rt_colours.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:42:35 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 03:49:46 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 	If any channel is > 255.0f we scale each channel down so that the biggest one
 	is 255.0 and other values stay proportional.
 */
-t_rgb	scale_colour_channels(t_rgb a)
+static t_rgb	scale_colour_channels(t_rgb a)
 {
 	float		max_value;
 	float		scale;
@@ -30,4 +30,43 @@ t_rgb	scale_colour_channels(t_rgb a)
 		a.b *= scale;
 	}
 	return (a);
+}
+
+t_rgb	add_colours(t_rgb a, t_rgb b)
+{
+	t_rgb	c;
+
+	c.r = a.r + b.r;
+	c.g = a.g + b.g;
+	c.b = a.b + b.b;
+	return (scale_colour_channels(c));
+}
+
+t_rgb	scale_colour(t_rgb a, float scaler)
+{
+	t_rgb	c;
+
+	c.r = a.r * scaler;
+	c.g = a.g * scaler;
+	c.b = a.b * scaler;
+	return (scale_colour_channels(c));
+}
+
+t_rgb	hadamard_product(t_rgb a, t_rgb b)
+{
+	t_rgb	c;
+
+	c.r = (a.r * b.r) / 255.0;
+	c.g = (a.g * b.g) / 255.0;
+	c.b = (a.b * b.b) / 255.0;
+	return (scale_colour_channels(c));
+}
+
+float	clamp(float n)
+{
+	if (n > 255.0)
+		return (255.0);
+	if (n < 0.0)
+		return (0.0);
+	return (n);
 }

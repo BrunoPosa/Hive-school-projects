@@ -1,16 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils2.c                                           :+:      :+:    :+:   */
+/*   rt_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 16:35:03 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/26 02:21:07 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 03:06:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minirt.h"
+
+void	esc_keyhook(mlx_key_data_t keydata, void *param)
+{
+	t_rt	*data;
+
+	data = param;
+	if (!param || !data->mlx)
+		return ;
+	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
+		mlx_close_window(data->mlx);
+}
 
 /*
 	Called by mlx_resize_hook, adjusts mlx img and variables with new dimensions.
@@ -66,25 +77,6 @@ t_vec	viewplane_offsets(t_scene *scene, t_vec eye)
 }
 
 /*
-	Returns 0 if hitpoint at t is out of vertical cylinder bounds, or if
-	t <= EPSILON. Returns unmodified t if within bounds.
-*/
-float	cyl_height_check(t_vec ray, t_vec origin, float t, t_shape *cyl)
-{
-	t_vec	hitpoint;
-	float	projection;
-
-	ft_memset(&hitpoint, 0, sizeof(t_vec));
-	if (t <= EPSILON || !cyl)
-		return (0.0f);
-	hitpoint = add(origin, scale(ray, t));
-	projection = dot(subtract(hitpoint, cyl->xyz), cyl->axis);
-	if (projection < 0 || projection > cyl->h)
-		return (0.0f);
-	return (t);
-}
-
-/*
 	Returns 0 if hitpoint at t is out of bounds of given cylinder top/base disc
 	radius, or if t <= EPSILON. Returns unmodified t if within bounds.
 */
@@ -101,7 +93,13 @@ float	cyl_radius_check(t_vec ray, t_vec origin, float t, t_shape *cap)
 	return (t);
 }
 
-t_rgb	black(void)
+uint32_t	to_uint32(t_rgb colour)
 {
-	return (create_colour(0, 0, 0));
+	uint32_t	c;
+
+	c = (uint32_t)(clamp(colour.r)) << 24
+		| (uint32_t)(clamp(colour.g)) << 16
+		| (uint32_t)(clamp(colour.b)) << 8
+		| 255;
+	return (c);
 }

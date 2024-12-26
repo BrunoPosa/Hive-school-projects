@@ -6,26 +6,15 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:43:37 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 02:37:54 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 03:34:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minirt.h"
 
-int	allocate_shape_array(t_scene *scene)
-{
-	scene->shape_count = scene->n_sphere + scene->n_plane + scene->n_cylinder;
-	if (scene->shape_count > 0)
-	{
-		scene->shapes = ft_calloc(scene->shape_count, sizeof(t_shape));
-		if (!scene->shapes)
-			return (E_MALLOC);
-	}
-	return (E_SUCCESS);
-}
-
-//indexing starts from 0 for spheres, then come planes, then cylinders
-
+/*
+	indexing starts from 0 for spheres, then come planes, then cylinders
+*/
 void	move_shapes_into_scene(t_list **l, t_scene *scene, int type)
 {
 	t_list	*current;
@@ -33,7 +22,7 @@ void	move_shapes_into_scene(t_list **l, t_scene *scene, int type)
 
 	current = *l;
 	i = 0;
-	if (type == plane) // if it is a plane, then work with cyl?
+	if (type == plane)
 		i = scene->n_sphere;
 	else if (type == cylinder)
 		i = scene->n_sphere + scene->n_plane;
