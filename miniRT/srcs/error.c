@@ -6,11 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:42:47 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/25 18:18:26 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 #include "../../libft/libft.h"
 
 static	char	*ft_strerror(t_error error)

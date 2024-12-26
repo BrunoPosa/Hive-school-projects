@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   process_elements1.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:45:38 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 19:34:41 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 
 int	process_ambiant(t_list *current)
 {

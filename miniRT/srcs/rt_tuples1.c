@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   rt_tuples1.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:52:19 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 19:47:57 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 
 /*
 	returns a tuple with each member divided, or same tuple if divisor is 0

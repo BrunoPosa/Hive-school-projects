@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   process_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:24:03 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 19:36:56 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/26 02:04:55 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 
 int	len_until_space(char *s)
 {
@@ -75,8 +75,8 @@ int	count_commas_between(char *s)
 }
 
 /*
- * Returns TRUE (1) if the string until comma/space/\0 is a valid double.
- * FALSE (0) if:
+ * Returns true (1) if the string until comma/space/\0 is a valid double.
+ * false (0) if:
  * - string is null
  * - there is an extraneous '-'
  * - there is more than one '.'
@@ -90,21 +90,21 @@ int	is_n_valid(char *num)
 	i = 0;
 	dot = 0;
 	if (!num)
-		return (FALSE);
+		return (false);
 	if (num[i] == '-')
 		i++;
 	while (num[i] && num[i] != ',' && num[i] != ' ')
 	{
 		if (num[i] == '-')
-			return (FALSE);
+			return (false);
 		if (num[i++] == '.')
 		{
 			dot++;
 			if (dot > 1)
-				return (FALSE);
+				return (false);
 		}
 	}
 	if (num[ft_strlen(num) - 1] == '.')
-		return (FALSE);
-	return (TRUE);
+		return (false);
+	return (true);
 }

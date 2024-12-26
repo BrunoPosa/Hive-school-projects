@@ -6,11 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 20:36:52 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/25 17:57:17 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 
 int	process_lbr(t_list *current)
 {

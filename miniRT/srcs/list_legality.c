@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   list_legality.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 23:11:44 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/22 21:16:19 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 
 int	only_legal_chars(char *s, char *legal)
 {

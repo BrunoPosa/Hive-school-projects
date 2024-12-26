@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   rt_colours2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:42:35 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/23 19:39:46 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/26 00:16:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 
 /*
 	If any channel is > 255.0f we scale each channel down so that the biggest one

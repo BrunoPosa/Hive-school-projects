@@ -1,17 +1,13 @@
-#ifndef FILE_TO_LIST_H
-# define FILE_TO_LIST_H
+#ifndef MINIRT_H
+# define MINIRT_H
 
-// not going to work well
-#include "../../MLX42/include/MLX42/MLX42.h"
-
-// this is going back too far.
-#include "../../libft/libft.h"
+#include "MLX42/include/MLX42/MLX42.h"
+#include "libft/libft.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <fcntl.h>
-
 
 #define LEGAL_CHARS1 "0123456789.CALplcysp-, \n" //input
 #define LEGAL_CHARS2 "0123456789.-, \n" //after assign type
@@ -21,13 +17,14 @@
 #define LEGAL_CHARS6 "0123456789" //fov
 #define LEGAL_CHARS7 "0123456789.-" //cd, ch, sd
 
-// should we remove?
-// #ifndef TRUE
-# define TRUE 1
+
+
+// #ifndef true
+// # define true 1
 // #endif
 
-// #ifndef FALSE
-# define FALSE 0
+// #ifndef false
+// # define false 0
 // #endif
 
 

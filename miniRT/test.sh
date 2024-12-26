@@ -4,7 +4,7 @@
 clear
 
 # Recompile the raytracer
-make re
+make
 make clean
 
 # Run the raytracer

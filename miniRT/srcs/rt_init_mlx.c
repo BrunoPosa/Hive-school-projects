@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   rt_init_mlx.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwadding <jwadding@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 23:51:46 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/09 23:52:00 by jwadding         ###   ########.fr       */
+/*   Updated: 2024/12/26 02:04:46 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 
 void	init_mlx(t_scene *rt)
 {

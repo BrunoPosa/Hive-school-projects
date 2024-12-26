@@ -6,11 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 20:01:23 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/25 20:59:39 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 02:04:55 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 
 /*
 	'a' of the quadratic formula is 1, as 'ray' is a normalized vector,
@@ -36,7 +36,7 @@ float fsphere(t_vec ray, t_vec origin, t_shape *sphere)
 	{
 		t = (-b + sqrt(discriminant)) / 2;
 		if (t > EPSILON)
-			sphere->inside = TRUE;
+			sphere->inside = true;
 	}
 	return (t);
 }
@@ -164,8 +164,8 @@ bool	is_backlit(t_scene *scene, t_shape *plane, t_raydata *rayd)
 		dot(plane->axis, subtract(scene->cam.eye, rayd->hitp)) > 0) ||
 		(dot(plane->axis, rayd->shadow_ray) > 0 &&
 		dot(plane->axis, subtract(scene->cam.eye, rayd->hitp)) < 0))
-		return (TRUE);
-	return (FALSE);
+		return (true);
+	return (false);
 }
 
 /*
@@ -184,9 +184,9 @@ t_colour	calc_diffuse_part(t_scene *scene, t_shape *shape, t_raydata *rayd)
 	diffuse_amount = 0.0;
 	light_distance = magnitude(subtract(scene->lightxyz, shape->xyz));
 	if ((shape->type == sphere && shape->inside && light_distance > shape->r) ||
-		(shape->type == plane && is_backlit(scene, shape, rayd) == TRUE) ||
+		(shape->type == plane && is_backlit(scene, shape, rayd) == true) ||
 		(shape->type == cylinder && shape->inside &&
-		is_point_inside_cyl(scene->lightxyz, shape) == FALSE))
+		is_point_inside_cyl(scene->lightxyz, shape) == false))
 		return black();
 	color = scale_colour(shape->rgb, scene->lbr);
 	diffuse_amount = dot(rayd->normal, rayd->shadow_ray);
@@ -201,15 +201,15 @@ t_vec	surface_normal(t_scene *scene, t_shape *shape, t_raydata *rayd)
 {
 	if (shape->type == plane)
 		return (shape->axis);
-	else if (shape->type == sphere && shape->inside == TRUE)
+	else if (shape->type == sphere && shape->inside == true)
 		return (negate(normalize(subtract(rayd->hitp, shape->xyz))));
-	else if (shape->type == sphere && shape->inside == FALSE)
+	else if (shape->type == sphere && shape->inside == false)
 		return (normalize(subtract(rayd->hitp, shape->xyz)));
 	else
 	{
-		if (is_point_inside_cyl(scene->cam.eye, shape) == TRUE)
+		if (is_point_inside_cyl(scene->cam.eye, shape) == true)
 		{
-			shape->inside = TRUE;
+			shape->inside = true;
 			return (negate(cyl_normal(rayd, rayd->shape)));
 		}
 		else
@@ -295,8 +295,8 @@ int	trace(t_scene *scene, t_vec ray)
 		return(to_uint32(scene->ambiant));
 	}
 	rayd.hitp = add(scene->cam.eye, scale(ray, rayd.hitmin));
-	rayd.shadow_ray = add(scene->lightxyz, scale(scene->cam.up, EPSILON));
-	rayd.shadow_ray = subtract(rayd.shadow_ray, rayd.hitp);
+	rayd.shadow_ray = subtract(
+			add(scene->lightxyz, scale(scene->cam.up, EPSILON)), rayd.hitp);
 	rayd.shadow_ray = normalize(rayd.shadow_ray);
 	rayd.base_color = hadamard_product(rayd.shape->rgb, scene->ambiant);
 	if (in_shadow(scene, &rayd))

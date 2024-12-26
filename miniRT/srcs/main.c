@@ -6,11 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 19:04:23 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/25 16:48:02 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 02:04:46 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/file_to_list.h"
+#include "../minirt.h"
 
 int	main(int argc, char **argv)
 {

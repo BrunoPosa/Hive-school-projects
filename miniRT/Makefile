@@ -1,17 +1,33 @@
-# COLOURS 
-RED			=	\033[0;31m
-GREEN		=	\033[0;32m
-YELLOW		=	\033[0;33m
-END			=	\033[0m
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/12/25 23:06:21 by bposa             #+#    #+#              #
+#    Updated: 2024/12/26 01:58:27 by bposa            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
+NAME		= miniRT
+CC			= cc
+CFLAGS		= -Wall -Wextra -Werror -I $(MLX42_DIR)/include -I $(LIBFT_DIR)
+RM			= rm -rf
 
-NAME		=	miniRT
+LIBFT_DIR	= libft
+LIBFT		= $(LIBFT_DIR)/libft.a
 
-CC			=	cc
-CFLAGS		=	-Wall -Wextra -Werror
-RM			=	rm -rf
+MLX42_DIR	= MLX42
+MLX42_REPO	= https://github.com/codam-coding-college/MLX42.git
+MLX42_LIB	= $(MLX42_DIR)/build/libmlx42.a
+MLXFLAGS	= -ldl -lglfw -pthread -L "$$HOME/.brew/opt/glfw/lib/"
 
-SRCS 		=	main.c \
+HEADER		= minirt.h
+SRCS_DIR	= srcs/
+OBJ			= $(SRCS:.c=.o)
+OBJS		= $(addprefix $(SRCS_DIR), $(OBJ))
+SRCS		= 	main.c \
 				file_to_list.c \
 				file_to_list_scene.c \
 				printer.c \
@@ -43,48 +59,49 @@ SRCS 		=	main.c \
 				rt_colours2.c \
 				rt_tuples1.c \
 				rt_tuples2.c \
-				rt_free_rt.c \
+				rt_free_rt.c
 
-# rt_init_camera.c \
-# rt_init_mlx.c don't need this if mlx runs in the main()
+RED			=	\033[0;31m
+GREEN		=	\033[0;32m
+YELLOW		=	\033[0;33m
+END			=	\033[0m
 
-HEADER = ./inc/file_to_list.h
+all: $(NAME)
 
-MLXDIR      = ../MLX42/
-MLXLIB      = $(MLXDIR)build/libmlx42.a
-MLXFLAGS    = -ldl -lglfw -pthread -L "$$HOME/.brew/opt/glfw/lib/"
-MLXHEADERS  = -I $(MLXDIR)include
+$(NAME): $(MLX42_LIB) $(OBJS) $(LIBFT)
+			@$(CC) $(CFLAGS) $(OBJS) $(MLX42_LIB) $(MLXFLAGS) $(LIBFT) -lm -o $(NAME)
+			@echo "$(GREEN) Program compiled $(END)"
 
-MANPATH = $(addprefix ./srcs/, $(SRCS))
+$(MLX42_LIB): $(MLX42_DIR)
+	@cmake $(MLX42_DIR) -B $(MLX42_DIR)/build && $(MAKE) -C $(MLX42_DIR)/build -j4
+	@echo "$(YELLOW) MLX42 built.. $(END)"
 
-OBJS		=	$(MANPATH:%.c=%.o)
-
-LIBFT		= ../libft/libft.a
-
-LIBHEADER = ../libft/libft.h
-
-all:			$(NAME)
-
-$(NAME):		$(MLXLIB) $(OBJS) $(LIBFT)
-			@$(CC) $(CFLAGS) $(OBJS) -lm $(MLXLIB) $(MLXFLAGS) $(MLXHEADERS) $(LIBFT) -I $(LIBHEADER) -o $(NAME) -g
-			@echo "$(GREEN) Files compiled $(END)"
-
-$(MLXLIB):
-	cmake $(MLXDIR) -B $(MLXDIR)build && make -C $(MLXDIR)build -j4
+$(MLX42_DIR):
+	@git clone $(MLX42_REPO)
+	@echo "$(YELLOW) MLX42 cloned.. $(END)"
 
 $(LIBFT):
-			@make -C ../libft && make -C ../libft make clean
+	@make -C $(LIBFT_DIR)
+	@echo "$(YELLOW) Libft compiled.. $(END)"
 
-# %.o:%.c
-# 			@$(CC) $(CFLAGS) -c $< -o $@		
+$(SRCS_DIR)%.o: $(SRCS_DIR)%.c $(HEADER)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+norm:
+	norminette -R CheckForbiddenSourceHeader $(SRCS_DIR) $(HEADER)
 
 clean:
-			@$(RM) $(OBJS)
-			@echo "$(YELLOW)Objects removed$(END)"
+	@$(RM) $(OBJS)
+	@make -C $(LIBFT_DIR) clean
+	@$(MAKE) -C $(MLX42_DIR)/build clean
+	@echo "$(YELLOW) cleaned $(END)"
 
-fclean:			clean
-			@$(RM) $(NAME)
+fclean: clean
+	@$(RM) $(NAME)
+	@make -C $(LIBFT_DIR) fclean
+	@$(RM) $(MLX42_DIR)
+	@echo "$(GREEN) Fcleaned $(END)"
 
-re:			fclean all
+re: fclean all
 
-.PHONY:		all clean fclean re debug
+.PHONY: all clean fclean re norm
