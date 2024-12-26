@@ -6,7 +6,7 @@
 #    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/25 23:06:21 by bposa             #+#    #+#              #
-#    Updated: 2024/12/26 04:04:07 by bposa            ###   ########.fr        #
+#    Updated: 2024/12/26 13:11:16 by bposa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -92,13 +92,17 @@ norm:
 clean:
 	@$(RM) $(OBJS)
 	@make -C $(LIBFT_DIR) clean
-	@$(MAKE) -C $(MLX42_DIR)/build clean
+	@if [ -d "$(MLX42_DIR)/build" ]; then \
+		make -C $(MLX42_DIR)/build clean; \
+	fi
 	@echo "$(YELLOW) cleaned $(END)"
 
 fclean: clean
 	@$(RM) $(NAME)
 	@make -C $(LIBFT_DIR) fclean
-	@$(RM) $(MLX42_DIR)
+	@if [ -d "$(MLX42_DIR)/build" ]; then \
+		$(RM) $(MLX42_DIR)/build; \
+	fi
 	@echo "$(GREEN) Fcleaned $(END)"
 
 re: fclean all
