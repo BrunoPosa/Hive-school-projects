@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 02:18:10 by bposa             #+#    #+#             */
-/*   Updated: 2024/12/26 04:00:43 by bposa            ###   ########.fr       */
+/*   Updated: 2024/12/26 04:10:56 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,22 @@
 # include <math.h>
 # include <fcntl.h>
 
-# define LEGAL_CHARS1 "0123456789.CALplcysp-, \n" //input
-# define LEGAL_CHARS2 "0123456789.-, \n" //after assign type
-# define LEGAL_CHARS3 "0123456789.-," //3dxyz, xyz
-# define LEGAL_CHARS4 "0123456789." //alr, lbr
-# define LEGAL_CHARS5 "0123456789," //rgb
-# define LEGAL_CHARS6 "0123456789" //fov
-# define LEGAL_CHARS7 "0123456789.-" //cd, ch, sd
+/*
+	1 - input
+	2 - after assign type
+	3 - 3dxyz, xyz
+	4 - alr, lbr
+	5 - rgb
+	6 - fov
+	7 - cd, ch, sd
+*/
+# define LEGAL_CHARS1 "0123456789.CALplcysp-, \n"
+# define LEGAL_CHARS2 "0123456789.-, \n"
+# define LEGAL_CHARS3 "0123456789.-,"
+# define LEGAL_CHARS4 "0123456789."
+# define LEGAL_CHARS5 "0123456789,"
+# define LEGAL_CHARS6 "0123456789"
+# define LEGAL_CHARS7 "0123456789.-"
 
 //	  C O N S T A N T S
 
@@ -252,8 +261,10 @@ int			process_rgb(t_list *current);
 int			populate_scene(t_list **l, t_scene *scene);
 t_cam		move_element_into_scene(t_list *current);
 float		calculate_focal_len(unsigned int fov);
+
+/*			Cleanup functions			*/
+
 int			clean_return(t_error error, t_rt *data);
-void		free_rt(t_scene *rt);
 void		free_array(char **s);
 int			free_return(void *ptr, t_error error);
 int			free_arr_return(char **s, int error);
