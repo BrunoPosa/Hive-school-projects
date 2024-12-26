@@ -6,7 +6,7 @@
 #    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/25 23:06:21 by bposa             #+#    #+#              #
-#    Updated: 2024/12/26 13:11:16 by bposa            ###   ########.fr        #
+#    Updated: 2024/12/26 13:29:08 by bposa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ LIBFT		= $(LIBFT_DIR)/libft.a
 MLX42_DIR	= MLX42
 MLX42_REPO	= https://github.com/codam-coding-college/MLX42.git
 MLX42_LIB	= $(MLX42_DIR)/build/libmlx42.a
-MLXFLAGS	= -ldl -lglfw -pthread -L "$$HOME/.brew/opt/glfw/lib/"
+MLXFLAGS	= -lglfw -pthread -L "$$HOME/.brew/opt/glfw/lib/"
 
 HEADER		= minirt.h
 SRCS_DIR	= srcs/
@@ -60,7 +60,6 @@ SRCS		= 	main.c \
 				rt_tuples2.c \
 				rt_free_rt.c
 
-RED			=	\033[0;31m
 GREEN		=	\033[0;32m
 YELLOW		=	\033[0;33m
 END			=	\033[0m
