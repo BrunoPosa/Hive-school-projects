@@ -1,6 +1,6 @@
 NAME		= miniRT
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -I $(MLX42_DIR)/include -I $(LIBFT_DIR)
+CFLAGS		= -Wall -Wextra -Werror -O3 -I $(MLX42_DIR)/include -I $(LIBFT_DIR)
 RM			= rm -rf
 
 LIBFT_DIR	= libft
