@@ -1,0 +1,12 @@
+*.o
+ray_tracer_challenge/ray_tracer
+*.out
+.vscode/
+/MLX42/
+/miniRT/MLX42
+*.a
+*.ppm
+miniRT/miniRT
+examples/
+Doxyfile
+miniRT/doxydocs/

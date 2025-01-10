@@ -1,0 +1,35 @@
+C 0,5,-8       0,0,1       90
+
+A 0.2 255,255,255
+
+L 0,5,5         1.0     250,250,250
+L -12,7,-10     0.6     250,250,250
+L 0,7,-10		0.6		255,255,255
+
+#character head?
+#sp	0,1,-1		1.2					125,25,25
+
+cy	-5,0,-2		0,1,0	2.8    20	140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm" 
+cy	-5,0,10		0,1,0	2.8    20   140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+cy	5,0,-2		0,1,0	2.8    20	140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+cy	5,0,10		0,1,0	2.8    20	140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+
+sp	-5,0,10		4.2					140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+sp	5,0,10		4.2					140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+sp	-5,0,-2		4.2					140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+sp	5,0,-2		4.2					140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+sp	-5,10,10	4.2					140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+sp	5,10,10		4.2					140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+sp	-5,10,-2	4.2					140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+sp	5,10,-2		4.2					140,140,140 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+
+#floor plane
+pl	0,0,0		0,1,0				0		0 0 0	104,104,104 -texture "textures/colour/167.xpm" -normal "textures/normal/167_norm.xpm"
+
+#back plane, weird af behavior?
+pl	0,0,16		0,0,-1				0		0 0 0	25,25,178 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+
+pl	0,10,0		0,-1,0				0		0 0 0	128,0,0 -texture "textures/colour/154.xpm" -normal "textures/normal/154_norm.xpm"
+#pl	0,0,-14		0,0,1				0		1 0 0	25,25,178
+
+
