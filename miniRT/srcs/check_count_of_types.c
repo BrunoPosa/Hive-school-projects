@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 21:29:02 by jwadding          #+#    #+#             */
-/*   Updated: 2024/12/26 02:40:48 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/09 12:34:47 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ int	check_count_of_types(t_list **l, t_scene *scene)
 			scene->n_ambient++;
 		current = current->next;
 	}
-	if (scene->n_camera != 1 || scene->n_light != 1 || scene->n_ambient != 1
-		|| scene->n_sphere + scene->n_plane + scene->n_cylinder <= 0
+	if (scene->n_camera + scene->n_light + scene->n_ambient
+		+ scene->n_sphere + scene->n_plane + scene->n_cylinder < 1
 		|| scene->n_sphere + scene->n_plane + scene->n_cylinder >= SHAPE_LIMIT)
 		return (E_OBJECT_COUNT);
 	return (E_SUCCESS);

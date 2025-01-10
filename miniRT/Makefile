@@ -1,18 +1,6 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/12/25 23:06:21 by bposa             #+#    #+#              #
-#    Updated: 2024/12/26 13:29:08 by bposa            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME		= miniRT
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -I $(MLX42_DIR)/include -I $(LIBFT_DIR)
+CFLAGS		= -Wall -Wextra -Werror -O3 -I $(MLX42_DIR)/include -I $(LIBFT_DIR)
 RM			= rm -rf
 
 LIBFT_DIR	= libft
