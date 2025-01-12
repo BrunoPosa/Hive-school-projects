@@ -1,5 +1,6 @@
 // #include "PhoneBook.class.hpp"
 #include "Contact.class.hpp"
+#include "PhoneBook.class.hpp"
 #include <iostream>
 #include <csignal>
 #include <array>

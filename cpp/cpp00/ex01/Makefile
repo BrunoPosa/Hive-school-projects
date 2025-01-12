@@ -2,6 +2,7 @@ NAME	= PhoneBook
 FLAGS	= -Wall -Wextra -Werror
 RM		= rm -rf
 SRCS	= main.cpp \
+		  Contact.cpp
 
 all: $(NAME)
 
