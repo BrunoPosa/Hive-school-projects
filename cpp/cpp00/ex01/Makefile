@@ -1,12 +1,17 @@
 NAME	= PhoneBook
 FLAGS	= -Wall -Wextra -Werror
 RM		= rm -rf
+
+HEADERS	= Contact.hpp \
+		  PhoneBook.hpp
+
 SRCS	= main.cpp \
-		  Contact.cpp
+		  Contact.cpp \
+		  PhoneBook.cpp
 
 all: $(NAME)
 
-$(NAME):
+$(NAME): $(SRCS)
 	c++ $(FLAGS) -o $(NAME) $(SRCS)
 
 clean:

@@ -1,27 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Contact.class.hpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/12 17:25:04 by bposa             #+#    #+#             */
+/*   Updated: 2025/01/15 00:38:05 by bposa            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 #include <iostream>
-#include <string>
+
+#ifndef CONTACT_COLUMN_WIDTH
+# define CONTACT_COLUMN_WIDTH 10
+#endif
+
+#ifndef CONTACT_STR_TRIM_CHAR
+# define CONTACT_STR_TRIM_CHAR '.'
+#endif
 
 class Contact {
 	public:
-		Contact();
+		Contact() = default;
+		Contact(const std::string firstName,
+				const std::string lastName,
+				const std::string nickName,
+				const std::string phoneNum,
+				const std::string darkSecret);
 
-		void		setFirstName(const std::string& s);
-		void		setLastName(const std::string& s);
-		void		setNickname(const std::string& s);
-		void		setPhoneNumber(const std::string& s);
-		void		setDarkSecret(const std::string& s);
-		void		displayContact();
-		std::string	getFirstName();
-		std::string	getLastName();
-		std::string	getNickname();
-		std::string	getPhoneNumber();
-		std::string	getDarkSecret();
+		std::string&	getFirstName();
+		std::string&	getLastName();
+		std::string&	getNickname();
+		std::string&	getPhoneNumber();
+		std::string&	getDarkSecret();
+
+		void		showContactPage();
+		void		showContactRow();
 
 	private:
-		std::string FirstName;
-		std::string LastName;
-		std::string Nickname;
-		std::string PhoneNum;
-		std::string DarkSecret;
+		std::string	_trim(std::string& str);
+		std::string _firstName;
+		std::string _lastName;
+		std::string _nickname;
+		std::string _phoneNum;
+		std::string _darkSecret;
 };

@@ -1,51 +1,43 @@
 #include "Contact.class.hpp"
+#include <iomanip>
 
-Contact::Contact() {}
+Contact::Contact(const std::string firstName,
+				const std::string lastName,
+				const std::string nickName,
+				const std::string phoneNum,
+				const std::string darkSecret)
+			: _firstName(firstName), _lastName(lastName), _nickname(nickName), 
+              _phoneNum(phoneNum), _darkSecret(darkSecret) {}
 
-void	Contact::setFirstName(const std::string& s) {
-	FirstName = s;
+void	Contact::showContactPage()
+{
+	std::cout << "First Name  : " << _firstName << std::endl
+			<< "Last Name   : " << _lastName << std::endl
+			<< "Nickname    : " << _nickname << std::endl
+			<< "Phone Number: " << _phoneNum << std::endl
+			<< "Dark Secret : " << _darkSecret << std::endl;
 }
 
-void	Contact::setLastName(const std::string& s) {
-	LastName = s;
+void	Contact::showContactRow()
+{
+	std::cout << std::right
+			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getFirstName()) << "|"
+			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getLastName()) << "|"
+			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getNickname()) << "|"
+			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getPhoneNumber()) << "|"
+			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getDarkSecret()) << std::endl;
 }
 
-void	Contact::setNickname(const std::string& s) {
-	Nickname = s;
+std::string	Contact::_trim(std::string& str)
+{
+	if (str.length() > CONTACT_COLUMN_WIDTH)
+		return (str.substr(0, CONTACT_COLUMN_WIDTH - 1) + CONTACT_STR_TRIM_CHAR);
+	else
+		return (str);
 }
 
-void	Contact::setPhoneNumber(const std::string& s) {
-	PhoneNum = s;
-}
-
-void	Contact::setDarkSecret(const std::string& s) {
-	DarkSecret = s;
-}
-
-void	Contact::displayContact() {
-	std::cout << "First Name  : " << FirstName << std::endl;
-	std::cout << "Last Name   : " << LastName << std::endl;
-	std::cout << "Nickname    : " << Nickname << std::endl;
-	std::cout << "Phone Number: " << PhoneNum << std::endl;
-	std::cout << "Dark Secret : " << DarkSecret << std::endl;
-}
-
-std::string	Contact::getFirstName() {
-	return (FirstName);
-}
-
-std::string	Contact::getLastName() {
-	return (LastName);
-}
-
-std::string	Contact::getNickname() {
-	return (Nickname);
-}
-
-std::string	Contact::getPhoneNumber() {
-	return (PhoneNum);
-}
-
-std::string	Contact::getDarkSecret() {
-	return (DarkSecret);
-}
+std::string&	Contact::getFirstName()		{	return (_firstName);	}
+std::string&	Contact::getLastName()		{	return (_lastName);		}
+std::string&	Contact::getNickname()		{	return (_nickname);		}
+std::string&	Contact::getPhoneNumber()	{	return (_phoneNum);		}
+std::string&	Contact::getDarkSecret()	{	return (_darkSecret);	}
