@@ -30,14 +30,14 @@ class Contact {
 				const std::string phoneNum,
 				const std::string darkSecret);
 
-		std::string&	getFirstName();
-		std::string&	getLastName();
-		std::string&	getNickname();
-		std::string&	getPhoneNumber();
-		std::string&	getDarkSecret();
+		std::string&	getFirstName(void);
+		std::string&	getLastName(void);
+		std::string&	getNickname(void);
+		std::string&	getPhoneNumber(void);
+		std::string&	getDarkSecret(void);
 
-		void		showContactPage();
-		void		showContactRow();
+		void		showContactPage(void);
+		void		showContactRow(void);
 
 	private:
 		std::string	_trim(std::string& str);

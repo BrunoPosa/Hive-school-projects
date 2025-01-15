@@ -12,8 +12,10 @@
 
 #include "PhoneBook.class.hpp"
 #include <cstring>
+#include <iomanip>
+#include <limits>
 
-PhoneBook::PhoneBook() : _index(0) {};
+PhoneBook::PhoneBook() : _index(0), _size(0) {};
 
 bool	PhoneBook::add_field(std::string& field, const std::string& label)
 {
@@ -45,52 +47,98 @@ bool	PhoneBook::add_contact(void)
 		return false;
 
 	_contacts[toIndex()] = Contact(first, last, nick, phone, secret);
+	if (getSize() != PHONEBOOK_SIZE)
+		setSize(getSize() + 1);
 	return (true);
 }
 
 /*
 Todo: check for valid numbers both in index, and in phone number z
-
-	You can use std::stoi (or std::stol, std::stoll for larger numbers) in combination with std::cin.fail() 
-	to check if the string can be converted to an integer. However, this approach would require handling 
-	exceptionsor checking input validity.
 */
-bool	PhoneBook::search()
+bool	PhoneBook::search(void)
 {
-	unsigned int displayIndex = 0;
+	std::string		input = "";
+	unsigned int	selection = 0;
+	unsigned int	inputTryCount = 0;
 
-	for (unsigned int i = 0; i < _index; i++) {
+	//show existing contacts line by line, with their index
+	for (unsigned int i = 0; i < getSize(); i++)
+	{
+		std::cout << std::setw(CONTACT_COLUMN_WIDTH) << i + 1 << "|";
 		_contacts[i].showContactRow();
 	}
+	std::cout << std::endl << "Enter index of contact to display (out of " << _index << "):" << std::endl;
+	while (true)
+	{
+		if (inputTryCount >= MAIN_TRIES_MAX || _inputFromStdin(input) == false)
+			return (false);
+		if (_isValidNumber(input, selection) == true && selection != 0 && selection <= getSize())
+			break ;
+		else
+		{
+			std::cout << "Selection does not exist! " << "(attempt " << inputTryCount + 1
+			<< " of " << MAIN_TRIES_MAX << ")" << std::endl;
+			inputTryCount++;
+		}
+	}
 
-	// std::cout << std::endl << "Enter index of contact to display (0 to " << _index - 1 << "):" << std::endl;
-	// while (true) {
-    //     std::cin >> displayIndex;
-
-    //     // Check if input failed (invalid input)
-    //     if (std::cin.fail()) {
-    //         std::cin.clear();  // Reset fail state
-    //         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Discard invalid input
-    //         std::cout << "Please enter a valid number.\n";
-    //     } else {
-    //         // Valid input, break out of loop
-    //         break;
-    //     }
-	// }
-
-	// _contacts[_indexCheck(displayIndex)].showContactPage();
+	_contacts[selection - 1].showContactPage();
 
 	return (true);
 }
 
-unsigned int	PhoneBook::_indexCheck(unsigned int i)
+bool	PhoneBook::_inputFromStdin(std::string& inputStr)
 {
-	return (i);
+	unsigned int	inputTryCount = 0;
+
+	while (!std::getline(std::cin, inputStr) && inputTryCount < MAIN_TRIES_MAX)
+	{
+		if (std::cin.eof() == true)
+		{
+			std::cerr << "EOF detected." << std::endl;
+			return (false);
+		}
+		else
+		{
+			std::cerr << "Input error." << std::endl;
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		}
+		inputTryCount++;
+	}
+	if (inputTryCount >= MAIN_TRIES_MAX)
+	{
+		std::cout << "Fatal input error! Exiting.." << std::endl;
+		return (false);
+	}
+	return (true);
+}
+
+bool	PhoneBook::_isValidNumber(const std::string& inputStr, unsigned int& result)
+{
+	std::stringstream	ss(inputStr);
+	unsigned int		num;
+
+	ss >> num;
+	if (ss.fail() || !ss.eof())
+		return (false);
+	result = num;
+	return (true);
 }
 
 unsigned int	PhoneBook::toIndex(void)
 {
-	if (_index > PHONEBOOK_SIZE - 1)
+	if (_index == PHONEBOOK_SIZE)
 		_index = 0;
 	return (_index++);
+}
+
+unsigned int	PhoneBook::getSize(void)
+{
+	return (_size);
+}
+
+void	PhoneBook::setSize(unsigned int newSize)
+{
+	_size = newSize;
 }

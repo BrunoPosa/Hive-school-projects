@@ -32,11 +32,17 @@ bool	do_cmd(PhoneBook& phonebook, std::array<char, 1024>& input)
 	}
 	else if (std::strcmp(input.data(), "SEARCH") == 0)
 	{
+		if (phonebook.getSize() == 0)
+		{
+			std::cout << "Silly Billy! Add a contact first! Closing.." << std::endl;
+			return (false);
+		}
 		phonebook.search();
 	}
 	return (true);
 }
 
+//test case: try SEARCH when there is no contacts
 int	main (void)
 {
 	std::array<char, 1024>	input;
@@ -46,9 +52,9 @@ int	main (void)
 	std::signal(SIGINT, sig_exit);
 	std::signal(SIGQUIT, sig_exit);
 
-	std::cout << "==== Awesome PhoneBook V.1 ====" << std::endl
-			<< "Up to " << PHONEBOOK_SIZE << " contacts with "
-			<< MAIN_INPUT_BUFFER_SIZE << "-byte fields" << std::endl
+	std::cout << HEADLINE_CLR << "============ Awesome PhoneBook V.0.1 ============" << RESET_CLR << std::endl
+			<< GREEN_CLR << "Up to " << PHONEBOOK_SIZE << " contacts with "
+			<< MAIN_INPUT_BUFFER_SIZE << "-byte fields" << RESET_CLR << std::endl
 			<< "Each contact's fields are:" << std::endl
 			<< "first name, last name, nickname, phone number, darkest secret" << std::endl;
 
@@ -56,7 +62,10 @@ int	main (void)
 	{
 		input.fill(0);
 		std::cout << YELLOW_CLR << "ADD, SEARCH, or EXIT:\n" << RESET_CLR;
-		std::cin.getline(input.data(), input.size());
+		if (!std::cin.getline(input.data(), input.size())) // MOVE AWAY FROM CSTRINGS, USE STD::GETLINE instead!
+		{
+			std::cout << "Oops." << std::endl;
+		};
 		if (std::cin.fail())
 		{
 			std::cin.clear();
