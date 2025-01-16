@@ -19,25 +19,38 @@ PhoneBook::PhoneBook() : _index(0), _size(0) {};
 
 bool	PhoneBook::add_field(std::string& field, const std::string& label)
 {
+	unsigned int	inputTryCount = 0;
 
-	while (field.length() > MAIN_INPUT_BUFFER_SIZE || field.length() == 0)
+	while ((field.length() > MAIN_INPUT_BUFFER_SIZE || field.length() == 0) && inputTryCount < MAIN_TRIES_MAX)
 	{
+		std::cout << "Entry " << 1 + (_index % PHONEBOOK_SIZE)
+				<< " - Type " << label << ":" << std::endl;
+		std::getline(std::cin, field);
 		if (std::cin.fail() == true && (field.length() <= MAIN_INPUT_BUFFER_SIZE && field.length() != 0))
 		{
 			std::cin.clear();
 			return (false);
 		}
+		if (label == "Phone Number" && _isAllDigits(field) == false)
+		{
+			std::cout << "Use only digits! " << "(attempt " << inputTryCount + 1
+					<< " of " << MAIN_TRIES_MAX << ")" << std::endl;
+			field = "";
+			inputTryCount++;
+		}
 		std::cin.clear();
-		std::cout << "Entry " << 1 + (_index % PHONEBOOK_SIZE)
-				<< " - Type " << label << ":" << std::endl;
-		std::getline(std::cin, field);
+	}
+	if (inputTryCount >= MAIN_TRIES_MAX)
+	{
+		std::cout << "Too many tries! Exiting.." << std::endl;
+		return (false);
 	}
 	return (true);
 }
 
 bool	PhoneBook::add_contact(void)
 {
-	std::string	first, last, nick, phone, secret;
+	std::string	first, last, nick, phone, secret = "";
 
 	if (!add_field(first, "First Name") || 
 		!add_field(last, "Last Name") || 
@@ -58,21 +71,21 @@ Todo: check for valid numbers both in index, and in phone number z
 bool	PhoneBook::search(void)
 {
 	std::string		input = "";
-	unsigned int	selection = 0;
+	unsigned int	selectNumber = 0;
 	unsigned int	inputTryCount = 0;
 
 	//show existing contacts line by line, with their index
-	for (unsigned int i = 0; i < getSize(); i++)
+	for (unsigned int i = 0; i < _size; i++)
 	{
 		std::cout << std::setw(CONTACT_COLUMN_WIDTH) << i + 1 << "|";
 		_contacts[i].showContactRow();
 	}
-	std::cout << std::endl << "Enter index of contact to display (out of " << _index << "):" << std::endl;
+	std::cout << std::endl << "Enter index of contact to display (out of " << _size << "):" << std::endl;
 	while (true)
 	{
 		if (inputTryCount >= MAIN_TRIES_MAX || _inputFromStdin(input) == false)
 			return (false);
-		if (_isValidNumber(input, selection) == true && selection != 0 && selection <= getSize())
+		if (_isValidNumber(input, selectNumber) == true && selectNumber <= _size)
 			break ;
 		else
 		{
@@ -82,7 +95,7 @@ bool	PhoneBook::search(void)
 		}
 	}
 
-	_contacts[selection - 1].showContactPage();
+	_contacts[selectNumber - 1].showContactPage();
 
 	return (true);
 }
@@ -114,13 +127,24 @@ bool	PhoneBook::_inputFromStdin(std::string& inputStr)
 	return (true);
 }
 
+bool	PhoneBook::_isAllDigits(const std::string& inputStr) {
+	for (size_t i = 0; i < inputStr.length(); i++) {
+		if (!std::isdigit(static_cast<unsigned char>(inputStr[i]))) {
+			return (false);
+		}
+	}
+	return (true);
+}
+
 bool	PhoneBook::_isValidNumber(const std::string& inputStr, unsigned int& result)
 {
 	std::stringstream	ss(inputStr);
-	unsigned int		num;
+	ssize_t				num;
 
+	if (_isAllDigits(inputStr) == false)
+		return (false);
 	ss >> num;
-	if (ss.fail() || !ss.eof())
+	if (ss.fail() || num <= 0)
 		return (false);
 	result = num;
 	return (true);

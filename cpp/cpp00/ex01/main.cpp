@@ -26,10 +26,7 @@ void sig_exit(int sig)
 bool	do_cmd(PhoneBook& phonebook, std::array<char, 1024>& input)
 {
 	if (std::strcmp(input.data(), "ADD") == 0 && phonebook.add_contact() == false)
-	{
-		std::cout << "Fatal error! Closing.." << std::endl;
 		return (false);
-	}
 	else if (std::strcmp(input.data(), "SEARCH") == 0)
 	{
 		if (phonebook.getSize() == 0)

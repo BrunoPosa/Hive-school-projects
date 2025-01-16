@@ -33,11 +33,12 @@
 # define RESET_CLR "\033[0m"
 #endif
 
-class PhoneBook {
+class PhoneBook
+{
 	public:
 		PhoneBook();
 
-		bool			add_contact(void);//set most these to private
+		bool			add_contact(void);
 		bool			search(void);
 		unsigned int	getSize(void);
 		void			setSize(unsigned int newSize);
@@ -49,6 +50,7 @@ class PhoneBook {
 		unsigned int	_index;
 		unsigned int	_size;
 
-		bool			_isValidNumber(const std::string& inputStr, unsigned int& result);
+		bool			_isAllDigits(const std::string& inputStr);
+		bool			_isValidNumber(const std::string& inputStr, unsigned int& selectNumber);
 		bool			_inputFromStdin(std::string& inputStr);
 };
