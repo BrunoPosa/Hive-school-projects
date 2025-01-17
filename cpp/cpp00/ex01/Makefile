@@ -2,8 +2,8 @@ NAME	= PhoneBook
 FLAGS	= -Wall -Wextra -Werror
 RM		= rm -rf
 
-HEADERS	= Contact.hpp \
-		  PhoneBook.hpp
+HEADERS	= Contact.class.hpp \
+		  PhoneBook.class.hpp
 
 SRCS	= main.cpp \
 		  Contact.cpp \
@@ -11,7 +11,7 @@ SRCS	= main.cpp \
 
 all: $(NAME)
 
-$(NAME): $(SRCS)
+$(NAME): $(SRCS) $(HEADERS)
 	c++ $(FLAGS) -o $(NAME) $(SRCS)
 
 clean:
@@ -21,3 +21,5 @@ fclean:
 	$(RM) $(NAME)
 
 re: fclean all
+
+.PHONY: all clean fclean re

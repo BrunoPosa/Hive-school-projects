@@ -10,47 +10,41 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef PHONEBOOK_CLASS_HPP
+# define PHONEBOOK_CLASS_HPP
+
 #include "Contact.class.hpp"
 
-/* Between 1 and UNSIGNED_INT_MAX (or smaller number depending on system) */
-#ifndef PHONEBOOK_SIZE
-# define PHONEBOOK_SIZE 3
-#endif
+/* Limits */
+# define PB_SIZE 10
+# define PB_INPUTSTR_MAX 512
+# define PB_ATTEMPT_MAX 3
 
-#ifndef MAIN_INPUT_BUFFER_SIZE
-# define MAIN_INPUT_BUFFER_SIZE 1024
-#endif
-
-#ifndef MAIN_TRIES_MAX
-# define MAIN_TRIES_MAX 3
-#endif
-
-#ifndef YELLOW_CLR
-# define YELLOW_CLR "\033[33m"
-# define GREEN_CLR "\e[1;32m"
-# define HEADLINE_CLR "\e[1;32m"
-# define RESET_CLR "\033[0m"
-#endif
+/* Colors */
+# define PB_YELLOW "\033[33m"
+# define PB_GREEN "\e[1;32m"
+# define PB_RESET_COLOR "\033[0m"
 
 class PhoneBook
 {
 	public:
 		PhoneBook();
 
-		bool			add_contact(void);
+		bool			addContact(void);
 		bool			search(void);
 		unsigned int	getSize(void);
-		void			setSize(unsigned int newSize);
-		bool			add_field(std::string& field, const std::string& label);//put private
-		unsigned int	toIndex(void);//put private
+
 
 	private:
-		Contact			_contacts[PHONEBOOK_SIZE];
+		Contact			_contacts[PB_SIZE];
 		unsigned int	_index;
 		unsigned int	_size;
 
+		bool			_addField(std::string& field, const std::string& label);
+		unsigned int	_toIndex(void);
 		bool			_isAllDigits(const std::string& inputStr);
-		bool			_isValidNumber(const std::string& inputStr, unsigned int& selectNumber);
+		bool			_isValidNumber(const std::string& inputStr, unsigned int& selection);
 		bool			_inputFromStdin(std::string& inputStr);
 };
+
+#endif

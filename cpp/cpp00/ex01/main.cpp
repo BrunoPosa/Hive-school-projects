@@ -23,54 +23,63 @@ void sig_exit(int sig)
 	std::exit(sig);
 }
 
-bool	do_cmd(PhoneBook& phonebook, std::array<char, 1024>& input)
+bool	do_cmd(PhoneBook& phonebook, std::string& input)
 {
-	if (std::strcmp(input.data(), "ADD") == 0 && phonebook.add_contact() == false)
+	if (input == "ADD" && phonebook.addContact() == false)
 		return (false);
-	else if (std::strcmp(input.data(), "SEARCH") == 0)
+	else if (input == "SEARCH")
 	{
 		if (phonebook.getSize() == 0)
 		{
 			std::cout << "Silly Billy! Add a contact first! Closing.." << std::endl;
 			return (false);
 		}
-		phonebook.search();
+		if (phonebook.search() == false)
+			return (false);
 	}
 	return (true);
 }
 
-//test case: try SEARCH when there is no contacts
+/*
+	test cases:
+	-try SEARCH when there is no contacts
+	-redirect an empty file as input
+	-Try very long line and empty line
+	-see if there is leaks on Ctrl+C or \
+	-see if adding limit+1 contacts loops over
+	-special chars mess the table bc they are > 1 byte
+*/
 int	main (void)
 {
-	std::array<char, 1024>	input;
-	PhoneBook				phonebook;
+	std::string	input;
+	PhoneBook	phonebook;
 
-	input.fill(0);
 	std::signal(SIGINT, sig_exit);
 	std::signal(SIGQUIT, sig_exit);
-
-	std::cout << HEADLINE_CLR << "============ Awesome PhoneBook V.0.1 ============" << RESET_CLR << std::endl
-			<< GREEN_CLR << "Up to " << PHONEBOOK_SIZE << " contacts with "
-			<< MAIN_INPUT_BUFFER_SIZE << "-byte fields" << RESET_CLR << std::endl
+ 
+	/* Welcome message */
+	std::cout << PB_GREEN << "============ Awesome PhoneBook V.0.1 ============" << PB_RESET_COLOR << std::endl
+			<< PB_GREEN << "Up to " << PB_SIZE << " contacts with "
+			<< PB_INPUTSTR_MAX << "-byte fields" << PB_RESET_COLOR << std::endl
 			<< "Each contact's fields are:" << std::endl
 			<< "first name, last name, nickname, phone number, darkest secret" << std::endl;
 
-	while (std::strcmp(input.data(), "EXIT") != 0)
+	while (input != "EXIT")
 	{
-		input.fill(0);
-		std::cout << YELLOW_CLR << "ADD, SEARCH, or EXIT:\n" << RESET_CLR;
-		if (!std::cin.getline(input.data(), input.size())) // MOVE AWAY FROM CSTRINGS, USE STD::GETLINE instead!
+		std::cout << PB_YELLOW << "ADD, SEARCH, or EXIT:" << PB_RESET_COLOR << std::endl;
+		if (!std::getline(std::cin, input))
 		{
-			std::cout << "Oops." << std::endl;
-		};
-		if (std::cin.fail())
-		{
-			std::cin.clear();
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			std::cout << "Input line limit is " << MAIN_INPUT_BUFFER_SIZE << " bytes!\n";
+			if (std::cin.eof() == true)
+			{
+				std::cout << "EOF!" << std::endl;
+				return (0);
+			}
+			else if (std::cin.fail())
+				return (5);
 		}
 		if (do_cmd(phonebook, input) == false)
 			return (1);
 	}
+	std::cout << "[Contacts deleted, Bye! :P]" << std::endl;
 	return (0);
 }

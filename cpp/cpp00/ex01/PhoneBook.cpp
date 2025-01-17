@@ -11,70 +11,41 @@
 /* ************************************************************************** */
 
 #include "PhoneBook.class.hpp"
-#include <cstring>
 #include <iomanip>
 #include <limits>
 
 PhoneBook::PhoneBook() : _index(0), _size(0) {};
 
-bool	PhoneBook::add_field(std::string& field, const std::string& label)
-{
-	unsigned int	inputTryCount = 0;
-
-	while ((field.length() > MAIN_INPUT_BUFFER_SIZE || field.length() == 0) && inputTryCount < MAIN_TRIES_MAX)
-	{
-		std::cout << "Entry " << 1 + (_index % PHONEBOOK_SIZE)
-				<< " - Type " << label << ":" << std::endl;
-		std::getline(std::cin, field);
-		if (std::cin.fail() == true && (field.length() <= MAIN_INPUT_BUFFER_SIZE && field.length() != 0))
-		{
-			std::cin.clear();
-			return (false);
-		}
-		if (label == "Phone Number" && _isAllDigits(field) == false)
-		{
-			std::cout << "Use only digits! " << "(attempt " << inputTryCount + 1
-					<< " of " << MAIN_TRIES_MAX << ")" << std::endl;
-			field = "";
-			inputTryCount++;
-		}
-		std::cin.clear();
-	}
-	if (inputTryCount >= MAIN_TRIES_MAX)
-	{
-		std::cout << "Too many tries! Exiting.." << std::endl;
-		return (false);
-	}
-	return (true);
-}
-
-bool	PhoneBook::add_contact(void)
+bool	PhoneBook::addContact(void)
 {
 	std::string	first, last, nick, phone, secret = "";
 
-	if (!add_field(first, "First Name") || 
-		!add_field(last, "Last Name") || 
-		!add_field(nick, "Nickname") || 
-		!add_field(phone, "Phone Number") || 
-		!add_field(secret, "Darkest Secret"))
+	if (!_addField(first, "First Name") || 
+		!_addField(last, "Last Name") || 
+		!_addField(nick, "Nickname") || 
+		!_addField(phone, "Phone Number") || 
+		!_addField(secret, "Darkest Secret"))
 		return false;
 
-	_contacts[toIndex()] = Contact(first, last, nick, phone, secret);
-	if (getSize() != PHONEBOOK_SIZE)
-		setSize(getSize() + 1);
+	_contacts[_toIndex()] = Contact(first, last, nick, phone, secret);
+	if (getSize() != PB_SIZE)
+		_size++;
 	return (true);
 }
 
-/*
-Todo: check for valid numbers both in index, and in phone number z
-*/
+unsigned int	PhoneBook::getSize(void)
+{
+	return (_size);
+}
+
 bool	PhoneBook::search(void)
 {
-	std::string		input = "";
-	unsigned int	selectNumber = 0;
-	unsigned int	inputTryCount = 0;
+	std::string		input;
+	unsigned int	selection = 0;
+	unsigned int	attempt = 0;
 
-	//show existing contacts line by line, with their index
+	if (_size == 0)
+		return (false);
 	for (unsigned int i = 0; i < _size; i++)
 	{
 		std::cout << std::setw(CONTACT_COLUMN_WIDTH) << i + 1 << "|";
@@ -83,52 +54,87 @@ bool	PhoneBook::search(void)
 	std::cout << std::endl << "Enter index of contact to display (out of " << _size << "):" << std::endl;
 	while (true)
 	{
-		if (inputTryCount >= MAIN_TRIES_MAX || _inputFromStdin(input) == false)
+		if (attempt >= PB_ATTEMPT_MAX || _inputFromStdin(input) == false)
 			return (false);
-		if (_isValidNumber(input, selectNumber) == true && selectNumber <= _size)
+		if (_isValidNumber(input, selection) == true && selection <= _size)
 			break ;
 		else
 		{
-			std::cout << "Selection does not exist! " << "(attempt " << inputTryCount + 1
-			<< " of " << MAIN_TRIES_MAX << ")" << std::endl;
-			inputTryCount++;
+			std::cout << "Selection does not exist! " << "(attempt " << attempt + 1
+			<< " of " << PB_ATTEMPT_MAX << ")" << std::endl;
+			attempt++;
 		}
 	}
+	_contacts[selection - 1].showContactPage();
 
-	_contacts[selectNumber - 1].showContactPage();
+	return (true);
+}
 
+bool	PhoneBook::_addField(std::string& field, const std::string& label)
+{
+	unsigned int	attempt = 0;
+
+	while (attempt < PB_ATTEMPT_MAX)
+	{
+		std::cout << "Entry " << 1 + (_index % PB_SIZE) << " - Type " << label << ":" << std::endl;
+		if (_inputFromStdin(field) == false)
+			return (false);
+		else if (label == "Phone Number" && _isAllDigits(field) == false)
+		{
+			std::cout << "Use only digits! " << "(attempt " << attempt + 1
+					<< " of " << PB_ATTEMPT_MAX << ")" << std::endl;
+			field = "";
+			attempt++;
+		}
+		else
+			break ;
+	}
+	if (attempt >= PB_ATTEMPT_MAX || field.length() == 0)
+		return (false);
 	return (true);
 }
 
 bool	PhoneBook::_inputFromStdin(std::string& inputStr)
 {
-	unsigned int	inputTryCount = 0;
+	unsigned int	attempt = 0;
 
-	while (!std::getline(std::cin, inputStr) && inputTryCount < MAIN_TRIES_MAX)
+	while (attempt < PB_ATTEMPT_MAX)
 	{
+		std::getline(std::cin, inputStr);
 		if (std::cin.eof() == true)
 		{
-			std::cerr << "EOF detected." << std::endl;
+			std::cerr << "EOF." << std::endl;
 			return (false);
 		}
-		else
+		else if (std::cin.fail() == true)
 		{
-			std::cerr << "Input error." << std::endl;
-			std::cin.clear();
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			std::cerr << "Input stream error." << std::endl;
+			return (false);
 		}
-		inputTryCount++;
+		else if (inputStr.length() > PB_INPUTSTR_MAX)
+		{
+			std::cout << "Input too long! Max input is " << PB_INPUTSTR_MAX << " chars." << std::endl;
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			inputStr = "";
+			attempt++;
+            continue;
+		}
+		else if (inputStr.empty() == true)
+		{
+			std::cout << "Input cannot be empty!" << std::endl;
+			attempt++;
+			continue ;
+		}
+		return (true);
 	}
-	if (inputTryCount >= MAIN_TRIES_MAX)
-	{
-		std::cout << "Fatal input error! Exiting.." << std::endl;
-		return (false);
-	}
-	return (true);
+	std::cout << "Too many attempts! Exiting.." << std::endl;
+	return (false);
 }
 
-bool	PhoneBook::_isAllDigits(const std::string& inputStr) {
-	for (size_t i = 0; i < inputStr.length(); i++) {
+bool	PhoneBook::_isAllDigits(const std::string& inputStr)
+{
+	for (size_t i = 0; i < inputStr.length(); i++)
+	{
 		if (!std::isdigit(static_cast<unsigned char>(inputStr[i]))) {
 			return (false);
 		}
@@ -150,19 +156,9 @@ bool	PhoneBook::_isValidNumber(const std::string& inputStr, unsigned int& result
 	return (true);
 }
 
-unsigned int	PhoneBook::toIndex(void)
+unsigned int	PhoneBook::_toIndex(void)
 {
-	if (_index == PHONEBOOK_SIZE)
+	if (_index == PB_SIZE)
 		_index = 0;
 	return (_index++);
-}
-
-unsigned int	PhoneBook::getSize(void)
-{
-	return (_size);
-}
-
-void	PhoneBook::setSize(unsigned int newSize)
-{
-	_size = newSize;
 }

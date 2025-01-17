@@ -10,16 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef CONTACT_CLASS_HPP
+# define CONTACT_CLASS_HPP
+
 #include <iostream>
 
-#ifndef CONTACT_COLUMN_WIDTH
 # define CONTACT_COLUMN_WIDTH 10
-#endif
-
-#ifndef CONTACT_STR_TRIM_CHAR
 # define CONTACT_STR_TRIM_CHAR '.'
-#endif
 
 class Contact {
 	public:
@@ -47,3 +44,5 @@ class Contact {
 		std::string _phoneNum;
 		std::string _darkSecret;
 };
+
+#endif
