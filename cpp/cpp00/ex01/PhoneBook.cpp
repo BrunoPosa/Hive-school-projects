@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/12 18:00:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/15 02:30:45 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/18 01:52:41 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ PhoneBook::PhoneBook() : _index(0), _size(0) {};
 
 bool	PhoneBook::addContact(void)
 {
-	std::string	first, last, nick, phone, secret = "";
+	std::string	first, last, nick, phone, secret;
 
 	if (!_addField(first, "First Name") || 
 		!_addField(last, "Last Name") || 
