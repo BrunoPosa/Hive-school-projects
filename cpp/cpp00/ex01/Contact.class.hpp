@@ -18,7 +18,8 @@
 # define CONTACT_COLUMN_WIDTH 10
 # define CONTACT_STR_TRIM_CHAR '.'
 
-class Contact {
+class Contact
+{
 	public:
 		Contact() = default;
 		Contact(const std::string firstName,
@@ -26,12 +27,6 @@ class Contact {
 				const std::string nickName,
 				const std::string phoneNum,
 				const std::string darkSecret);
-
-		std::string&	getFirstName(void);
-		std::string&	getLastName(void);
-		std::string&	getNickname(void);
-		std::string&	getPhoneNumber(void);
-		std::string&	getDarkSecret(void);
 
 		void		showContactPage(void);
 		void		showContactRow(void);
