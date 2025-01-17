@@ -23,9 +23,7 @@ void	Contact::showContactRow()
 	std::cout << std::right
 			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getFirstName()) << "|"
 			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getLastName()) << "|"
-			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getNickname()) << "|"
-			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getPhoneNumber()) << "|"
-			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getDarkSecret()) << std::endl;
+			<< std::setw(CONTACT_COLUMN_WIDTH) << _trim(getNickname()) << "|" << std::endl;
 }
 
 std::string	Contact::_trim(std::string& str)

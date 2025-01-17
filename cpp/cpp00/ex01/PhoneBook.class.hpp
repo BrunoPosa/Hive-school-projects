@@ -16,7 +16,7 @@
 #include "Contact.class.hpp"
 
 /* Limits */
-# define PB_SIZE 10
+# define PB_SIZE 8
 # define PB_INPUTSTR_MAX 512
 # define PB_ATTEMPT_MAX 3
 

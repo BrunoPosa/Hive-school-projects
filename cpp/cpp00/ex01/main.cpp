@@ -12,11 +12,8 @@
 
 #include "Contact.class.hpp"
 #include "PhoneBook.class.hpp"
-#include <iostream>
+
 #include <csignal>
-#include <array>
-#include <cstring>
-#include <limits>
 
 void sig_exit(int sig)
 {
