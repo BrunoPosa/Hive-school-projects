@@ -1,31 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Zombie.class.hpp                                   :+:      :+:    :+:   */
+/*   newZombie.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/18 01:25:30 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/18 19:43:49 by bposa            ###   ########.fr       */
+/*   Created: 2025/01/18 19:36:21 by bposa             #+#    #+#             */
+/*   Updated: 2025/01/18 19:36:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ZOMBIE_CLASS_HPP
-# define ZOMBIE_CLASS_HPP
+#include "Zombie.class.hpp"
 
-#include <iostream>
-
-class Zombie
+Zombie*	Zombie::newZombie(std::string name)
 {
-	std::string	_name;
-
-public:
-	Zombie(std::string name);
-	~Zombie();
-
-	void		announce(void);
-	Zombie*		newZombie(std::string name);
-	void		randomChump(std::string name);
-};
-
-#endif
+	Zombie*	zombie = new (std::nothrow) Zombie(name);
+	if (zombie == nullptr)
+		std::cout << name << " was not created due to malloc fail!" << std::endl;
+	return (zombie);
+}

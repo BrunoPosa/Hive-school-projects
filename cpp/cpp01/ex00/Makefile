@@ -1,11 +1,17 @@
-NAME	= megaphone
+NAME	= BraiiiiiiinnnzzzZ
 FLAGS	= -Wall -Wextra -Werror
 RM		= rm -rf
-SRCS	= megaphone.cpp
+
+HEADERS	= Zombie.class.hpp
+
+SRCS	= 	main.cpp \
+			Zombie.cpp \
+			newZombie.cpp  \
+			randomChump.cpp
 
 all: $(NAME)
 
-$(NAME): $(SRCS)
+$(NAME): $(SRCS) $(HEADERS)
 	c++ $(FLAGS) -o $(NAME) $(SRCS)
 
 clean:
