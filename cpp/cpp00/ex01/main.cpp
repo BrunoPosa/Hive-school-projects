@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/12 17:25:22 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/15 02:04:48 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/21 15:02:03 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,12 @@ bool	do_cmd(PhoneBook& phonebook, std::string& input)
 	-see if there is leaks on Ctrl+C or \
 	-see if adding limit+1 contacts loops over
 	-special chars mess the table bc they are > 1 byte
+
+	To fix:
+	-delete 'class' from header file names
+	-ensure each file has a 42 header
+	-if not needed to exit, do not exit..
+	-std::cin.ignore is unecessary in inputFromStdin()
 */
 int	main (void)
 {
