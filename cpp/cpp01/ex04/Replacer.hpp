@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   FileHandler.hpp                                    :+:      :+:    :+:   */
+/*   Replacer.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 01:27:51 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/25 02:27:15 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/28 02:10:26 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include <iostream>
+#ifndef REPLACER_HPP
+# define REPLACER_HPP
+
 #include <fstream>
 #include <string>
 
-/* FileHandler object needs to be checked! */
-class InFile
+class Replacer
 {
-	std::fstream	_file;
+	std::ifstream		_inFile;
+	std::ofstream		_outFile;
+	const std::string&	_oldStr;
+	const std::string&	_newStr;
 
 public:
-	InFile(const std::string& filename);
-
-	std::fstream&	getFileStream();
+	Replacer(const std::string& filename, const std::string& s1, const std::string& s2);
 };
 
-InFile::FileHandler(const std::string& filename) : _file(filename, std::ios::in | std::ios::out) {}
+#endif
