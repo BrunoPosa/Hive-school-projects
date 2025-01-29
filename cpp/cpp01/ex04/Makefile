@@ -15,6 +15,8 @@ $(NAME): $(SRCS) $(HEADERS)
 
 clean:
 	$(RM) text.replace
+	$(RM) LoremToHello.log
+	$(RM) forbiddenLocation.log
 
 fclean: clean
 	$(RM) $(NAME)

@@ -6,11 +6,12 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 21:46:24 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/29 01:49:51 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/29 04:00:47 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Replace.hpp"
+#include <limits>
 
 Replace::Replace(const string& filename, const string& str1, const string& str2)
 	: _filename(filename), _oldStr(str1), _newStr(str2) {}
