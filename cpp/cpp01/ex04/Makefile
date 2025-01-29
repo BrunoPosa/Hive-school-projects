@@ -3,10 +3,10 @@ CXX		= clang++
 FLAGS	= -std=c++11 -Wall -Wextra -Werror
 RM		= rm -rf
 
-HEADERS	=
+HEADERS	= Replace.hpp
 
 SRCS	=	main.cpp \
-
+			Replace.cpp
 
 all: $(NAME)
 
@@ -14,9 +14,9 @@ $(NAME): $(SRCS) $(HEADERS)
 	$(CXX) $(FLAGS) -o $(NAME) $(SRCS)
 
 clean:
-	@echo nothing to clean. use fclean
+	$(RM) text.replace
 
-fclean:
+fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all

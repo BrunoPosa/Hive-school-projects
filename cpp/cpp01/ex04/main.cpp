@@ -6,77 +6,48 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 18:36:39 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/28 02:04:05 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/29 02:19:04 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Replacer.hpp"
-#include <string>
+#include "Replace.hpp"
 #include <iostream>
-#include <fstream>
-#include <csignal>
 #include <exception>
 
-# define SED_NEW_FILE_EXTENSION ".replace"
-# define SED_FILENAME_MAX 255
-
-/* Colors */
-# define SED_RED "\e[31m"
-# define SED_YELLOW "\033[33m"
-# define SED_GREEN "\e[1;32m"
-# define SED_RESETCLR "\033[0m"
-
-enum e_errorCode
+int	printUsageReturn(int errCode)
 {
-	SUCCESS,
-	EXCEPTION,
-	ARGUMENT_ERROR,
-	EMPTY_FILENAME,
-	FILENAME_TOO_LONG,
-	FILE_OPEN_ERROR
-};
-
-bool	check(bool condition, const std::string& message)
-{
-	if (condition)
+	if (errCode != SUCCESS)
 	{
-		std::cout << SED_RED << "[ERROR]: " << SED_RESETCLR << message << std::endl;
-		return (true);
+		cout << SED_YELLOW
+			<< "usage: ./Sed_is_for_losers <filename> <str to be replaced> <replacement str>"
+			<< SED_RESETCLR << endl;
 	}
-	return (false);
+	return errCode;
 }
-
-int	usageMsg(int errCode)
-{
-	std::cout << SED_YELLOW
-			<< "usage: ./program <filename> <str to be replaced> <replacement str>"
-			<< SED_RESETCLR << std::endl;
-	return (errCode);
-}
-
 /*
-	argv[1] - filename
-	argv[2] - oldString
-	argv[3] - newString
+	Test:
+	-s1 is a substring of s2
+	-binary file
+	-run when output file already exists
 */
 int main(int argc, char **argv)
 {
 	int	status = 0;
 
-	if (check(argc != 4, "there must be 3 arguments!"))
-		return usageMsg(ARGUMENT_ERROR);
-	
+	if (argc != 4)
+	{
+		cout << SED_YELLOW << "there must be 3 arguments!" << SED_RESETCLR << endl;
+		return printUsageReturn(ARGUMENT_ERROR);
+	}
 	try
 	{
-		Replacer	replacer(argv[1], argv[2], argv[3]);
-		status = replacer.replace();
+		Replace	replacer(argv[1], argv[2], argv[3]);
+		status = replacer.run();
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << "Error: " << e.what() << std::endl;
+		cout << "Fatal Error: " << e.what() << endl;
 		return EXCEPTION;
 	}
-	if (status != SUCCESS)
-		return usageMsg(status);
-	return status;
+	return printUsageReturn(status);
 }
