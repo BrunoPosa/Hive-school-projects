@@ -1,6 +1,6 @@
 NAME	= Sed_is_for_losers
 CXX		= clang++
-FLAGS	= -std=c++11 -Wall -Wextra -Werror
+FLAGS	= -std=c++11 -g -Wall -Wextra -Werror
 RM		= rm -rf
 
 HEADERS	= Replace.hpp

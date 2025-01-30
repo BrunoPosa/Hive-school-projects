@@ -6,11 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 14:32:42 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/20 01:34:24 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/30 12:16:42 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "HumanB.class.hpp"
+#include "HumanB.hpp"
 
 HumanB::HumanB(const std::string& name) : _name(name), _weaponType(nullptr) {}
 

@@ -103,4 +103,26 @@ CPP 01
 
 -huh, funny. When i write : ```Zombie z; z = Zombie("John")```, there is two objects, and the first 'z' gets destroyed when we assign it the constructor Zombie(name).
 
--
+------References a la GPT: Alias for a variable:
+    -A reference acts as an alternative name for a variable.
+    	Any operation on the reference directly affects the original variable.
+	-Must be initialized at declaration:
+	    You must assign a reference to an existing variable when you declare it.
+	-Cannot be null:
+	    Unlike pointers, references must always refer to a valid object.
+	-No reseating:
+    	A reference cannot be changed to refer to another variable after initialization.
+
+
+
+------------the main practical difference between a struct and a class in cpp is its access control:
+	-the struct has members public by default, inheriting also public by default
+	-class has private by default, inheriting private as well. 
+	Use struct when you primarily want a simple, data-holding object without requiring encapsulation
+	or advanced features (although you can use access control and functions in structs.
+	Use class when you want to define a more complex type with encapsulation, access control,
+	or when you're implementing object-oriented features like inheritance or polymorphism.
+
+
+
+

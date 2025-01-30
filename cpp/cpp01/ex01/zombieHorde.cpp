@@ -6,11 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 20:51:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/19 00:10:55 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/30 12:09:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Zombie.class.hpp"
+#include "Zombie.hpp"
 
 Zombie*		Zombie::zombieHorde(int N, std::string name)
 {

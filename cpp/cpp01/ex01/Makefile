@@ -1,9 +1,9 @@
 NAME	= Moar_brainz!
 CXX		= clang++
-FLAGS	= -std=c++17 -Wall -Wextra -Werror
+FLAGS	= -std=c++11 -Wall -Wextra -Werror
 RM		= rm -rf
 
-HEADERS	= Zombie.class.hpp
+HEADERS	= Zombie.hpp
 
 SRCS	=	main.cpp \
 			Zombie.cpp \

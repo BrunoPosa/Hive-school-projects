@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 01:27:51 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/29 01:52:01 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/30 13:04:10 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,9 @@ enum e_errorCode
  */
 class Replace
 {
-	const string&	_filename;
-	const string&	_oldStr;
-	const string&	_newStr;
+	const string	_filename;
+	const string	_oldStr;
+	const string	_newStr;
 
 	int				_printReturn(int status, const string& message);
 	int				_validate();

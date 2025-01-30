@@ -6,11 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 14:30:41 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/20 01:48:41 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/30 12:21:54 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Weapon.class.hpp"
+#include "Weapon.hpp"
 
 Weapon::Weapon(std::string type) : _type(type) {}
 

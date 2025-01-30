@@ -6,11 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 20:50:22 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/19 00:11:18 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/30 12:09:29 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Zombie.class.hpp"
+#include "Zombie.hpp"
 
 int	main (void)
 {

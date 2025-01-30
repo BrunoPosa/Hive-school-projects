@@ -6,13 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 14:31:47 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/20 01:45:11 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/30 12:22:00 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Weapon.class.hpp"
-#include "HumanA.class.hpp"
-#include "HumanB.class.hpp"
+#include "Weapon.hpp"
+#include "HumanA.hpp"
+#include "HumanB.hpp"
 
 int main(void)
 {

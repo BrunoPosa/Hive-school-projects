@@ -6,11 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 19:36:21 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/18 19:36:35 by bposa            ###   ########.fr       */
+/*   Updated: 2025/01/30 12:06:50 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Zombie.class.hpp"
+#include "Zombie.hpp"
 
 Zombie*	Zombie::newZombie(std::string name)
 {

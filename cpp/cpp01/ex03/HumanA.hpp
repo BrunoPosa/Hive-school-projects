@@ -1,31 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Zombie.class.hpp                                   :+:      :+:    :+:   */
+/*   HumanA.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/18 01:25:30 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/18 19:43:49 by bposa            ###   ########.fr       */
+/*   Created: 2025/01/19 14:33:25 by bposa             #+#    #+#             */
+/*   Updated: 2025/01/20 01:40:03 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ZOMBIE_CLASS_HPP
-# define ZOMBIE_CLASS_HPP
+#ifndef HUMANA_HPP
+# define HUMANA_HPP
 
-#include <iostream>
+#include "Weapon.hpp"
 
-class Zombie
+class HumanA
 {
 	std::string	_name;
+	Weapon&		_weaponType;
 
 public:
-	Zombie(std::string name);
-	~Zombie();
+	HumanA(const std::string& name, Weapon& weapon);
 
-	void		announce(void);
-	Zombie*		newZombie(std::string name);
-	void		randomChump(std::string name);
+	void attack() const;
 };
 
 #endif
