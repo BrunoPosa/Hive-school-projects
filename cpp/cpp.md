@@ -1,4 +1,4 @@
-=========
+------ in ex=========
 C++ principles/to do list for good code:
 =========
 -RAII (Resource Acquisition Is Initialization): C++ emphasizes the RAII pattern, where resources like memory and file handles are acquired during object creation and automatically released when objects go out of scope.
@@ -124,5 +124,5 @@ CPP 01
 	or when you're implementing object-oriented features like inheritance or polymorphism.
 
 
-
+------ in ex04 i had class private memnber variables string& type, instead of just string. That caused issues where the scope wouild exit and i'd be using dangling string pointers with garbage values. 
 
