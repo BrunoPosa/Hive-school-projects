@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:23 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/31 17:45:35 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/01 13:43:44 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,21 @@ Fixed::~Fixed() {
 	cout << "Destructor called." << endl;
 }
 
+Fixed::Fixed(const int n) : _num(n) {
+	cout << "Int constructor called." << endl;
+	_num = _num << _binpoint;
+}
+
+Fixed::Fixed(const float n) :
+	_num(static_cast<int>(roundf(n * (1 << _binpoint)))) {
+	cout << "Float constructor called." << endl;
+}
+
 Fixed::Fixed(const Fixed &obj) : _num(obj._num) {
 	cout << "Copy constructor called." << endl;
-};//why should you not use '=' in copy constructor?
+};
 
-Fixed& Fixed::operator=(const Fixed &obj) {
+Fixed&	Fixed::operator=(const Fixed &obj) {
 	cout << "Copy assignment operator called." << endl;
 	if (this != &obj)
 		this->_num = obj._num;
@@ -45,3 +55,17 @@ void	Fixed::setRawBits(int const raw)
 	_num = raw;
 }
 //printed result does not look like in the subject example!
+
+float	Fixed::toFloat() const {
+	return static_cast<float>(_num) * 1 / (1 << _binpoint);
+}
+
+int		Fixed::toInt() const {
+	return _num >> _binpoint;
+}
+
+std::ostream&	operator<<(std::ostream& os, const Fixed& obj)
+{
+	os << obj.toFloat();
+	return os;
+}

@@ -5,28 +5,28 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/31 15:00:18 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/31 17:46:37 by bposa            ###   ########.fr       */
+/*   Created: 2025/02/01 10:40:18 by bposa             #+#    #+#             */
+/*   Updated: 2025/02/01 13:33:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Fixed.hpp"
 
-int	main(void) {
+int main (void) {
+	Fixed a;
+	Fixed const b( 10 );
+	Fixed const c( 42.42f );
+	Fixed const d( b );
 
-	Fixed	a;
-	Fixed	b(a);
-	Fixed	c;
+	a = Fixed( 1234.4321f );
+	cout << "a is " << a << endl;
+	cout << "b is " << b << endl;
+	cout << "c is " << c << endl;
+	cout << "d is " << d << endl;
+	cout << "a is " << a.toInt() << " as integer" << endl;
+	cout << "b is " << b.toInt() << " as integer" << endl;
+	cout << "c is " << c.toInt() << " as integer" << endl;
+	cout << "d is " << d.toInt() << " as integer" << endl;
 
-	c = b;
-	cout << a.getRawBits() << endl;
-	cout << b.getRawBits() << endl;
-	cout << c.getRawBits() << endl;
-
-	a.setRawBits(7);
-	b.setRawBits(8);
-	c.setRawBits(9);
-	cout << a.getRawBits() << endl;
-	cout << b.getRawBits() << endl;
-	cout << c.getRawBits() << endl;
+	return 0;
 }
