@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:14 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/01 13:27:02 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/02 11:59:27 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 using std::cout;
 using std::endl;
 
+# define FIXED_SCALE 1 << _binpoint
+
 class Fixed
 {
 	int					_num;
@@ -26,11 +28,11 @@ class Fixed
 
 public:
 	Fixed();
+	Fixed(const Fixed &obj);
+	Fixed&	operator=(const Fixed&);
 	~Fixed();
 	Fixed(const int n);
 	Fixed(const float n);
-	Fixed(const Fixed &obj);
-	Fixed& operator=(const Fixed&);
 
 	int		getRawBits() const;
 	void	setRawBits(int const raw);

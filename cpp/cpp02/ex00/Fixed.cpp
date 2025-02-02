@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:23 by bposa             #+#    #+#             */
-/*   Updated: 2025/01/31 17:45:35 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/02 12:10:21 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,30 @@
 
 const int Fixed::_binpoint = 8;
 
+/*	Orthodox Canonical Form members	*/
+
 Fixed::Fixed() : _num(0) {
 	cout << "Default constructor called." << endl;
+}
+
+Fixed::Fixed(const Fixed &obj) : _num(obj._num) {
+	cout << "Copy constructor called." << endl;
+};
+
+Fixed& Fixed::operator=(const Fixed &obj) {
+	cout << "Copy assignment operator called." << endl;
+	if (this != &obj) {
+		this->_num = obj._num;
+	}
+	getRawBits();
+	return *this;
 }
 
 Fixed::~Fixed() {
 	cout << "Destructor called." << endl;
 }
 
-Fixed::Fixed(const Fixed &obj) : _num(obj._num) {
-	cout << "Copy constructor called." << endl;
-};//why should you not use '=' in copy constructor?
-
-Fixed& Fixed::operator=(const Fixed &obj) {
-	cout << "Copy assignment operator called." << endl;
-	if (this != &obj)
-		this->_num = obj._num;
-	return *this;
-}
+/*	member functions	*/
 
 int		Fixed::getRawBits() const
 {
@@ -44,4 +50,3 @@ void	Fixed::setRawBits(int const raw)
 	cout << "setRawBits member function called" << endl;
 	_num = raw;
 }
-//printed result does not look like in the subject example!
