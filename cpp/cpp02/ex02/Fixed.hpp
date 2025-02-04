@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:14 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/02 12:44:27 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/04 16:01:04 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,18 @@ public:
 	~Fixed();
 	Fixed(const int n);
 	Fixed(const float n);
+
 	bool	operator<(const Fixed& obj) const;
 	bool	operator>(const Fixed& obj) const;
 	bool	operator<=(const Fixed& obj) const;
 	bool	operator>=(const Fixed& obj) const;
 	bool	operator==(const Fixed& obj) const;
 	bool	operator!=(const Fixed& obj) const;
+
 	Fixed	operator+(const Fixed& obj) const;
+	Fixed	operator-(const Fixed& obj) const;
+	Fixed	operator*(const Fixed& obj) const;
+	Fixed	operator/(const Fixed& obj) const;
 
 	int		getRawBits() const;
 	void	setRawBits(int const raw);

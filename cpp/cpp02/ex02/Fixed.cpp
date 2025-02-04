@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:23 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/02 13:14:22 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/04 16:03:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,29 @@ Fixed	Fixed::operator+(const Fixed& obj) const {
 
 	result._num = this->_num + obj._num;
 	return result;
-}//explain this well! can't be a one liner seemingly!
+}
+
+Fixed	Fixed::operator-(const Fixed& obj) const {
+	Fixed result;
+
+	result._num = this->_num - obj._num;
+	return result;
+}
+
+Fixed	Fixed::operator*(const Fixed& obj) const {
+	Fixed result;
+
+	result._num = (this->_num * obj._num) >> _binpoint;
+	return result;
+}
+
+Fixed	Fixed::operator/(const Fixed& obj) const {	 
+	Fixed result;
+
+	result._num = this->_num << _binpoint / obj._num;
+	return result;
+}
+
 
 
 /*	member functions	*/
