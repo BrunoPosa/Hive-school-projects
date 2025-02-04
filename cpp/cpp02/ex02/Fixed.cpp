@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:23 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/04 16:03:40 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/04 17:57:59 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,14 @@ Fixed::Fixed(const float n) : _num(static_cast<int>(roundf(n * (1 << _binpoint))
 	cout << "Float constructor called." << endl;
 }
 
+
 bool	Fixed::operator<(const Fixed& obj) const {	return this->_num < obj._num;	}
-
 bool	Fixed::operator>(const Fixed& obj) const {	return this->_num > obj._num;	}
-
 bool	Fixed::operator<=(const Fixed& obj) const {	return this->_num <= obj._num;	}
-
 bool	Fixed::operator>=(const Fixed& obj) const {	return this->_num >= obj._num;	}
-
 bool	Fixed::operator==(const Fixed& obj) const {	return this->_num == obj._num;	}
-
 bool	Fixed::operator!=(const Fixed& obj) const {	return this->_num != obj._num;	}
+
 
 Fixed	Fixed::operator+(const Fixed& obj) const {	 
 	Fixed result;
@@ -80,8 +77,25 @@ Fixed	Fixed::operator*(const Fixed& obj) const {
 Fixed	Fixed::operator/(const Fixed& obj) const {	 
 	Fixed result;
 
-	result._num = this->_num << _binpoint / obj._num;
+	if (obj._num == 0) {
+		cout << "Division by zero not allowed!" << endl;
+	}
+	else {
+		result._num = (this->_num << _binpoint) / obj._num;
+	}
 	return result;
+}
+
+Fixed&	Fixed::operator++() {
+	_num++;
+	return *this;
+}
+
+Fixed	Fixed::operator++(int) {
+	Fixed	old(*this);
+
+	_num++;
+	return old;
 }
 
 
