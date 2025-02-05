@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:23 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/04 17:57:59 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/05 17:28:22 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 std::ostream&	operator<<(std::ostream& os, const Fixed& obj) {	return os << obj.toFloat();	}
 
-const int Fixed::_binpoint = 8;
+constexpr int	Fixed::_fractBits = 8;
+constexpr int	Fixed::_scale = 1 << _fractBits;
 
 
 
@@ -37,9 +38,9 @@ Fixed::~Fixed() {	cout << "Destructor called." << endl;	}
 
 /*	Overloads	*/
 
-Fixed::Fixed(const int n) : _num(n << _binpoint) {	cout << "Int constructor called." << endl;	}
+Fixed::Fixed(const int n) : _num(n << _fractBits) {	cout << "Int constructor called." << endl;	}
 
-Fixed::Fixed(const float n) : _num(static_cast<int>(roundf(n * (1 << _binpoint))))
+Fixed::Fixed(const float n) : _num(static_cast<int>(roundf(n * _scale)))
 {
 	cout << "Float constructor called." << endl;
 }
@@ -70,7 +71,7 @@ Fixed	Fixed::operator-(const Fixed& obj) const {
 Fixed	Fixed::operator*(const Fixed& obj) const {
 	Fixed result;
 
-	result._num = (this->_num * obj._num) >> _binpoint;
+	result._num = (this->_num * obj._num) >> _fractBits;
 	return result;
 }
 
@@ -81,20 +82,32 @@ Fixed	Fixed::operator/(const Fixed& obj) const {
 		cout << "Division by zero not allowed!" << endl;
 	}
 	else {
-		result._num = (this->_num << _binpoint) / obj._num;
+		result._num = (_num << _fractBits) / obj._num;
 	}
 	return result;
 }
 
 Fixed&	Fixed::operator++() {
-	_num++;
+	_num += 1;// _scale;
 	return *this;
 }
 
 Fixed	Fixed::operator++(int) {
 	Fixed	old(*this);
 
-	_num++;
+	_num += 1;//_scale;
+	return old;
+}
+
+Fixed&	Fixed::operator--() {
+	_num -= 1;// _scale;
+	return *this;
+}
+
+Fixed	Fixed::operator--(int) {
+	Fixed	old(*this);
+
+	_num -= 1;// _scale;
 	return old;
 }
 
@@ -114,6 +127,38 @@ void	Fixed::setRawBits(int const raw)
 	_num = raw;
 }
 
-float	Fixed::toFloat() const {	return (static_cast<float>(_num) / (1 << _binpoint));	}
+float	Fixed::toFloat() const {	return (static_cast<float>(_num) / _scale);	}
 
-int		Fixed::toInt() const {	return _num >> _binpoint;	}
+int		Fixed::toInt() const {	return _num >> _fractBits;	}
+
+Fixed&	Fixed::min(Fixed& a, Fixed& b)
+{
+	if (a < b){
+		return a;
+	}
+	return b;
+}
+
+const Fixed&	Fixed::min(const Fixed& a, const Fixed& b)
+{
+	if (a < b){
+		return a;
+	}
+	return b;
+}
+
+Fixed&	Fixed::max(Fixed& a, Fixed& b)
+{
+	if (a > b){
+		return a;
+	}
+	return b;
+}
+
+const Fixed&	Fixed::max(const Fixed& a, const Fixed& b)
+{
+	if (a > b){
+		return a;
+	}
+	return b;
+}

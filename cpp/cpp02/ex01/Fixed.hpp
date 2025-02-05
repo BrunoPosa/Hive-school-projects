@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:14 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/02 11:59:27 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/05 16:20:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@
 using std::cout;
 using std::endl;
 
-# define FIXED_SCALE 1 << _binpoint
+# define FIXED_SCALE 1 << _fracBits
 
 class Fixed
 {
 	int					_num;
-	static const int	_binpoint;
+	static const int	_fracBits;
 
 public:
 	Fixed();

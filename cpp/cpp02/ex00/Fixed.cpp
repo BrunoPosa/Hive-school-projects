@@ -6,13 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:23 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/02 12:10:21 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/05 16:20:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Fixed.hpp"
 
-const int Fixed::_binpoint = 8;
+const int Fixed::_fracBits = 8;
 
 /*	Orthodox Canonical Form members	*/
 
