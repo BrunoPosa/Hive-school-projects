@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:16:14 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/05 17:23:31 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/05 19:56:34 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ using std::endl;
 class Fixed
 {
 	static const int	_fractBits;
-	static const int	_scale;
 	int					_num;
 
 public:
