@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 20:51:49 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/10 20:53:17 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/12 16:27:51 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,18 @@
 
 #include <iostream>
 
+using std::string;
 using std::cout;
 using std::endl;
+
+class ScavTrap
+{
+public:
+	ScavTrap();
+	ScavTrap(const ScavTrap& obj);
+	ScavTrap&	operator=(const ScavTrap& obj);
+	~ScavTrap();
+	ScavTrap(const string& name);
+};
 
 #endif
