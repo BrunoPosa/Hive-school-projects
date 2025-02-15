@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:05:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/10 20:45:51 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/15 18:11:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,33 +15,35 @@
 /*	Orthodox Canonical Form members	*/
 
 ClapTrap::ClapTrap() : _hitPts(10), _energyPts(10), _atkDamage(0) {
-	cout <<	"Default constructor called." << endl;
+	cout <<	"ClapTrap Default constructor called." << endl;
 };
 
 ClapTrap::ClapTrap(const ClapTrap& obj)
 	: _name(obj._name), _hitPts(obj._hitPts), _energyPts(obj._energyPts), _atkDamage(obj._atkDamage) {
-		cout << "Copy constructor called." << endl;
+		cout << "ClapTrap Copy constructor called." << endl;
 }
 
 ClapTrap&	ClapTrap::operator=(const ClapTrap& obj) {
-	cout << "Copy assignment operator called." << endl;
-	if (this != &obj) {
-		_name = obj._name;
-		_hitPts = obj._hitPts;
-		_energyPts = obj._energyPts;
-		_atkDamage = obj._atkDamage;
+	if (this == &obj) {
+		return *this;
 	}
+	_name = obj._name;
+	_hitPts = obj._hitPts;
+	_energyPts = obj._energyPts;
+	_atkDamage = obj._atkDamage;
+	cout << "ClapTrap Copy assignment operator called." << endl;
+
 	return *this;
 }
 
-ClapTrap::~ClapTrap() {	cout << "Destructor called." << endl;	}
+ClapTrap::~ClapTrap() {	cout << "ClapTrap Destructor called." << endl;	}
 
 
 
 /*	Overloads	*/
 
 ClapTrap::ClapTrap(const string& name) : _name(name), _hitPts(10), _energyPts(10), _atkDamage(0) {
-	cout <<	"Constructor called." << endl;
+	cout <<	"ClapTrap Constructor called." << endl;
 };
 
 

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:04:38 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/10 21:12:15 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/15 16:06:02 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ using std::endl;
 
 class ClapTrap
 {
+protected:
 	string	_name;
 	int		_hitPts;
 	int		_energyPts;
