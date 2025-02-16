@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:04:38 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/15 16:06:02 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/16 18:14:57 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ public:
 	~ClapTrap();
 	ClapTrap(const string& name);
 
-	void	attack(const string& target);
-	void	takeDamage(unsigned int amount);
-	void	beRepaired(unsigned int amount);
+	virtual void	attack(const string& target);
+	void			takeDamage(unsigned int amount);
+	void			beRepaired(unsigned int amount);
 
 	void	print();
 };

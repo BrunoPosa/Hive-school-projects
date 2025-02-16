@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 20:51:29 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/15 18:54:42 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/16 18:47:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ ScavTrap::ScavTrap() {
 ScavTrap::ScavTrap(const ScavTrap& obj) : ClapTrap(obj) {
 	cout << "ScavTrap Copy Constructor called." << endl;
 }
-/*test this*/
+
 ScavTrap&	ScavTrap::operator=(const ScavTrap& obj) {
 	if (this != &obj) {
 		ClapTrap::operator=(obj);
@@ -44,14 +44,18 @@ ScavTrap::ScavTrap(const string& name) : ClapTrap(name) {
 	_energyPts = 50;
 	_atkDamage = 20;
 	cout <<	"ScavTrap Constructor called." << endl;
-	this->print();
+}
+
+void	ScavTrap::attack(const string& target) {
+	if (_hitPts > 0 && _energyPts > 0) {
+		--_energyPts;
+		cout << "ScavTrap " << _name << " attacks " << target << ", causing " << _atkDamage << " points of damage!" << endl;
+	}
 }
 
 
 
-
-
-/*	Member functions	*/
+/*	New Member Functions	*/
 
 void	ScavTrap::guardGate() {
 	cout << "ScavTrap Gate Keeper mode ON" << endl;

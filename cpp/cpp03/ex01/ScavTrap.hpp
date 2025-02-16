@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 20:51:49 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/15 18:54:38 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/16 18:28:29 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ public:
 	~ScavTrap();
 	ScavTrap(const string& name);
 
-	// virtual void ScavTrap::attack() override;
+	void	attack(const string& target) override;
 	void	guardGate();
 };
 
