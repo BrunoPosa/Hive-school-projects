@@ -1,6 +1,6 @@
 NAME	= Repetitive_work
 CXX		= c++
-FLAGS	= -std=c++11 -Wall -Wextra -Werror
+FLAGS	= -std=c++11 -Wall -Wextra -Werror -Wshadow
 RM		= rm -rf
 
 HEADERS	=	ClapTrap.hpp \
