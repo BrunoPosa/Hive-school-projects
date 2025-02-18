@@ -6,13 +6,13 @@ RM		= rm -rf
 HEADERS	=	Animal.hpp \
 			Dog.hpp \
 			Cat.hpp \
-			WrongCat.hpp
+			# WrongCat.hpp
 
 SRCS	=	main.cpp \
 			Animal.cpp \
 			Dog.cpp \
-			Cat \
-			WrongCat.cpp
+			Cat.cpp \
+			# WrongCat.cpp
 
 all: $(NAME)
 

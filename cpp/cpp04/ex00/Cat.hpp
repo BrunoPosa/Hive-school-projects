@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Dog.hpp                                            :+:      :+:    :+:   */
+/*   Cat.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/17 17:22:15 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/18 16:24:10 by bposa            ###   ########.fr       */
+/*   Created: 2025/02/18 16:23:26 by bposa             #+#    #+#             */
+/*   Updated: 2025/02/18 16:26:27 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef DOG_HPP
-# define DOG_HPP
+#ifndef CAT_HPP
+# define CAT_HPP
 
 #include <iostream>
 #include <string>
@@ -21,15 +21,15 @@ using std::string;
 using std::cout;
 using std::endl;
 
-class Dog : public Animal
+class Cat : public Animal
 {
 public:
-	Dog();
-	Dog(const Dog& obj);
-	Dog&	operator=(const Dog& obj);
-	~Dog();
+    Cat();
+    Cat(const Cat& obj);
+    Cat&    operator=(const Cat& obj);
+    ~Cat();
 
-	void	makeSound() const override;
+    void    makeSound() const override;
 };
 
 #endif

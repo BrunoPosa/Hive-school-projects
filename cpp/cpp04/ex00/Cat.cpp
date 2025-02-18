@@ -1,45 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Dog.cpp                                            :+:      :+:    :+:   */
+/*   Cat.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/18 16:07:48 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/18 16:38:48 by bposa            ###   ########.fr       */
+/*   Created: 2025/02/18 16:26:41 by bposa             #+#    #+#             */
+/*   Updated: 2025/02/18 16:37:24 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Cat.hpp"
 #include "Animal.hpp"
-#include "Dog.hpp"
 
 /*	Orthodox Canonical Form members	*/
 
-Dog::Dog() {
-	_type = "Dog";
-	cout << "Dog def. constructor." << endl;
+Cat::Cat() {
+	_type = "Cat";
+	cout << "Cat constructor." << endl;
 }
 
-Dog::Dog(const Dog& obj) : Animal(obj) {
-	cout << "Dog copy constructor." << endl;
+Cat::Cat(const Cat& obj) : Animal(obj) {
+	cout << "Cat copy constructor." << endl;
 }
 
-Dog&	Dog::operator=(const Dog& obj) {
+Cat&	Cat::operator=(const Cat& obj) {
 	if (this != &obj) {
 		Animal::operator=(obj);
-		cout << "Dog copy assignment." << endl;
+		cout << "Cat copy assignment." << endl;
 	}
 	return *this;
 }
 
-Dog::~Dog() {
-	std::cout << "Dog destructor called" << std::endl;
+Cat::~Cat() {
+	std::cout << "Cat destructor called" << std::endl;
 }
 
 
 
 /*	Member functions	*/
 
-void Dog::makeSound() const {
-	cout << this->_type << "*Barkie barks bark*" << endl;
+void Cat::makeSound() const {
+	cout << this->_type << "*Meowy kitty purr*" << endl;
 }
