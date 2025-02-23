@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:07:48 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/18 16:38:48 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/23 20:18:31 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Dog&	Dog::operator=(const Dog& obj) {
 }
 
 Dog::~Dog() {
-	std::cout << "Dog destructor called" << std::endl;
+	cout << "Dog destructor called" << endl;
 }
 
 
@@ -41,5 +41,5 @@ Dog::~Dog() {
 /*	Member functions	*/
 
 void Dog::makeSound() const {
-	cout << this->_type << "*Barkie barks bark*" << endl;
+	cout << "\033[33m" << this->_type << "*Barkie barks bark*" << "\033[0m" << endl;
 }

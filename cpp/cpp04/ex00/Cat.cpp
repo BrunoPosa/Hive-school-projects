@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:26:41 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/18 16:37:24 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/23 20:18:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 Cat::Cat() {
 	_type = "Cat";
-	cout << "Cat constructor." << endl;
+	cout << "Cat def. constructor." << endl;
 }
 
 Cat::Cat(const Cat& obj) : Animal(obj) {
@@ -33,7 +33,7 @@ Cat&	Cat::operator=(const Cat& obj) {
 }
 
 Cat::~Cat() {
-	std::cout << "Cat destructor called" << std::endl;
+	cout << "Cat destructor called" << endl;
 }
 
 
@@ -41,5 +41,5 @@ Cat::~Cat() {
 /*	Member functions	*/
 
 void Cat::makeSound() const {
-	cout << this->_type << "*Meowy kitty purr*" << endl;
+	cout << "\033[33m" << this->_type << "*Meowy kitty purr*" << "\033[0m" << endl;
 }

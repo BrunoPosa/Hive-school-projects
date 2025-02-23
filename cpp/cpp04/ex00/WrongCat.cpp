@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 18:22:47 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/23 18:23:53 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/23 20:19:08 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ WrongCat&	WrongCat::operator=(const WrongCat& obj) {
 }
 
 WrongCat::~WrongCat() {
-	std::cout << "WrongCat destructor called" << std::endl;
+	cout << "WrongCat destructor called" << endl;
 }
 
 
@@ -41,5 +41,5 @@ WrongCat::~WrongCat() {
 /*	Member functions	*/
 
 void WrongCat::makeSound() const {
-	cout << this->_type << "*Meowy kitty purr*" << endl;
+	cout << "\033[33m" << this->_type << "*Meowy kitty purr*" << "\033[0m" << endl;
 }

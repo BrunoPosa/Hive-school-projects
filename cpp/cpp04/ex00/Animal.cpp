@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:30:44 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/17 20:01:45 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/23 20:17:14 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,6 @@ Animal::~Animal() {	cout << "Animal def. destructor." << endl;	}
 
 /*	Member functions	*/
 
-void	Animal::makeSound() const {	cout << "*Wild Animal sound!*" << endl;	}   
+void	Animal::makeSound() const {	cout << "\033[33m" << "*Wild Animal sound!*" << "\033[0m" << endl;	}   
 
 string	Animal::getType() const {	return _type;	}
