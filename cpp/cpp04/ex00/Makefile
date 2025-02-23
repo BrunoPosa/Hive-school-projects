@@ -1,18 +1,20 @@
 NAME	= Polymorphism
 CXX		= c++
-FLAGS	= -std=c++11 -Wall -Wextra -Werror -Wshadow
+FLAGS	= -std=c++11 -Wall -Wextra -Werror # -Wshadow
 RM		= rm -rf
 
 HEADERS	=	Animal.hpp \
 			Dog.hpp \
 			Cat.hpp \
-			# WrongCat.hpp
+			WrongCat.hpp \
+			WrongAnimal.hpp
 
 SRCS	=	main.cpp \
 			Animal.cpp \
 			Dog.cpp \
 			Cat.cpp \
-			# WrongCat.cpp
+			WrongCat.cpp \
+			WrongAnimal.cpp
 
 all: $(NAME)
 

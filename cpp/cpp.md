@@ -3,11 +3,7 @@ C++ principles/to do list for good code:
 =========
 -RAII (Resource Acquisition Is Initialization): C++ emphasizes the RAII pattern, where resources like memory and file handles are acquired during object creation and automatically released when objects go out of scope.
 
-
-
-CPP 1st level, basics and modules 00-04
-=======================================
-
+ encapsulation, inheritance, polymorphism, and abstraction
 
 == resources:
 -slowly readding: Programming: Principles and Practice Using C++ by the creator of c++
@@ -33,6 +29,17 @@ Target: x86_64-pc-linux-gnu
 Thread model: posix
 InstalledDir: /usr/bin
 ```
+
+
+
+string	getType() const; <-- the 'trailing' const means the object calling the getType will not be modified. 
+
+
+
+=================================================
+CPP 00 - Namespaces, classes, member functions, stdio streams, initialization lists, static, const, etc
+=================================================
+
 
 ======= basic meanings - ex00 ========
 
@@ -89,6 +96,9 @@ problem of double inclusion by adding include guards"
 ===
 
 
+
+
+
 =================================================
 CPP 01
 =================================================
@@ -128,8 +138,22 @@ CPP 01
 
 
 
+
+
+
+
+=================================================
+CPP 02 - Ad-hoc polymorphism, operator overloading, and Orthodox Canonical class form
+=================================================
+
+
+
+
+
+
+
 ====================================================
-CPP 03
+CPP 03 - Inheritance
 ====================================================
 --------Inheritance - The capability of a class to derive properties and characteristics from another class 
 class  derived_class_name : access-specifier  base_class_name
@@ -146,7 +170,7 @@ Inheritance Modes:
 
 
 
--------Virtuality- Geeks for geeks
+-------Virtuality- Geeks for geeks - (seems like Templates might be a better alternative)
 A virtual function (also known as virtual methods) is a member function that is declared within a base class and is re-defined (overridden) by a derived class. When you refer to a derived class object using a pointer or a reference to the base class, you can call a virtual function for that object and execute the derived class’s version of the method.
 
     Virtual functions ensure that the correct function is called for an object, regardless of the type of reference (or pointer) used for the function call.
@@ -167,5 +191,13 @@ Rules for Virtual Functions:
 
 Grok3:
 Key Rule in C++: If a base class destructor is virtual, all derived class destructors are automatically virtual, regardless of whether the virtual keyword is used in the derived class declaration. This is because the virtual nature of the destructor is inherited.
+
+
+====================================================
+CPP 04 - Subtype polymorphism, abstract classes, interfaces
+====================================================
+
+
+
 
 
