@@ -1,6 +1,6 @@
-NAME	= Polymorphism
+NAME	= I_dont_want_to_set_the_world_on_fire
 CXX		= c++
-FLAGS	= -std=c++11 -Wall -Wextra -Werror -Wshadow
+FLAGS	= -std=c++11 -Wall -Wextra -Werror  -Wshadow
 RM		= rm -rf
 
 HEADERS	=	Animal.hpp \
