@@ -1,13 +1,15 @@
 NAME	= Repetitive_work
 CXX		= c++
-FLAGS	= -std=c++11 -Wall -Wextra -Werror -Wshadow
+FLAGS	= -std=c++11 -Wall -Wextra -Werror
 RM		= rm -rf
 
 HEADERS	=	ClapTrap.hpp \
+			ScavTrap.hpp \
 			FragTrap.hpp
 
 SRCS	=	main.cpp \
 			ClapTrap.cpp \
+			ScavTrap.cpp \
 			FragTrap.cpp
 
 all: $(NAME)

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:04:38 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/16 18:14:57 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/22 23:06:06 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,16 @@ using std::endl;
 class ClapTrap
 {
 protected:
-	string	_name;
-	int		_hitPts;
-	int		_energyPts;
-	int		_atkDamage;
+	string			_name;
+	unsigned int	_hitPoints;
+	unsigned int	_energyPoints;
+	unsigned int	_attackDamage;
 
 public:
 	ClapTrap();
 	ClapTrap(const ClapTrap& obj);
 	ClapTrap&	operator=(const ClapTrap& obj);
-	~ClapTrap();
+	virtual ~ClapTrap();
 	ClapTrap(const string& name);
 
 	virtual void	attack(const string& target);

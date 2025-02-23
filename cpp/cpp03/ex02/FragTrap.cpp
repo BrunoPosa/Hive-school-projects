@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 19:14:48 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/17 14:14:10 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/23 00:55:27 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 /*	Orthodox Canonical Form members - base class overloads	*/
 
 FragTrap::FragTrap() {
-	_hitPts = 100;
-	_energyPts = 100;
-	_atkDamage = 30;
+	_hitPoints = 100;
+	_energyPoints = 100;
+	_attackDamage = 30;
 	cout << "FragTrap Default Constructor called." << endl;
 }
 
@@ -40,9 +40,9 @@ FragTrap::~FragTrap() {	cout << "FragTrap Destructor called." << endl;	}
 /*	Overloads	*/
 
 FragTrap::FragTrap(const string& name) : ClapTrap(name) {
-	_hitPts = 100;
-	_energyPts = 100;
-	_atkDamage = 30;
+	_hitPoints = 100;
+	_energyPoints = 100;
+	_attackDamage = 30;
 	cout <<	"FragTrap Constructor called." << endl;
 }
 
@@ -51,5 +51,7 @@ FragTrap::FragTrap(const string& name) : ClapTrap(name) {
 /*	New Member Functions	*/
 
 void	FragTrap::highFivesGuys() {
-	cout << "FragTrap's Positive high-five request granted." << endl;
+	if (_hitPoints > 0 && _energyPoints > 0) {
+		cout << "FragTrap's Positive high-fives request granted." << endl;
+	}
 }

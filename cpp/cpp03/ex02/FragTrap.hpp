@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 19:16:23 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/17 14:27:32 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/23 00:53:06 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ public:
     FragTrap(const FragTrap& obj);
     FragTrap&   operator=(const FragTrap& obj);
     ~FragTrap();
-
     FragTrap(const string& name);
+
     void    highFivesGuys();
 };
 

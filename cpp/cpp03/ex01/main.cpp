@@ -6,60 +6,51 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 21:10:26 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/16 19:10:11 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/23 00:07:41 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ScavTrap.hpp"
 #include "ClapTrap.hpp"
+#include <exception>
 
 int main()
 {
+	try {
+		ClapTrap	*fufu = new ScavTrap();
+		ScavTrap	sisi("sisi");
+		ScavTrap	soso("soso");
+		ClapTrap	cici("cici");
+		ClapTrap	coco("coco");
+		ScavTrap	copy(sisi);
+		copy = soso;
+		fufu->attack("Self");
+		delete fufu;
 
-	ScavTrap	gigi("Gigi");
-	ScavTrap	gogo("Gogo");
-	ClapTrap	bibi("Bibi");
-	ClapTrap	bobo("Bobo");
+		cout << endl;
+		cici.print();
+		coco.print();
+		sisi.print();
+		soso.print();
+		copy.print();
+		cout << endl;
 
-	cout << endl;
-	bibi.print();
-	bobo.print();
-	gigi.print();
-	gogo.print();
-	cout << endl;
+		soso.attack("sisi");
+		sisi.takeDamage(20);
+		sisi.beRepaired(__UINT32_MAX__);
+		soso.takeDamage(__UINT32_MAX__);
+		soso.guardGate();
+		sisi.guardGate();
 
-	bobo.attack("Gigi");
-	gigi.takeDamage(0);
-	bibi.attack("Gigi");
-	gigi.takeDamage(0);
-	gogo.attack("Gigi");
-	gigi.takeDamage(20);
-	gigi.beRepaired(5);
-	gigi.attack("Wrong person!");
-	gogo.takeDamage(20);
-	gigi.attack("Wrong person again!!");
-	gogo.takeDamage(20);
-	gigi.attack("Bibi");
-	bibi.takeDamage(20);
-	gogo.guardGate();
-
-	cout << endl;
-	bibi.print();
-	bobo.print();
-	gigi.print();
-	gogo.print();
-	cout << endl;
-
-	gogo.attack("Gigi");
-	gogo.attack("Gigi");
-	gogo.attack("Gigi");
-	gogo.attack("Gigi");
-	gigi.takeDamage(80);
-	gogo.guardGate();
-
-	cout << endl;
-	bibi.print();
-	bobo.print();
-	gigi.print();
-	gogo.print();
+		cout << endl;
+		sisi.print();
+		soso.print();
+		cout << endl;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+		return 1;
+	}
+	return 0;
 }

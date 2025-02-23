@@ -126,3 +126,46 @@ CPP 01
 
 ------ in ex04 i had class private memnber variables string& type, instead of just string. That caused issues where the scope wouild exit and i'd be using dangling string pointers with garbage values. 
 
+
+
+====================================================
+CPP 03
+====================================================
+--------Inheritance - The capability of a class to derive properties and characteristics from another class 
+class  derived_class_name : access-specifier  base_class_name
+{
+       //    body ....
+};
+
+Inheritance Modes:
+-If we derive a subclass from a public base class. Then the public member of the base class will become public in the derived class and protected members of the base class will become protected in the derived class.
+
+-If we derive a subclass from a Protected base class. Then both public members and protected members of the base class will become protected in the derived class.
+
+-If we derive a subclass from a Private base class. Then both public members and protected members of the base class will become private in the derived class. They can only be accessed by the member functions of the derived class. Private mode is the default mode that is applied when we don’t specify any mode.
+
+
+
+-------Virtuality- Geeks for geeks
+A virtual function (also known as virtual methods) is a member function that is declared within a base class and is re-defined (overridden) by a derived class. When you refer to a derived class object using a pointer or a reference to the base class, you can call a virtual function for that object and execute the derived class’s version of the method.
+
+    Virtual functions ensure that the correct function is called for an object, regardless of the type of reference (or pointer) used for the function call.
+    They are mainly used to achieve Runtime polymorphism.
+    Functions are declared with a virtual keyword in a base class.
+    The resolving of a function call is done at runtime.
+
+Rules for Virtual Functions:
+    Virtual functions cannot be static.
+    A virtual function can be a friend function of another class.
+    Virtual functions should be accessed using a pointer or reference of base class type to achieve runtime polymorphism.
+    The prototype of virtual functions should be the same in the base as well as the derived class.
+    They are always defined in the base class and overridden in a derived class. It is not mandatory for the derived class to override (or re-define the virtual function), in that case, the base class version of the function is used.
+    A class may have a virtual destructor but it cannot have a virtual constructor.
+    
+    
+
+
+Grok3:
+Key Rule in C++: If a base class destructor is virtual, all derived class destructors are automatically virtual, regardless of whether the virtual keyword is used in the derived class declaration. This is because the virtual nature of the destructor is inherited.
+
+
