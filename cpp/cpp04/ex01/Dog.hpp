@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:22:15 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/18 16:24:10 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/24 18:27:38 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <string>
 #include "Animal.hpp"
+#include "Brain.hpp"
 
 using std::string;
 using std::cout;
@@ -23,6 +24,9 @@ using std::endl;
 
 class Dog : public Animal
 {
+private:
+	Brain	*meatBrain;
+
 public:
 	Dog();
 	Dog(const Dog& obj);

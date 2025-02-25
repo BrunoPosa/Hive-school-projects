@@ -7,14 +7,16 @@ HEADERS	=	Animal.hpp \
 			Dog.hpp \
 			Cat.hpp \
 			WrongCat.hpp \
-			WrongAnimal.hpp
+			WrongAnimal.hpp \
+			Brain.hpp
 
 SRCS	=	main.cpp \
 			Animal.cpp \
 			Dog.cpp \
 			Cat.cpp \
 			WrongCat.cpp \
-			WrongAnimal.cpp
+			WrongAnimal.cpp \
+			Brain.cpp
 
 all: $(NAME)
 

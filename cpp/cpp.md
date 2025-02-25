@@ -3,7 +3,7 @@ C++ principles/to do list for good code:
 =========
 -RAII (Resource Acquisition Is Initialization): C++ emphasizes the RAII pattern, where resources like memory and file handles are acquired during object creation and automatically released when objects go out of scope.
 
- encapsulation, inheritance, polymorphism, and abstraction
+cpp oop principles: encapsulation, inheritance, polymorphism, and abstraction
 
 == resources:
 -slowly readding: Programming: Principles and Practice Using C++ by the creator of c++
@@ -170,7 +170,7 @@ Inheritance Modes:
 
 
 
--------Virtuality- Geeks for geeks - (seems like Templates might be a better alternative)
+-------Virtuality- Geeks for geeks -
 A virtual function (also known as virtual methods) is a member function that is declared within a base class and is re-defined (overridden) by a derived class. When you refer to a derived class object using a pointer or a reference to the base class, you can call a virtual function for that object and execute the derived class’s version of the method.
 
     Virtual functions ensure that the correct function is called for an object, regardless of the type of reference (or pointer) used for the function call.
@@ -186,6 +186,7 @@ Rules for Virtual Functions:
     They are always defined in the base class and overridden in a derived class. It is not mandatory for the derived class to override (or re-define the virtual function), in that case, the base class version of the function is used.
     A class may have a virtual destructor but it cannot have a virtual constructor.
     
+    Grok: Virtuality in Inheritance: The classic OOP approach. You define a base class with virtual methods, and derived classes inherit and override. It’s intuitive for modeling “is-a” relationships (e.g., Dog is-an Animal).
     
 
 
@@ -197,7 +198,22 @@ Key Rule in C++: If a base class destructor is virtual, all derived class destru
 CPP 04 - Subtype polymorphism, abstract classes, interfaces
 ====================================================
 
+-Subtype polymorphism - Base class pointers/references can use derived class methods dynamically. *Uses virtual functions* and vtable (makes it have the slight overhead of looking up from the lookup table)
+
+-Abstract class - A class that cannot be instantiated and is meant to be a blueprint for derived classes, by containing *at least one pure virtual function (= 0)*; Why It’s Useful: It’s a way to define “what” (interface) without dictating “how” (implementation), ensuring consistency across subclasses.
+
+-Interface - A class where *all methods are pure virtual (= 0)*. Purpose: Defines a contract for derived classes without any implementation. Difference from Abstract Classes? No concrete methods or member variables (except possibly static ones)
+
+Grok: When to Use What:
+    Interface: Define a capability (e.g., Serializable, Comparable) across unrelated classes.
+    Abstract Class: Share code and enforce some structure (e.g., Shape with a default describe()).
+    Polymorphism: Whenever you need runtime flexibility with either.
 
 
 
+---Copying can be done via copy constructor or assinment operator. Depending upon the resources like dynamic memory held by the object, either we need to perform Shallow Copy or Deep Copy in order to create a replica of the object.
 
+Grok:
+---Shallow Copy: Copies an object’s values, but shares references/pointers to nested data. Cheap, fast, but changes to the original’s nested data affect the copy (e.g., obj = other; in C++ with pointers).
+
+---Deep Copy: Copies an object and recursively duplicates all nested data. Expensive, slower, but the copy is fully independent (e.g., custom copy constructor cloning a pointer’s data).
