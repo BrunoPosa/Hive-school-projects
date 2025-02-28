@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:20:09 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/28 22:33:35 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/28 23:30:48 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,21 @@ int	main(void)
 {
 	try {
 		cout << endl << "---- custom tests ----" << endl << endl;
-		Brain a;
-		a.addIdea("Helsinki");
-		a.addIdea("Poop");
-		a.addIdea("Grr");
-		a.printAll();
-		Brain b;
-		b = a;
-		b.printAll();
-
+		// Brain a;
+		// a.addIdea("Helsinki");
+		// a.addIdea("Poop");
+		// a.addIdea("Grr");
+		// a.addIdea("Boo");
+		// a.printAll();
+		// Brain b;
+		// b = a;
+		// b.printAll();
+		Dog Bono;
+		Bono.addIdea("Food");
+		Bono.addIdea("Ice creamz");
+		Dog bebe(Bono);
+		// Bono = bebe;
+		bebe.printIdeas();
 	}
 	catch (const std::exception& e)
 	{

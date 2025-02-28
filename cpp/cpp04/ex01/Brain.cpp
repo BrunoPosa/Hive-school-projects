@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 21:06:55 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/28 22:40:48 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/28 23:14:21 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	Brain::printAll() const {
 	}
 }
 
-void	Brain::addIdea(string newIdea)
+void	Brain::addIdea(const string& newIdea)
 {
 	if (_index == BRAINSIZE)
 		_index = 0;

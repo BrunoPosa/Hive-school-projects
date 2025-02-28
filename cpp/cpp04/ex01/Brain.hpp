@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 20:50:51 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/28 22:33:08 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/28 23:14:08 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ using std::endl;
 
 class Brain
 {
-protected:
 	string			_ideas[BRAINSIZE];
 	unsigned int	_index;
 
@@ -32,9 +31,9 @@ public:
 	Brain();
 	Brain(const Brain& obj);
 	Brain&	operator=(const Brain& obj);
-	virtual ~Brain();
+	~Brain();
 
-	void	addIdea(string newIdea);
+	void	addIdea(const string& newIdea);
 	void	printAll() const;
 };
 
