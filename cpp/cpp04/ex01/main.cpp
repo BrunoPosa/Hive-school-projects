@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:20:09 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/23 21:14:43 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/28 22:33:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,39 +17,33 @@
 int	main(void)
 {
 {
-	cout << endl << "---- given main ----" << endl;
-	try {
-		const Animal* j = new Dog();
-		const Animal* i = new Cat();
-		delete j;//should not create a leak
-		delete i;
-		//...
-		return 0;
-	}
-	catch (const std::exception& e)
-	{
-		cout << e.what() << endl;
-		return 1;
-	}
+	// cout << endl << "---- given main ----" << endl;
+	// try {
+	// 	const Animal* j = new Dog();
+	// 	const Animal* i = new Cat();
+	// 	delete j;//should not create a leak
+	// 	delete i;
+	// 	//...
+	// 	return 0;
+	// }
+	// catch (const std::exception& e)
+	// {
+	// 	cout << e.what() << endl;
+	// 	return 1;
+	// }
 }
 {
 	try {
 		cout << endl << "---- custom tests ----" << endl << endl;
-		Animal	*og = new Dog();
-		og->makeSound();
-		Animal	GoodBoy(*og);
-		GoodBoy.makeSound();
-		GoodBoy = Cat();
-		cout << GoodBoy.getType() << endl;
-		GoodBoy.makeSound();
-		delete og;
+		Brain a;
+		a.addIdea("Helsinki");
+		a.addIdea("Poop");
+		a.addIdea("Grr");
+		a.printAll();
+		Brain b;
+		b = a;
+		b.printAll();
 
-		cout << endl << endl;
-		Cat	*kit = new Cat();
-		og = kit;
-		cout << og->getType() << endl;
-		og->makeSound();
-		delete og;
 	}
 	catch (const std::exception& e)
 	{

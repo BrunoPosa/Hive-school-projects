@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:23:26 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/24 18:27:43 by bposa            ###   ########.fr       */
+/*   Updated: 2025/02/28 21:19:48 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ using std::endl;
 class Cat : public Animal
 {
 private:
-	Brain	*meatBrain;
+	// Brain	*meatBrain;
 
 public:
 	Cat();
