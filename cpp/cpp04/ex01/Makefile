@@ -1,6 +1,6 @@
 NAME	= I_dont_want_to_set_the_world_on_fire
 CXX		= c++
-FLAGS	= -std=c++11 -Wall -Wextra -Werror  -Wshadow -g
+FLAGS	= -std=c++11 -Wall -Wextra -Werror
 RM		= rm -rf
 
 HEADERS	=	Animal.hpp \

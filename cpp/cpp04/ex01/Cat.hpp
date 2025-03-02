@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:23:26 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/02 21:26:50 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/02 23:26:17 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ public:
 	~Cat();
 
 	void	makeSound() const override;
-	void	addIdea(const string& idea) override;
-	void	printIdeas() const override;
+	void	addIdea(const string& idea);
+	void	printIdeas() const;
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:22:15 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/02 21:26:43 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/02 23:26:09 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ public:
 	~Dog();
 
 	void	makeSound() const override;
-	void	addIdea(const string& idea) override;
-	void	printIdeas() const override;
+	void	addIdea(const string& idea);
+	void	printIdeas() const;
 };
 
 #endif

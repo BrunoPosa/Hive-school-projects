@@ -1,6 +1,6 @@
 NAME	= Polymorphism
 CXX		= c++
-FLAGS	= -std=c++11 -Wall -Wextra -Werror -Wshadow
+FLAGS	= -std=c++11 -Wall -Wextra -Werror
 RM		= rm -rf
 
 HEADERS	=	Animal.hpp \

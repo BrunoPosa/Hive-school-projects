@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:22:15 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/02 21:56:18 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/02 23:25:52 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,6 @@ public:
 
 	virtual void	makeSound() const;
 	string			getType() const;
-
-	virtual void	addIdea(const string& idea) = 0;
-	virtual void	printIdeas() const = 0;
 };
 
 #endif

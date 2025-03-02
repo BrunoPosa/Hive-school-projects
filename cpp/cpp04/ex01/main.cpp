@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:20:09 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/02 22:27:10 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/02 23:34:42 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,7 @@ int	main(void)
 			zoo[k] = new Cat();
 		}
 		for (Animal *animal : zoo) {
-			animal->addIdea("om nom");
 			animal->makeSound();
-			animal->printIdeas();
 		}
 		for (Animal *animal : zoo) {
 			delete animal;
@@ -82,6 +80,7 @@ int	main(void)
 		bebe.printIdeas();
 		cout << endl;
 		Fifi.printIdeas();
+		Fifi.makeSound();
 
 		cout << endl << endl;
 		cout << "\e[33m" << "Cats:" << "\e[0m" << endl;
@@ -97,8 +96,11 @@ int	main(void)
 		bob.printIdeas();
 		cout << endl;
 		Fee.printIdeas();
+		Fee.makeSound();
 
-		WrongCat test;
+		Animal	animal;
+		animal.makeSound();
+		WrongCat tac;
 	}
 	catch (const std::exception& e)
 	{
