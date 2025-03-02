@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:20:09 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/02 20:30:43 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/02 22:27:10 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,25 +47,58 @@ int	main(void)
 		return 1;
 	}
 }
+
 {
 	try {
 		cout << endl << "---- custom tests ----" << endl << endl;
-		// Brain a;
-		// a.addIdea("Helsinki");
-		// a.addIdea("Poop");
-		// a.addIdea("Grr");
-		// a.addIdea("Boo");
-		// a.printAll();
-		// Brain b;
-		// b = a;
-		// b.printAll();
+		cout << "\e[33m" << "Brains:" << "\e[0m" << endl;
+		Brain a;
+		a.addIdea("eat");
+		a.addIdea("sleep");
+		a.addIdea("poop");
+		a.addIdea("repeat");
+		Brain b(a);
+		b.addIdea("dance monkey");
+		Brain c;
+		c = b;
+		c.addIdea("RANDOM");
+		a.printAll();
+		cout << endl;
+		b.printAll();
+		cout << endl;
+		c.printAll();
+
+		cout << endl << endl;
+		cout << "\e[33m" << "Dogs:" << "\e[0m" << endl;
 		Dog Bono;
 		Bono.addIdea("Food");
 		Dog bebe(Bono);
 		bebe.addIdea("Ice creamz");
-		// Bono = bebe;
+		Dog Fifi;
+		Fifi = bebe;
+		Fifi.addIdea("Fluff");
 		Bono.printIdeas();
+		cout << endl;
 		bebe.printIdeas();
+		cout << endl;
+		Fifi.printIdeas();
+
+		cout << endl << endl;
+		cout << "\e[33m" << "Cats:" << "\e[0m" << endl;
+		Cat Donna;
+		Donna.addIdea("Food");
+		Cat bob(Donna);
+		bob.addIdea("Ice creamz");
+		Cat Fee;
+		Fee = bob;
+		Fee.addIdea("Fluff");
+		Donna.printIdeas();
+		cout << endl;
+		bob.printIdeas();
+		cout << endl;
+		Fee.printIdeas();
+
+		WrongCat test;
 	}
 	catch (const std::exception& e)
 	{
