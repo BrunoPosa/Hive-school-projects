@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:07:48 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/28 23:33:13 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/02 20:04:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,28 +15,28 @@
 
 /*	Orthodox Canonical Form members	*/
 
-Dog::Dog() {
+Dog::Dog() : _brain(new Brain()) {
 	_type = "Dog";
-	_brain = new Brain();
 	cout << "Dog def. constructor." << endl;
 }
-//is brain leaking?
-Dog::Dog(const Dog& obj) : Animal(obj), _brain(obj._brain) {
+
+Dog::Dog(const Dog& obj) : Animal(obj), _brain(new Brain(*obj._brain)) {
 	cout << "Dog copy constructor." << endl;
 }
 
 Dog&	Dog::operator=(const Dog& obj) {
 	if (this != &obj) {
 		Animal::operator=(obj);
-		_brain = obj._brain;
+		delete _brain;
+		_brain = new Brain(*obj._brain);
 		cout << "Dog copy assignment." << endl;
 	}
 	return *this;
 }
 
 Dog::~Dog() {
-	// delete _brain;//segfaults
-	cout << "Dog destructor called" << endl;
+	cout << "Dog def. destructor." << endl;
+	delete _brain;
 }
 
 
@@ -49,4 +49,8 @@ void Dog::makeSound() const {
 
 void	Dog::addIdea(const string& idea) {	_brain->addIdea(idea);	}
 
-void	Dog::printIdeas() {	_brain->printAll();	}
+void	Dog::printIdeas() const {
+	cout << "\e[32m" << "--Dog ideaz--" << endl;
+	_brain->printAll();
+	cout << "\e[0m" << endl;
+}

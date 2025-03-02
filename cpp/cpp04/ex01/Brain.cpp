@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 21:06:55 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/28 23:14:21 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/02 19:15:01 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,9 @@ Brain::~Brain() {	cout << "Brain def. destructor." << endl;	}
 
 void	Brain::printAll() const {
 	for(int i = 0; i < BRAINSIZE ; i++) {
-		cout << "-" << _ideas[i] << endl;
+		if (_ideas[i].empty() == false) {
+			cout << "-" << _ideas[i] << endl;
+		}
 	}
 }
 

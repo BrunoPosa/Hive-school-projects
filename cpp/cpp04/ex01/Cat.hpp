@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 16:23:26 by bposa             #+#    #+#             */
-/*   Updated: 2025/02/28 21:19:48 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/02 20:03:56 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,7 @@ using std::endl;
 
 class Cat : public Animal
 {
-private:
-	// Brain	*meatBrain;
+	Brain	*_brain;
 
 public:
 	Cat();
@@ -33,7 +32,9 @@ public:
 	Cat&	operator=(const Cat& obj);
 	~Cat();
 
-	void    makeSound() const override;
+	void	makeSound() const override;
+	void	addIdea(const string& idea) override;
+	void	printIdeas() const override;
 };
 
 #endif
