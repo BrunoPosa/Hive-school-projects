@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:20:09 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/02 23:12:11 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/03 16:55:32 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,11 @@ int	main(void)
 		Cat moo(kit);
 		cout << kit.getType() << endl;
 		kat.makeSound();
+
+		cout << endl << endl;
+		Animal	animal;
+		animal.makeSound();
+		cout << "animal type: " << animal.getType() << endl;
 	}
 	catch (const std::exception& e)
 	{
