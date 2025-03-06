@@ -10,10 +10,12 @@ RM			= rm -rf
 
 
 
-HEADERS	=	Bureaucrat.hpp
+HEADERS	=	Bureaucrat.hpp \
+			Colors.hpp
 
 SRCS	=	main.cpp \
-			Bureaucrat.cpp
+			Bureaucrat.cpp \
+			Colors.cpp
 
 
 

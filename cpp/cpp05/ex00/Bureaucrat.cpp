@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/06 13:06:07 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/06 18:34:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Bureaucrat::Bureaucrat(const Bureaucrat& obj) : _name(obj._name), _grade(obj._gr
 
 
 /*	Constructor Overload	*/
-Bureaucrat::Bureaucrat(const string& name, unsigned short grade) : _name(name), _grade(grade) {
+Bureaucrat::Bureaucrat(const string& name, long grade) : _name(name), _grade(grade) {
 	if (grade < _bestGrade) {
 		throw GradeTooHighException();
 	}
@@ -45,7 +45,7 @@ void	Bureaucrat::upGrade() {
 }
 
 void	Bureaucrat::downGrade() {
-	if (static_cast<long>(_grade) - static_cast<long>(_gradeStep) > _worstGrade) {
+	if (static_cast<long>(_grade) + static_cast<long>(_gradeStep) > _worstGrade) {
 		throw GradeTooLowException();
 	};
 	_grade += _gradeStep;
@@ -59,7 +59,7 @@ const char*	Bureaucrat::GradeTooLowException::what() const noexcept {	return "Gr
 
 /*	Insertion operator overload	*/
 std::ostream&	operator<<(std::ostream& os, const Bureaucrat& obj) {
-	return os << BUREAUCRATIC_GREEN
+	return os << getColor(Color::YELLOW)
 		<< obj.getName() << ", bureaucrat grade " << obj.getGrade()
-		<< BUREAUCRATIC_COLOR_RESET << endl;
+		<< getColor(Color::RESET) << endl;
 }

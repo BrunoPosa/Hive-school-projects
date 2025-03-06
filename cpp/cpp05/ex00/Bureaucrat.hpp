@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/06 13:07:02 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/06 18:14:57 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,7 @@
 #include <iostream>
 #include <string>
 #include <exception>
-
-/* Colors */
-# define BUREAUCRATIC_YELLOW "\033[33m"
-# define BUREAUCRATIC_GREEN "\033[1;32m"
-# define BUREAUCRATIC_COLOR_RESET "\033[0m"
+#include "Colors.hpp"
 
 using std::cout;
 using std::endl;
@@ -46,7 +42,7 @@ public:
 	Bureaucrat(const Bureaucrat& obj);
 	Bureaucrat&	operator=(const Bureaucrat& obj)	= delete;
 	~Bureaucrat() 									= default;
-	Bureaucrat(const string& name, unsigned short grade);
+	Bureaucrat(const string& name, long grade);
 
 	const string&	getName() const noexcept;
 	unsigned int	getGrade() const noexcept;
