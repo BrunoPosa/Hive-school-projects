@@ -1,6 +1,9 @@
 NAME		= Mommy_when_I_grow_up_I_want_to_be_a_bureaucrat!
+DEBUGNAME	= debugBuild
+VALGRNAME	= valgrindBuild
+
 CXX			= c++
-FLAGS		= -std=c++11 -Wall -Wextra -Werror
+FLAGS		= -std=c++11 -Wall -Wextra -Werror -O3
 DEBUGFLAGS	= -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined
 VALGRFLAGS	= -Wpedantic -Wshadow -g -O0
 RM			= rm -rf
@@ -8,6 +11,7 @@ RM			= rm -rf
 
 
 HEADERS	=	Bureaucrat.hpp
+
 SRCS	=	main.cpp \
 			Bureaucrat.cpp
 
@@ -22,14 +26,14 @@ clean:
 	@echo nothing to clean, use fclean
 
 fclean:
-	$(RM) $(NAME)
+	$(RM) $(NAME) $(DEBUGNAME) $(VALGRNAME)
 
 re: fclean all
 
-debug: $(SRCS) $(HEADERS)
-	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o debugBuild $(SRCS)
+debug: fclean $(SRCS) $(HEADERS)
+	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o $(DEBUGNAME) $(SRCS)
 
-val: $(SRCS) $(HEADERS)
-	$(CXX) $(FLAGS) $(VALGRFLAGS) -o valgrindBuild $(SRCS)
+val: fclean $(SRCS) $(HEADERS)
+	$(CXX) $(FLAGS) $(VALGRFLAGS) -o $(VALGRNAME) $(SRCS)
 
 .PHONY: all clean fclean re debug val
