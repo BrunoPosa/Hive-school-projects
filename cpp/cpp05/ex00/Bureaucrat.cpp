@@ -6,11 +6,12 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/06 18:34:15 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/06 20:07:17 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
+#include "Colors.hpp"
 
 /*	Orthodox Canonical Form	*/
 Bureaucrat::Bureaucrat() : _name("JohnDoe"), _grade(150) {}

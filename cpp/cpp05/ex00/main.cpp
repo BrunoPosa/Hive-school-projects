@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/06 18:36:21 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/06 20:09:16 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,17 @@ static bool testDownGrade() {
 	return false;
 }
 
+/*
+	ToDo:
+	-make own new wrapper 
+*/
 int main () {
+Bureaucrat *a = nullptr;
+// Bureaucrat *c = nullptr;
 	try {
 		cout << "Class exception tests" << endl;
-
+a = new Bureaucrat("John", 1);
+(void)a;
 		(testConstructor() == true) ?
 				cout << getColor(Color::GREEN) << "testConstructor exception OK" << getColor(Color::RESET) << endl
 			:	cout << getColor(Color::RED) << "testConstructor exception KO" << getColor(Color::RESET) << endl;
@@ -86,15 +93,19 @@ int main () {
 				cout << getColor(Color::GREEN) << "testDownGrade() exception OK" << getColor(Color::RESET) << endl
 			:	cout << getColor(Color::RED) << "DownGrade() exception KO" << getColor(Color::RESET) << endl;
 
-		
-		// Bureaucrat *c = new Bureaucrat[std::numeric_limits<unsigned int>::max());
-		// c[1).getName();
+		// c = new Bureaucrat[std::numeric_limits<unsigned int>::max()];
+		// c[1].getName();
+
 		// for (int i = 0; i < BUREAUCRATIC_LADDER; i++){b.upGrade();}
 		// for (int i = 0; i < BUREAUCRATIC_LADDER; i++){a.downGrade();}
 		// cout << a << b;
+		delete a;
+		// delete[] c;
 	}
 	catch (...) {
 		cout << getColor(Color::YELLOW) << "Something else went wrong!" << getColor(Color::RESET) << endl;
+		delete a;
+		// delete[] c;
 	}
 	return 0;
 }
