@@ -2,4 +2,4 @@
 
 clear
 make debug
-./debugBuild
+./buildDebug

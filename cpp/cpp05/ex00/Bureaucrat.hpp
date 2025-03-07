@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/06 18:14:57 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/07 14:09:51 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ using std::string;
 /**
  *	Default constructor sets _name to 'JohnDoe' and _grade to worst grade.
  *	Best grade is 1, worst 150;
- *	upGrade() decrements _grade and downGrade() increments it, both by 1.
+ *	upGrade() decrements _grade and downGrade() increments it.
  *
  *	Throwable exceptions: GradeTooHighException and GradeTooLowException.
  */
@@ -34,14 +34,13 @@ class Bureaucrat {
 	unsigned short				_grade;
 	static const unsigned short	_bestGrade	= 1;
 	static const unsigned short	_worstGrade	= 150;
-	static const unsigned short	_gradeStep	= 1;
 	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");
 
 public:
 	Bureaucrat();
 	Bureaucrat(const Bureaucrat& obj);
-	Bureaucrat&	operator=(const Bureaucrat& obj)	= delete;
-	~Bureaucrat() 									= default;
+	Bureaucrat&	operator=(const Bureaucrat& obj);
+	~Bureaucrat() = default;
 	Bureaucrat(const string& name, long grade);
 
 	const string&	getName() const noexcept;

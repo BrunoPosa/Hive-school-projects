@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/06 20:07:17 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/07 13:42:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,13 @@
 Bureaucrat::Bureaucrat() : _name("JohnDoe"), _grade(150) {}
 
 Bureaucrat::Bureaucrat(const Bureaucrat& obj) : _name(obj._name), _grade(obj._grade) {}
+
+Bureaucrat&	Bureaucrat::operator=(const Bureaucrat& obj) {
+	if (this != &obj) {
+		_grade = obj._grade;
+	}
+	return *this;
+}
 
 
 
@@ -39,17 +46,17 @@ const string&	Bureaucrat::getName() const noexcept {	return _name;	}
 unsigned int	Bureaucrat::getGrade() const noexcept {	return _grade;	}
 
 void	Bureaucrat::upGrade() {
-	if (static_cast<long>(_grade) - static_cast<long>(_gradeStep) < _bestGrade) {
+	if (_grade == _bestGrade) {
 		throw GradeTooHighException();
 	};
-	_grade -= _gradeStep;
+	--_grade;
 }
 
 void	Bureaucrat::downGrade() {
-	if (static_cast<long>(_grade) + static_cast<long>(_gradeStep) > _worstGrade) {
+	if (_grade == _worstGrade) {
 		throw GradeTooLowException();
 	};
-	_grade += _gradeStep;
+	++_grade;
 }
 
 const char*	Bureaucrat::GradeTooHighException::what() const noexcept {	return "Grade too high!";	}
