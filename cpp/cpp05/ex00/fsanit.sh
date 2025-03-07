@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 clear
-make debug
-./buildDebug
+make fsanit
+./buildFsanitiz

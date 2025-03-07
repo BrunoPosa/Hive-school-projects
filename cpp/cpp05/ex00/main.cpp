@@ -6,30 +6,40 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/07 14:26:34 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/07 16:53:11 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
 #include "Colors.hpp"
-
-#include <limits>
+#include <cstdlib>
 
 #define BUREAUCRATIC_LADDER 150
-#define BUREAUCRATIC_NEW_DISASTER_EVERY 2
+#define BUREAUCRATIC_NEW_FAILS_EVERY 2
+#define BUREAUCRAT_NAME_MAX_LENGTH 10
 
-static Bureaucrat* myNew(const Bureaucrat& b) {
-	static unsigned int i = 0;
-	cout << "i: " << i << endl;
-	if (++i == BUREAUCRATIC_NEW_DISASTER_EVERY) {
-		i = 0;
-		throw std::bad_alloc();
+class FaultyBureaucrat : public Bureaucrat {
+public:
+	FaultyBureaucrat() = default;
+	FaultyBureaucrat(const string& name, long grade) : Bureaucrat(name, grade) {
+		throw std::length_error("Name too long!");
 	}
-	return new Bureaucrat(b);
-}
+};
 
-// static bool testTwoExceptions() {
-	
+// static Bureaucrat* myNew(const Bureaucrat& b) {
+// 	static unsigned int i = 0;
+// 	cout << "i: " << i << endl;
+// 	if (++i == BUREAUCRATIC_NEW_FAILS_EVERY) {
+// 		i = 0;
+// 		throw std::bad_alloc();
+// 	}
+// 	return new Bureaucrat(b);
+// }
+
+// static bool testBadAllocException() {
+// 	cout << "------------------------------------" << endl;
+// 	Bureaucrat* b = nullptr;
+// 	b = myNew(Bureaucrat("Michael", 2));
 // }
 
 static bool  testConstructor() {
@@ -39,13 +49,25 @@ static bool  testConstructor() {
 		cout << Kevin << endl;
 	}
 	catch (const std::exception& e) {
-		cout << getColor(Color::YELLOW) << e.what() << getColor(Color::RESET) << endl;
+		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
 		if (string(e.what()) == "Grade too low!") {
 			return true;
 		}
 		else {
 			return false;
 		}
+	}
+	return false;
+}
+
+static bool testTooLongName() {
+	cout << "------------------------------------" << endl;
+	try {
+		FaultyBureaucrat	Michael("Michael", 2);
+	}
+	catch (const std::exception& e) {
+		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
+		return true;
 	}
 	return false;
 }
@@ -58,7 +80,7 @@ static bool testUpGrade() {
 		cout << Erin << endl;
 	}
 	catch (const std::exception& e) {
-		cout << getColor(Color::YELLOW) << e.what() << getColor(Color::RESET) << endl;
+		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
 		if (string(e.what()) == "Grade too high!") {
 			return true;
 		}
@@ -77,7 +99,7 @@ static bool testDownGrade() {
 		cout << Jim << endl;
 	}
 	catch (const std::exception& e) {
-		cout << getColor(Color::YELLOW) << e.what() << getColor(Color::RESET) << endl;
+		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
 		if (string(e.what()) == "Grade too low!") {
 			return true;
 		}
@@ -94,43 +116,33 @@ static bool testDownGrade() {
 	-add myNew to test 2 exceptions in a 2nd level try catch 
 */
 int main () {
-Bureaucrat *a = nullptr;
-Bureaucrat *v = nullptr;
-// Bureaucrat *c = nullptr;
 	try {
+		Bureaucrat h;
+		Bureaucrat a;
 		cout << "Class exception tests" << endl;
-a = myNew (Bureaucrat("John", 1));
-v = myNew(Bureaucrat("Lucy", 21));
-(void)v;
-(void)a;
-
 		(testConstructor() == true) ?
-				cout << getColor(Color::GREEN) << "testConstructor exception OK" << getColor(Color::RESET) << endl
-			:	cout << getColor(Color::RED) << "testConstructor exception KO" << getColor(Color::RESET) << endl;
+				cout << MyColor::GREEN << "testConstructor exception OK" << MyColor::RESET << endl
+			:	cout << MyColor::RED << "testConstructor exception KO" << MyColor::RESET << endl;
 		cout << "------------------------------------" << endl;
 		(testUpGrade() == true) ?
-				cout << getColor(Color::GREEN) << "testUpGrade() exception OK" << getColor(Color::RESET) << endl
-			:	cout << getColor(Color::RED) << "UpGrade() exception KO" << getColor(Color::RESET) << endl;
+				cout << MyColor::GREEN << "testUpGrade() exception OK" << MyColor::RESET << endl
+			:	cout << MyColor::RED << "UpGrade() exception KO" << MyColor::RESET << endl;
 		cout << "------------------------------------" << endl;
 		(testDownGrade() == true) ?
-				cout << getColor(Color::GREEN) << "testDownGrade() exception OK" << getColor(Color::RESET) << endl
-			:	cout << getColor(Color::RED) << "DownGrade() exception KO" << getColor(Color::RESET) << endl;
+				cout << MyColor::GREEN << "testDownGrade() exception OK" << MyColor::RESET << endl
+			:	cout << MyColor::RED << "DownGrade() exception KO" << MyColor::RESET << endl;
+		cout << "------------------------------------" << endl;
+		(testTooLongName() == true) ?
+				cout << MyColor::GREEN << "testTooLongName() exception OK" << MyColor::RESET << endl
+			:	cout << MyColor::RED << "TooLongName() exception KO" << MyColor::RESET << endl;
 		cout << "------------------------------------" << endl;
 
-		// c = new Bureaucrat[std::numeric_limits<unsigned int>::max()];
-		// c[1].getName();
-
-		// for (int i = 0; i < BUREAUCRATIC_LADDER; i++){b.upGrade();}
-		// for (int i = 0; i < BUREAUCRATIC_LADDER; i++){a.downGrade();}
-		// cout << a << b;
-		delete a;
-		// delete[] c;
 	}
-	catch (std::exception& e) {//or (...)?
-		cout << getColor(Color::YELLOW) << "Something else went wrong: " << e.what() << getColor(Color::RESET) << endl;
-		delete a;
-		delete v;
-		// delete[] c;
+	catch (std::exception& e) {
+		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
+	}
+	catch (...) {
+		cout << MyColor::YELLOW << "Unknown exception!" << MyColor::RESET << endl;
 	}
 	return 0;
 }

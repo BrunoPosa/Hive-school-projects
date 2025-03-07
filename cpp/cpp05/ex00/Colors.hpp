@@ -6,20 +6,19 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 14:45:10 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/06 20:07:23 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/07 16:45:47 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COLORS_HPP
 # define COLORS_HPP
 
-enum class Color {
-	RED,
-	YELLOW,
-	GREEN,
-	RESET
+class MyColor {
+public:
+	static constexpr const char* RED	= "\033[1;31m";
+	static constexpr const char* YELLOW	= "\033[33m";
+	static constexpr const char* GREEN	= "\033[1;32m";
+	static constexpr const char* RESET	= "\033[0m";
 };
-
-const char* getColor(Color c);
 
 #endif
