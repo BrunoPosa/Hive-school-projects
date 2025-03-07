@@ -6,23 +6,29 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/07 16:53:11 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/07 19:22:04 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
-#include "Colors.hpp"
+// #include "Colors.hpp"
 #include <cstdlib>
+#include <memory>
 
 #define BUREAUCRATIC_LADDER 150
-#define BUREAUCRATIC_NEW_FAILS_EVERY 2
-#define BUREAUCRAT_NAME_MAX_LENGTH 10
+#define BUREAUCRATIC_NEW_FAILS_EVERY 5
 
 class FaultyBureaucrat : public Bureaucrat {
 public:
 	FaultyBureaucrat() = default;
 	FaultyBureaucrat(const string& name, long grade) : Bureaucrat(name, grade) {
-		throw std::length_error("Name too long!");
+		static int i = 0;
+		cout << "i: " << i << endl;
+		if (++i == BUREAUCRATIC_NEW_FAILS_EVERY) {
+			i = 0;
+			throw std::bad_alloc();
+		}
+		// throw std::length_error("Name too long!");
 	}
 };
 
@@ -63,7 +69,7 @@ static bool  testConstructor() {
 static bool testTooLongName() {
 	cout << "------------------------------------" << endl;
 	try {
-		FaultyBureaucrat	Michael("Michael", 2);
+		std::unique_ptr<FaultyBureaucrat> p1(new FaultyBureaucrat());
 	}
 	catch (const std::exception& e) {
 		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
