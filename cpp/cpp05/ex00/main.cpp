@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/07 19:22:04 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/09 22:27:18 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 // #include "Colors.hpp"
 #include <cstdlib>
 #include <memory>
+#include <limits>
 
 #define BUREAUCRATIC_LADDER 150
 #define BUREAUCRATIC_NEW_FAILS_EVERY 5
@@ -116,6 +117,26 @@ static bool testDownGrade() {
 	return false;
 }
 
+// static bool testWrapAroundGradeCorrectException() {
+// 	cout << "------------------------------------" << endl;
+// 	int	i = 0;
+// 	try {
+// 		Bureaucrat("Angela", -1);
+// 	}
+// 	catch (const std::exception& e) {
+// 		if (string(e.what()) == "Grade too high!") {
+// 			++i;
+// 		}
+// 	}
+// 	catch (const std::exception& e) {
+// 		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
+// 		if (i == 4) {
+// 			return true;
+// 		}
+// 	}
+// 	return false;
+// }
+
 /*
 	ToDo:
 	DONE - make own new wrapper 
@@ -123,7 +144,7 @@ static bool testDownGrade() {
 */
 int main () {
 	try {
-		Bureaucrat h;
+		Bureaucrat h("Howard", -2147483649);
 		Bureaucrat a;
 		cout << "Class exception tests" << endl;
 		(testConstructor() == true) ?

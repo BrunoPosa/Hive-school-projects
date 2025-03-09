@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/07 14:09:51 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/09 22:25:36 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ using std::string;
  *	Best grade is 1, worst 150;
  *	upGrade() decrements _grade and downGrade() increments it.
  *
- *	Throwable exceptions: GradeTooHighException and GradeTooLowException.
+ *	Special exceptions: GradeTooHighException and GradeTooLowException.
  */
 class Bureaucrat {
 	const string				_name;
@@ -41,7 +41,7 @@ public:
 	Bureaucrat(const Bureaucrat& obj);
 	Bureaucrat&	operator=(const Bureaucrat& obj);
 	~Bureaucrat() = default;
-	Bureaucrat(const string& name, long grade);
+	Bureaucrat(const string& name, int grade);
 
 	const string&	getName() const noexcept;
 	unsigned int	getGrade() const noexcept;
