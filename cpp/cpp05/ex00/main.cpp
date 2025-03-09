@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 01:00:49 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/10 01:02:38 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,6 @@
 #include <limits>
 
 #define BUREAUCRATIC_NEW_FAILS_EVERY 10
-
-class MyColor {
-	MyColor() = delete;
-public:
-	static constexpr const char* RED	= "\033[1;31m";
-	static constexpr const char* YELLOW	= "\033[33m";
-	static constexpr const char* GREEN	= "\033[1;32m";
-	static constexpr const char* RESET	= "\033[0m";
-};
 
 static Bureaucrat* myNew(const Bureaucrat& b) {
 	static unsigned int i = 0;
