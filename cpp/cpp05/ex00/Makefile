@@ -12,7 +12,6 @@ RM			= rm -rf
 
 
 HEADERS	=	Bureaucrat.hpp \
-			Colors.hpp
 
 SRCS	=	main.cpp \
 			Bureaucrat.cpp \
