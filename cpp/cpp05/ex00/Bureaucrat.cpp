@@ -6,12 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/09 22:25:48 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/10 00:40:36 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
-#include "Colors.hpp"
 
 /*	Orthodox Canonical Form	*/
 Bureaucrat::Bureaucrat() : _name("JohnDoe"), _grade(150) {}
@@ -28,8 +27,7 @@ Bureaucrat&	Bureaucrat::operator=(const Bureaucrat& obj) {
 
 
 /*	Constructor Overload	*/
-Bureaucrat::Bureaucrat(const string& name, int grade) : _name(name), _grade(grade) {
-cout << MyColor::YELLOW << grade << MyColor::RESET << endl;
+Bureaucrat::Bureaucrat(const string& name, long long grade) : _name(name), _grade(grade) {
 	if (grade < _bestGrade) {
 		throw GradeTooHighException();
 	}

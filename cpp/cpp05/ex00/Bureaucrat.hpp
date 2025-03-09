@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/09 22:25:36 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/10 00:01:55 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ public:
 	Bureaucrat(const Bureaucrat& obj);
 	Bureaucrat&	operator=(const Bureaucrat& obj);
 	~Bureaucrat() = default;
-	Bureaucrat(const string& name, int grade);
+	Bureaucrat(const string& name, long long grade);
 
 	const string&	getName() const noexcept;
 	unsigned int	getGrade() const noexcept;
