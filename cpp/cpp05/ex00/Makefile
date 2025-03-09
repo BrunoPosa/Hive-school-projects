@@ -43,7 +43,7 @@ val: fclean $(SRCS) $(HEADERS)
 	$(CXX) $(FLAGS) $(VALGRFLAGS) -o $(VALGRNAME) $(SRCS)
 	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME)
 
-git:
+git: fclean
 	clear
 	git status
 	git add .
