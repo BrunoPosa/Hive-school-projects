@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 01:02:38 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/10 15:22:28 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ static bool testNegativeGradesCorrectException() {
 
 static void testMallocFail() {
 	cout << "------------------------------------" << endl;
-	for (int i = 0; i < 21; ++i) {
+	for (int i = 0; i < 10 * BUREAUCRATIC_NEW_FAILS_EVERY; ++i) {
 		std::unique_ptr<Bureaucrat> ptr(myNew(Bureaucrat("Michael", 2)));
 		// myNew(Bureaucrat("Michael", 2));
 	}

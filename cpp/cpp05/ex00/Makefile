@@ -34,7 +34,7 @@ re: fclean all
 
 
 
-fsanit: fclean $(SRCS) $(HEADERS)
+fs: fclean $(SRCS) $(HEADERS)
 	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o $(FSANITNAME) $(SRCS)
 	./$(FSANITNAME)
 
