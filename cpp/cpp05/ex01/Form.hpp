@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:35:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 15:44:37 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/11 18:59:26 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,30 @@ using std::cout;
 using std::endl;
 using std::string;
 
+class Bureaucrat; //Forward declaration to avoid circular dependency
+
 class Form {
-	const string	_name;
-	bool			_signed;
-	const int		_signGrade;
-	const int		_execGrade;
+	static const unsigned short	_bestGrade	= 1;
+	static const unsigned short	_worstGrade	= 150;
+	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");
+	
+	const string			_name;
+	bool					_signed;
+	const unsigned short	_signGrade;
+	const unsigned short	_execGrade;
+
 public:
 	Form();
-	Form(std::string name, int signGrade, int execGrade);
 	Form(Form const &src);
-	~Form() = default;
+	Form&	operator=(Form const &src)	= delete;
+	~Form()								= default;
+	Form(const string& name, long long signGrade, long long execGrade);
 
-	Form &operator=(Form const &src);
-
-	string getName() const;
-	bool getSigned() const;
-	int getSignGrade() const;
-	int getExecGrade() const;
-
-	void beSigned(Bureaucrat &bureaucrat);
+	const string&	getName()		const noexcept;
+	bool			getSigned()		const noexcept;
+	unsigned short	getSignGrade()	const noexcept;
+	unsigned short	getExecGrade()	const noexcept;
+	void	beSigned(const Bureaucrat &bureaucrat);
 
 	class GradeTooHighException : public std::exception {
 	public:
@@ -50,7 +55,7 @@ public:
 	public:
 		virtual const char *what() const throw();
 	};
-}
+};
 
 std::ostream& operator<<(std::ostream& os, const Form& obj);
 

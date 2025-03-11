@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 15:51:04 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/11 18:59:04 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,13 @@
 #include <iostream>
 #include <string>
 #include <exception>
+#include "Form.hpp"
 
 using std::cout;
 using std::endl;
 using std::string;
+
+class Form; //Forward declaration to avoid circular dependency
 
 class MyColor {
 	MyColor() = delete;
@@ -54,8 +57,9 @@ public:
 
 	const string&	getName() const noexcept;
 	unsigned short	getGrade() const noexcept;
-	void			upGrade();		//--grade (3 becomes 2)
-	void			downGrade();	//++grade (3 becomes 4)
+	void	upGrade();		//--grade (3 becomes 2)
+	void	downGrade();	//++grade (3 becomes 4)
+	void	signForm(Form& obj) const;
 
 	class GradeTooHighException : public std::exception {
 	public:

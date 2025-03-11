@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 00:40:36 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/11 19:00:17 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ Bureaucrat::Bureaucrat(const string& name, long long grade) : _name(name), _grad
 
 const string&	Bureaucrat::getName() const noexcept {	return _name;	}
 
-unsigned int	Bureaucrat::getGrade() const noexcept {	return _grade;	}
+unsigned short	Bureaucrat::getGrade() const noexcept {	return _grade;	}
 
 void	Bureaucrat::upGrade() {
 	if (_grade == _bestGrade) {
@@ -58,6 +58,17 @@ void	Bureaucrat::downGrade() {
 	++_grade;
 }
 
+void	Bureaucrat::signForm(Form& obj) const {
+	try {
+		obj.beSigned(*this);
+	}
+	catch (GradeTooLowException& e) {
+		cout << MyColor::RED << _name << " cannot sign " << obj.getName() << " because " << e.what() << MyColor::RESET << endl;
+		return;
+	}
+	cout << MyColor::YELLOW << _name << " signs the form" << MyColor::RESET << endl;
+}
+
 const char*	Bureaucrat::GradeTooHighException::what() const noexcept {	return "Grade too high!";	}
 
 const char*	Bureaucrat::GradeTooLowException::what() const noexcept {	return "Grade too low!";	}
@@ -67,6 +78,6 @@ const char*	Bureaucrat::GradeTooLowException::what() const noexcept {	return "Gr
 /*	Insertion operator overload	*/
 std::ostream&	operator<<(std::ostream& os, const Bureaucrat& obj) {
 	return os << MyColor::YELLOW
-		<< obj.getName() << ", bureaucrat grade " << obj.getGrade()
+		<< "Form " << obj.getName() << "" << obj.getGrade()
 		<< MyColor::RESET << endl;
 }

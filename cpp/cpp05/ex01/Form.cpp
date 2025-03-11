@@ -6,91 +6,62 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:44:49 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 15:50:03 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/11 18:58:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Form.hpp"
 
+/*	Orthodox Canonical Form	*/
 Form::Form() : _name("JohnDoe"), _signed(false), _signGrade(1), _execGrade(1) {}
 
+Form::Form(const Form& obj)
+	: _name(obj._name), _signed(obj._signed), _signGrade(obj._signGrade), _execGrade(obj._execGrade) {}
 
-
-
-
-
-
-
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Bureaucrat.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 00:40:36 by bposa            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "Bureaucrat.hpp"
-
-/*	Orthodox Canonical Form	*/
-Bureaucrat::Bureaucrat() : _name("JohnDoe"), _grade(150) {}
-
-Bureaucrat::Bureaucrat(const Bureaucrat& obj) : _name(obj._name), _grade(obj._grade) {}
-
-Bureaucrat&	Bureaucrat::operator=(const Bureaucrat& obj) {
-	if (this != &obj) {
-		_grade = obj._grade;
-	}
-	return *this;
-}
 
 
 
 /*	Constructor Overload	*/
-Bureaucrat::Bureaucrat(const string& name, long long grade) : _name(name), _grade(grade) {
-	if (grade < _bestGrade) {
+Form::Form(const string& name, long long signGrade, long long execGrade)
+	: _name(name), _signed(false), _signGrade(signGrade), _execGrade(execGrade) {
+	if (signGrade < _bestGrade || execGrade < _bestGrade) {
 		throw GradeTooHighException();
 	}
-	else if (grade > _worstGrade) {
+	else if (signGrade > _worstGrade || execGrade > _worstGrade) {
 		throw GradeTooLowException();
 	}
 }
+
 
 
 
 /*	Member Functions	*/
 
-const string&	Bureaucrat::getName() const noexcept {	return _name;	}
+const string&	Form::getName()			const noexcept {	return _name;	}
+bool			Form::getSigned()		const noexcept {	return _signed;	}
+unsigned short	Form::getSignGrade()	const noexcept {	return _signGrade;	}
+unsigned short	Form::getExecGrade()	const noexcept {	return _execGrade;	}
 
-unsigned int	Bureaucrat::getGrade() const noexcept {	return _grade;	}
-
-void	Bureaucrat::upGrade() {
-	if (_grade == _bestGrade) {
-		throw GradeTooHighException();
-	};
-	--_grade;
-}
-
-void	Bureaucrat::downGrade() {
-	if (_grade == _worstGrade) {
+void	Form::beSigned(const Bureaucrat& bureaucrat) {
+	if (bureaucrat.getGrade() > _signGrade) {
 		throw GradeTooLowException();
-	};
-	++_grade;
+	}
+	_signed = true;
 }
 
-const char*	Bureaucrat::GradeTooHighException::what() const noexcept {	return "Grade too high!";	}
+const char*	Form::GradeTooHighException::what() const noexcept {	return "Grade too high!";	}
 
-const char*	Bureaucrat::GradeTooLowException::what() const noexcept {	return "Grade too low!";	}
+const char*	Form::GradeTooLowException::what() const noexcept {	return "Grade too low!";	}
+
 
 
 
 /*	Insertion operator overload	*/
 std::ostream&	operator<<(std::ostream& os, const Form& obj) {
 	return os << MyColor::YELLOW
-		<< obj.getName() << ", bureaucrat grade " << obj.getGrade()
+		<< "Form: " << obj.getName() << ", "
+		<< "Sign Grade: " << obj.getSignGrade() << ", "
+		<< "Execution Grade: " << obj.getExecGrade() << ", "
+		<< "Signed: " << obj.getSigned()
 		<< MyColor::RESET << endl;
 }
