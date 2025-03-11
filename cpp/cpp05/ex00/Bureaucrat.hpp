@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 01:03:11 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/11 18:30:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,12 @@ public:
  *	Special exceptions: GradeTooHighException and GradeTooLowException.
  */
 class Bureaucrat {
-	const string				_name;
-	unsigned short				_grade;
 	static const unsigned short	_bestGrade	= 1;
 	static const unsigned short	_worstGrade	= 150;
 	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");
+	
+	const string				_name;
+	unsigned short				_grade;
 
 public:
 	Bureaucrat();
