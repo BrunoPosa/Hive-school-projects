@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 01:06:17 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/14 11:17:17 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ const char*	Bureaucrat::GradeTooLowException::what() const noexcept {	return "Gr
 
 /*	Insertion operator overload	*/
 std::ostream&	operator<<(std::ostream& os, const Bureaucrat& obj) {
-	return os << MyColor::YELLOW
+	return os << YELLOWISH
 		<< obj.getName() << ", bureaucrat grade " << obj.getGrade()
-		<< MyColor::RESET << endl;
+		<< RESETISH << endl;
 }

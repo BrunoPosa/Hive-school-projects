@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/11 18:30:30 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/14 11:17:53 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,10 @@ using std::cout;
 using std::endl;
 using std::string;
 
-class MyColor {
-	MyColor() = delete;
-public:
-	static constexpr const char* RED	= "\033[1;31m";
-	static constexpr const char* YELLOW	= "\033[33m";
-	static constexpr const char* GREEN	= "\033[1;32m";
-	static constexpr const char* RESET	= "\033[0m";
-};
-
+#define REDISH "\033[1;31m"
+#define YELLOWISH "\033[33m"
+#define GREENISH "\033[1;32m"
+#define RESETISH "\033[0m"
 
 /**
  *	Default constructor sets _name to 'JohnDoe' and _grade to worst grade.

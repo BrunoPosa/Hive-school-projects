@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/10 15:22:28 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/14 11:16:12 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 #include <limits>
 
 #define BUREAUCRATIC_NEW_FAILS_EVERY 10
+
+#define REDISH "\033[1;31m"
+#define YELLOWISH "\033[33m"
+#define GREENISH "\033[1;32m"
+#define RESETISH "\033[0m"
 
 static Bureaucrat* myNew(const Bureaucrat& b) {
 	static unsigned int i = 0;
@@ -34,7 +39,7 @@ static bool  testConstructor() {
 		cout << Kevin << endl;
 	}
 	catch (const std::exception& e) {
-		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
+		cout << YELLOWISH << e.what() << RESETISH << endl;
 		if (string(e.what()) == "Grade too low!") {
 			return true;
 		}
@@ -53,7 +58,7 @@ static bool testUpGrade() {
 		Erin.upGrade();
 	}
 	catch (const std::exception& e) {
-		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
+		cout << YELLOWISH << e.what() << RESETISH << endl;
 		if (string(e.what()) == "Grade too high!") {
 			return true;
 		}
@@ -72,7 +77,7 @@ static bool testDownGrade() {
 		Jim.downGrade();
 	}
 	catch (const std::exception& e) {
-		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
+		cout << YELLOWISH << e.what() << RESETISH << endl;
 		if (string(e.what()) == "Grade too low!") {
 			return true;
 		}
@@ -143,28 +148,28 @@ int main () {
 		cout << "------------------------------------" << endl;
 		cout << "Class exception tests" << endl;
 		(testConstructor() == true) ?
-				cout << MyColor::GREEN << "testConstructor exception OK" << MyColor::RESET << endl
-			:	cout << MyColor::RED << "testConstructor exception KO" << MyColor::RESET << endl;
+				cout << GREENISH << "testConstructor exception OK" << RESETISH << endl
+			:	cout << REDISH << "testConstructor exception KO" << RESETISH << endl;
 		cout << "------------------------------------" << endl;
 		(testUpGrade() == true) ?
-				cout << MyColor::GREEN << "testUpGrade() exception OK" << MyColor::RESET << endl
-			:	cout << MyColor::RED << "UpGrade() exception KO" << MyColor::RESET << endl;
+				cout << GREENISH << "testUpGrade() exception OK" << RESETISH << endl
+			:	cout << REDISH << "UpGrade() exception KO" << RESETISH << endl;
 		cout << "------------------------------------" << endl;
 		(testDownGrade() == true) ?
-				cout << MyColor::GREEN << "testDownGrade() exception OK" << MyColor::RESET << endl
-			:	cout << MyColor::RED << "DownGrade() exception KO" << MyColor::RESET << endl;
+				cout << GREENISH << "testDownGrade() exception OK" << RESETISH << endl
+			:	cout << REDISH << "DownGrade() exception KO" << RESETISH << endl;
 		cout << "------------------------------------" << endl;
 		(testNegativeGradesCorrectException() == true) ?
-				cout << MyColor::GREEN << "testNegativeGradesCorrectException() OK" << MyColor::RESET << endl
-			:	cout << MyColor::RED << "testNegativeGradesCorrectException() KO" << MyColor::RESET << endl;
+				cout << GREENISH << "testNegativeGradesCorrectException() OK" << RESETISH << endl
+			:	cout << REDISH << "testNegativeGradesCorrectException() KO" << RESETISH << endl;
 		cout << "------------------------------------" << endl;
 		testMallocFail();
 	}
 	catch (std::exception& e) {
-		cout << MyColor::YELLOW << e.what() << MyColor::RESET << endl;
+		cout << YELLOWISH << e.what() << RESETISH << endl;
 	}
 	catch (...) {
-		cout << MyColor::YELLOW << "Unknown exception!" << MyColor::RESET << endl;
+		cout << YELLOWISH << "Unknown exception!" << RESETISH << endl;
 	}
 	return 0;
 }
