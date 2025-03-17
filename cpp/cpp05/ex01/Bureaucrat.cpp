@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/11 19:00:17 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/17 12:20:03 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,11 @@ void	Bureaucrat::signForm(Form& obj) const {
 	try {
 		obj.beSigned(*this);
 	}
-	catch (GradeTooLowException& e) {
-		cout << MyColor::RED << _name << " cannot sign " << obj.getName() << " because " << e.what() << MyColor::RESET << endl;
+	catch (Form::GradeTooLowException& e) {
+		cout << YELLOWISH << _name << " cannot sign " << obj.getName() << " because " << e.what() << RESETISH << endl;
 		return;
 	}
-	cout << MyColor::YELLOW << _name << " signs the form" << MyColor::RESET << endl;
+	cout << YELLOWISH << _name << " signed " << obj.getName() << RESETISH << endl;
 }
 
 const char*	Bureaucrat::GradeTooHighException::what() const noexcept {	return "Grade too high!";	}
@@ -77,7 +77,7 @@ const char*	Bureaucrat::GradeTooLowException::what() const noexcept {	return "Gr
 
 /*	Insertion operator overload	*/
 std::ostream&	operator<<(std::ostream& os, const Bureaucrat& obj) {
-	return os << MyColor::YELLOW
+	return os << YELLOWISH
 		<< "Form " << obj.getName() << "" << obj.getGrade()
-		<< MyColor::RESET << endl;
+		<< RESETISH << endl;
 }

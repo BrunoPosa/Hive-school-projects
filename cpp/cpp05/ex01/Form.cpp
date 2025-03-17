@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:44:49 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/11 18:58:13 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/17 11:39:03 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,19 +49,19 @@ void	Form::beSigned(const Bureaucrat& bureaucrat) {
 	_signed = true;
 }
 
-const char*	Form::GradeTooHighException::what() const noexcept {	return "Grade too high!";	}
+const char*	Form::GradeTooHighException::what() const noexcept {	return "Signer's grade too high!";	}
 
-const char*	Form::GradeTooLowException::what() const noexcept {	return "Grade too low!";	}
+const char*	Form::GradeTooLowException::what() const noexcept {	return "Signer's grade too low!";	}
 
 
 
 
 /*	Insertion operator overload	*/
 std::ostream&	operator<<(std::ostream& os, const Form& obj) {
-	return os << MyColor::YELLOW
+	return os << YELLOWISH
 		<< "Form: " << obj.getName() << ", "
 		<< "Sign Grade: " << obj.getSignGrade() << ", "
 		<< "Execution Grade: " << obj.getExecGrade() << ", "
 		<< "Signed: " << obj.getSigned()
-		<< MyColor::RESET << endl;
+		<< RESETISH << endl;
 }

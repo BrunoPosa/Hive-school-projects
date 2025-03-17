@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:35:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/11 18:59:26 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/14 14:59:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <string>
+#include <exception>
 #include "Bureaucrat.hpp"
 
 using std::cout;
@@ -26,7 +27,7 @@ class Bureaucrat; //Forward declaration to avoid circular dependency
 class Form {
 	static const unsigned short	_bestGrade	= 1;
 	static const unsigned short	_worstGrade	= 150;
-	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");
+	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");//delete for production code
 	
 	const string			_name;
 	bool					_signed;

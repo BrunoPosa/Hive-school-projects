@@ -1,4 +1,4 @@
-NAME		= Form_up_maggots!
+NAME		= Form_up_maggots
 EXERCISE	= cpp--05 - ex01
 FSANITNAME	= buildFsanitiz
 VALGRNAME	= buildValgrind
@@ -28,19 +28,21 @@ $(NAME): $(SRCS) $(HEADERS)
 clean:
 	$(RM) $(FSANITNAME) $(VALGRNAME)
 
-fclean:
-	$(RM) $(NAME) $(FSANITNAME) $(VALGRNAME)
+fclean: clean
+	$(RM) $(NAME) a.out
 
 re: fclean all
 
 
 
 
-fs: fclean $(SRCS) $(HEADERS)
+fs: fclean
+	echo ########################################################
 	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o $(FSANITNAME) $(SRCS)
 	./$(FSANITNAME)
 
-val: fclean $(SRCS) $(HEADERS)
+val: fclean
+	echo ########################################################
 	$(CXX) $(FLAGS) $(VALGRFLAGS) -o $(VALGRNAME) $(SRCS)
 	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME)
 
