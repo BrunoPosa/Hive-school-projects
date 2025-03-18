@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 17:42:12 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/17 12:19:42 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/18 12:01:48 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ bool testFormCreationTooHighSign() {
 	try {
 		Form invalidHigh("InvalidHigh", 0, 50);
 	} catch (Form::GradeTooHighException& e) {
-		cout << e.what() << endl;
+		cout << YELLOWISH << e.what() << RESETISH << endl;
 		return true;
 	} catch (...) {
 		return false;
@@ -52,7 +52,7 @@ bool testFormCreationTooHighExecute() {
 	try {
 		Form invalidHigh("InvalidHigh", 10,-1);
 	} catch (Form::GradeTooHighException& e) {
-		cout << e.what() << endl;
+		cout << YELLOWISH << e.what() << RESETISH << endl;
 		return true;
 	} catch (...) {
 		return false;
@@ -65,7 +65,7 @@ bool testFormCreationTooLow() {
 	try {
 		Form invalidLow("InvalidLow", 50, 151);
 	} catch (Form::GradeTooLowException& e) {
-		cout << e.what() << endl;
+		cout << YELLOWISH << e.what() << RESETISH << endl;
 		return true;
 	} catch (...) {
 		return false;
@@ -90,9 +90,6 @@ bool testUnsuccessfulFormSigning() {
 		Bureaucrat lowRank("LowRank", 150);
 		lowRank.signForm(notSignableForm);
 		return notSignableForm.getSigned() == false;
-	// } catch (Form::GradeTooLowException& e) {
-	// 	cout << e.what() << endl;
-	// 	return true;
 	} catch (...) {
 		return false;
 	}

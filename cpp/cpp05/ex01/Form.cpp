@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:44:49 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/17 11:39:03 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/18 11:58:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,10 @@ const char*	Form::GradeTooLowException::what() const noexcept {	return "Signer's
 
 /*	Insertion operator overload	*/
 std::ostream&	operator<<(std::ostream& os, const Form& obj) {
-	return os << YELLOWISH
+	return os
 		<< "Form: " << obj.getName() << ", "
 		<< "Sign Grade: " << obj.getSignGrade() << ", "
 		<< "Execution Grade: " << obj.getExecGrade() << ", "
 		<< "Signed: " << obj.getSigned()
-		<< RESETISH << endl;
+		<< endl;
 }
