@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/14 11:16:12 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/18 12:04:56 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,6 +170,7 @@ int main () {
 	}
 	catch (...) {
 		cout << YELLOWISH << "Unknown exception!" << RESETISH << endl;
+		return 1;
 	}
 	return 0;
 }
