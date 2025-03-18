@@ -1,4 +1,4 @@
-NAME		= No_you_need_form_28B_not_28C...
+NAME		= No_you_need_AForm_28B_not_28C...
 EXERCISE	= cpp--05 - ex02
 FSANITNAME	= buildFsanitiz
 VALGRNAME	= buildValgrind
@@ -12,11 +12,11 @@ RM			= rm -rf
 
 
 HEADERS	=	Bureaucrat.hpp \
-			Form.hpp
+			AForm.hpp
 
 SRCS	=	main.cpp \
 			Bureaucrat.cpp \
-			Form.cpp
+			AForm.cpp
 
 
 
