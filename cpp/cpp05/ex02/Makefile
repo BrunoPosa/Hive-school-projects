@@ -5,18 +5,20 @@ VALGRNAME	= buildValgrind
 
 CXX			= c++
 FLAGS		= -std=c++11 -Wall -Wextra -Werror -O3
-DEBUGFLAGS	= -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined
+DEBUGFLAGS	= -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
 VALGRFLAGS	= -Wpedantic -Wshadow -g -O0
 RM			= rm -rf
 
 
 
 HEADERS	=	Bureaucrat.hpp \
-			AForm.hpp
+			AForm.hpp \
+			ShrubberyCreationForm.hpp \
 
 SRCS	=	main.cpp \
 			Bureaucrat.cpp \
-			AForm.cpp
+			AForm.cpp \
+			ShrubberyCreationForm.cpp \
 
 
 

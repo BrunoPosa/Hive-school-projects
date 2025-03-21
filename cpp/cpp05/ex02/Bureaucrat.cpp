@@ -6,13 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/18 13:38:32 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/21 15:27:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
 
-/*	Orthodox Canonical AForm	*/
+/*	Orthodox Canonical Form	*/
 Bureaucrat::Bureaucrat() : _name("JohnDoe"), _grade(150) {}
 
 Bureaucrat::Bureaucrat(const Bureaucrat& obj) : _name(obj._name), _grade(obj._grade) {}

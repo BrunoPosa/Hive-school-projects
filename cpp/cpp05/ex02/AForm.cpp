@@ -12,11 +12,16 @@
 
 #include "AForm.hpp"
 
-/*	Orthodox Canonical AForm	*/
-AForm::AForm() : _name("JohnDoe"), _signed(false), _signGrade(1), _execGrade(1) {}
+/*	Orthodox Canonical Form	*/
+AForm::AForm() : _name("default"), _signed(false), _signGrade(1), _execGrade(1) {
+	cout << "Aform def. constructor" << endl;
+}
 
-AForm::AForm(const AForm& obj)
-	: _name(obj._name), _signed(obj._signed), _signGrade(obj._signGrade), _execGrade(obj._execGrade) {}
+AForm::AForm(const AForm& obj)	: _name(obj._name), _signed(obj._signed), _signGrade(obj._signGrade), _execGrade(obj._execGrade) {
+	cout << "Aform copy constructor" << endl;
+}
+
+AForm::~AForm() {	cout << "Aform def. destructor" << endl;	}
 
 
 
@@ -30,6 +35,7 @@ AForm::AForm(const string& name, long long signGrade, long long execGrade)
 	else if (signGrade > _worstGrade || execGrade > _worstGrade) {
 		throw GradeTooLowException();
 	}
+	cout << "Aform overloaded constructor" << endl;
 }
 
 
@@ -69,7 +75,7 @@ const char*	AForm::FormNotSignedException::what()	const noexcept {	return "Form 
 /*	Insertion operator overload	*/
 std::ostream&	operator<<(std::ostream& os, const AForm& obj) {
 	return os
-		<< "AForm: " << obj.getName() << ", "
+		<< "Form: " << obj.getName() << ", "
 		<< "Sign Grade: " << obj.getSignGrade() << ", "
 		<< "Execution Grade: " << obj.getExecGrade() << ", "
 		<< "Signed: " << obj.getSigned()

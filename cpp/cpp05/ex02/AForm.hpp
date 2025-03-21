@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   AAForm.hpp                                          :+:      :+:    :+:   */
+/*   AForm.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:35:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/18 13:37:30 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/21 16:26:27 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@
 #include <string>
 #include <exception>
 #include "Bureaucrat.hpp"
-#include "ShrubberyCreationForm.hpp"
 
 using std::cout;
 using std::endl;
 using std::string;
 
 class Bureaucrat; //Forward declaration to avoid circular dependency
+
 
 class AForm {
 	static const unsigned short	_bestGrade	= 1;
@@ -37,9 +37,9 @@ class AForm {
 
 public:
 	AForm();
-	AForm(AForm const &src);
+	AForm(AForm const &obj);
 	AForm&	operator=(AForm const &src)	= delete;
-	~AForm()							= default;
+	virtual ~AForm();
 	AForm(const string& name, long long signGrade, long long execGrade);
 
 	const string&	getName()		const noexcept;
@@ -48,7 +48,7 @@ public:
 	unsigned short	getExecGrade()	const noexcept;
 	void			beSigned(Bureaucrat const &bureaucrat);
 	void			execute(Bureaucrat const &executor)	const;
-	virtual void	act() const	= 0;
+	virtual void	act() const		= 0;
 
 
 
@@ -65,6 +65,7 @@ public:
 		virtual const char *what() const throw();
 	};
 };
+
 
 std::ostream& operator<<(std::ostream& os, const AForm& obj);
 
