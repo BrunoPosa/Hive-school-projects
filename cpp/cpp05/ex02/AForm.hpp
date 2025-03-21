@@ -17,6 +17,7 @@
 #include <string>
 #include <exception>
 #include "Bureaucrat.hpp"
+#include "ShrubberyCreationForm.hpp"
 
 using std::cout;
 using std::endl;
@@ -45,14 +46,21 @@ public:
 	bool			getSigned()		const noexcept;
 	unsigned short	getSignGrade()	const noexcept;
 	unsigned short	getExecGrade()	const noexcept;
-	void	beSigned(const Bureaucrat &bureaucrat);
+	void			beSigned(Bureaucrat const &bureaucrat);
+	void			execute(Bureaucrat const &executor)	const;
+	virtual void	act() const	= 0;
+
+
 
 	class GradeTooHighException : public std::exception {
 	public:
 		virtual const char *what() const throw();
 	};
-
 	class GradeTooLowException : public std::exception {
+	public:
+		virtual const char *what() const throw();
+	};
+	class FormNotSignedException : public std::exception {
 	public:
 		virtual const char *what() const throw();
 	};

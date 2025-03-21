@@ -37,7 +37,7 @@ AForm::AForm(const string& name, long long signGrade, long long execGrade)
 
 /*	Member Functions	*/
 
-const string&	AForm::getName()			const noexcept {	return _name;	}
+const string&	AForm::getName()		const noexcept {	return _name;	}
 bool			AForm::getSigned()		const noexcept {	return _signed;	}
 unsigned short	AForm::getSignGrade()	const noexcept {	return _signGrade;	}
 unsigned short	AForm::getExecGrade()	const noexcept {	return _execGrade;	}
@@ -49,9 +49,19 @@ void	AForm::beSigned(const Bureaucrat& bureaucrat) {
 	_signed = true;
 }
 
-const char*	AForm::GradeTooHighException::what() const noexcept {	return "Signer's grade too high!";	}
+void	AForm::execute(Bureaucrat const &executor)	const {
+	if (!_signed) {
+		throw FormNotSignedException();
+	}
+	if (executor.getGrade() > _execGrade) {
+		throw GradeTooLowException();
+	}
+	this->act();
+}
 
-const char*	AForm::GradeTooLowException::what() const noexcept {	return "Signer's grade too low!";	}
+const char*	AForm::GradeTooHighException::what()	const noexcept {	return "Signer's grade too high!";	}
+const char*	AForm::GradeTooLowException::what()		const noexcept {	return "Signer's grade too low!";	}
+const char*	AForm::FormNotSignedException::what()	const noexcept {	return "Form must be signed to execute it!";	}
 
 
 

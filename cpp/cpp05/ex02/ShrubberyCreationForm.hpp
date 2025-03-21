@@ -21,12 +21,15 @@ using std::endl;
 using std::string;
 
 class ShrubberyCreationForm : public AForm {
+	string	_target;
 public:
 	ShrubberyCreationForm();
 	ShrubberyCreationForm(string);
 	ShrubberyCreationForm(const ShrubberyCreationForm&);
 	ShrubberyCreationForm&	operator=(const ShrubberyCreationForm&);
 	~ShrubberyCreationForm();// override;
+
+	void	act() const override;
 };
 
 #endif
