@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:41:21 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/21 18:10:07 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/23 18:23:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 /*	Orthodox Canonical Form	*/
 ShrubberyCreationForm::ShrubberyCreationForm() : AForm("ShrubberyCreationForm", 145, 137), _target("default") {
-	cout << "Shrub. def. constructor" << endl;
+	cout << "Shrubbery def. constructor" << endl;
 }
 
 ShrubberyCreationForm::ShrubberyCreationForm(const ShrubberyCreationForm& obj) : AForm(obj), _target(obj._target) {
-	cout << "Shrub. copy constructor" << endl;
+	cout << "Shrubbery copy constructor" << endl;
 }
 
 ShrubberyCreationForm::~ShrubberyCreationForm() {
-	cout << "Shrub. def. destructor" << endl;
+	cout << "Shrubbery def. destructor" << endl;
 }
 
 
@@ -30,13 +30,45 @@ ShrubberyCreationForm::~ShrubberyCreationForm() {
 
 /*	Overload	*/
 ShrubberyCreationForm::ShrubberyCreationForm(const string& target) : AForm("ShrubberyCreationForm", 145, 137), _target(target) {
-	cout << "Shrub. overloaded constructor" << endl;
+	cout << "Shrubbery overloaded constructor" << endl;
 }
 
 
 
 
 /*	Methods	(member functions)	*/
-void	ShrubberyCreationForm::act() const {
-	cout << "acting." << endl;
+bool	ShrubberyCreationForm::act() const {
+	std::ofstream outFile(_target + "_shrubbery", std::ios::out | std::ios::trunc);
+	if (!outFile.is_open()) {
+		cout << "Could not open file!" << endl;
+		return false;
+	}
+
+	int	i = _target.length();
+	do {
+		outFile << R"(
+			# #### ####
+		### \/#|### |/####
+		##\/#/ \||/##/_/##/_#
+		###  \/###|/ \/ # ###
+	##_\_#\_\## | #/###_/_####
+	## #### # \ #| /  #### ##/##
+	__#_--###`  |{,###---###-~
+				\ }{
+				}}{
+				}}{
+			ejm  {{}
+		, -=-~{ .-^- _
+				`}
+				{)";
+	} while (--i > 0);
+
+	if (outFile.fail()) {
+		cout << "Writing failed!" << endl;
+		return false;
+	}
+	outFile.close();//for sake of clarity
+
+	cout << GREENISH << "Shrubbery planted in " << _target << "_shrubbery." << RESETISH << endl;
+	return true;
 }

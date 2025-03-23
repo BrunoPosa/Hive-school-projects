@@ -31,7 +31,7 @@ clean:
 	$(RM) $(FSANITNAME) $(VALGRNAME)
 
 fclean: clean
-	$(RM) $(NAME) a.out
+	$(RM) $(NAME) a.out *_shrubbery
 
 re: fclean all
 

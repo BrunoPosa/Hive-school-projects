@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/21 15:27:15 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/23 15:36:09 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	Bureaucrat::downGrade() {
 	++_grade;
 }
 
-void	Bureaucrat::signAForm(AForm& obj) const {
+void	Bureaucrat::signForm(AForm& obj) const {
 	try {
 		obj.beSigned(*this);
 	}

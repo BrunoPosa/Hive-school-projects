@@ -29,7 +29,7 @@ public:
 	~ShrubberyCreationForm();
 	ShrubberyCreationForm(const string& target);
 
-	void	act() const override;
+	bool	act() const override;
 };
 
 #endif

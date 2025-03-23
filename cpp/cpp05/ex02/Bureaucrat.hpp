@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/18 13:38:32 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/23 15:36:04 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ public:
 	unsigned short	getGrade() const noexcept;
 	void	upGrade();		//--grade (3 becomes 2)
 	void	downGrade();	//++grade (3 becomes 4)
-	void	signAForm(AForm& obj) const;
+	void	signForm(AForm& obj) const;
 
 	class GradeTooHighException : public std::exception {
 	public:

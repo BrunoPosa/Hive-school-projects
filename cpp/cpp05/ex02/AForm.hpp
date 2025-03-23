@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:35:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/21 16:26:27 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/23 18:27:43 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ using std::string;
 
 class Bureaucrat; //Forward declaration to avoid circular dependency
 
-
+/*
+ *	execute returns bool false if writing out to file failed. 
+*/
 class AForm {
 	static const unsigned short	_bestGrade	= 1;
 	static const unsigned short	_worstGrade	= 150;
@@ -47,8 +49,8 @@ public:
 	unsigned short	getSignGrade()	const noexcept;
 	unsigned short	getExecGrade()	const noexcept;
 	void			beSigned(Bureaucrat const &bureaucrat);
-	void			execute(Bureaucrat const &executor)	const;
-	virtual void	act() const		= 0;
+	bool			execute(Bureaucrat const &executor)	const;
+	virtual bool	act() const		= 0;
 
 
 
