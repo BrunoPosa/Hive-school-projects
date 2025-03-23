@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:24:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/23 18:25:19 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/23 19:27:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 */
 #include "AForm.hpp"
 #include "ShrubberyCreationForm.hpp"
+#include "RobotomyRequestForm.hpp"
 
 #include <type_traits>
 #include <memory>
@@ -28,10 +29,16 @@ int main (void) {
 
 	showVirtualDestructor();
 
-	std::shared_ptr<AForm> ptr(new ShrubberyCreationForm("Hello"));
+	std::unique_ptr<AForm> p1(new ShrubberyCreationForm("Hello"));
 
 	Bureaucrat boss("boss", 3);
-	boss.signForm(*ptr);
-	if (ptr->execute(boss) == true)
-	{cout << "true" << endl;}
+	boss.signForm(*p1);
+	if (p1->execute(boss) == true)	{
+		cout << "p1 true" << endl;
+	}
+	std::unique_ptr<AForm> p2(new RobotomyRequestForm("Zidane"));
+	boss.signForm(*p2);
+	if (p2->execute(boss) == true) {
+		cout << "p2 true" << endl;
+	}
 }
