@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:24:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/23 21:15:56 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/23 21:17:51 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,6 @@ int main (void) {
 	}
 
 	std::unique_ptr<AForm> p3(new PresidentialPardonForm("Myself and I"));
+	boss.signForm(*p3);
+	p3->execute(boss);
 }
