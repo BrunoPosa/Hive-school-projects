@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/23 15:36:09 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/23 21:28:02 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,18 @@ void	Bureaucrat::signForm(AForm& obj) const {
 	}
 	cout << YELLOWISH << _name << " signed " << obj.getName() << RESETISH << endl;
 }
+
+bool	Bureaucrat::executeForm(AForm const & form) {
+	try {
+		form.execute(*this);
+		cout << _name << " executed " << form.getName() << endl;
+	} catch (std::exception& e) {
+		cout << YELLOWISH << "Bureaucrat could not execute form because of: " << e.what() << RESETISH << endl;
+		return false;
+	}
+	return true;
+}
+
 
 const char*	Bureaucrat::GradeTooHighException::what() const noexcept {	return "Grade too high!";	}
 
