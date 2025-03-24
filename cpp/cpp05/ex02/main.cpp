@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:24:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/24 18:07:39 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/24 18:24:28 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,11 @@ static void	normalFormSignAndExecution() {
 	boss.executeForm(*p3);
 }
 
+
+/*
+	-add noexcept guarantees around
+	-
+*/
 int main (void) {
 	try {
 		cout << "======================= main =========================" << endl;
