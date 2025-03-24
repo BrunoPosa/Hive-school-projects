@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:24:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/24 18:24:28 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/24 19:48:48 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,20 @@ static void	normalFormSignAndExecution() {
 	boss.executeForm(*p3);
 }
 
+static void	formSignError() {
+	cout << "showing signing errors:" << endl;
+	Bureaucrat ed("Ed", 150);
+
+	std::unique_ptr<AForm> p1(new ShrubberyCreationForm("Home"));
+	ed.signForm(*p1);
+	// boss.executeForm(*p1);
+	// std::unique_ptr<AForm> p2(new RobotomyRequestForm("Rick"));
+	// boss.signForm(*p2);
+	// boss.executeForm(*p2);
+	// std::unique_ptr<AForm> p3(new PresidentialPardonForm("Proxima Centauri"));
+	// boss.signForm(*p3);
+	// boss.executeForm(*p3);
+}
 
 /*
 	-add noexcept guarantees around
@@ -52,6 +66,7 @@ int main (void) {
 		cout << "------------------------------------" << endl;
 		normalFormSignAndExecution();
 		cout << "------------------------------------" << endl;
+		formSignError();
 
 	} catch (std::exception& e) {
 		cout << e.what() << endl;
