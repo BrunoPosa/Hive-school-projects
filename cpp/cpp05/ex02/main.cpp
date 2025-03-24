@@ -6,13 +6,10 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:24:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/23 21:27:28 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/24 18:07:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-	-test the virtual destruction (e.g. use heap and cheack for leaks)
-*/
 #include "AForm.hpp"
 #include "ShrubberyCreationForm.hpp"
 #include "RobotomyRequestForm.hpp"
@@ -22,30 +19,36 @@
 #include <memory>
 
 static void	showVirtualDestructor() {
+	cout << "showing virtual destructor:" << endl;
 	std::unique_ptr<AForm> p(new ShrubberyCreationForm());
 }
 
-int main (void) {
-	static_assert(std::is_abstract<AForm>::value, "AForm must be an abstract class!");
+static void	normalFormSignAndExecution() {
+	cout << "showing normal signing and execution by boss (grade 1):" << endl;
+	Bureaucrat boss("boss", 1);
 
-	showVirtualDestructor();
-
-	std::unique_ptr<AForm> p1(new ShrubberyCreationForm("Hello"));
-
-	Bureaucrat boss("boss", 3);
+	std::unique_ptr<AForm> p1(new ShrubberyCreationForm("Home"));
 	boss.signForm(*p1);
-	if (p1->execute(boss) == true)	{
-		cout << "p1 true" << endl;
-	}
-	std::unique_ptr<AForm> p2(new RobotomyRequestForm("Zidane"));
-	boss.signForm(*p2);
-	if (p2->execute(boss) == true) {
-		cout << "p2 true" << endl;
-	}
-
-	std::unique_ptr<AForm> p3(new PresidentialPardonForm("Myself and I"));
-	boss.signForm(*p3);
-	p3->execute(boss);
-
 	boss.executeForm(*p1);
+	std::unique_ptr<AForm> p2(new RobotomyRequestForm("Rick"));
+	boss.signForm(*p2);
+	boss.executeForm(*p2);
+	std::unique_ptr<AForm> p3(new PresidentialPardonForm("Proxima Centauri"));
+	boss.signForm(*p3);
+	boss.executeForm(*p3);
+}
+
+int main (void) {
+	try {
+		cout << "======================= main =========================" << endl;
+		static_assert(std::is_abstract<AForm>::value, "AForm must be an abstract class!");
+
+		showVirtualDestructor();
+		cout << "------------------------------------" << endl;
+		normalFormSignAndExecution();
+		cout << "------------------------------------" << endl;
+
+	} catch (std::exception& e) {
+		cout << e.what() << endl;
+	}
 }

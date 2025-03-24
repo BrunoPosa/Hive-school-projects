@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:35:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/23 19:29:42 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/24 18:14:20 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ using std::string;
 class Bureaucrat; //Forward declaration to avoid circular dependency
 
 /*
- *	execute() method returns bool false if writing out to file failed. 
+ *	execute() method throws exceptions in case of too low/high grade Bureaucrat,
+ *	and returns 'false' on failure during execution (e.g. writing to file or making sound)
 */
 class AForm {
 	static const unsigned short	_bestGrade	= 1;

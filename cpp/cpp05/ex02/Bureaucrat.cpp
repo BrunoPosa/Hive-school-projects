@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/23 21:28:02 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/24 18:16:57 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,19 +71,21 @@ void	Bureaucrat::signForm(AForm& obj) const {
 
 bool	Bureaucrat::executeForm(AForm const & form) {
 	try {
-		form.execute(*this);
-		cout << _name << " executed " << form.getName() << endl;
+		if (form.execute(*this) == false) {
+			cout << REDISH << _name << " failed to execute " << form.getName() << " due to an error." << RESETISH << endl;
+		}
 	} catch (std::exception& e) {
-		cout << YELLOWISH << "Bureaucrat could not execute form because of: " << e.what() << RESETISH << endl;
+		cout << YELLOWISH << _name << " could not execute form because of: " << e.what() << RESETISH << endl;
 		return false;
 	}
+	cout << YELLOWISH << _name << " executed " << form.getName() << RESETISH << endl;
 	return true;
 }
 
 
-const char*	Bureaucrat::GradeTooHighException::what() const noexcept {	return "Grade too high!";	}
+const char*	Bureaucrat::GradeTooHighException::what() const noexcept {	return "~Grade too high!";	}
 
-const char*	Bureaucrat::GradeTooLowException::what() const noexcept {	return "Grade too low!";	}
+const char*	Bureaucrat::GradeTooLowException::what() const noexcept {	return "~Grade too low!";	}
 
 
 

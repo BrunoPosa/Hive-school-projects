@@ -65,9 +65,9 @@ bool	AForm::execute(Bureaucrat const &executor)	const {
 	return (this->act());
 }
 
-const char*	AForm::GradeTooHighException::what()	const noexcept {	return "Signer's grade too high!";	}
-const char*	AForm::GradeTooLowException::what()		const noexcept {	return "Signer's grade too low!";	}
-const char*	AForm::FormNotSignedException::what()	const noexcept {	return "Form must be signed to execute it!";	}
+const char*	AForm::GradeTooHighException::what()	const noexcept {	return "~Signer's grade too high!";	}
+const char*	AForm::GradeTooLowException::what()		const noexcept {	return "~Signer's grade too low!";	}
+const char*	AForm::FormNotSignedException::what()	const noexcept {	return "~Form must be signed to execute it!";	}
 
 
 

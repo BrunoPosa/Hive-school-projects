@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:41:21 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/23 18:23:39 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/24 16:59:12 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ bool	ShrubberyCreationForm::act() const {
 		cout << "Writing failed!" << endl;
 		return false;
 	}
-	outFile.close();//for sake of clarity
+	outFile.close();
 
 	cout << GREENISH << "Shrubbery planted in " << _target << "_shrubbery." << RESETISH << endl;
 	return true;
