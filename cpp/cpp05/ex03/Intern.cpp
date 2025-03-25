@@ -6,19 +6,22 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 11:01:38 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/25 13:56:40 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/25 17:00:05 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Intern.hpp"
 
-unsigned int	Intern::_hash(const char *str) {
-	unsigned int	hash = 0;
-	while (*str) {
-		hash = hash * 31 + *str++;
-	}
-	return hash;
-}
+AForm*	Intern::_createShrubberyForm(const string& _target) {	return new ShrubberyCreationForm(_target);	}
+AForm*	Intern::_createRobotomyForm(const string& _target) {	return new ShrubberyCreationForm(_target);	}
+AForm*	Intern::_createPresidentialForm(const string& _target) {	return new ShrubberyCreationForm(_target);	}
+
+const Intern::_form	Intern::_knownForms[] = {
+	{"shrubbery creation",	&Intern::_createShrubberyForm},
+	{"robotomy request",	&Intern::_createRobotomyForm},
+	{"presidential pardon",	&Intern::_createPresidentialForm}
+	// {nullptr, nullptr}
+};
 
 string&	Intern::_toLower(string& str) {
 	for (char& ch : str) {
@@ -29,33 +32,24 @@ string&	Intern::_toLower(string& str) {
 	return str;
 }
 
-AForm*	Intern::_makeForm(string name, string target) {
+AForm*	Intern::_makeForm(string& _name, string& _target) {
+	_name = _toLower(_name);
 
-	name = _toLower(name);
-
-	switch (_hash(name.c_str()))
-	{
-		case _hash("shrubbery creation"):
-			return new ShrubberyCreationForm(target);
-		case _hash("robotomy request"):
-			return new RobotomyRequestForm(target);
-		case _hash("presidential pardon"):
-			return new PresidentialPardonForm(target);
-		default:
-			return nullptr;
+	for (const _form& form : _knownForms) {
+		if (_name == form._formName) {
+			return (this->*form._function)(_target);
+		}
 	}
-	cout << "Intern created " << name << " form." << endl;
+	return nullptr;
 }
 
-
 AForm*	Intern::makeForm(string formName, string formTarget) {
-
 	AForm*	result = _makeForm(formName, formTarget);
 
 	if (result == nullptr) {
 		cout << "Intern can't find the specified form!" << endl;
 	} else {
-		cout << "Intern created " << formName << " form." << endl;
+		cout << "Intern created " << _toLower(formName) << " form." << endl;
 	}
 
 	return result;
