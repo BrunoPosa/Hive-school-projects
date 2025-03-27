@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 18:30:11 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/25 17:20:00 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/23 20:14:38 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ RobotomyRequestForm::RobotomyRequestForm(const string& target) : AForm("Robotomy
 /*	Methods	*/
 bool	RobotomyRequestForm::act() const {
 	cout << "~~~ drill sOouund.. ~~~" << endl;
+	if (system("paplay drill.wav &") == -1) {
+		return false;
+	}
 
 	std::srand(std::time(nullptr));
 	if (std::rand() & 1) {

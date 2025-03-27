@@ -44,9 +44,6 @@ re: fclean all
 
 
 
-ass:
-	$(CXX) $(FLAGS) -o assembly.s $(SRCS)
-
 fs: fclean
 	echo ########################################################
 	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o $(FSANITNAME) $(SRCS)

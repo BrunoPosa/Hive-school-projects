@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/26 18:08:32 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/18 12:04:56 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,20 @@
 #define GREENISH "\033[1;32m"
 #define RESETISH "\033[0m"
 
-// static Bureaucrat* myNew(const Bureaucrat& b) {
-// 	static unsigned int i = 0;
-// 	if (++i == BUREAUCRATIC_NEW_FAILS_EVERY) {
-// 		i = 0;
-// 		throw std::bad_alloc();
-// 	}
-// 	return new Bureaucrat(b);
-// }
+static Bureaucrat* myNew(const Bureaucrat& b) {
+	static unsigned int i = 0;
+	if (++i == BUREAUCRATIC_NEW_FAILS_EVERY) {
+		i = 0;
+		throw std::bad_alloc();
+	}
+	return new Bureaucrat(b);
+}
 
 static bool  testConstructor() {
 	cout << "------------------------------------" << endl;
 	try {
 		cout << 151 << endl;
-		Bureaucrat	Kevin("Kevin", Grade(151));
+		Bureaucrat	Kevin("Kevin", 151);
 		cout << Kevin << endl;
 	}
 	catch (const std::exception& e) {
@@ -53,7 +53,7 @@ static bool  testConstructor() {
 static bool testUpGrade() {
 	cout << "------------------------------------" << endl;
 	try {
-		Bureaucrat	Erin("Erin", Grade(1));
+		Bureaucrat	Erin("Erin", 1);
 		cout << Erin << endl;
 		Erin.upGrade();
 	}
@@ -72,7 +72,7 @@ static bool testUpGrade() {
 static bool testDownGrade() {
 	cout << "------------------------------------" << endl;
 	try {
-		Bureaucrat	Jim("Jim", Grade(150));
+		Bureaucrat	Jim("Jim", 150);
 		cout << Jim << endl;
 		Jim.downGrade();
 	}
@@ -92,56 +92,56 @@ static bool testNegativeGradesCorrectException() {
 	cout << "------------------------------------" << endl;
 	short correct = 0;
 	try {
-		Bureaucrat("Angela", Grade(-4));
+		Bureaucrat("Angela", -4);
 	}
 	catch (const std::exception& e) {
 		if (strcmp(e.what(), "Grade too high!") == 0) {
 			++correct;
 		}
 	}
-	// try {
-	// 	Bureaucrat("Angela", std::numeric_limits<long long>::max());
-	// }
-	// catch (const std::exception& e) {
-	// 	if (strcmp(e.what(), "Grade too low!") == 0) {
-	// 		++correct;
-	// 	}
-	// }
-	// try {
-	// 	Bureaucrat("Angela", std::numeric_limits<long long>::min());
-	// }
-	// catch (const std::exception& e) {
-	// 	if (strcmp(e.what(), "Grade too high!") == 0) {
-	// 		++correct;
-	// 	}
-	// }
-	// try {
-	// 	Bureaucrat("Angela", std::numeric_limits<int>::max());
-	// }
-	// catch (const std::exception& e) {
-	// 	if (strcmp(e.what(), "Grade too low!") == 0) {
-	// 		++correct;
-	// 	}
-	// }
-	// try {
-	// 	Bureaucrat("Angela", std::numeric_limits<int>::min());
-	// }
-	// catch (const std::exception& e) {
-	// 	if (strcmp(e.what(), "Grade too high!") == 0) {
-	// 		++correct;
-	// 	}
-	// }
+	try {
+		Bureaucrat("Angela", std::numeric_limits<long long>::max());
+	}
+	catch (const std::exception& e) {
+		if (strcmp(e.what(), "Grade too low!") == 0) {
+			++correct;
+		}
+	}
+	try {
+		Bureaucrat("Angela", std::numeric_limits<long long>::min());
+	}
+	catch (const std::exception& e) {
+		if (strcmp(e.what(), "Grade too high!") == 0) {
+			++correct;
+		}
+	}
+	try {
+		Bureaucrat("Angela", std::numeric_limits<int>::max());
+	}
+	catch (const std::exception& e) {
+		if (strcmp(e.what(), "Grade too low!") == 0) {
+			++correct;
+		}
+	}
+	try {
+		Bureaucrat("Angela", std::numeric_limits<int>::min());
+	}
+	catch (const std::exception& e) {
+		if (strcmp(e.what(), "Grade too high!") == 0) {
+			++correct;
+		}
+	}
 	cout << "correct: " << correct << " of 5" << endl;
 	return correct == 5;
 }
 
-// static void testMallocFail() {
-// 	cout << "------------------------------------" << endl;
-// 	for (int i = 0; i < 10 * BUREAUCRATIC_NEW_FAILS_EVERY; ++i) {
-// 		std::unique_ptr<Bureaucrat> ptr(myNew(Bureaucrat("Michael", 2)));
-// 		// myNew(Bureaucrat("Michael", 2));
-// 	}
-// }
+static void testMallocFail() {
+	cout << "------------------------------------" << endl;
+	for (int i = 0; i < 10 * BUREAUCRATIC_NEW_FAILS_EVERY; ++i) {
+		std::unique_ptr<Bureaucrat> ptr(myNew(Bureaucrat("Michael", 2)));
+		// myNew(Bureaucrat("Michael", 2));
+	}
+}
 
 int main () {
 	try {
@@ -163,7 +163,7 @@ int main () {
 				cout << GREENISH << "testNegativeGradesCorrectException() OK" << RESETISH << endl
 			:	cout << REDISH << "testNegativeGradesCorrectException() KO" << RESETISH << endl;
 		cout << "------------------------------------" << endl;
-		// testMallocFail();
+		testMallocFail();
 	}
 	catch (std::exception& e) {
 		cout << YELLOWISH << e.what() << RESETISH << endl;

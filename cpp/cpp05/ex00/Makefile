@@ -12,11 +12,9 @@ RM			= rm -rf
 
 
 HEADERS	=	Bureaucrat.hpp \
-			Grade.hpp
 
 SRCS	=	main.cpp \
 			Bureaucrat.cpp \
-			Grade.cpp
 
 
 

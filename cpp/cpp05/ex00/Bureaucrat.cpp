@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/26 18:08:32 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/14 11:17:17 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,7 @@ Bureaucrat&	Bureaucrat::operator=(const Bureaucrat& obj) {
 
 
 /*	Constructor Overload	*/
-Bureaucrat::Bureaucrat(const string& name, Grade grade) : _name(name), _grade(grade) {
-cout << _grade << endl;
+Bureaucrat::Bureaucrat(const string& name, long long grade) : _name(name), _grade(grade) {
 	if (grade < _bestGrade) {
 		throw GradeTooHighException();
 	}
