@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:35:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/27 17:29:19 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/27 18:06:11 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class AForm {
 	static const unsigned short	_worstGrade	= 150;
 	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");//delete for production code
 	
-	const std::string			_name;
+	const std::string		_name;
 	bool					_signed;
 	const unsigned short	_signGrade;
 	const unsigned short	_execGrade;
@@ -39,15 +39,15 @@ public:
 	AForm(AForm const &obj);
 	AForm&	operator=(AForm const &obj);
 	virtual ~AForm();
-	AForm(const std::string& name, long long signGrade, long long execGrade);
+	AForm(const std::string& name, unsigned short signGrade, unsigned short execGrade);
 
 	const std::string&	getName()		const noexcept;
-	bool			getSigned()		const noexcept;
-	unsigned short	getSignGrade()	const noexcept;
-	unsigned short	getExecGrade()	const noexcept;
-	void			beSigned(Bureaucrat const &bureaucrat);
-	bool			execute(Bureaucrat const &executor)	const;
-	virtual bool	act() const		= 0;
+	bool				getSigned()		const noexcept;
+	unsigned short		getSignGrade()	const noexcept;
+	unsigned short		getExecGrade()	const noexcept;
+	void				beSigned(Bureaucrat const &bureaucrat);
+	bool				execute(Bureaucrat const &executor)	const;
+	virtual bool		act() const		= 0;
 
 
 

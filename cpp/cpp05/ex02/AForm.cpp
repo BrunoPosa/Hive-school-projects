@@ -12,6 +12,10 @@
 
 #include "AForm.hpp"
 
+using std::cout;
+using std::endl;
+using std::string;
+
 /*	Orthodox Canonical Form	*/
 AForm::AForm() : _name("default"), _signed(false), _signGrade(1), _execGrade(1) {
 	cout << "Aform def. constructor" << endl;
@@ -21,14 +25,26 @@ AForm::AForm(const AForm& obj)	: _name(obj._name), _signed(obj._signed), _signGr
 	cout << "Aform copy constructor" << endl;
 }
 
+AForm&	AForm::operator=(AForm const &obj) {
+	if (this != &obj) {
+		_signed = obj._signed;
+		cout << "Aform copy assignment operator." << endl;
+	}
+	return *this;
+}
+
 AForm::~AForm() {	cout << "Aform def. destructor" << endl;	}
 
 
 
 
 /*	Constructor Overload	*/
-AForm::AForm(const string& name, long long signGrade, long long execGrade)
-	: _name(name), _signed(false), _signGrade(signGrade), _execGrade(execGrade) {
+AForm::AForm(const std::string& name, unsigned short signGrade, unsigned short execGrade)
+	:	_name(name),
+		_signed(false),
+		_signGrade(signGrade),
+		_execGrade(execGrade)
+{
 	if (signGrade < _bestGrade || execGrade < _bestGrade) {
 		throw GradeTooHighException();
 	}

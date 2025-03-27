@@ -39,8 +39,12 @@ AForm::~AForm() {	cout << "Aform def. destructor" << endl;	}
 
 
 /*	Constructor Overload	*/
-AForm::AForm(const string& name, long long signGrade, long long execGrade)
-	: _name(name), _signed(false), _signGrade(signGrade), _execGrade(execGrade) {
+AForm::AForm(const std::string& name, unsigned short signGrade, unsigned short execGrade)
+	:	_name(name),
+		_signed(false),
+		_signGrade(signGrade),
+		_execGrade(execGrade)
+{
 	if (signGrade < _bestGrade || execGrade < _bestGrade) {
 		throw GradeTooHighException();
 	}

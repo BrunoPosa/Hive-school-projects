@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:24:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/24 19:48:48 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/27 18:19:59 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static void	formSignError() {
 
 /*
 	-add noexcept guarantees around
-	-
+	- update all other classes in ex02 (apart from AForm), 01, and 00 to reflect ex03
 */
 int main (void) {
 	try {

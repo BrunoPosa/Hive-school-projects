@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:35:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/24 18:14:20 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/27 18:17:02 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,22 +18,18 @@
 #include <exception>
 #include "Bureaucrat.hpp"
 
-using std::cout;
-using std::endl;
-using std::string;
-
 class Bureaucrat; //Forward declaration to avoid circular dependency
 
 /*
  *	execute() method throws exceptions in case of too low/high grade Bureaucrat,
- *	and returns 'false' on failure during execution (e.g. writing to file or making sound)
+ *	and returns 'false' on failure during execution.
 */
 class AForm {
 	static const unsigned short	_bestGrade	= 1;
 	static const unsigned short	_worstGrade	= 150;
 	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");//delete for production code
 	
-	const string			_name;
+	const std::string		_name;
 	bool					_signed;
 	const unsigned short	_signGrade;
 	const unsigned short	_execGrade;
@@ -41,17 +37,17 @@ class AForm {
 public:
 	AForm();
 	AForm(AForm const &obj);
-	AForm&	operator=(AForm const &src)	= delete;
+	AForm&	operator=(AForm const &obj);
 	virtual ~AForm();
-	AForm(const string& name, long long signGrade, long long execGrade);
+	AForm(const std::string& name, unsigned short signGrade, unsigned short execGrade);
 
-	const string&	getName()		const noexcept;
-	bool			getSigned()		const noexcept;
-	unsigned short	getSignGrade()	const noexcept;
-	unsigned short	getExecGrade()	const noexcept;
-	void			beSigned(Bureaucrat const &bureaucrat);
-	bool			execute(Bureaucrat const &executor)	const;
-	virtual bool	act() const		= 0;
+	const std::string&	getName()		const noexcept;
+	bool				getSigned()		const noexcept;
+	unsigned short		getSignGrade()	const noexcept;
+	unsigned short		getExecGrade()	const noexcept;
+	void				beSigned(Bureaucrat const &bureaucrat);
+	bool				execute(Bureaucrat const &executor)	const;
+	virtual bool		act() const		= 0;
 
 
 
