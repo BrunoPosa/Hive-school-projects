@@ -6,11 +6,15 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/25 17:07:59 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/27 17:30:05 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
+
+using std::cout;
+using std::endl;
+using std::string;
 
 /*	Orthodox Canonical Form	*/
 Bureaucrat::Bureaucrat() : _name("JohnDoe"), _grade(150) {}
@@ -23,6 +27,8 @@ Bureaucrat&	Bureaucrat::operator=(const Bureaucrat& obj) {
 	}
 	return *this;
 }
+
+Bureaucrat::~Bureaucrat() {}
 
 
 

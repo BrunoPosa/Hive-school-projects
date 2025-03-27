@@ -6,11 +6,21 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 11:01:38 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/25 17:38:17 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/27 17:54:15 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Intern.hpp"
+
+using std::string;
+using std::cout;
+using std::endl;
+
+/*	Orthodox Canonical Form	*/
+Intern::Intern() {}
+Intern::Intern(const Intern& obj) {	(void)obj;	}
+Intern&	Intern::operator=(const Intern& obj) {	(void)obj; return *this;	}
+Intern::~Intern() {}
 
 AForm*	Intern::_createShrubberyForm(const string& _target) 	{ return new ShrubberyCreationForm(_target); }
 AForm*	Intern::_createRobotomyForm(const string& _target) 		{ return new RobotomyRequestForm(_target); }
@@ -52,11 +62,4 @@ AForm*	Intern::makeForm(string formName, string formTarget) {
 	}
 
 	return result;
-}
-
-void	Intern::print() {
-	cout << "this intern's known forms:" << endl;
-	for (const _form& form : _knownForms) {
-		cout << form._formName << endl;
-	}
 }

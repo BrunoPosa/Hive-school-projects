@@ -12,6 +12,10 @@
 
 #include "AForm.hpp"
 
+using std::cout;
+using std::endl;
+using std::string;
+
 /*	Orthodox Canonical Form	*/
 AForm::AForm() : _name("default"), _signed(false), _signGrade(1), _execGrade(1) {
 	cout << "Aform def. constructor" << endl;
@@ -19,6 +23,14 @@ AForm::AForm() : _name("default"), _signed(false), _signGrade(1), _execGrade(1) 
 
 AForm::AForm(const AForm& obj)	: _name(obj._name), _signed(obj._signed), _signGrade(obj._signGrade), _execGrade(obj._execGrade) {
 	cout << "Aform copy constructor" << endl;
+}
+
+AForm&	AForm::operator=(AForm const &obj) {
+	if (this != &obj) {
+		_signed = obj._signed;
+		cout << "Aform copy assignment operator." << endl;
+	}
+	return *this;
 }
 
 AForm::~AForm() {	cout << "Aform def. destructor" << endl;	}

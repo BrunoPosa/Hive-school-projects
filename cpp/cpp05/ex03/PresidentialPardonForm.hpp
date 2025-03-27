@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 21:02:29 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/24 18:10:13 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/27 17:32:27 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,14 @@
 #include <iostream>
 #include "AForm.hpp"
 
-
-using std::cout;
-using std::endl;
-using std::string;
-
 class PresidentialPardonForm : public AForm {
-	string	_target;
+	std::string	_target;
 public:
 	PresidentialPardonForm();
 	PresidentialPardonForm(const PresidentialPardonForm& obj);
-	PresidentialPardonForm&	operator=(const PresidentialPardonForm& obj)	= delete;
+	PresidentialPardonForm&	operator=(const PresidentialPardonForm& obj);
 	~PresidentialPardonForm();
-	PresidentialPardonForm(const string& target);
+	PresidentialPardonForm(const std::string& target);
 
 	bool	act() const override;
 };

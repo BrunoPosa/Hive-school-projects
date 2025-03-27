@@ -16,18 +16,14 @@
 #include "AForm.hpp"
 #include <fstream>
 
-using std::cout;
-using std::endl;
-using std::string;
-
 class ShrubberyCreationForm : public AForm {
-	string	_target;
+	std::string	_target;
 public:
 	ShrubberyCreationForm();
 	ShrubberyCreationForm(const ShrubberyCreationForm& obj);
-	ShrubberyCreationForm&	operator=(const ShrubberyCreationForm& obj)	= delete;
+	ShrubberyCreationForm&	operator=(const ShrubberyCreationForm& obj);
 	~ShrubberyCreationForm();
-	ShrubberyCreationForm(const string& target);
+	ShrubberyCreationForm(const std::string& target);
 
 	bool	act() const override;
 };

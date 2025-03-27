@@ -6,11 +6,15 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 18:30:11 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/25 17:19:50 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/27 17:36:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RobotomyRequestForm.hpp"
+
+using std::cout;
+using std::endl;
+using std::string;
 
 /*	Orthodox Canonical Form	*/
 RobotomyRequestForm::RobotomyRequestForm() : AForm("RobotomyRequestForm", 72, 45), _target("_empty_") {
