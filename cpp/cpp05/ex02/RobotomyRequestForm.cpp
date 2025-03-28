@@ -6,11 +6,15 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 18:30:11 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/23 20:14:38 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 15:32:25 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RobotomyRequestForm.hpp"
+
+using std::cout;
+using std::endl;
+using std::string;
 
 /*	Orthodox Canonical Form	*/
 RobotomyRequestForm::RobotomyRequestForm() : AForm("RobotomyRequestForm", 72, 45), _target("_empty_") {
@@ -19,6 +23,14 @@ RobotomyRequestForm::RobotomyRequestForm() : AForm("RobotomyRequestForm", 72, 45
 
 RobotomyRequestForm::RobotomyRequestForm(const RobotomyRequestForm& obj) : AForm(obj), _target(obj._target) {
 	cout << "Robotomy copy constructor" << endl;
+}
+
+RobotomyRequestForm&	RobotomyRequestForm::operator=(const RobotomyRequestForm& obj) {
+	if (this != &obj) {
+		_target = obj._target;
+		cout << "Robotomy copy assignment" << endl;
+	}
+	return *this;
 }
 
 RobotomyRequestForm::~RobotomyRequestForm() {
@@ -39,9 +51,6 @@ RobotomyRequestForm::RobotomyRequestForm(const string& target) : AForm("Robotomy
 /*	Methods	*/
 bool	RobotomyRequestForm::act() const {
 	cout << "~~~ drill sOouund.. ~~~" << endl;
-	if (system("paplay drill.wav &") == -1) {
-		return false;
-	}
 
 	std::srand(std::time(nullptr));
 	if (std::rand() & 1) {

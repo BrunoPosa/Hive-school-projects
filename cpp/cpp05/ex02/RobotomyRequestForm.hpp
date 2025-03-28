@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 18:30:11 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/23 19:56:36 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 15:32:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,14 @@
 #include <ctime>
 #include "AForm.hpp"
 
-using std::cout;
-using std::endl;
-using std::string;
-
 class RobotomyRequestForm : public AForm {
-	string	_target;
+	std::string	_target;
 public:
 	RobotomyRequestForm();
 	RobotomyRequestForm(const RobotomyRequestForm& obj);
-	RobotomyRequestForm&	operator=(const RobotomyRequestForm& obj)	= delete;
+	RobotomyRequestForm&	operator=(const RobotomyRequestForm& obj);
 	~RobotomyRequestForm();
-	RobotomyRequestForm(const string& target);
+	RobotomyRequestForm(const std::string& target);
 
 	bool	act() const override;
 };

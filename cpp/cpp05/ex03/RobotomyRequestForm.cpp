@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 18:30:11 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/27 17:36:07 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 15:32:28 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,14 @@ RobotomyRequestForm::RobotomyRequestForm() : AForm("RobotomyRequestForm", 72, 45
 
 RobotomyRequestForm::RobotomyRequestForm(const RobotomyRequestForm& obj) : AForm(obj), _target(obj._target) {
 	cout << "Robotomy copy constructor" << endl;
+}
+
+RobotomyRequestForm&	RobotomyRequestForm::operator=(const RobotomyRequestForm& obj) {
+	if (this != &obj) {
+		_target = obj._target;
+		cout << "Robotomy copy assignment" << endl;
+	}
+	return *this;
 }
 
 RobotomyRequestForm::~RobotomyRequestForm() {

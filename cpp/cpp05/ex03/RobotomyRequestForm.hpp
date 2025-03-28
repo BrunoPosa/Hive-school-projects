@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 18:30:11 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/27 17:41:05 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 15:32:33 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class RobotomyRequestForm : public AForm {
 public:
 	RobotomyRequestForm();
 	RobotomyRequestForm(const RobotomyRequestForm& obj);
-	RobotomyRequestForm&	operator=(const RobotomyRequestForm& obj)	= delete;
+	RobotomyRequestForm&	operator=(const RobotomyRequestForm& obj);
 	~RobotomyRequestForm();
 	RobotomyRequestForm(const std::string& target);
 

@@ -6,11 +6,15 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:41:21 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/24 19:46:56 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 15:35:04 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ShrubberyCreationForm.hpp"
+
+using std::cout;
+using std::endl;
+using std::string;
 
 /*	Orthodox Canonical Form	*/
 ShrubberyCreationForm::ShrubberyCreationForm() : AForm("ShrubberyCreationForm", 145, 137), _target("default") {
@@ -19,6 +23,14 @@ ShrubberyCreationForm::ShrubberyCreationForm() : AForm("ShrubberyCreationForm", 
 
 ShrubberyCreationForm::ShrubberyCreationForm(const ShrubberyCreationForm& obj) : AForm(obj), _target(obj._target) {
 	cout << "Shrubbery copy constructor" << endl;
+}
+
+ShrubberyCreationForm&	ShrubberyCreationForm::operator=(const ShrubberyCreationForm& obj) {
+	if (this != &obj) {
+		_target = obj._target;
+		cout << "Shrubbery copy assignment" << endl;
+	}
+	return *this;
 }
 
 ShrubberyCreationForm::~ShrubberyCreationForm() {
@@ -61,13 +73,11 @@ bool	ShrubberyCreationForm::act() const {
 		, -=-~{ .-^- _
 				`}
 				{)";
+		if (outFile.fail()) {
+			cout << "Writing failed!" << endl;
+			return false;
+		}
 	} while (--i > 0);
-
-	if (outFile.fail()) {
-		cout << "Writing failed!" << endl;
-		return false;
-	}
-	outFile.close();
 
 	cout << GREENISH << "Shrubbery planted in " << _target << "_shrubbery." << RESETISH << endl;
 	return true;

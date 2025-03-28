@@ -6,11 +6,15 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/24 18:16:57 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 15:24:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
+
+using std::cout;
+using std::endl;
+using std::string;
 
 /*	Orthodox Canonical Form	*/
 Bureaucrat::Bureaucrat() : _name("JohnDoe"), _grade(150) {}
@@ -24,10 +28,12 @@ Bureaucrat&	Bureaucrat::operator=(const Bureaucrat& obj) {
 	return *this;
 }
 
+Bureaucrat::~Bureaucrat() {}
+
 
 
 /*	Constructor Overload	*/
-Bureaucrat::Bureaucrat(const string& name, long long grade) : _name(name), _grade(grade) {
+Bureaucrat::Bureaucrat(const string& name, unsigned short grade) : _name(name), _grade(grade) {
 	if (grade < _bestGrade) {
 		throw GradeTooHighException();
 	}

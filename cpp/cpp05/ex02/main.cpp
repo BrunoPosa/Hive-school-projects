@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:24:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/27 18:19:59 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 15:36:09 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@
 
 #include <type_traits>
 #include <memory>
+
+using std::cout;
+using std::endl;
+using std::string;
 
 static void	showVirtualDestructor() {
 	cout << "showing virtual destructor:" << endl;
@@ -55,7 +59,6 @@ static void	formSignError() {
 
 /*
 	-add noexcept guarantees around
-	- update all other classes in ex02 (apart from AForm), 01, and 00 to reflect ex03
 */
 int main (void) {
 	try {

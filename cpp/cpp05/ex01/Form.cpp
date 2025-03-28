@@ -6,11 +6,15 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:44:49 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/18 11:58:13 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 15:44:20 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Form.hpp"
+
+using std::cout;
+using std::endl;
+using std::string;
 
 /*	Orthodox Canonical Form	*/
 Form::Form() : _name("JohnDoe"), _signed(false), _signGrade(1), _execGrade(1) {}

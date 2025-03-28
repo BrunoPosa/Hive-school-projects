@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:35:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/18 12:40:01 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 15:44:11 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,6 @@
 #include <string>
 #include <exception>
 #include "Bureaucrat.hpp"
-
-using std::cout;
-using std::endl;
-using std::string;
 
 class Bureaucrat; //Forward declaration to avoid circular dependency
 
