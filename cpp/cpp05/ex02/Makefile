@@ -4,7 +4,7 @@ FSANITNAME	= buildFsanitiz
 VALGRNAME	= buildValgrind
 
 CXX			= c++
-FLAGS		= -std=c++11 -Wall -Wextra -Werror -O3
+FLAGS		= -std=c++11 -Wall -Wextra -Werror #-O3
 DEBUGFLAGS	= -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
 VALGRFLAGS	= -Wpedantic -Wshadow -g -O0
 RM			= rm -rf
@@ -64,4 +64,4 @@ git: fclean
 
 
 
-.PHONY: all clean fclean re debug val
+.PHONY: all clean fclean re fs val git

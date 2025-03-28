@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:44:49 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/28 15:44:20 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 19:20:31 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,21 @@ Form::Form() : _name("JohnDoe"), _signed(false), _signGrade(1), _execGrade(1) {}
 Form::Form(const Form& obj)
 	: _name(obj._name), _signed(obj._signed), _signGrade(obj._signGrade), _execGrade(obj._execGrade) {}
 
+Form&	Form::operator=(Form const &obj) {
+	if (this != &obj) {
+		_signed = obj._signed;
+		cout << "Aform copy assignment operator." << endl;
+	}
+	return *this;
+}
+
+Form::~Form() {	cout << "Aform def. destructor" << endl;	}
+
 
 
 
 /*	Constructor Overload	*/
-Form::Form(const string& name, long long signGrade, long long execGrade)
+Form::Form(const string& name, unsigned short signGrade, unsigned short execGrade)
 	: _name(name), _signed(false), _signGrade(signGrade), _execGrade(execGrade) {
 	if (signGrade < _bestGrade || execGrade < _bestGrade) {
 		throw GradeTooHighException();

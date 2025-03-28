@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:35:34 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/28 15:44:11 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 19:21:13 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class Form {
 	static const unsigned short	_worstGrade	= 150;
 	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");//delete for production code
 	
-	const string			_name;
+	const std::string		_name;
 	bool					_signed;
 	const unsigned short	_signGrade;
 	const unsigned short	_execGrade;
@@ -33,15 +33,15 @@ class Form {
 public:
 	Form();
 	Form(Form const &src);
-	Form&	operator=(Form const &src)	= delete;
-	~Form()								= default;
-	Form(const string& name, long long signGrade, long long execGrade);
+	Form&	operator=(Form const &src);
+	~Form();
+	Form(const std::string& name, unsigned short signGrade, unsigned short execGrade);
 
-	const string&	getName()		const noexcept;
-	bool			getSigned()		const noexcept;
-	unsigned short	getSignGrade()	const noexcept;
-	unsigned short	getExecGrade()	const noexcept;
-	void	beSigned(const Bureaucrat &bureaucrat);
+	const std::string&	getName()		const noexcept;
+	bool				getSigned()		const noexcept;
+	unsigned short		getSignGrade()	const noexcept;
+	unsigned short		getExecGrade()	const noexcept;
+	void				beSigned(const Bureaucrat &bureaucrat);
 
 	class GradeTooHighException : public std::exception {
 	public:

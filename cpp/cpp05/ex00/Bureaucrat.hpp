@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/14 11:17:53 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 19:15:35 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,6 @@
 #include <iostream>
 #include <string>
 #include <exception>
-
-using std::cout;
-using std::endl;
-using std::string;
 
 #define REDISH "\033[1;31m"
 #define YELLOWISH "\033[33m"
@@ -38,20 +34,20 @@ class Bureaucrat {
 	static const unsigned short	_worstGrade	= 150;
 	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");
 	
-	const string				_name;
+	const std::string				_name;
 	unsigned short				_grade;
 
 public:
 	Bureaucrat();
 	Bureaucrat(const Bureaucrat& obj);
 	Bureaucrat&	operator=(const Bureaucrat& obj);
-	~Bureaucrat() = default;
-	Bureaucrat(const string& name, long long grade);
+	~Bureaucrat();
+	Bureaucrat(const std::string& name, unsigned short grade);
 
-	const string&	getName() const noexcept;
-	unsigned int	getGrade() const noexcept;
-	void			upGrade();		//--grade (3 becomes 2)
-	void			downGrade();	//++grade (3 becomes 4)
+	const std::string&	getName() const noexcept;
+	unsigned int		getGrade() const noexcept;
+	void				upGrade();		//--grade (3 becomes 2)
+	void				downGrade();	//++grade (3 becomes 4)
 
 	class GradeTooHighException : public std::exception {
 	public:

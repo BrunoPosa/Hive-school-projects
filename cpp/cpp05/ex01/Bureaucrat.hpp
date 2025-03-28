@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/15 13:27:19 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 19:11:41 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,6 @@
 #include <string>
 #include <exception>
 #include "Form.hpp"
-
-using std::cout;
-using std::endl;
-using std::string;
 
 class Form; //Forward declaration to avoid circular dependency
 
@@ -37,7 +33,7 @@ class Form; //Forward declaration to avoid circular dependency
  *	Special exceptions: GradeTooHighException and GradeTooLowException.
  */
 class Bureaucrat {
-	const string				_name;
+	const std::string			_name;
 	unsigned short				_grade;
 	static const unsigned short	_bestGrade	= 1;
 	static const unsigned short	_worstGrade	= 150;
@@ -47,14 +43,14 @@ public:
 	Bureaucrat();
 	Bureaucrat(const Bureaucrat& obj);
 	Bureaucrat&	operator=(const Bureaucrat& obj);
-	~Bureaucrat() = default;
-	Bureaucrat(const string& name, long long grade);
+	~Bureaucrat();
+	Bureaucrat(const std::string& name, unsigned short grade);
 
-	const string&	getName() const noexcept;
-	unsigned short	getGrade() const noexcept;
-	void	upGrade();		//--grade (3 becomes 2)
-	void	downGrade();	//++grade (3 becomes 4)
-	void	signForm(Form& obj) const;
+	const std::string&	getName() const noexcept;
+	unsigned short		getGrade() const noexcept;
+	void				upGrade();		//--grade (3 becomes 2)
+	void				downGrade();	//++grade (3 becomes 4)
+	void				signForm(Form& obj) const;
 
 	class GradeTooHighException : public std::exception {
 	public:

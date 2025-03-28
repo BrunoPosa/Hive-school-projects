@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/27 14:11:07 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/28 19:17:06 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,22 @@
 
 #define BUREAUCRATIC_NEW_FAILS_EVERY 10
 
-#define REDISH "\033[1;31m"
-#define YELLOWISH "\033[33m"
-#define GREENISH "\033[1;32m"
-#define RESETISH "\033[0m"
+#ifndef REDISH
+# define REDISH "\033[1;31m"
+#endif
+#ifndef YELLOWISH
+# define YELLOWISH "\033[33m"
+#endif
+#ifndef GREENISH
+# define GREENISH "\033[1;32m"
+#endif
+#ifndef RESETISH
+# define RESETISH "\033[0m"
+#endif
+
+using std::cout;
+using std::endl;
+using std::string;
 
 static Bureaucrat* myNew(const Bureaucrat& b) {
 	static unsigned int i = 0;
@@ -88,52 +100,52 @@ static bool testDownGrade() {
 	return false;
 }
 
-static bool testNegativeGradesCorrectException() {
-	cout << "------------------------------------" << endl;
-	short correct = 0;
-	try {
-		Bureaucrat("Angela", -4);
-	}
-	catch (const std::exception& e) {
-		if (strcmp(e.what(), "Grade too high!") == 0) {
-			++correct;
-		}
-	}
-	try {
-		Bureaucrat("Angela", std::numeric_limits<long long>::max());
-	}
-	catch (const std::exception& e) {
-		if (strcmp(e.what(), "Grade too low!") == 0) {
-			++correct;
-		}
-	}
-	try {
-		Bureaucrat("Angela", std::numeric_limits<long long>::min());
-	}
-	catch (const std::exception& e) {
-		if (strcmp(e.what(), "Grade too high!") == 0) {
-			++correct;
-		}
-	}
-	try {
-		Bureaucrat("Angela", std::numeric_limits<int>::max());
-	}
-	catch (const std::exception& e) {
-		if (strcmp(e.what(), "Grade too low!") == 0) {
-			++correct;
-		}
-	}
-	try {
-		Bureaucrat("Angela", std::numeric_limits<int>::min());
-	}
-	catch (const std::exception& e) {
-		if (strcmp(e.what(), "Grade too high!") == 0) {
-			++correct;
-		}
-	}
-	cout << "correct: " << correct << " of 5" << endl;
-	return correct == 5;
-}
+// static bool testNegativeGradesCorrectException() {
+// 	cout << "------------------------------------" << endl;
+// 	short correct = 0;
+// 	try {
+// 		Bureaucrat("Angela", -4);
+// 	}
+// 	catch (const std::exception& e) {
+// 		if (strcmp(e.what(), "Grade too high!") == 0) {
+// 			++correct;
+// 		}
+// 	}
+// 	try {
+// 		Bureaucrat("Angela", std::numeric_limits<long long>::max());
+// 	}
+// 	catch (const std::exception& e) {
+// 		if (strcmp(e.what(), "Grade too low!") == 0) {
+// 			++correct;
+// 		}
+// 	}
+// 	try {
+// 		Bureaucrat("Angela", std::numeric_limits<long long>::min());
+// 	}
+// 	catch (const std::exception& e) {
+// 		if (strcmp(e.what(), "Grade too high!") == 0) {
+// 			++correct;
+// 		}
+// 	}
+// 	try {
+// 		Bureaucrat("Angela", std::numeric_limits<int>::max());
+// 	}
+// 	catch (const std::exception& e) {
+// 		if (strcmp(e.what(), "Grade too low!") == 0) {
+// 			++correct;
+// 		}
+// 	}
+// 	try {
+// 		Bureaucrat("Angela", std::numeric_limits<int>::min());
+// 	}
+// 	catch (const std::exception& e) {
+// 		if (strcmp(e.what(), "Grade too high!") == 0) {
+// 			++correct;
+// 		}
+// 	}
+// 	cout << "correct: " << correct << " of 5" << endl;
+// 	return correct == 5;
+// }
 
 static void testMallocFail() {
 	cout << "------------------------------------" << endl;
@@ -159,9 +171,10 @@ int main () {
 				cout << GREENISH << "testDownGrade() exception OK" << RESETISH << endl
 			:	cout << REDISH << "DownGrade() exception KO" << RESETISH << endl;
 		cout << "------------------------------------" << endl;
-		(testNegativeGradesCorrectException() == true) ?
-				cout << GREENISH << "testNegativeGradesCorrectException() OK" << RESETISH << endl
-			:	cout << REDISH << "testNegativeGradesCorrectException() KO" << RESETISH << endl;
+		/*[obsolete]*/
+		// (testNegativeGradesCorrectException() == true) ?
+		// 		cout << GREENISH << "testNegativeGradesCorrectException() OK" << RESETISH << endl
+		// 	:	cout << REDISH << "testNegativeGradesCorrectException() KO" << RESETISH << endl;
 		cout << "------------------------------------" << endl;
 		testMallocFail();
 	}
