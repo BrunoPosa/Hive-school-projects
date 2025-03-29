@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 21:05:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/28 15:27:50 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/29 20:37:52 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,6 @@ PresidentialPardonForm::PresidentialPardonForm(const string& target) : AForm("Pr
 
 /*	Methods	(member functions)	*/
 bool	PresidentialPardonForm::act() const {
-	cout << YELLOWISH << _target << " has been pardoned by Zaphod Beeblebrox" << RESETISH << endl;
+	cout << GREENISH << _target << " has been pardoned by Zaphod Beeblebrox" << RESETISH << endl;
 	return true;
 }

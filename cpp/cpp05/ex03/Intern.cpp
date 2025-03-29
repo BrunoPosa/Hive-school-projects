@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 11:01:38 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/27 17:54:15 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/29 21:27:56 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ AForm*	Intern::makeForm(string formName, string formTarget) {
 	if (result == nullptr) {
 		cout << "Intern can't find the specified form!" << endl;
 	} else {
-		cout << "Intern created " << _toLower(formName) << " form." << endl;
+		cout << YELLOWISH << "Intern created " << _toLower(formName) << " form." << RESETISH << endl;
 	}
 
 	return result;

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:09:06 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/28 15:24:35 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/29 21:11:40 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	Bureaucrat::signForm(AForm& obj) const {
 		obj.beSigned(*this);
 	}
 	catch (AForm::GradeTooLowException& e) {
-		cout << YELLOWISH << _name << " cannot sign " << obj.getName() << " because " << e.what() << RESETISH << endl;
+		cout << YELLOWISH << _name << " cannot sign " << obj.getName() << " because: " << e.what() << RESETISH << endl;
 		return;
 	}
 	cout << YELLOWISH << _name << " signed " << obj.getName() << RESETISH << endl;
@@ -98,6 +98,6 @@ const char*	Bureaucrat::GradeTooLowException::what() const noexcept {	return "~G
 /*	Insertion operator overload	*/
 std::ostream&	operator<<(std::ostream& os, const Bureaucrat& obj) {
 	return os << YELLOWISH
-		<< "AForm " << obj.getName() << "" << obj.getGrade()
+		<< obj.getName() << ", bureaucrat grade " << obj.getGrade()
 		<< RESETISH << endl;
 }
