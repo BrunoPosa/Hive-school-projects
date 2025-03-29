@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:24:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/28 15:36:09 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/29 18:02:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@ using std::endl;
 using std::string;
 
 static void	showVirtualDestructor() {
-	cout << "showing virtual destructor:" << endl;
+	cout << "=showing virtual destructor:" << endl;
 	std::unique_ptr<AForm> p(new ShrubberyCreationForm());
 }
 
 static void	normalFormSignAndExecution() {
-	cout << "showing normal signing and execution by boss (grade 1):" << endl;
+	cout << "=showing normal signing and execution by boss (grade 1):" << endl;
 	Bureaucrat boss("boss", 1);
 
 	std::unique_ptr<AForm> p1(new ShrubberyCreationForm("Home"));
@@ -73,5 +73,7 @@ int main (void) {
 
 	} catch (std::exception& e) {
 		cout << e.what() << endl;
+		return 1;
 	}
+	return 0;
 }
