@@ -6,59 +6,78 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 11:30:58 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/29 21:35:55 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/31 17:03:33 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Intern.hpp"
-#include <iostream>
 
 using std::cout;
 using std::endl;
+using std::unique_ptr;
 
 int main() {
-	AForm* shrubbery = nullptr;
-	AForm* robotomy = nullptr;
-	AForm* presidential = nullptr;
 	try {
 		Intern randomIntern;
-
-		cout << "=Valid form names:\n" << endl;
-		shrubbery = randomIntern.makeForm("shrubbery creation", "Garden");
-		robotomy = randomIntern.makeForm("robotomy request", "Bender");
-		presidential = randomIntern.makeForm("presidential pardon", "Zaphod");
-		cout << endl;
 		Bureaucrat boss("Big Boss", 1);
+		Bureaucrat clerk("Joe", 137);
+		{
+			cout << "-----------------------------------" << endl;
+			cout << "=Valid form names:\n" << endl;
+			unique_ptr<AForm> shrubbery = randomIntern.makeForm("shrubbery creation", "Garden");
+			unique_ptr<AForm> robotomy = randomIntern.makeForm("robotomy request", "Bender");
+			unique_ptr<AForm> presidential = randomIntern.makeForm("presidential pardon", "Zaphod");
+			cout << endl;
 
-		if (shrubbery) {
-			boss.signForm(*shrubbery);
-			boss.executeForm(*shrubbery);
-			delete shrubbery;
+			if (shrubbery) {
+				boss.signForm(*shrubbery);
+				boss.executeForm(*shrubbery);
+			}
+			cout << endl;
+			if (robotomy) {
+				boss.signForm(*robotomy);
+				boss.executeForm(*robotomy);
+				clerk.executeForm(*robotomy);
+			}
+			cout << endl;
+			if (presidential) {
+				boss.signForm(*presidential);
+				boss.executeForm(*presidential);
+			}
 		}
-		cout << endl;
-		if (robotomy) {
-			boss.signForm(*robotomy);
-			boss.executeForm(*robotomy);
-			delete robotomy;
+		{
+			cout << "-----------------------------------" << endl;
+			cout << "=Invalid form name:\n" << endl;
+			unique_ptr<AForm> unknown = randomIntern.makeForm("unknown Form", "Nobody");
 		}
-		cout << endl;
-		if (presidential) {
-			boss.signForm(*presidential);
-			boss.executeForm(*presidential);
-			delete presidential;
+		{
+			try {
+				cout << "-----------------------------------" << endl;
+				cout << "=Invalid shrubbery target:\n" << endl;
+				unique_ptr<AForm>	illegalTarget = randomIntern.makeForm("shrubbery creation", "space space[!]");
+				boss.signForm(*illegalTarget);
+			} catch (std::invalid_argument& e) {
+				cout << YELLOWISH << e.what() << RESETISH << endl;
+			}
 		}
-
-		cout << "-----------------------------------" << endl;
-		cout << "=Invalid form name:" << endl;
-		AForm* unknown = randomIntern.makeForm("unknown form", "Nobody");
-		if (!unknown) {
-			cout << "Intern failed to create an unknown form.\n";
+		{
+			try {
+				cout << "-----------------------------------" << endl;
+				cout << "=Another invalid shrubbery target:\n" << endl;
+				unique_ptr<AForm>	illegalTarget = randomIntern.makeForm("shrubbery creation", "Looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo0ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong");
+				boss.signForm(*illegalTarget);
+			} catch (std::invalid_argument& e) {
+				cout << YELLOWISH << e.what() << RESETISH << endl;
+			}
+		}
+		{
+			cout << "-----------------------------------" << endl;
+			cout << "=OCF Intern:\n" << endl;
+			Intern joe(randomIntern);
+			joe = randomIntern;
 		}
 	} catch (const std::exception& e) {
-		cout << "Exception caught: " << e.what() << endl;
-		delete shrubbery;
-		delete presidential;
-		delete robotomy;
+		cout << "Main catch: " << YELLOWISH << e.what() << RESETISH << endl;
 	}
 	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:41:21 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/27 17:52:07 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/31 16:53:59 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,10 @@ ShrubberyCreationForm::~ShrubberyCreationForm() {
 
 
 /*	Overload	*/
-ShrubberyCreationForm::ShrubberyCreationForm(const string& target) : AForm("ShrubberyCreationForm", 145, 137), _target(target) {
+ShrubberyCreationForm::ShrubberyCreationForm(const string& target)
+	:	AForm("ShrubberyCreationForm", 145, 137),
+		_target(_validateTarget(target))
+{
 	cout << "Shrubbery overloaded constructor" << endl;
 }
 
@@ -82,3 +85,15 @@ bool	ShrubberyCreationForm::act() const {
 	cout << GREENISH << "Shrubbery planted in " << _target << "_shrubbery." << RESETISH << endl;
 	return true;
 }
+
+string	ShrubberyCreationForm::_validateTarget(const string& target) {
+	if (target.length() + 10 > 255) {
+		throw std::invalid_argument("Target must be < 245 characters!");
+	}
+	const string	disallowed = "/\\?%*:|\"<>'`$&;!{}[]()#@+=~^, \t\n";
+	if (target.find_first_of(disallowed) != string::npos) {
+		throw std::invalid_argument("Invalid characters detected! Avoid \\t, \\n and these:/\\?%*:|\"<>'`$&;!{}[]()#@+=~^, \t\n");
+	}
+	return target;
+}
+

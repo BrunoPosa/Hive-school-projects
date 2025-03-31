@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 13:24:46 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/29 21:18:02 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/31 17:11:39 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static void	formSignExecuteGradeTooLow() {
 	Bureaucrat ed("Ed", 150);
 	cout << ed << endl;
 	{
-		std::unique_ptr<AForm> p1(new ShrubberyCreationForm("Home 2"));
+		std::unique_ptr<AForm> p1(new ShrubberyCreationForm("Home2"));
 		ed.signForm(*p1);
 		ed.executeForm(*p1);
 	}
@@ -62,7 +62,7 @@ static void	formSignExecuteGradeTooLow() {
 	}
 	{
 		cout << endl;
-		std::unique_ptr<AForm> p3(new PresidentialPardonForm("Proxima Centauri"));
+		std::unique_ptr<AForm> p3(new PresidentialPardonForm("ProximaCentauri"));
 		ed.signForm(*p3);
 		ed.executeForm(*p3);
 	}
@@ -78,7 +78,16 @@ static void	formChecks() {
 		Form1.execute(Frank);
 		Form1.act();
 	}
-
+	try {
+		ShrubberyCreationForm tooLongTarget("The max filename length is 255 bytes. The max filename length is 255 bytes. The max filename length is 255 bytes. The max filename length is 255 bytes. The max filename length is 255 bytes. The max filename length is 255 bytes. The max filename length is 255 bytes.");
+	} catch (std::exception& e) {
+		cout << YELLOWISH << e.what() << RESETISH << endl;
+	}
+	try {
+		ShrubberyCreationForm forbiddenChars("nameoffile[oops]!");
+	} catch (std::exception& e) {
+		cout << YELLOWISH << e.what() << RESETISH << endl;
+	}
 }
 
 int main (void) {
@@ -93,7 +102,7 @@ int main (void) {
 		formChecks();
 
 	} catch (std::exception& e) {
-		cout << e.what() << endl;
+		cout << "Main catch: " << YELLOWISH << e.what() << RESETISH << endl;
 		return 1;
 	}
 	return 0;

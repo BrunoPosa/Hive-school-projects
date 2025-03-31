@@ -18,6 +18,8 @@
 
 class ShrubberyCreationForm : public AForm {
 	std::string	_target;
+	std::string	_validateTarget(const std::string& target);
+
 public:
 	ShrubberyCreationForm();
 	ShrubberyCreationForm(const ShrubberyCreationForm& obj);

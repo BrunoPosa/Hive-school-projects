@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:06:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/28 19:17:06 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/31 17:17:59 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ int main () {
 		testMallocFail();
 	}
 	catch (std::exception& e) {
-		cout << YELLOWISH << e.what() << RESETISH << endl;
+		cout << "Main catch: " << YELLOWISH << e.what() << RESETISH << endl;
 	}
 	catch (...) {
 		cout << YELLOWISH << "Unknown exception!" << RESETISH << endl;

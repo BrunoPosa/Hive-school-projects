@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 22:04:16 by bposa             #+#    #+#             */
-/*   Updated: 2025/03/28 19:15:35 by bposa            ###   ########.fr       */
+/*   Updated: 2025/03/31 17:19:41 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Bureaucrat {
 	static const unsigned short	_worstGrade	= 150;
 	static_assert(_bestGrade < _worstGrade, "Best grade must be less than worst grade");
 	
-	const std::string				_name;
+	const std::string			_name;
 	unsigned short				_grade;
 
 public:
