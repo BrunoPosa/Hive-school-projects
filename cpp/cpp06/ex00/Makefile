@@ -1,4 +1,4 @@
-NAME		= Conversion_of_scalar_types
+NAME		= convert
 EXERCISE	= cpp--06 - ex00
 FSANITNAME	= buildFsanitiz
 VALGRNAME	= buildValgrind
@@ -11,20 +11,10 @@ RM			= rm -rf
 
 
 
-HEADERS	=	Bureaucrat.hpp \
-			AForm.hpp \
-			ShrubberyCreationForm.hpp \
-			RobotomyRequestForm.hpp \
-			PresidentialPardonForm.hpp \
-			Intern.hpp
+HEADERS	=	ScalarConverter.hpp \
 
 SRCS	=	main.cpp \
-			Bureaucrat.cpp \
-			AForm.cpp \
-			ShrubberyCreationForm.cpp \
-			RobotomyRequestForm.cpp \
-			PresidentialPardonForm.cpp \
-			Intern.cpp
+			ScalarConverter.cpp
 
 
 
@@ -37,7 +27,7 @@ clean:
 	$(RM) $(FSANITNAME) $(VALGRNAME)
 
 fclean: clean
-	$(RM) $(NAME) a.out *_shrubbery
+	$(RM) $(NAME) a.out
 
 re: fclean all
 
