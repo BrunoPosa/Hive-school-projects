@@ -4,7 +4,10 @@ BINARY="./convert"
 TEST_FILE="test_values.txt"
 
 clear
-make
+if ! make; then
+	echo "Error: could not make"
+	exit 1;
+fi
 sleep 2
 
 if [[ ! -x "$BINARY" ]]; then
