@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:53:42 by bposa             #+#    #+#             */
-/*   Updated: 2025/04/06 15:57:48 by bposa            ###   ########.fr       */
+/*   Updated: 2025/04/09 23:45:19 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 #include <cctype> // isprint
 // #include <sstream>
 #include <limits> 
+#include <iomanip> //fixed, setprecision
 
 #define REDISH "\033[1;31m"
 #define YELLOWISH "\033[33m"
 #define GREENISH "\033[1;32m"
 #define RESETISH "\033[0m"
 
-#include <iomanip>
 #include <cmath>
 #include <cctype>
 #include <regex>

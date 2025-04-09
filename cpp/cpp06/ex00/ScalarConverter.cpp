@@ -6,18 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:23:23 by bposa             #+#    #+#             */
-/*   Updated: 2025/04/06 16:57:16 by bposa            ###   ########.fr       */
+/*   Updated: 2025/04/10 02:15:56 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ScalarConverter.hpp"
-//check if system char type is signed or unsigned
-// #include <type_traits>
-// if (std::is_signed<char>::value) {
-// 	std::cout << "char is signed" << std::endl;
-// } else {
-// 	std::cout << "char is unsigned" << std::endl;
-// }
 
 using std::string;
 using std::cout;
@@ -30,7 +23,13 @@ namespace {
 	void	_convertFloat(unsigned int type, const string& lit, double *value);
 	void	_convertDouble(unsigned int type, const string& lit, double *value);
 
-	enum _LiteralType { TYPE_CHAR, TYPE_INT, TYPE_FLOAT, TYPE_DOUBLE, TYPE_INVALID };
+	enum _LiteralType {
+		TYPE_CHAR = 0,
+		TYPE_INT,
+		TYPE_FLOAT,
+		TYPE_DOUBLE,
+		TYPE_INVALID
+	};
 
 	void (*_typeConversionFunctions[4])(unsigned int type, const string& literal, double *value) = {
 		_convertChar,
@@ -39,31 +38,103 @@ namespace {
 		_convertDouble
 	};
 
-	bool	_hasValidChars(const string& lit) {
-		if (lit.find_first_not_of("infa-+.0123456789") != string::npos) {
+	string	_toLower(const string& lit) {
+		string	s = lit;
+
+		for (char& ch : s) {
+			if (ch >= 'A' && ch <= 'Z') {
+				ch += ('a' - 'A');
+			}
+		}
+		return s;
+	}
+
+	bool	_isSpecialDouble(const string& lit) {
+		const string	specials[] = {"nan", "+nan", "-nan", "inf", "+inf", "-inf"};
+		string			lowerLit = _toLower(lit);
+	
+		for (const string& s : specials) {
+			if (lowerLit == s)
+				return true;
+		}
+		return false;
+	}
+	
+	// bool	_hasValidNumericChars(const string& lit) {
+	// 	if (lit.empty() || lit.find_first_not_of("infa-+.0123456789") != string::npos) {
+	// 		return false;
+	// 	}
+	// 	return true;
+	// }
+
+	bool	_isChar(const string& l) {
+		size_t	len = l.length();
+
+		if (len == 1
+			&& !std::isdigit(l.at(0))) {
+			return true;
+		} else if (len == 3
+			&& l.at(0) == '\''
+			&& l.at(2) == '\'') {
+				return true;
+		}
+		return false;
+	}
+
+	bool	_isInt(const string& l) {
+		try {
+			size_t pos;
+			std::stoi(l, &pos);
+			return (pos == l.length());
+		} catch (std::exception& e) {
 			return false;
 		}
+	}
 
-		return true;
+	bool	_isFloat(const string& l) {
+		try {
+			if (_isSpecialDouble(l) || l.back() != 'f') {
+				return false;
+			}
+			size_t pos;
+			std::stof(l, &pos);
+			return (pos == l.length() || (pos == l.length() - 1 && l.back() == 'f'));
+		} catch (const std::exception& e) {
+			return false;
+		}
+	}
+
+	bool _isDouble(const string& lit) {
+		try {
+			size_t pos;
+			std::stod(lit, &pos);
+			return (pos == lit.length());
+		} catch (const std::exception& e) {
+			return false;
+		}
 	}
 
 	_LiteralType	_assignType(const string& lit) {
-		(void)lit;
+		if (_isChar(lit) == true) {
+			return TYPE_CHAR;
+		} else if (_isInt(lit) == true) {
+			return TYPE_INT;
+		} else if (_isFloat(lit) == true) {
+			return TYPE_FLOAT;
+		} else if (_isDouble(lit) == true) {
+			return TYPE_DOUBLE;
+		}
 		return TYPE_INVALID;
 	}
 
 	void	_convertChar(unsigned int type, const string& lit, double *value) {
 		char	ch = 0;
-		string	format = "char: ";
 		bool	possible = true;
 
 		if (type == TYPE_CHAR) {
-			if (lit.length() == 3) { // "'c'"
-				ch = lit.at(1);
-			} else { // "c"
-				ch = lit.at(0);
-			}
-		} else if (type < TYPE_INVALID) {
+			ch = (lit.length() == 3) ? lit.at(1) : lit.at(0);
+			*value = static_cast<double>(ch);
+		} else if (type != TYPE_INVALID) {
 			if (*value <= std::numeric_limits<char>::max() && *value >= std::numeric_limits<char>::min()) {
 				ch = static_cast<char>(*value);
 			} else {
@@ -71,61 +142,92 @@ namespace {
 			}
 		}
 
-		if (type == TYPE_INVALID || possible == false) {
-			cout << format << "impossible!" << endl;
-			return;
-		} else if (ch < 32 || ch > 127) {
-			cout << format << "Non displayable" << endl;
-			return;
+		if (type == TYPE_INVALID || !possible) {
+			cout << "char: impossible!" << endl;
+		} else if (!std::isprint(ch)) {
+			cout << "char: Non displayable!" << endl;
+		} else {
+			cout << "char: '" << ch << "'" << endl;
 		}
-		cout << format << "'" << ch << "'" << endl;
 	}
 
 	void	_convertInt(unsigned int type, const string& lit, double *value) {
-		(void)type;
-		(void)lit;
-		(void)value;
-		cout << "int: " << endl;
+		int		n = 0;
+		bool	possible = true;
+
+		if (type == TYPE_INT) {
+			n = std::stoi(lit);
+			*value = static_cast<double>(n);
+		} else if (type != TYPE_INVALID) {
+			if (*value <= std::numeric_limits<int>::max() && *value >= std::numeric_limits<int>::min()) {
+				n = static_cast<int>(*value);
+			} else {
+				possible = false;
+			}
+		}
+
+		if (type == TYPE_INVALID || !possible) {
+			cout << "int: impossible!" << endl;
+		} else {
+			cout << "int: " << n << endl;
+		}
 	}
 
 	void	_convertFloat(unsigned int type, const string& lit, double *value) {
-		(void)type;
-		(void)lit;
-		(void)value;
-		cout << "float: " << endl;
+		float	f = 0.0f;
+		bool	possible = true;
+
+		if (type == TYPE_FLOAT) {
+			f = std::stof(lit);
+			*value = static_cast<double>(f);
+		} else if (type != TYPE_INVALID) {
+			if ((*value <= std::numeric_limits<float>::max() && *value >= std::numeric_limits<float>::lowest())
+			|| _isSpecialDouble(lit)) {
+				f = static_cast<float>(*value);
+			} else {
+				possible = false;
+			}
+		}
+
+		if (type == TYPE_INVALID || !possible) {
+			cout << "float: impossible!" << endl;
+		} else {
+			cout << "float: " << std::fixed << f << "f" << endl;
+		}
 	}
 
 	void	_convertDouble(unsigned int type, const string& lit, double *value) {
-		(void)type;
-		(void)lit;
-		(void)value;
-		cout << "double: " << endl;
-	}
+		double	d = 0.0;
 
+		if (type == TYPE_DOUBLE) {
+			d = std::stod(lit);
+			*value = d;
+		} else if (type != TYPE_INVALID) {
+			d = *value;
+		}
+
+		if (type == TYPE_INVALID) {
+			cout << "double: impossible!" << endl;
+		} else {
+			cout << "double: " << std::fixed << d << endl;
+		}
+	}
 }
 
-/*
-	-detect type of literal passed (char, int, float, double)
-	-convert from string to the actual type
-	-convert explicitly to the other 3 types
-	-display the results
-	-if conversion makes no sense or overflows, print impossible
-	
-*/
 void	ScalarConverter::convert(const string& literal) {
 	try {
-		_LiteralType	type = TYPE_INVALID;
 		double			value = 0;
+		_LiteralType	type = TYPE_INVALID;
 
-		if (_hasValidChars(literal) == true) {
+		// if (_isChar(literal)) {
+		// 	type = TYPE_CHAR;
+		// } else if (_hasValidNumericChars(literal)) {
 			type = _assignType(literal);
-		}
+		// }
 		for (int i = 0; i < 4; i++) {
 			(_typeConversionFunctions[(type + i) % 4])(type, literal, &value);
 		}
 	} catch (std::exception& e) {
 		cout << YELLOWISH << "exception caugth: " << REDISH << e.what() << RESETISH << endl;
 	}
-	// float	nf2 = std::stof(literal, nullptr);
-	// cout << "stof: " << nf2 << endl;
 }
