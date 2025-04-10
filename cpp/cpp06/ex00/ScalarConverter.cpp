@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:23:23 by bposa             #+#    #+#             */
-/*   Updated: 2025/04/10 02:15:56 by bposa            ###   ########.fr       */
+/*   Updated: 2025/04/10 18:11:48 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,6 @@ namespace {
 		}
 		return false;
 	}
-	
-	// bool	_hasValidNumericChars(const string& lit) {
-	// 	if (lit.empty() || lit.find_first_not_of("infa-+.0123456789") != string::npos) {
-	// 		return false;
-	// 	}
-	// 	return true;
-	// }
 
 	bool	_isChar(const string& l) {
 		size_t	len = l.length();
@@ -117,6 +110,8 @@ namespace {
 	_LiteralType	_assignType(const string& lit) {
 		if (_isChar(lit) == true) {
 			return TYPE_CHAR;
+		} else if (lit.empty() || lit.find_first_not_of("infaINFA-+.0123456789") != string::npos) {
+			return TYPE_INVALID;
 		} else if (_isInt(lit) == true) {
 			return TYPE_INT;
 		} else if (_isFloat(lit) == true) {
@@ -217,13 +212,8 @@ namespace {
 void	ScalarConverter::convert(const string& literal) {
 	try {
 		double			value = 0;
-		_LiteralType	type = TYPE_INVALID;
+		_LiteralType	type = _assignType(literal);
 
-		// if (_isChar(literal)) {
-		// 	type = TYPE_CHAR;
-		// } else if (_hasValidNumericChars(literal)) {
-			type = _assignType(literal);
-		// }
 		for (int i = 0; i < 4; i++) {
 			(_typeConversionFunctions[(type + i) % 4])(type, literal, &value);
 		}
