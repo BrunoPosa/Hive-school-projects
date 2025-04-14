@@ -1,0 +1,31 @@
+===========================
+		COMMANDS
+===========================
+to connect, run:
+`nc localhost <port>`
+
+
+===========================
+		FUNCTIONS
+===========================
+-connect - initiate a connection on a socket
+-send - send, sendto, sendmsg - send a message on a socket (basically write() with flags)
+-recv - recv, recvfrom, recvmsg - receive a message from a socket (basically read() with flags)
+
+
+
+
+===========================
+		  THEORY
+===========================
+
+-Socket is a way to speak to other programs using standard Unix file descriptors.
+
+-There are Internet sockets, UNIX sockets, X.25 sockets, etc.
+
+-Internet sockets have Stream sockets, Datagram sockets, Raw sockets, etc. 
+-Telnet or ssh use Stream sockets
+-Stream sockets use Transmission Control Protocol (TCP)
+-Datagram sockets use User Datagram Protocol (UDP) and are often connectionless, not needing to maintain a connection 
+-It’s way faster to fire-and-forget than it is to keep track of what has arrived safely and make sure it’s in order and all that. If you’re sending chat messages, TCP is great; if you’re sending 40 positional updates per second of the players in the world, maybe it doesn’t matter so much if one or two get dropped, and UDP is a good choice.
+-Basically, a packet is wrapped (“encapsulated”) in a header (and rarely a footer) by the first protocol (say, the TFTP protocol), then the whole thing (TFTP header included) is encapsulated again by the next protocol (say, UDP), then again by the next (IP), then again by the final protocol on the hardware (physical) layer (say, Ethernet). When another computer receives the packet, the hardware strips the Ethernet header, the kernel strips the IP and UDP headers, the TFTP program strips the TFTP header, and it finally has the data.
