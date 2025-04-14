@@ -6,15 +6,19 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:53:42 by bposa             #+#    #+#             */
-/*   Updated: 2025/04/10 18:12:11 by bposa            ###   ########.fr       */
+/*   Updated: 2025/04/13 15:17:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef SCALARCONVERTER_HPP
+# define SCALARCONVERTER_HPP
 
 #include <iostream>
 #include <string>
 #include <cctype> // isprint
 #include <limits> 
 #include <iomanip> //fixed, setprecision
+#include <cmath>//isnan
 
 #define REDISH "\033[1;31m"
 #define YELLOWISH "\033[33m"
@@ -30,3 +34,5 @@ class ScalarConverter {
 	public:
 		static void convert(const std::string& literal);
 };
+
+#endif
