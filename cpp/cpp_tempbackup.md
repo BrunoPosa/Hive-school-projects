@@ -1,4 +1,9 @@
 ------ in ex=========
+ENDIANNESS ==
+Endianness defines how multi-byte data (like integers) are stored in memory (Little-endian has Least significant byte first	07 00 00 00, and Big-endian has Most significant byte first	00 00 00 07).
+BigEndian is the dominant order in any network protocols, and is referred to as network order, for example. On the other hand, most PC's are little-endian.
+Little-Endian (LE) Example (storing 0x12345678): Memory: 78 56 34 12
+
 C++ principles/to do list for good code:
 =========
 -RAII (Resource Acquisition Is Initialization): C++ emphasizes the RAII pattern, where resources like memory and file handles are acquired during object creation and automatically released when objects go out of scope.
@@ -38,6 +43,12 @@ A prvalue expression has no address that is accessible by your program. Examples
 
 An xvalue expression has an address that no longer accessible by your program but can be used to initialize an rvalue reference, which provides access to the expression. Examples include function calls that return an rvalue reference, and the array subscript, member and pointer to member expressions where the array or object is an rvalue reference.
 https://learn.microsoft.com/en-us/cpp/cpp/lvalues-and-rvalues-visual-cpp?view=msvc-170
+
+Uniform (brace) initialization:
+instead of using braces or assignment, you can use curly braces to initialize any object. Prevents narrowing✅
+Consistent for all types✅ Safer than = or ()✅ Picks initializer_list when has option ⚠️
+https://stackoverflow.com/questions/18222926/what-are-the-advantages-of-list-initialization-using-curly-braces
+
 
 
 ===== names ======
@@ -394,11 +405,12 @@ Stack overflow types in C++:
 Apparently the system/compiler might have different char types: signed or unsigned, and their min/max are not guaranteed to be the same across implementations.
 
 
+-Apparently it is bad practice to use underscores or double underscores as start to variable names, as they are reserved by the standard for global use, e.g. libraries, and can therefore cause hard-to-debug bugs. (*_vptr was one variable for a lookup table IIRC)
 
+-Data serialization is the process of converting an object into a stream of bytes to more easily save or transmit it. The reverse process—constructing a data structure or object from a series of bytes—is deserialization
 
-
-
-
+-reinterpret_cast lets you treat some memory as a different type, even if it makes no logical sense.
+-uintptr_t is An integer big enough to hold a pointer safely
 
 
 
