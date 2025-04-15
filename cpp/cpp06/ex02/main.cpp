@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 21:02:33 by bposa             #+#    #+#             */
-/*   Updated: 2025/04/15 21:35:56 by bposa            ###   ########.fr       */
+/*   Updated: 2025/04/15 21:47:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "C.hpp"
 #include <iostream>
 #include <cstdlib> // rand()
-#include <ctime>   // time()
+#include <ctime>
 #include <exception>
 
 using std::cout;
@@ -36,12 +36,15 @@ namespace {
 	}
 
 	void identify(Base* p) {
-		if (dynamic_cast<A*>(p))
+		if (dynamic_cast<A*>(p)) {
 			cout << "A" << endl;
-		else if (dynamic_cast<B*>(p))
+		} else if (dynamic_cast<B*>(p)) {
 			cout << "B" << endl;
-		else if (dynamic_cast<C*>(p))
+		} else if (dynamic_cast<C*>(p)) {
 			cout << "C" << endl;
+		} else {
+			cout << "???" << endl;
+		}
 	}
 
 	void identify(Base& ref) {
