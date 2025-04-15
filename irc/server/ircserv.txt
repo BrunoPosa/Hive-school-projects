@@ -2,7 +2,7 @@
 		COMMANDS
 ===========================
 to connect, run:
-`nc localhost <port>`
+`nc <ip address> <port>`
 
 
 ===========================
@@ -11,7 +11,10 @@ to connect, run:
 -connect - initiate a connection on a socket
 -send - send, sendto, sendmsg - send a message on a socket (basically write() with flags)
 -recv - recv, recvfrom, recvmsg - receive a message from a socket (basically read() with flags)
-
+-htons() 	host to network short - byte reordering, if necessary (just pass the ports to one of these always, it won't hurt)
+-htonl() 	host to network long
+-ntohs() 	network to host short
+-ntohl()	network to host long
 
 
 
@@ -29,3 +32,44 @@ to connect, run:
 -Datagram sockets use User Datagram Protocol (UDP) and are often connectionless, not needing to maintain a connection 
 -It’s way faster to fire-and-forget than it is to keep track of what has arrived safely and make sure it’s in order and all that. If you’re sending chat messages, TCP is great; if you’re sending 40 positional updates per second of the players in the world, maybe it doesn’t matter so much if one or two get dropped, and UDP is a good choice.
 -Basically, a packet is wrapped (“encapsulated”) in a header (and rarely a footer) by the first protocol (say, the TFTP protocol), then the whole thing (TFTP header included) is encapsulated again by the next protocol (say, UDP), then again by the next (IP), then again by the final protocol on the hardware (physical) layer (say, Ethernet). When another computer receives the packet, the hardware strips the Ethernet header, the kernel strips the IP and UDP headers, the TFTP program strips the TFTP header, and it finally has the data.
+
+-TCP and UDP use two addresses: IP (Internet Protocol), and Port number. Port number is a 16-bit number that’s like the local address for the connection.
+
+-Say you want to have a computer that handles incoming mail AND web services—how do you differentiate between the two on a computer with a single IP address?
+Well, different services on the Internet have different well-known port numbers. You can see them all in the Big IANA Port List16 or, if you’re on a Unix box, in your /etc/services file. HTTP (the web) is port 80, telnet is port 23, SMTP is port 25, and so on.
+Ports under 1024 are often considered special, and usually require special OS privileges to use. 
+-Sockets bind to ports. A port is like a mailbox: It’s a designated location where messages arrive. A socket is like a phone call: Once you pick up (accept a connection), the two parties can talk to each other using that established connection.
+So ports are entry points, and sockets are active connections (A UDP socket binds to a port so other devices can send packets to it, but it does not maintain a persistent link.).
+
+-Byte order can be Big Endian (b34f - b3 byte stored first, 4f second), and little endian (opposite). Big is "Network Byte Order" and the little is "Host Byte order"
+
+
+-Socket interface data types:
+	-socket descriptor - an int 
+	-struct addrinfo {
+		int              ai_flags;     // AI_PASSIVE, AI_CANONNAME, etc.
+		int              ai_family;    // AF_INET, AF_INET6, AF_UNSPEC
+		int              ai_socktype;  // SOCK_STREAM, SOCK_DGRAM
+		int              ai_protocol;  // use 0 for "any"
+		size_t           ai_addrlen;   // size of ai_addr in bytes
+		struct sockaddr *ai_addr;      // struct sockaddr_in or _in6
+		char            *ai_canonname; // full canonical hostname
+
+		struct addrinfo *ai_next;      // linked list, next node
+	};
+	addrinfo structure is a more recent invention, and is used to prep the socket address structures for subsequent use. It’s also used in host name lookups, and service name lookups. That’ll make more sense later when we get to actual usage, but just know for now that it’s one of the first things you’ll call when making a connection
+	You might not usually need to write to these structures; oftentimes, a call to getaddrinfo() to fill out your struct addrinfo for you is all you’ll need. You will, however, have to peer inside these structs to get the values out.
+	-struct sockaddr {
+		unsigned short    sa_family;    // address family, AF_xxx
+		char              sa_data[14];  // 14 bytes of protocol address
+	}; 
+	sa_family can be a variety of things, but it’ll be AF_INET (IPv4) or AF_INET6 (IPv6) for irc.
+	sa_data contains a destination address and port number for the socket. This is rather unwieldy since you don’t want to tediously pack the address in the sa_data by hand.
+	To deal with struct sockaddr, programmers created a parallel structure: struct sockaddr_in (“in” for “Internet”) to be used with IPv4.	
+	And this is the important bit: a pointer to a struct sockaddr_in can be cast to a pointer to a struct sockaddr and vice-versa. So even though connect() wants a struct sockaddr*, you can still use a struct sockaddr_in and cast it at the last minute!
+	-struct sockaddr_in {
+		short int          sin_family;  // Address family, AF_INET
+		unsigned short int sin_port;    // Port number
+		struct in_addr     sin_addr;    // Internet address
+		unsigned char      sin_zero[8]; // Same size as struct sockaddr
+	}; // (see struct sockaddr_in6 for IPv6)
