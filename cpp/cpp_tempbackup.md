@@ -20,7 +20,7 @@ pragma once does have one drawback (other than being non-standard) and that is i
 
 #include <stdio.h> vs #include <iostream> C headers ususally have .h and Cpp headers usually don't have any extension. C standard lib vs C++ standard lib difference. 
 
-===== values ======
+===== value catagories ======
 Every C++ expression has a type, and belongs to a value category. The value categories are the basis for rules that compilers must follow when creating, copying, and moving temporary objects during expression evaluation.
 
 The C++17 standard defines expression value categories as follows:
@@ -43,6 +43,11 @@ A prvalue expression has no address that is accessible by your program. Examples
 
 An xvalue expression has an address that no longer accessible by your program but can be used to initialize an rvalue reference, which provides access to the expression. Examples include function calls that return an rvalue reference, and the array subscript, member and pointer to member expressions where the array or object is an rvalue reference.
 https://learn.microsoft.com/en-us/cpp/cpp/lvalues-and-rvalues-visual-cpp?view=msvc-170
+
+
+
+"An lvalue refers to an object that persists beyond a single expression. An rvalue is a temporary value that does not persist beyond the expression that uses it."
+
 
 Uniform (brace) initialization:
 instead of using braces or assignment, you can use curly braces to initialize any object. Prevents narrowing✅
@@ -409,12 +414,33 @@ Apparently the system/compiler might have different char types: signed or unsign
 
 -Data serialization is the process of converting an object into a stream of bytes to more easily save or transmit it. The reverse process—constructing a data structure or object from a series of bytes—is deserialization
 
--reinterpret_cast lets you treat some memory as a different type, even if it makes no logical sense.
 -uintptr_t is An integer big enough to hold a pointer safely
 
+-const_cast conversion 		adds or removes const (good e.g. for making pointers const, or in legacy APIs when it is necessary to modify consts)
+-static_cast conversion 	performs basic conversions (Compile time)
+-dynamic_cast conversion 	performs checked polymorphic conversions
+-reinterpret_cast conversion 	performs general low-level conversions
+-standard conversions 		implicit conversions from one type to another
 
+-reinterpret_cast lets you treat some memory as a different type, even if it makes no logical sense.
 
+-dynamic_cast conversion - Safely converts pointers and references to classes up, down, and sideways along the inheritance hierarchy. Runtime
 
+========================= ex02 =========================
+-Why dynamic_cast? Used only for polymorphic types
+    Ensures Safe Downcasting:
+        Base is the parent class, and A, B, and C are derived classes.
+        dynamic_cast checks at runtime whether a Base* or Base& actually refers to an A, B, or C.
+        If the cast fails, dynamic_cast:
+            Returns nullptr for pointers.
+            Throws an exception for references.
+    Prevents Undefined Behavior:
+        If you use static_cast<A*>(p), the compiler assumes the cast is valid but does not check.
+        If p actually points to a B or C object, but you force static_cast<A*>(p), you'll get undefined behavior.
+        dynamic_cast prevents accidental misinterpretation of types.
+When Could static_cast Work?
+    If you are sure about the object's type (e.g., converting a Base* that was originally created as A*), then static_cast might work.
+    But here, identify(Base*) must handle unknown types at runtime, so dynamic_cast is safer.
 
 
 
