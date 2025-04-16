@@ -33,10 +33,9 @@ public:
     int getPort() const { return port_; }
     const std::string& getPassword() const { return password_; }
     int getServerFd() const { return serverFd_; }
-    // methods
+
     void run(); // Start the server
     
-    // constructor and destructor
     Server();// Default constructor
     Server(const int port, const std::string& password); // Parameterized constructor
     ~Server();

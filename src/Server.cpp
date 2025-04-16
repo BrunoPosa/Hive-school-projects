@@ -15,7 +15,6 @@ Server::~Server() {
         close(serverFd_);
     }
 }
-
 void Server::run() {
     std::cout << "Starting server..." << std::endl; // Debug output
     setupServer(); // Set up the server
@@ -26,7 +25,6 @@ void Server::setupServer() {
     if (serverFd_ < 0) {
         throw std::runtime_error("Failed to create socket: " + std::string(strerror(errno)));
     }
-
     // Set socket to non-blocking
     int flags = fcntl(serverFd_, F_GETFL, 0);
     fcntl(serverFd_, F_SETFL, flags | O_NONBLOCK);
@@ -87,17 +85,6 @@ void Server::mainLoop() {
         }
     }
 }
-// void Server::acceptNewConnection() {
-//     sockaddr_in clientAddr;
-//     socklen_t clientAddrLen = sizeof(clientAddr);
-//     int clientFd = accept(serverFd_, (struct sockaddr*)&clientAddr, &clientAddrLen);
-//     if (clientFd < 0) {
-//         throw std::runtime_error("Failed to accept connection: " + std::string(strerror(errno)));
-//     }
-
-//     pollFds_.emplace_back(pollfd{clientFd, POLLIN, 0});
-//     std::cout << "New connection accepted" << std::endl;
-// }
 void Server::acceptNewConnection() {
     sockaddr_in clientAddr;
     socklen_t clientAddrLen = sizeof(clientAddr);
@@ -130,23 +117,6 @@ void Server::acceptNewConnection() {
         std::cerr << "send() error: " << strerror(errno) << std::endl;
     }
 }
-// void Server::handleClient(size_t index) {
-//     char buffer[1024];
-//     ssize_t bytesRead = recv(pollFds_[index].fd, buffer, sizeof(buffer) - 1, 0);
-//     if (bytesRead <= 0) {
-//         if (bytesRead == 0) {
-//             std::cout << "Client disconnected" << std::endl;
-//         } else {
-//             std::cerr << "recv() failed: " << strerror(errno) << std::endl;
-//         }
-//         close(pollFds_[index].fd);
-//         pollFds_.erase(pollFds_.begin() + index);
-//         return;
-//     }
-
-//     buffer[bytesRead] = '\0'; // Null-terminate the received data
-//     std::cout << "Received: " << buffer << std::endl;
-// }
 void Server::handleClient(size_t index) {
     char buffer[1024];
     ssize_t bytesRead = recv(pollFds_[index].fd, buffer, sizeof(buffer) - 1, 0);
@@ -176,13 +146,37 @@ void Server::handleClient(size_t index) {
 
     buffer[bytesRead] = '\0';
     
-    // Get client info for the message
+    // Get client info
     struct sockaddr_in clientAddr;
     socklen_t addrLen = sizeof(clientAddr);
     getpeername(pollFds_[index].fd, (struct sockaddr*)&clientAddr, &addrLen);
     char clientIp[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(clientAddr.sin_addr), clientIp, INET_ADDRSTRLEN);
     
-    std::cout << "Message from " << clientIp << " (FD: " << pollFds_[index].fd << "): " 
-              << buffer << std::endl;
+    std::string message(buffer);
+    std::cout << "RAW from " << clientIp << " (FD " << pollFds_[index].fd << "): " 
+              << message << std::endl;
+
+    // Handle NICK command
+    if (message.find("NICK ") == 0) {  // Check if message starts with "NICK "
+        size_t end = message.find("\r\n");
+        if (end != std::string::npos) {
+            std::string newNick = message.substr(5, end - 5);  // Extract nickname
+            
+            // Basic validation
+            if (newNick.empty() || newNick.find(' ') != std::string::npos) {
+                std::string error = ":localhost 432 * " + newNick + " :Erroneous nickname\r\n";
+                send(pollFds_[index].fd, error.c_str(), error.size(), 0);
+            } else {
+                // Store nickname (you'll need to add client tracking)
+                std::cout << "Client FD " << pollFds_[index].fd 
+                          << " changed nickname to: " << newNick << std::endl;
+                
+                // Send success response
+                std::string reply = ":localhost 001 " + newNick + " :Welcome to the IRC server\r\n";
+                send(pollFds_[index].fd, reply.c_str(), reply.size(), 0);
+            }
+        }
+    }
+    // Add other command handlers here later (USER, JOIN, etc.)
 }
