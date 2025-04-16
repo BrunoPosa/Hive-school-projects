@@ -7,8 +7,7 @@ int main(int argc, char* argv[]) {
 	if (argCheck(argc, argv, server) == 1)//check if the user has provided the correct number of arguments
 		return 1;
 	
-	
-	
+	server.run();
 	//print server information
 	std::cout << "Server Port: " << server.getPort() << std::endl;
 	std::cout << "Server Password: " << server.getPassword() << std::endl;
