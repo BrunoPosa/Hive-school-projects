@@ -162,7 +162,6 @@ void Server::handleClient(size_t index) {
         size_t end = message.find("\r\n");
         if (end != std::string::npos) {
             std::string newNick = message.substr(5, end - 5);  // Extract nickname
-            
             // Basic validation
             if (newNick.empty() || newNick.find(' ') != std::string::npos) {
                 std::string error = ":localhost 432 * " + newNick + " :Erroneous nickname\r\n";

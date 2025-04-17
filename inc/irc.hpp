@@ -19,10 +19,6 @@
 #include <sstream> // For std::cerr
 #include <fcntl.h> // For fcntl
 
-namespace irc {
-    class Server; // Forward declaration of Server class
-}
-
 class Server {
 public:
     // setters
