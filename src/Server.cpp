@@ -15,6 +15,25 @@ Server::~Server() {
         close(serverFd_);
     }
 }
+
+void Server::checkRegistration(int fd) {
+    Client& client = clients_[fd];
+    if (!client.nick.empty() && !client.user.empty() && !client.registered) {
+        client.registered = true;
+        sendWelcome(fd);
+    }
+}
+
+void Server::sendWelcome(int fd) {
+    const std::string& nick = clients_[fd].nick;
+    std::string welcome = 
+        ":localhost 001 " + nick + " :Welcome to the Internet Relay Network\r\n" +
+        ":localhost 002 " + nick + " :Your host is localhost\r\n" +
+        ":localhost 003 " + nick + " :This server was created today\r\n" +
+        ":localhost 004 " + nick + " :localhost 1.0\r\n";
+    send(fd, welcome.c_str(), welcome.size(), 0);
+}
+
 void Server::run() {
     std::cout << "Starting server..." << std::endl; // Debug output
     setupServer(); // Set up the server
@@ -116,6 +135,14 @@ void Server::acceptNewConnection() {
     if (send(clientFd, welcome.c_str(), welcome.size(), 0) < 0) {
         std::cerr << "send() error: " << strerror(errno) << std::endl;
     }
+    // Initialize new client
+    clients_[clientFd] = Client();  // Sets registered=false by default
+    
+    // Send initial MOTD (makes irssi happy)
+    std::string motd = 
+        ":localhost 375 * :- Message of the Day -\r\n"
+        ":localhost 376 * :End of MOTD\r\n";
+    send(clientFd, motd.c_str(), motd.size(), 0);
 }
 void Server::handleClient(size_t index) {
     char buffer[1024];
@@ -158,24 +185,28 @@ void Server::handleClient(size_t index) {
               << message << std::endl;
 
     // Handle NICK command
-    if (message.find("NICK ") == 0) {  // Check if message starts with "NICK "
+    if (message.find("NICK ") == 0) {
         size_t end = message.find("\r\n");
         if (end != std::string::npos) {
-            std::string newNick = message.substr(5, end - 5);  // Extract nickname
-            // Basic validation
+            std::string newNick = message.substr(5, end - 5);
+            
+            // Validate nickname
             if (newNick.empty() || newNick.find(' ') != std::string::npos) {
-                std::string error = ":localhost 432 * " + newNick + " :Erroneous nickname\r\n";
-                send(pollFds_[index].fd, error.c_str(), error.size(), 0);
-            } else {
-                // Store nickname (you'll need to add client tracking)
-                std::cout << "Client FD " << pollFds_[index].fd 
-                          << " changed nickname to: " << newNick << std::endl;
-                
-                // Send success response
-                std::string reply = ":localhost 001 " + newNick + " :Welcome to the IRC server\r\n";
-                send(pollFds_[index].fd, reply.c_str(), reply.size(), 0);
+                send(pollFds_[index].fd, ":localhost 432 * :Erroneous nickname\r\n", 38, 0);
+                return;
             }
+            
+            // Store nickname
+            clients_[pollFds_[index].fd].nick = newNick;
+            checkRegistration(pollFds_[index].fd);
         }
     }
-    // Add other command handlers here later (USER, JOIN, etc.)
+    // Handle USER command
+    else if (message.find("USER ") == 0) {
+        size_t end = message.find("\r\n");
+        if (end != std::string::npos) {
+            clients_[pollFds_[index].fd].user = message.substr(5, end - 5);
+            checkRegistration(pollFds_[index].fd);
+        }
+    }
 }
