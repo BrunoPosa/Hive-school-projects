@@ -208,7 +208,7 @@ void Server::handleClient(size_t index) {
     inet_ntop(AF_INET, &(clientAddr.sin_addr), clientIp, INET_ADDRSTRLEN);
     
     std::string message(buffer);
-    std::cout << "RAW from " << clientIp << " (FD " << pollFds_[index].fd << "): " 
+    std::cout << "from " << clientIp << " (FD " << pollFds_[index].fd << "): " 
               << message << std::endl;
 
     // Handle NICK command
