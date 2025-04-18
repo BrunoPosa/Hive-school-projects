@@ -1,25 +1,37 @@
+
 ===========================
 		COMMANDS
 ===========================
 to connect, run:
 `nc <ip address> <port>`
+//Netcat (nc) is a raw TCP/UDP tool that allows direct communication with network services without modifying data. It is often used for port scanning, debugging, and data transfer. Unlike e.g. Telnet, Netcat does not interpret control sequences, making it better for binary data transmission
 
 
 ===========================
 		FUNCTIONS
 ===========================
--connect - initiate a connection on a socket
--send - send, sendto, sendmsg - send a message on a socket (basically write() with flags)
--recv - recv, recvfrom, recvmsg - receive a message from a socket (basically read() with flags)
 -htons() 	host to network short - byte reordering, if necessary (just pass the ports to one of these always, it won't hurt)
 -htonl() 	host to network long
 -ntohs() 	network to host short
 -ntohl()	network to host long
+-pton()		printable to network
 
+
+		SYSCALLS:
+- getaddrinfo()
+- socket() //use PF_INET instead of AF_INET as the domain, despite both basically being same
+- bind () //once there is a socket, you bind it to a port
+- connect() -initiate a connection on a socket
+- listen()
+- accept()
+- send - send, sendto, sendmsg - send a message on a socket (basically write() with flags)
+- recv - recv, recvfrom, recvmsg - receive a message from a socket (basically read() with flags)
+- close() and shutdown()
+- getpeername() and gethostname()
 
 
 ===========================
-		  THEORY
+		  THEORY BASIC
 ===========================
 
 -Socket is a way to speak to other programs using standard Unix file descriptors.
@@ -31,7 +43,7 @@ to connect, run:
 -Stream sockets use Transmission Control Protocol (TCP)
 -Datagram sockets use User Datagram Protocol (UDP) and are often connectionless, not needing to maintain a connection 
 -It’s way faster to fire-and-forget than it is to keep track of what has arrived safely and make sure it’s in order and all that. If you’re sending chat messages, TCP is great; if you’re sending 40 positional updates per second of the players in the world, maybe it doesn’t matter so much if one or two get dropped, and UDP is a good choice.
--Basically, a packet is wrapped (“encapsulated”) in a header (and rarely a footer) by the first protocol (say, the TFTP protocol), then the whole thing (TFTP header included) is encapsulated again by the next protocol (say, UDP), then again by the next (IP), then again by the final protocol on the hardware (physical) layer (say, Ethernet). When another computer receives the packet, the hardware strips the Ethernet header, the kernel strips the IP and UDP headers, the TFTP program strips the TFTP header, and it finally has the data.
+-Basically, a packet is wrapped (“encapsulated”) in a header (and rarely a footer) by the first protocol (say, the TFTP -Trivial File Transfer Protocol), then the whole thing (TFTP header included) is encapsulated again by the next protocol (say, UDP), then again by the next (IP), then again by the final protocol on the hardware (physical) layer (say, Ethernet). When another computer receives the packet, the hardware strips the Ethernet header, the kernel strips the IP and UDP headers, the TFTP program strips the TFTP header, and it finally has the data.
 
 -TCP and UDP use two addresses: IP (Internet Protocol), and Port number. Port number is a 16-bit number that’s like the local address for the connection.
 
@@ -73,3 +85,48 @@ So ports are entry points, and sockets are active connections (A UDP socket bind
 		struct in_addr     sin_addr;    // Internet address
 		unsigned char      sin_zero[8]; // Same size as struct sockaddr
 	}; // (see struct sockaddr_in6 for IPv6)
+	
+- let’s say you have a struct sockaddr_in ina, and you have an IP address “10.12.110.57” or “2001:db8:63b3:1::3490” that you want to store into it. The function you want to use, inet_pton(), converts an IP address in numbers-and-dots notation into either a struct in_addr or a struct in6_addr depending on whether you specify AF_INET or AF_INET6. (“pton” stands for “presentation to network”—you can call it “printable to network” if that’s easier to remember.)
+	struct sockaddr_in sa; // IPv4
+	struct sockaddr_in6 sa6; // IPv6
+
+	inet_pton(AF_INET, "10.12.110.57", &(sa.sin_addr)); // IPv4
+	inet_pton(AF_INET6, "2001:db8:63b3:1::3490", &(sa6.sin6_addr)); // IPv6
+
+
+
+Signals from socket():
+"A SIGPIPE signal is raised if a process sends or receives on a broken stream; this causes naive processes, which do not handle the signal, to exit."
+
+
+===========================
+	  THEORY HIGH LEVEL
+===========================
+examples:
+    Create all the necessary classes and methods for the project
+    Create a socket and handle the server signals.
+    Use the poll() function to check if an event has occurred.
+    If the event is a new client, register it.
+    If the event is data from a registered client, handle it.
+    
+The ADAPTIVE Communication Environment (ACE) is a 1993 framework that implements many core patterns for concurrent communication software (used by NASA, Motorola Iridium etc). Mostly adopted by now in modern c++ and functions like epoll(). 
+
+    void logging_server (void) {
+		initialize acceptor endpoint
+		loop forever {
+			wait for events
+			handle data events
+			handle connection events
+		}
+	}
+
+To start listening, you make the socket, bind it to local address, listen, and then run accept(). 
+"If no pending connections are present on the queue, and the socket
+       is not marked as nonblocking, accept() blocks the caller until a
+       connection is present.  If the socket is marked nonblocking and no
+       pending connections are present on the queue, accept() fails with
+       the error EAGAIN or EWOULDBLOCK.
+       In order to be notified of incoming connections on a socket, you
+       can use select(2), poll(2), or epoll(7).  A readable event will be
+       delivered when a new connection is attempted and you may then call
+       accept() to get a socket for that connection."

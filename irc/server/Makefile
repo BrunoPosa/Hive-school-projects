@@ -1,19 +1,19 @@
 NAME		= ircserv
-FSANITNAME	= ircFsanitiz
-VALGRNAME	= ircValgrind
+FSANITNAME	= ircFsan
+VALGRNAME	= ircVal
 
 CXX			= c++
-FLAGS		= -std=c++11 -Wall -Wextra -Werror #-O3
+FLAGS		= -std=c++20 -Wall -Wextra -Werror #-O3
 DEBUGFLAGS	= -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
 VALGRFLAGS	= -Wpedantic -Wshadow -g -O0
 RM			= rm -rf
 
 
 
-HEADERS	=	irc.hpp \
+HEADERS	=	ircserv.hpp \
 
 SRCS	=	main.cpp \
-			irc.cpp
+			ircserv.cpp
 
 
 
