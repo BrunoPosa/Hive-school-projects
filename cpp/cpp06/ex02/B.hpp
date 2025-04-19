@@ -6,10 +6,15 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 21:12:35 by bposa             #+#    #+#             */
-/*   Updated: 2025/04/15 21:12:41 by bposa            ###   ########.fr       */
+/*   Updated: 2025/04/19 15:00:26 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef B_HPP
+#define B_HPP
 
 #include "Base.hpp"
 
 class B : public Base {};
+
+#endif
