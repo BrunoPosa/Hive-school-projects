@@ -17,6 +17,8 @@ void Server::processCommand(int fd, const std::string& message) {
     } else if (message.find("QUIT") == 0 || message.find("exit") == 0) {
         std::cout << "QUIT command received" << std::endl;
         handleClientError(0, fd); // Handle QUIT command
+    } else if (message.find("PRIVMSG") == 0) {
+        cmdPrivMsg(fd, message);
     } else {
         send(fd, ":localhost 421 * :Unknown command client.cpp:21\r\n", 53, 0);
     }

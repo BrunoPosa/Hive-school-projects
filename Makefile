@@ -20,6 +20,7 @@ SRCS    =    src/main.cpp \
 			 src/cmd/Nick.cpp \
 			 src/cmd/User.cpp \
 			 src/cmd/Join.cpp \
+			 src/cmd/Privmsg.cpp \
 
 
 
