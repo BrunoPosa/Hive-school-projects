@@ -19,6 +19,7 @@ to connect, run:
 
 		SYSCALLS:
 - getaddrinfo()
+- getnameinfo() - inverse of getaddrinfo(3): it converts a socket address to a corresponding host and service, in a protocol-independent manner.
 - socket() //use PF_INET instead of AF_INET as the domain, despite both basically being same
 - bind () //once there is a socket, you bind it to a port
 - connect() -initiate a connection on a socket

@@ -1,16 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/14 20:58:01 by bposa             #+#    #+#             */
-/*   Updated: 2025/04/21 21:37:33 by bposa            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "Socket.hpp"
+#include "IrcServer.hpp"
 // #include <filesystem>
 // #include <string_view>
 #include <cstdint>
@@ -24,20 +14,23 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-int main()
-{
+int main(int ac, char **av) {
 	try {
 		Socket  a;
 		assert(a.getFd() == 5);
 		(void)a;
 
+		if (ac != 3) {
+			cerr << "USAGE: ./ircserv <port> <password>" << endl;
+			return -1;
+		}
+
 		return 0;
 
 	} catch (const std::system_error& e) {
-		cerr << e.what() << ": " << e.code().message() << endl;
-		return -1;
+		cerr << YELLOWIRC << e.what() << ": " << e.code().message() << RESETCOLORIRC << endl;
 	} catch (std::exception& e) {
-		cerr << e.what() << endl;
-		return -1;
+		cerr << REDIRC << e.what() << RESETCOLORIRC << endl;
 	}
+	return -1;
 }

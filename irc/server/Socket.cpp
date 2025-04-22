@@ -5,7 +5,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-Socket::Socket() : fd_{-1}, addr_{}, isListening_{false} {
+Socket::Socket() : addr_{}, isListening_{false} {
 	#ifdef __linux__
 	fd_ = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
 	#else
@@ -49,9 +49,9 @@ void	Socket::makeListener(uint16_t port) {
 
 Socket Socket::accept() const {
 	assert(isListening_ && "Only listening sockets can call accept()");
-	sockaddr_in cli{};
-	socklen_t sz = sizeof(cli);
-	int clientFd = ::accept(fd_, reinterpret_cast<sockaddr*>(&cli), &sz);
+	sockaddr_in client{};
+	socklen_t size = sizeof(client);
+	int clientFd = ::accept(fd_, reinterpret_cast<sockaddr*>(&client), &size);
 	if (clientFd < 0) {
 		throw std::system_error(errno, std::generic_category(), "accept() failed");
 	}

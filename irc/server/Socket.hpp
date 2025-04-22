@@ -27,7 +27,8 @@ public:
 	Socket	accept() const;
 	ssize_t	send(std::string_view data) const;
 	ssize_t	receive(std::string& buf) const;
-	int	getFd() const noexcept {return fd_;}
+
+	int		getFd() const noexcept {return fd_;}
 };
 
 #endif
