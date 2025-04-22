@@ -56,6 +56,16 @@ https://stackoverflow.com/questions/18222926/what-are-the-advantages-of-list-ini
 
 
 
+" Why would you use const& on a method?
+
+The reference qualifier (& or &&) controls what kind of object (lvalue or rvalue) the method can be called on.
+Signature	Can be called on...	Typical use
+foo() const	lvalues and rvalues	General-purpose getter
+foo() const &	only lvalues	Avoid temporary overhead
+foo() &&	only rvalues	Optimized for temporaries (e.g. move)
+foo() const &&	rvalues only, const	Safe move from temporaries "
+
+
 ===== names ======
 
 - '::' scope resolution operator - highest precedance operator in cpp
