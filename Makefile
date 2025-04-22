@@ -15,6 +15,11 @@ HEADERS    =    inc/irc.hpp \
 SRCS    =    src/main.cpp \
 			 src/ArgCheck.cpp \
 			 src/Server.cpp \
+			 src/Client.cpp \
+			 src/Error.cpp \
+			 src/cmd/Nick.cpp \
+			 src/cmd/User.cpp \
+			 src/cmd/Join.cpp \
 
 
 
