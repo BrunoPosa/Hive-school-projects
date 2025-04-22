@@ -3,17 +3,19 @@ FSANITNAME	= ircFsan
 VALGRNAME	= ircVal
 
 CXX			= c++
-FLAGS		= -std=c++20 -Wall -Wextra -Werror #-O3
+FLAGS		= -std=c++20 -Wall -Wextra -Werror -DNDEBUG #-O3 
 DEBUGFLAGS	= -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
 VALGRFLAGS	= -Wpedantic -Wshadow -g -O0
 RM			= rm -rf
 
 
 
-HEADERS	=	ircserv.hpp \
+HEADERS	=	IrcServer.hpp \
+			Socket.hpp
 
 SRCS	=	main.cpp \
-			ircserv.cpp
+			# IrcServer.cpp \
+			# Socket.cpp
 
 
 
@@ -36,12 +38,12 @@ re: fclean all
 fs: fclean
 	echo ########################################################
 	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o $(FSANITNAME) $(SRCS)
-	./$(FSANITNAME) 'c'
+	./$(FSANITNAME)
 
 val: fclean
 	echo ########################################################
 	$(CXX) $(FLAGS) $(VALGRFLAGS) -o $(VALGRNAME) $(SRCS)
-	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME) 'c'
+	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME)
 
 git: fclean
 	clear

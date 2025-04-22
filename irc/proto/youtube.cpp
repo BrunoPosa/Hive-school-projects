@@ -12,7 +12,7 @@ using std::endl;
 
 int main (void) {
 	//create a socket
-	int	listening = socket(AF_INET, SOCK_STREAM, 0);
+	int	listening = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (listening == -1) {
 		cout << "Can't create socket!" << endl;
 		return -1;

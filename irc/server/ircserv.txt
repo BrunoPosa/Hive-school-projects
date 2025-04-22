@@ -120,7 +120,7 @@ The ADAPTIVE Communication Environment (ACE) is a 1993 framework that implements
 		}
 	}
 
-To start listening, you make the socket, bind it to local address, listen, and then run accept(). 
+To start listening, you make the socket(), bind() it to local address, listen(), and then run accept(). 
 "If no pending connections are present on the queue, and the socket
        is not marked as nonblocking, accept() blocks the caller until a
        connection is present.  If the socket is marked nonblocking and no
