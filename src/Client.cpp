@@ -15,9 +15,22 @@ void Server::processCommand(int fd, const std::string& message) {
     } else if (message.find("PRIVMSG ") == 0) {
         // Handle PRIVMSG command (not implemented in this snippet)
     } else if (message.find("QUIT") == 0 || message.find("exit") == 0) {
-        std::cout << "QUIT command received" << std::endl;
-        handleClientError(0, fd); // Handle QUIT command
-    } else if (message.find("PRIVMSG") == 0) {
+		std::cout << "QUIT command received from FD: " << fd << std::endl;
+		
+		// Find the index in pollFds_ that matches this fd
+		size_t index = 0;
+		for (; index < pollFds_.size(); index++) {
+			if (pollFds_[index].fd == fd) {
+				break;
+			}
+		}
+		
+		if (index < pollFds_.size()) {
+			handleClientError(0, index);
+		} else {
+			std::cerr << "QUIT command for unknown FD: " << fd << std::endl;
+		}
+	} else if (message.find("PRIVMSG") == 0) {
         cmdPrivMsg(fd, message);
     } else {
         send(fd, ":localhost 421 * :Unknown command client.cpp:21\r\n", 53, 0);
