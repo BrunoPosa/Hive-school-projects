@@ -1,0 +1,99 @@
+
+#include "Socket.hpp"
+#include <unistd.h>
+#include <cstring>
+#include <fcntl.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
+//
+// Constructors / Destructor
+//
+
+Socket::Socket() : isListening_{false}, addr_{}, fd_{-1}
+{
+	fd_ = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+	if (fd_ < 0) {
+		throw std::system_error(errno, std::generic_category(), "socket() failed");
+	}
+}
+
+explicit Socket::Socket(int fd, sockaddr_in addr, bool isListener) noexcept
+	: fd_{fd}, addr_{addr}, isListening_{isListener}{}
+
+Socket::~Socket() {
+	if (fd_ >= 0) {
+		if (::close(fd_) < 0) {
+			std::cerr << "Socket close failed: " << std::strerror(errno) << std::endl;
+		}
+	}
+}
+
+//
+// Factory methods
+//
+
+void	Socket::makeListener(uint16_t port) {
+	addr_.sin_family      = AF_INET;
+	addr_.sin_addr.s_addr = INADDR_ANY;
+	addr_.sin_port        = htons(port);
+
+	if (::bind(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) < 0) {
+		throw std::system_error(errno, std::generic_category(), "bind() failed");
+	}
+
+	if (::listen(fd_, SOMAXCONN) < 0) {
+		throw std::system_error(errno, std::generic_category(), "listen() failed");
+	}
+	isListening_ = true;
+}
+
+//
+// Public API
+//
+// todo: accept in server class instead
+// Socket Socket::accept() {
+// 	assert(isListening_ && "Only listening sockets can call accept()");
+// 	sockaddr_in cli{};
+// 	socklen_t sz = sizeof(cli);
+
+// 	int clientFd = ::accept4(fd_, reinterpret_cast<sockaddr*>(&cli), &sz, O_NONBLOCK);
+// 	if (clientFd < 0) {
+// 		throw std::system_error(errno, std::generic_category(), "accept4() failed");
+// 	}
+// 	return Socket(clientFd, cli, false);
+// }
+
+ssize_t Socket::send(std::string_view data) const {
+	assert(fd_ >= 0 && "Send on invalid socket");
+	size_t sent = 0;
+	while (sent < data.size()) {
+		ssize_t n = ::send(fd_,
+						data.data() + sent,
+						data.size() - sent,
+						0);
+		if (n < 0) {
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+				break;
+			throw std::system_error(errno, std::generic_category(), "send() failed");
+		}
+		sent += n;
+	}
+	return static_cast<ssize_t>(sent);
+}
+
+ssize_t Socket::receive(std::string& buf) const {
+	assert(fd_ >= 0 && "Recieve on invalid socket");
+	char tmp[4096];
+	ssize_t n = ::recv(fd_, tmp, sizeof(tmp), 0);
+	if (n < 0) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+			return 0;
+		throw std::system_error(errno, std::generic_category(), "recv() failed");
+	}
+	if (n > 0)
+		buf.assign(tmp, static_cast<size_t>(n));
+	return n;
+}
+
