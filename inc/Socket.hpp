@@ -24,7 +24,7 @@
 	bool		isListening_;
 
 public:
-	Socket();
+	Socket(); // create non-blocking socket
 	explicit Socket(int fd, sockaddr_in addr, bool isListener) noexcept;
 	Socket(const Socket& other)				= delete;
 	Socket& operator=(const Socket& other)	= delete;
