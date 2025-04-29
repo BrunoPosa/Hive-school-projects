@@ -17,6 +17,7 @@
  * On construction, creates a socket and sets it non‑blocking.
  * Closes on destruction.
  * Throws on failures.
+ * Throws on failures.
  */
  class Socket {
 	int			fd_;
