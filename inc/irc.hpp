@@ -61,7 +61,7 @@ public:
 	// setters
 	void setPort(const int port) { port_ = port; }
 	void setPassword(const std::string& password) { password_ = password; }
-	void setServerFd(int fd) { serverFd_ = fd; }
+	// void setServerFd(int fd) { serverFd_ = fd; } // TODO change this to work with Socket
 	// getters
 	const std::string& getPassword() const { return password_; }
 
