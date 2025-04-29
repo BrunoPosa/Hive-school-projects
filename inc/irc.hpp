@@ -20,7 +20,7 @@
 #include <fcntl.h> // For fcntl
 #include <unordered_map> // For std::unordered_map
 
-
+#include "../inc/Socket.hpp"
 #include "error.hpp"
 
 class Channel {
@@ -57,11 +57,11 @@ public:
 	// setters
 	void setPort(const int port) { port_ = port; }
 	void setPassword(const std::string& password) { password_ = password; }
-	void setServerFd(int fd) { serverFd_ = fd; }
+	// void setServerFd(int fd) { serverFd_ = fd; } // TODO change this to work with Socket
 	// getters
 	int getPort() const { return port_; }
 	const std::string& getPassword() const { return password_; }
-	int getServerFd() const { return serverFd_; }
+	int getServerFd() const { return serverFd_.getFd(); }
 	void run(); // Start the server
 	Server();// Default constructor
 	Server(const int port, const std::string& password);    // Parameterized constructor
@@ -82,8 +82,11 @@ private:
 
 	int port_;
 	std::string password_;
-	int serverFd_;
-	std::vector<int> clientFds_;                            // Vector of client file descriptors
+
+    Socket               serverFd_; // socket wrapper for serverFd_
+    std::map<int, Socket> sockets_; // per-client socket objects
+
+	// std::vector<int> clientFds_;                            // Vector of client file descriptors
 	std::vector<struct pollfd> pollFds_;                    // Vector of poll file descriptors for clients
 	struct Client {
 		std::string nick;
