@@ -36,7 +36,7 @@ public:
 	// setters
 	void setPort(const int port) { port_ = port; }
 	void setPassword(const std::string& password) { password_ = password; }
-	void setServerFd(int fd) { serverFd_ = fd; }
+	// void setServerFd(int fd) { serverFd_ = fd; } // TODO change this to work with Socket
 	// getters
 	const std::string& getPassword() const { return password_; }
 
@@ -71,8 +71,11 @@ private:
 
 	int port_;
 	std::string password_;
-	int serverFd_;
-	std::vector<int> clientFds_;                            // Vector of client file descriptors
+
+    Socket               serverFd_; // socket wrapper for serverFd_
+    std::map<int, Socket> sockets_; // per-client socket objects
+
+	// std::vector<int> clientFds_;                            // Vector of client file descriptors
 	std::vector<struct pollfd> pollFds_;                    // Vector of poll file descriptors for clients
 	std::map<int, Client> clients_;                         // Map of client file descriptors to Client objects
 	int defaultUserCount_ = 0;                              // Default user count for the server

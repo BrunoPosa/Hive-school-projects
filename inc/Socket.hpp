@@ -32,21 +32,9 @@ public:
 	ssize_t	send(std::string_view data) const;
 	ssize_t	receive(std::string& buf) const;
 
-	int		getFd() const noexcept {return fd_;}
-    bool    isListener() const noexcept {return isListening_;}
+	int			getFd() const noexcept {return fd_;}
+	sockaddr_in getAddr() const {return addr_;}
+	bool		isListener() const noexcept {return isListening_;}
 };
 
 #endif
-
-/*
-class Socket:
-    constructor():
-        _fd ← ::socket(AF_INET, SOCK_STREAM)
-    bind(port)
-    listen(backlog = 10)
-    accept() → Socket
-    recv(buffer, len) → bytesRead
-    send(buffer, len) → bytesSent
-    fd() const → _fd
-    destructor(): ::close(_fd)
-*/
