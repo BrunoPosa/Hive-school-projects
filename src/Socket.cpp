@@ -19,7 +19,7 @@ Socket::Socket() : fd_{-1}, addr_{}, isListening_{false} {
 	}
 }
 
-explicit Socket::Socket(int fd, sockaddr_in addr, bool isListener) noexcept
+Socket::Socket(int fd, sockaddr_in addr, bool isListener) noexcept
 	: fd_{fd}, addr_{addr}, isListening_{isListener} {}
 
 
