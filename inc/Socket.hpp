@@ -16,35 +16,37 @@
  * Closes on destruction.
  * Throws on failure.
  */
+
 class Socket {
-public:
-	Socket(); // create non-blocking socket
-	explicit Socket(int fd, sockaddr_in addr, bool isListener) noexcept;
-	~Socket();
-	Socket(const Socket&)				= delete;
-	Socket& operator=(const Socket&)	= delete;
-
-	void	makeListener(uint16_t port);
-	// void	makeConnector(const std::string& host, uint16_t port);
-
-	Socket accept(); // call only on listening socket
-
-	ssize_t send(std::string_view data) const;
-	ssize_t receive(std::string& buffer) const;
-
-	int  getFd()       const noexcept { return fd_; }
-	bool isListening() const noexcept { return isListening_; }
-
-private:
 	int			fd_;
 	sockaddr_in	addr_;
 	bool		isListening_;
 
-	// void setNonBlocking();
-	// void doBind(uint16_t port);
-	// void doListen();
-	// void doConnect(const std::string& host, uint16_t port);
+public:
+	Socket();
+	explicit Socket(int fd, sockaddr_in addr, bool isListener) noexcept;
+	~Socket();
+
+	void	makeListener(uint16_t port);
+	Socket	accept() const;
+	ssize_t	send(std::string_view data) const;
+	ssize_t	receive(std::string& buf) const;
+
+	int		getFd() const noexcept {return fd_;}
+    bool    isListener() const noexcept {return isListening_;}
 };
 
 #endif
 
+/*
+class Socket:
+    constructor():
+        _fd ← ::socket(AF_INET, SOCK_STREAM)
+    bind(port)
+    listen(backlog = 10)
+    accept() → Socket
+    recv(buffer, len) → bytesRead
+    send(buffer, len) → bytesSent
+    fd() const → _fd
+    destructor(): ::close(_fd)
+*/
