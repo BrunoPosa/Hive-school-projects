@@ -22,6 +22,29 @@ Socket::Socket() : fd_{-1}, addr_{}, isListening_{false} {
 Socket::Socket(int fd, sockaddr_in addr, bool isListener) noexcept
 	: fd_{fd}, addr_{addr}, isListening_{isListener} {}
 
+Socket::Socket(Socket&& obj) noexcept
+: fd_(obj.fd_), addr_(obj.addr_), isListening_(obj.isListening_)
+{
+	obj.fd_ = -1;
+}
+
+Socket& Socket::operator=(Socket&& other) noexcept {
+	if (this != &other) {
+		// Clean up our current socket descriptor if valid.
+		if (fd_ >= 0) {
+			::close(fd_);
+		}
+
+		// Transfer ownership from 'other' to this instance.
+		fd_ = other.fd_;
+		addr_ = other.addr_;
+		isListening_ = other.isListening_;
+
+		// Leave 'other' in a safe state.
+		other.fd_ = -1;
+	}
+	return *this;
+}
 
 Socket::~Socket() {
 	if (fd_ >= 0) {
@@ -57,7 +80,11 @@ Socket Socket::accept() const {
 
 	int clientFd = ::accept4(fd_, reinterpret_cast<sockaddr*>(&cli), &sz, O_NONBLOCK);
 	if (clientFd < 0) {
-		throw std::system_error(errno, std::generic_category(), "accept4() failed");
+		if (errno == EWOULDBLOCK || errno == EAGAIN) {
+			cout << "accept() would block" << endl;
+		} else {
+			throw std::system_error(errno, std::generic_category(), "accept() failed");//maybe we need not throw?
+		}
 	}
 	return Socket(clientFd, cli, false);
 }

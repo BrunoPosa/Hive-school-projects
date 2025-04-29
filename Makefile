@@ -1,27 +1,28 @@
 NAME        = ircserv
-FSANITNAME    = ircFsan
-VALGRNAME    = ircVal
+FSANITNAME    = $(NAME)Fsan
+VALGRNAME    = $(NAME)Val
 
 CXX            = c++
-FLAGS        = -std=c++20 -Wall -Wextra -Werror #-O3
+FLAGS        = -std=c++17 -Wall -Wextra -Werror #-O3 #-DNDEBUG
 DEBUGFLAGS    = -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
 VALGRFLAGS    = -Wpedantic -Wshadow -g -O0
 RM            = rm -rf
 
 
+HEADIR		=	inc/
+HEADERS    =    $(HEADIR)irc.hpp \
 
-HEADERS    =    inc/irc.hpp \
-
-SRCS    =    src/main.cpp \
-			 src/ArgCheck.cpp \
-			 src/Server.cpp \
-			 src/Socket.cpp \
-			 src/Client.cpp \
-			 src/Error.cpp \
-			 src/cmd/Nick.cpp \
-			 src/cmd/User.cpp \
-			 src/cmd/Join.cpp \
-			 src/cmd/PrivMsg.cpp \
+SRCDIR		=	src/
+SRCS    =   $(SRCDIR)main.cpp \
+			$(SRCDIR)ArgCheck.cpp \
+			$(SRCDIR)Server.cpp \
+			$(SRCDIR)Socket.cpp \
+			$(SRCDIR)Client.cpp \
+			$(SRCDIR)Error.cpp \
+			$(SRCDIR)cmd/Nick.cpp \
+			$(SRCDIR)cmd/User.cpp \
+			$(SRCDIR)cmd/Join.cpp \
+			$(SRCDIR)cmd/PrivMsg.cpp \
 
 
 
