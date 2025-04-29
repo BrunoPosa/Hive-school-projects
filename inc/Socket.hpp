@@ -14,7 +14,7 @@
  *
  * On construction, creates a socket and sets it non‑blocking.
  * Closes on destruction.
- * Throws on failure.
+ * Throws on failures.
  */
 
 class Socket {
@@ -25,6 +25,10 @@ class Socket {
 public:
 	Socket();
 	explicit Socket(int fd, sockaddr_in addr, bool isListener) noexcept;
+	Socket(const Socket& other)				= delete;
+	Socket& operator=(const Socket& other)	= delete;
+	Socket(Socket&& other) noexcept;
+	Socket& operator=(Socket&& other) noexcept;
 	~Socket();
 
 	void	makeListener(uint16_t port);

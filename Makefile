@@ -1,9 +1,9 @@
 NAME        = ircserv
-FSANITNAME    = ircFsan
-VALGRNAME    = ircVal
+FSANITNAME    = $(NAME)Fsan
+VALGRNAME    = $(NAME)Val
 
 CXX            = c++
-FLAGS        = -std=c++20 -Wall -Wextra -Werror #-O3
+FLAGS        = -std=c++17 -Wall -Wextra -Werror #-O3 #-DNDEBUG
 DEBUGFLAGS    = -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
 VALGRFLAGS    = -Wpedantic -Wshadow -g -O0
 RM            = rm -rf
