@@ -36,16 +36,9 @@ public:
 	Socket& operator=(const Socket& other)	= delete;
 	Socket(Socket&& other) noexcept;
 	Socket& operator=(Socket&& other) noexcept;
-	~Socket();
+	~Socket() noexcept;
 
-	/**
-	* @brief Accept a new connection.
-	*
-	* If no connection is pending (EAGAIN), returns an invalid socket (fd == -1).
-	* Otherwise returns a new connected Socket.
-	* Throws on system-level errors.
-	*/
-	std::optional<Socket> Socket::accept() const;
+	bool	accept(Socket& toSocket) const noexcept;
 	void	makeListener(uint16_t port);
 	ssize_t	send(std::string_view data) const;
 	ssize_t	receive(std::string& buf) const;

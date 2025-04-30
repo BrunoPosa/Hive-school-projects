@@ -27,7 +27,7 @@ Socket::Socket(Socket&& other) noexcept
 	other.isListening_ = false;
 }
 
-Socket& Socket::operator=(Socket&& other) noexcept {
+Socket&	Socket::operator=(Socket&& other) noexcept {
 	if (this != &other) {
 		if (fd_ >= 0) {
 			::close(fd_);
@@ -42,7 +42,7 @@ Socket& Socket::operator=(Socket&& other) noexcept {
 	return *this;
 }
 
-Socket::~Socket() {
+Socket::~Socket() noexcept {
 	if (fd_ >= 0) {
 		if (::close(fd_) < 0) {
 			cerr << "Failed to close fd " << fd_ << ": " << std::strerror(errno) << endl;
@@ -66,61 +66,72 @@ void	Socket::makeListener(uint16_t port) {
 	isListening_ = true;
 }
 
-std::optional<Socket> Socket::accept() const {
+bool	Socket::accept(Socket& toSocket) const noexcept {
 	assert(isListening_ && "Only a listening socket can call accept()");
+	assert(fd_ >= 0);
 
 	sockaddr_in clientAddr{};
 	socklen_t addrLen = sizeof(clientAddr);
-
-	while (true) {
-		int clientFd = ::accept4(fd_, reinterpret_cast<sockaddr*>(&clientAddr), &addrLen,
-								 SOCK_NONBLOCK | SOCK_CLOEXEC);
-		if (clientFd >= 0) {
-			return Socket(clientFd, clientAddr, false);
-		}
-		switch (errno) {
-			case EINTR:
-				// Interrupted by signal, retry
-				continue;
-			case EAGAIN:
-			case EWOULDBLOCK:
-			case ECONNABORTED:
-			case ENETDOWN:
-			case EPROTO:
-			case ENOPROTOOPT:
-			case EHOSTDOWN:
-			case ENONET:
-			case EHOSTUNREACH:
-			case EOPNOTSUPP:
-			case ENETUNREACH:
-				// Transient/network errors: no connection or aborted, return empty
-				return std::nullopt;
-			default:
-				// Fatal errors
-				throw std::system_error(errno, std::generic_category(), "accept() failed");
-		}
+	int clientFd = ::accept4(fd_, reinterpret_cast<sockaddr*>(&clientAddr), &addrLen, SOCK_NONBLOCK);
+	if (clientFd >= 0) {
+		toSocket = Socket(clientFd, clientAddr, false);
+		return true;
 	}
+	return false;
 }
 
 ssize_t Socket::send(std::string_view data) const {
 	assert(fd_ >= 0 && "Send on invalid socket");
-	ssize_t n = ::send(fd_, data.data(), data.size(), 0);
-	if (n < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
-		throw std::system_error(errno, std::generic_category(), "send() failed");
+
+	size_t totalSent = 0;
+	while (totalSent < data.size()) {
+		ssize_t n = ::write(fd_, data.data() + totalSent, data.size() - totalSent);
+		if (n > 0) {
+			totalSent += n;
+		} else if (n == -1) {
+			if (errno == EINTR) {
+				continue;  // Interrupted; retry.
+			}
+			else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+				break;  // Non-fatal, temporary conditions.
+			}
+			else {
+				throw std::system_error(errno, std::generic_category(), "write() failed");// Fatal error
+			}
+		} else {
+			break; // n == 0; break out to avoid potential infinite loop.
+		}
 	}
-	return n; // -1 on EAGAIN/EWOULDBLOCK, or bytes written
+	return totalSent;
 }
 
-ssize_t Socket::receive(string& buf) const {
-	assert(fd_ >= 0 && "Recieve on invalid socket");
+ssize_t Socket::receive(std::string &buf) const {
+	assert(fd_ >= 0 && "Receive on invalid socket");
 	char tmp[4096];
-	ssize_t n = ::recv(fd_, tmp, sizeof(tmp), 0);
-	if (n < 0) {
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-			return 0;
-		throw std::system_error(errno, std::generic_category(), "recv() failed");
+	ssize_t n = 0;
+
+	while (true) {
+		n = ::read(fd_, tmp, sizeof(tmp));
+		if (n > 0) {
+			break;
+		} else if (n == 0) {
+			break;// End-of-file: the peer has closed the connection.
+		} else {
+			if (errno == EINTR) { // Interrupted by a signal, retry the read.
+				continue;
+			} else if (errno == EAGAIN || errno == EWOULDBLOCK) { // no data available; return 0 bytes read.
+				n = 0;
+				break;
+			} else {
+				throw std::system_error(errno, std::generic_category(), "read() failed");
+			}
+		}
 	}
-	if (n > 0)
+
+	if (n > 0) {
 		buf.assign(tmp, static_cast<size_t>(n));
+	} else {
+		buf.clear();
+	}
 	return n;
 }
