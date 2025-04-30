@@ -8,6 +8,13 @@
 #include <system_error>
 #include <sys/socket.h> //SOMAXCONN, listen()
 #include <cassert>
+#include <unistd.h>
+#include <cstring>
+#include <fcntl.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <optional>
+
 
 /**
  * @brief RAII wrapper for a non‑blocking TCP/IPv4 socket.
@@ -31,8 +38,15 @@ public:
 	Socket& operator=(Socket&& other) noexcept;
 	~Socket();
 
+	/**
+	* @brief Accept a new connection.
+	*
+	* If no connection is pending (EAGAIN), returns an invalid socket (fd == -1).
+	* Otherwise returns a new connected Socket.
+	* Throws on system-level errors.
+	*/
+	std::optional<Socket> Socket::accept() const;
 	void	makeListener(uint16_t port);
-	Socket	accept() const;
 	ssize_t	send(std::string_view data) const;
 	ssize_t	receive(std::string& buf) const;
 

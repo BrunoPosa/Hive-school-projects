@@ -1,19 +1,16 @@
 
 #include "Socket.hpp"
-#include <unistd.h>
-#include <cstring>
-#include <fcntl.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netdb.h>
 
 using std::string;
 using std::cerr;
 using std::cout;
 using std::endl;
 
-Socket::Socket() : fd_{-1}, addr_{}, isListening_{false} {
-	fd_ = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
+Socket::Socket()
+:	fd_{::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP)},
+	addr_{},
+	isListening_{false}
+{
 	if (fd_ < 0) {
 		throw std::system_error(errno, std::generic_category(), "socket() failed");
 	}
@@ -22,27 +19,25 @@ Socket::Socket() : fd_{-1}, addr_{}, isListening_{false} {
 Socket::Socket(int fd, sockaddr_in addr, bool isListener) noexcept
 	: fd_{fd}, addr_{addr}, isListening_{isListener} {}
 
-Socket::Socket(Socket&& obj) noexcept
-: fd_(obj.fd_), addr_(obj.addr_), isListening_(obj.isListening_)
+Socket::Socket(Socket&& other) noexcept
+: fd_(other.fd_), addr_(other.addr_), isListening_(other.isListening_)
 {
-	obj.fd_ = -1;
+	other.fd_ = -1;
+	other.addr_ = sockaddr_in{};
+	other.isListening_ = false;
 }
-
 
 Socket& Socket::operator=(Socket&& other) noexcept {
 	if (this != &other) {
-		// Clean up our current socket descriptor if valid.
 		if (fd_ >= 0) {
 			::close(fd_);
 		}
-
-		// Transfer ownership from 'other' to this instance.
 		fd_ = other.fd_;
 		addr_ = other.addr_;
 		isListening_ = other.isListening_;
-
-		// Leave 'other' in a safe state.
 		other.fd_ = -1;
+		other.addr_ = sockaddr_in{};
+		other.isListening_ = false;
 	}
 	return *this;
 }
@@ -71,41 +66,49 @@ void	Socket::makeListener(uint16_t port) {
 	isListening_ = true;
 }
 
-//
-// Public API
-//
-Socket Socket::accept() const {
-	assert(isListening_ && "Only listening sockets can call accept()");
-	sockaddr_in cli{};
-	socklen_t sz = sizeof(cli);
+std::optional<Socket> Socket::accept() const {
+	assert(isListening_ && "Only a listening socket can call accept()");
 
-	int clientFd = ::accept4(fd_, reinterpret_cast<sockaddr*>(&cli), &sz, O_NONBLOCK);
-	if (clientFd < 0) {
-		if (errno == EWOULDBLOCK || errno == EAGAIN) {
-			cout << "accept() would block" << endl;
-		} else {
-			throw std::system_error(errno, std::generic_category(), "accept() failed");//maybe we need not throw?
+	sockaddr_in clientAddr{};
+	socklen_t addrLen = sizeof(clientAddr);
+
+	while (true) {
+		int clientFd = ::accept4(fd_, reinterpret_cast<sockaddr*>(&clientAddr), &addrLen,
+								 SOCK_NONBLOCK | SOCK_CLOEXEC);
+		if (clientFd >= 0) {
+			return Socket(clientFd, clientAddr, false);
+		}
+		switch (errno) {
+			case EINTR:
+				// Interrupted by signal, retry
+				continue;
+			case EAGAIN:
+			case EWOULDBLOCK:
+			case ECONNABORTED:
+			case ENETDOWN:
+			case EPROTO:
+			case ENOPROTOOPT:
+			case EHOSTDOWN:
+			case ENONET:
+			case EHOSTUNREACH:
+			case EOPNOTSUPP:
+			case ENETUNREACH:
+				// Transient/network errors: no connection or aborted, return empty
+				return std::nullopt;
+			default:
+				// Fatal errors
+				throw std::system_error(errno, std::generic_category(), "accept() failed");
 		}
 	}
-	return Socket(clientFd, cli, false);
 }
 
 ssize_t Socket::send(std::string_view data) const {
 	assert(fd_ >= 0 && "Send on invalid socket");
-	size_t sent = 0;
-	while (sent < data.size()) {
-		ssize_t n = ::send(fd_,
-						data.data() + sent,
-						data.size() - sent,
-						0);
-		if (n < 0) {
-			if (errno == EAGAIN || errno == EWOULDBLOCK)
-				break;
-			throw std::system_error(errno, std::generic_category(), "send() failed");
-		}
-		sent += n;
+	ssize_t n = ::send(fd_, data.data(), data.size(), 0);
+	if (n < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+		throw std::system_error(errno, std::generic_category(), "send() failed");
 	}
-	return static_cast<ssize_t>(sent);
+	return n; // -1 on EAGAIN/EWOULDBLOCK, or bytes written
 }
 
 ssize_t Socket::receive(string& buf) const {
