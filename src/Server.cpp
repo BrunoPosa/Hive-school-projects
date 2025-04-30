@@ -80,7 +80,30 @@ void Server::mainLoop() {
 	}
 }
 void Server::acceptNewConnection() {
-	Socket	clientSock = serverFd_.accept();
+	Socket	clientSock;
+	while (serverFd_.accept(clientSock) == false) { //can be while(maxRetries_ private const) or similar
+		switch (errno)
+		{
+			case EINTR:
+				continue;
+			#if EAGAIN != EWOULDBLOCK
+			case EAGAIN:
+			#endif
+			case EWOULDBLOCK:
+			case ECONNABORTED:
+			case ENETDOWN:
+			case EPROTO:
+			case ENOPROTOOPT:
+			case EHOSTDOWN:
+			case ENONET:
+			case EHOSTUNREACH:
+			case EOPNOTSUPP:
+			case ENETUNREACH:
+				return;
+			default:
+				throw std::system_error(errno, std::generic_category(), "accept() failed");// Fatal errors
+		}
+	};
 	int		clientFd   = clientSock.getFd();
 
 	std::cout << "Accepted new connection from " 
