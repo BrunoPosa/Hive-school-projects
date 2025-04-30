@@ -1,6 +1,8 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
+#include <unistd.h>
+#include <cstring>
 #include <string>
 #include <string_view>
 #include <iostream>
@@ -16,8 +18,7 @@
  * Closes on destruction.
  * Throws on failures.
  */
-
-class Socket {
+ class Socket {
 	int			fd_;
 	sockaddr_in	addr_;
 	bool		isListening_;
@@ -29,10 +30,10 @@ public:
 	Socket& operator=(const Socket& other)	= delete;
 	Socket(Socket&& other) noexcept;
 	Socket& operator=(Socket&& other) noexcept;
-	~Socket();
+	~Socket() noexcept;
 
+	bool	accept(Socket& toSocket) const noexcept;
 	void	makeListener(uint16_t port);
-	Socket	accept() const;
 	ssize_t	send(std::string_view data) const;
 	ssize_t	receive(std::string& buf) const;
 
