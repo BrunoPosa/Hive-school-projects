@@ -38,7 +38,7 @@ void Server::run() {
 	mainLoop(); // Start the main loop
 }
 void Server::setupServer() {
-    serverFd_.makeListener(static_cast<uint16_t>(port_));// Socket wrapper to bind+listen+non-blocking
+    serverFd_.makeListener(port_);// Socket wrapper to bind+listen+non-blocking
 	// Initialize pollFds_ with server socket
 	pollFds_.clear();
 	pollFds_.push_back((pollfd){serverFd_.getFd(), POLLIN, 0});
@@ -63,7 +63,7 @@ void Server::mainLoop() {
 		// Check all file descriptors, not just server socket
 		for (size_t i = 0; i < pollFds_.size(); i++) {
 			if (pollFds_[i].revents & POLLIN) {
-				if (pollFds_[i].fd == serverFd_.getFd()) { // Server socket
+				if (pollFds_.at(i).fd == serverFd_.getFd()) { // Server socket
 					acceptNewConnection();
 				}
 				else { // Client socket
@@ -72,8 +72,8 @@ void Server::mainLoop() {
 			}
 			if (pollFds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
 				std::cerr << "Error condition on fd " << pollFds_[i].fd << std::endl;
-				close(pollFds_[i].fd);
 				pollFds_.erase(pollFds_.begin() + i);
+				sockets_.erase(pollFds_.at(i).fd);
 				i--; // Adjust index after erase
 			}
 		}
@@ -82,15 +82,6 @@ void Server::mainLoop() {
 void Server::acceptNewConnection() {
 	Socket	clientSock = serverFd_.accept();
 	int		clientFd   = clientSock.getFd();
-	if (clientFd < 0) {
-		if (errno == EWOULDBLOCK || errno == EAGAIN) {
-			// No pending connections available right now
-			std::cout << "accept() would block" << std::endl;
-		} else {
-			std::cerr << "accept() error: " << strerror(errno) << std::endl;
-		}
-		return;
-	}
 
 	std::cout << "Accepted new connection from " 
 			  << inet_ntoa(clientSock.getAddr().sin_addr) << ":"
