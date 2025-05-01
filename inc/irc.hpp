@@ -56,7 +56,7 @@ public:
 	~Server();
 =======
 	Server();// Default constructor
-	Server(const int port, const std::string& password);    // Parameterized constructor
+	Server(Config&& configuration);    // Parameterized constructor
 	~Server();
 
 	// setters
