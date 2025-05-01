@@ -11,10 +11,12 @@ RM            = rm -rf
 
 HEADIR		=	inc/
 HEADERS    =    $(HEADIR)irc.hpp \
+				$(HEADIR)Socket.hpp \
+				$(HEADIR)Config.hpp \
 
 SRCDIR		=	src/
 SRCS    =   $(SRCDIR)main.cpp \
-			$(SRCDIR)ArgCheck.cpp \
+			$(SRCDIR)Config.cpp \
 			$(SRCDIR)Server.cpp \
 			$(SRCDIR)Socket.cpp \
 			$(SRCDIR)Client.cpp \

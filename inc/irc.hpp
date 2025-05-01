@@ -21,6 +21,7 @@
 #include <unordered_map> // For std::unordered_map
 
 #include "../inc/Socket.hpp"
+#include "../inc/Config.hpp"
 #include "error.hpp"
 
 class Channel {
@@ -54,17 +55,11 @@ class Channel {
 
 class Server {
 public:
-	// setters
-	void setPort(const int port) { port_ = port; }
-	void setPassword(const std::string& password) { password_ = password; }
-	// void setServerFd(int fd) { serverFd_ = fd; } // TODO change this to work with Socket
-	// getters
-	int getPort() const { return port_; }
-	const std::string& getPassword() const { return password_; }
-	int getServerFd() const { return serverFd_.getFd(); }
+    int getPort() const noexcept {return cnfg_.getPort();}
+
 	void run(); // Start the server
 	Server();// Default constructor
-	Server(const int port, const std::string& password);    // Parameterized constructor
+	Server(Config&& configuration);    // Parameterized constructor
 	~Server();
 private:
 	void setupServer();                                     // Set up the server
@@ -80,9 +75,7 @@ private:
 	void cmdJoin(int fd, const std::string& message);       // Handle JOIN command
 	void cmdPrivMsg(int fd, const std::string& message);    // Handle PRIVMSG command
 
-	int port_;
-	std::string password_;
-
+	Config  cnfg_;
     Socket               serverFd_; // socket wrapper for serverFd_
     std::map<int, Socket> sockets_; // per-client socket objects
 
@@ -103,7 +96,3 @@ private:
 	int defaultUserCount_ = 0;                              // Default user count for the server
 	std::map<std::string, Channel> channels_;               // Map of channel names to Channel objects
 };
-	
-	int argCheck(int argc, char* argv[], Server& server); // Take Server reference as parameter
-	bool isValidPort(const std::string& port);
-	bool isValidPassword(const std::string& password);

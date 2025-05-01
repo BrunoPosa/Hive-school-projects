@@ -1,11 +1,11 @@
 #include "../inc/irc.hpp"
 
 // Default constructor
-Server::Server() : port_(0), password_(""), serverFd_{} {
+Server::Server() : cnfg_{}, serverFd_{} {
 	// Initialize default values
 }
 // Parameterized constructor
-Server::Server(const int port, const std::string& password) : port_(port), password_(password), serverFd_{} {
+Server::Server(Config&& configuration) : cnfg_{std::move(configuration)}, serverFd_{} {
 	// Initialize with provided values
 }
 // Destructor
@@ -38,11 +38,11 @@ void Server::run() {
 	mainLoop(); // Start the main loop
 }
 void Server::setupServer() {
-    serverFd_.makeListener(port_);// Socket wrapper to bind+listen+non-blocking
+    serverFd_.makeListener(cnfg_.getPort());// Socket wrapper to bind+listen+non-blocking
 	// Initialize pollFds_ with server socket
 	pollFds_.clear();
 	pollFds_.push_back((pollfd){serverFd_.getFd(), POLLIN, 0});
-	std::cout << "Server setup complete on port " << port_ << std::endl;
+	std::cout << "Server setup complete on port " << cnfg_.getPort() << std::endl;
 }
 void Server::mainLoop() {
 	std::cout << "Entering main loop with " << pollFds_.size() << " file descriptors" << std::endl;
