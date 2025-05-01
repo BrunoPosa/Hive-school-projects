@@ -131,3 +131,11 @@ To start listening, you make the socket(), bind() it to local address, listen(),
        can use select(2), poll(2), or epoll(7).  A readable event will be
        delivered when a new connection is attempted and you may then call
        accept() to get a socket for that connection."
+
+GPT about move semantics:
+When your class owns a resource (like memory, a file descriptor, a socket…), 
+copying that class usually requires a deep copy of the resource. But sometimes, 
+you don’t want to copy, you want to transfer the ownership, like in this case:
+```std::vector<Socket> vec;
+vec.push_back(Socket()); // Here, a temporary Socket is created and moved into the vector```
+
