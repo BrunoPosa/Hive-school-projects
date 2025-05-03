@@ -1,6 +1,8 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
+#include <unistd.h>
+#include <cstring>
 #include <string>
 #include <string_view>
 #include <iostream>
@@ -8,39 +10,32 @@
 #include <system_error>
 #include <sys/socket.h> //SOMAXCONN, listen()
 #include <cassert>
-#include <unistd.h>
-#include <cstring>
-#include <fcntl.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <optional>
-
+#include <utility>//std::exchange
 
 /**
  * @brief RAII wrapper for a non‑blocking TCP/IPv4 socket.
  *
  * On construction, creates a socket and sets it non‑blocking.
  * Closes on destruction.
- * Throws on failure.
+ * Throws on failures.
  */
-
-class Socket {
+ class Socket {
 	int			fd_;
 	sockaddr_in	addr_;
 	bool		isListening_;
 
 public:
 	Socket();
-	explicit Socket(int fd, sockaddr_in addr, bool isListener) noexcept;
+	explicit Socket(int fd, sockaddr_in addr);
 	Socket(const Socket& other)				= delete;
 	Socket& operator=(const Socket& other)	= delete;
 	Socket(Socket&& other) noexcept;
 	Socket& operator=(Socket&& other) noexcept;
 	~Socket() noexcept;
 
-	bool	accept(Socket& toSocket) const noexcept;
+	bool	accept(Socket& toSocket) const;
 	void	makeListener(uint16_t port);
-	ssize_t	send(std::string_view data) const;
+	size_t	send(std::string_view data) const;
 	ssize_t	receive(std::string& buf) const;
 
 	int			getFd() const noexcept {return fd_;}

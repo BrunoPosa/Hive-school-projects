@@ -21,12 +21,24 @@ void test_constructor() {
 	assert(fd >= 0);
 }
 
+void test_param_constructor() {
+	Socket a;
+    bool isGood = false;
+    try {
+        Socket b(-4, a.getAddr());
+    } catch (std::exception&) {
+        isGood = true;
+        std::cout << "[test_param_constructor] Threw on negative socket creation attempt" << std::endl;
+    }
+    assert(isGood);
+}
+
 // Test 2: Move constructor
 void test_move_constructor() {
 	Socket s;
 	int origFD = s.getFd();
 	// Move s into moved
-	Socket moved = std::move(s);
+	Socket moved(std::move(s));
 	std::cout << "[test_move_constructor] Moved socket: original fd now = "
 			  << s.getFd() << ", moved fd = " << moved.getFd() << "\n";
 	assert(s.getFd() == -1);
@@ -43,7 +55,7 @@ void test_listener_accept_send_receive() {
     try {
         // Create a listener socket, bind it, and start listening.
         Socket listener;
-        listener.makeListener(0); // Port 0 = OS assigns an ephemeral port
+        listener.makeListener(6668);
 
         // Retrieve the actual port assigned using getsockname.
         sockaddr_in sin{};
@@ -175,6 +187,7 @@ void test_move_assignment() {
 int main() {
 
 	test_constructor();
+    test_param_constructor();
 	test_move_constructor();
 	test_listener_accept_send_receive();
 	test_move_assignment();
