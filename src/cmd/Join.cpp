@@ -2,31 +2,31 @@
 
 
 void Server::cmdJoin(int fd, const std::string& message) {
-	std::cout << "received JOIN command " << message << " FD: " << fd << std::endl;
+    std::istringstream iss(message);
+    std::string command, channel;
+    iss >> command >> channel;
 
-	std::stringstream ss(message);
-	std::string cmd, channelName;
-	ss >> cmd >> channelName;
+    if (channel.empty()) {
+        std::string errMsg = ERR_NEEDMOREPARAMS;
+        ft_send(fd, errMsg);
+        return;
+    }
 
-	if (channelName.empty() || channelName[0] != '#') {
-		std::string errorMsg = ":localhost 403 * " + channelName + " :No such channel\r\n";
-		send(fd, errorMsg.c_str(), errorMsg.length(), 0);
-		return;
-	}
+    if (channels_.find(channel) == channels_.end()) {
+        channels_[channel] = Channel(channel); // Create a new channel if it doesn't exist
+    }
 
-	// Create channel if it doesn't exist
-	if (channels_.find(channelName) == channels_.end()) {
-		channels_[channelName] = Channel(channelName);
-	}
+    if (clients_[fd].isInChannel(channel)) {
+        std::string errMsg = ERR_USERONCHANNEL(channel);
+        ft_send(fd, errMsg);
+        return;
+    }
 
-	// Add client to channel and update client state
-	channels_[channelName].addClient(fd);
-	clients_[fd].joinChannel(channelName); // optional, if you're tracking which channels the client is in
+    clients_[fd].joinChannel(channel, false); // Your client-side method
+    channels_[channel].addClient(fd);         // Add to channel list
 
-	// Notify the user that they joined
-	std::string joinMsg = ":" + clients_[fd].nick + " JOIN " + channelName + "\r\n";
-	send(fd, joinMsg.c_str(), joinMsg.length(), 0);
-
-	// Broadcast to everyone else in the channel
-	channels_[channelName].broadcast(fd, "has joined the channel", clients_[fd].nick, fd);
+    // Notify all users in the channel (except the one joining)
+    std::string joinMessage = ":" + clients_[fd].getNick() + " JOIN :" + channel + "\r\n";
+    channels_[channel].broadcast(fd, joinMessage, clients_[fd].getNick(), -1); // Send to all
 }
+

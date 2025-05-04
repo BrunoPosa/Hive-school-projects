@@ -14,6 +14,7 @@ HEADERS    =    $(HEADIR)irc.hpp \
 				$(HEADIR)Socket.hpp \
 				$(HEADIR)Config.hpp \
 
+<<<<<<< HEAD
 SRCDIR		=	src/
 SRCS    =   $(SRCDIR)main.cpp \
 			$(SRCDIR)Config.cpp \
@@ -25,6 +26,28 @@ SRCS    =   $(SRCDIR)main.cpp \
 			$(SRCDIR)cmd/User.cpp \
 			$(SRCDIR)cmd/Join.cpp \
 			$(SRCDIR)cmd/PrivMsg.cpp \
+=======
+HEADERS    =    inc/irc.hpp \
+				inc/error.hpp \
+				inc/Client.hpp \
+				inc/Channel.hpp 
+
+SRCS    =    src/main.cpp \
+			 src/argCheck.cpp \
+			 src/Channel.cpp \
+			 src/Client.cpp \
+			 src/Error.cpp \
+			 src/ProcessCmd.cpp \
+			 src/Server.cpp \
+			 src/cmd/Join.cpp \
+			 src/cmd/Kick.cpp \
+			 src/cmd/Mode.cpp \
+			 src/cmd/Nick.cpp \
+			 src/cmd/Ping.cpp \
+			 src/cmd/Privmsg.cpp \
+			 src/cmd/Topic.cpp \
+			 src/cmd/User.cpp 
+>>>>>>> d44b94b (more cmds done)
 
 
 
