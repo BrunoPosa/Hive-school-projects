@@ -11,16 +11,25 @@ RM            = rm -rf
 
 
 HEADERS    =    inc/irc.hpp \
+				inc/error.hpp \
+				inc/Client.hpp \
+				inc/Channel.hpp 
 
 SRCS    =    src/main.cpp \
-			 src/ArgCheck.cpp \
-			 src/Server.cpp \
+			 src/argCheck.cpp \
+			 src/Channel.cpp \
 			 src/Client.cpp \
 			 src/Error.cpp \
-			 src/cmd/Nick.cpp \
-			 src/cmd/User.cpp \
+			 src/ProcessCmd.cpp \
+			 src/Server.cpp \
 			 src/cmd/Join.cpp \
-			 src/cmd/PrivMsg.cpp \
+			 src/cmd/Kick.cpp \
+			 src/cmd/Mode.cpp \
+			 src/cmd/Nick.cpp \
+			 src/cmd/Ping.cpp \
+			 src/cmd/Privmsg.cpp \
+			 src/cmd/Topic.cpp \
+			 src/cmd/User.cpp 
 
 
 

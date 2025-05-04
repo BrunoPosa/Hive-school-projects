@@ -1,12 +1,25 @@
 #include "../../inc/irc.hpp"
 
 void Server::cmdUser(int fd, const std::string& message) {
-    std::cerr << "cmdUser called with message: " << message << std::endl; // Debug output
-    size_t end = message.find("\r\n");
-    if (end != std::string::npos) {
-        clients_[fd].user = message.substr(5);
-        std::cout << "User set to: " << clients_[fd].user << std::endl;
-        checkRegistration(fd);
-        clients_[fd].nameChanged = true; // Set nameChanged to true after USER command
+    std::istringstream iss(message);
+    std::string command, user, mode, unused, realname;
+    iss >> command >> user >> mode >> unused >> realname;
+
+    if (user.empty() || mode.empty() || realname.empty()) {
+        std::string errMsg = ERR_NOT_ENOUGH_PARAMS;
+        errMsg += "Usage: USER <username> <mode> <unused> <realname>\r\n";
+        ft_send(fd, errMsg);
+        return;
+    }    
+
+    if (clients_[fd].hasReceivedUser()) {
+        std::string errMsg = ERR_ALREADY_REGISTERED;
+        ft_send(fd, errMsg);  // Use ft_send here
+        return;
     }
+
+    clients_[fd].setUser(user);
+    clients_[fd].setUserReceived();
+    std::string welcomeMsg = WELCOME_MSG(user);
+    ft_send(fd, welcomeMsg);  // Use ft_send here
 }

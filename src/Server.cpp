@@ -17,7 +17,7 @@ Server::~Server() {
 }
 
 void Server::sendWelcome(int fd) {
-	const std::string& nick = clients_[fd].nick;
+	const std::string& nick = clients_[fd].getNick();
 	std::string welcome = 
 		":localhost 001 " + nick + " :Welcome to the Internet Relay Network\r\n" +
 		":localhost 002 " + nick + " :Your host is localhost\r\n" +
@@ -28,9 +28,9 @@ void Server::sendWelcome(int fd) {
 
 void Server::checkRegistration(int fd) {
 	Client& client = clients_[fd];
-	if (!client.nick.empty() && !client.user.empty() && !client.registered) {
-		client.registered = true;
-		sendWelcome(fd);
+	if (!client.getNick().empty() && !client.getUser().empty() && !client.isAuthenticated()) {
+        client.setAuthenticated();  // Assuming you want to set them as authenticated
+        sendWelcome(fd);
 	}
 }
 
@@ -131,7 +131,7 @@ void Server::acceptNewConnection() {
 	pollFds_.push_back((pollfd){clientFd, POLLIN | POLLOUT, 0});
 	
 	// Send welcome message
-	std::string welcome = "Welcome to ft_irc!\r\n";
+	std::string welcome = "Welcome to ft_irc!\nPlease register with NICK and USER\r\n";
 	if (send(clientFd, welcome.c_str(), welcome.size(), 0) < 0) {
 		std::cerr << "send() error: " << strerror(errno) << std::endl;
 	}
@@ -141,6 +141,23 @@ void Server::acceptNewConnection() {
 	// Send initial MOTD (makes irssi happy)
 	std::string motd = 
 		":localhost 375 * :- Message of the Day -\r\n"
-		":localhost 376 * :End of MOTD\r\n";
+		":localhost 376 * :Another day another slay\r\n";
 	send(clientFd, motd.c_str(), motd.size(), 0);
+}
+
+int Server::getClientFdByNick(const std::string& nick) const {
+    for (std::map<int, Client>::const_iterator it = clients_.begin(); it != clients_.end(); ++it) {
+        if (it->second.getNick() == nick) {
+            return it->first;
+        }
+    }
+    return -1; // Not found
+}
+
+std::string Server::getNickByFd(int fd) const {
+	std::map<int, Client>::const_iterator it = clients_.find(fd);
+	if (it != clients_.end()) {
+		return it->second.getNick();
+	}
+	return ""; // Not found
 }

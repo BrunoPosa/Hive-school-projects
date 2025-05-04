@@ -1,59 +1,5 @@
 #include "../inc/irc.hpp"
 
-void Server::processCommand(int fd, const std::string& message) {
-	if (message.find("NICK ") == 0) {
-		cmdNick(fd, message);
-	} else if (message.find("USER ") == 0) {
-		cmdUser(fd, message);
-	} else if (message.find("PING ") == 0) {
-		std::string pong = "PONG " + message.substr(5) + "\r\n";
-		send(fd, pong.c_str(), pong.size(), 0);
-	} else if (message.find("JOIN ") == 0) {
-        cmdJoin(fd, message);
-    } else if (message.find("PONG ") == 0) {
-        // Handle PONG command (not implemented in this snippet)
-    } else if (message.find("PRIVMSG ") == 0) {
-        // Handle PRIVMSG command (not implemented in this snippet)
-    } else if (message.find("QUIT") == 0 || message.find("exit") == 0) {
-		std::cout << "QUIT command received from FD: " << fd << std::endl;
-		
-		// Find the index in pollFds_ that matches this fd
-		size_t index = 0;
-		for (; index < pollFds_.size(); index++) {
-			if (pollFds_[index].fd == fd) {
-				break;
-			}
-		}
-		
-		if (index < pollFds_.size()) {
-			handleClientError(0, index);
-		} else {
-			std::cerr << "QUIT command for unknown FD: " << fd << std::endl;
-		}
-	} else if (message.find("PRIVMSG") == 0) {
-        cmdPrivMsg(fd, message);
-    } else {
-        send(fd, ":localhost 421 * :Unknown command client.cpp:21\r\n", 53, 0);
-    }
-
-	// Print client info
-	std::string nickname = clients_[fd].nick;
-	std::string username = clients_[fd].user;
-
-	if (username.empty() && !clients_[fd].nameChanged) {
-		username = "user" + std::to_string(fd);
-	}
-
-	struct sockaddr_in clientAddr;
-	socklen_t addrLen = sizeof(clientAddr);
-	getpeername(fd, (struct sockaddr*)&clientAddr, &addrLen);
-	char clientIp[INET_ADDRSTRLEN];
-	inet_ntop(AF_INET, &(clientAddr.sin_addr), clientIp, INET_ADDRSTRLEN);
-
-	std::cout << nickname << " from " << clientIp
-			  << " (FD " << fd << "): " << message << std::endl;
-}
-
 void Server::handleClient(size_t index) {
 	char buffer[1024];
 	ssize_t bytesRead = recv(pollFds_[index].fd, buffer, sizeof(buffer) - 1, 0);
@@ -61,10 +7,9 @@ void Server::handleClient(size_t index) {
 		handleClientError(bytesRead == 0 ? 0 : errno, index);
 		return;
 	}
-
+	
 	buffer[bytesRead] = '\0'; // Null-terminate
 	int fd = pollFds_[index].fd;
-
 	// Split the input by \r\n and process each command
 	std::string input(buffer);
 	size_t pos = 0;
@@ -75,3 +20,154 @@ void Server::handleClient(size_t index) {
 		input.erase(0, pos + 2); // Move past \r\n
 	}
 }
+
+Client::~Client() {} // 
+
+Client::Client(int fd) : fd(fd), nick("guest"), user("guest") // Constructor with fd
+{
+	this->authenticated = false;
+	this->nickReceived = false;
+	this->userReceived = false;
+	this->passReceived = false;
+	this->modeReceived = false;
+	this->whois = false;
+}
+
+Client::Client() : fd(-1), nick("guest"), user("guest") // Constructor without fd
+{
+	this->authenticated = false;
+	this->nickReceived = false;
+	this->userReceived = false;
+	this->passReceived = false;
+	this->modeReceived = false;
+	this->whois = false;
+}
+
+Client::Client(std::string nick, std::string user, int fd): fd(fd), nick(nick), user(user) {}
+
+Client::Client(const Client &other)
+{
+	*this = other;
+}
+
+Client &Client::operator=(const Client &other)
+{
+	if (this != &other)
+	{
+		this->nick = other.nick;
+		this->user = other.user;
+		this->fd = other.fd;
+		this->joinedChannels = other.joinedChannels;
+	}
+	return *this;
+}
+
+bool Client::isInChannel(const std::string &channel)
+{
+	if (joinedChannels.find(channel) != joinedChannels.end())
+		return true;
+	return false;
+}
+
+bool Client::getOperator(const std::string &channel)
+{
+	if(isInChannel(channel))
+		return joinedChannels[channel];
+	return false;
+}
+
+void Client::setNick(const std::string &nick)
+{
+	this->nick = nick;
+}
+
+void Client::setUser(const std::string &user)
+{
+	this->user = user;
+}
+void Client::setNickReceived()
+{
+	this->nickReceived = true;
+}
+void Client::setUserReceived()
+{
+	this->userReceived = true;
+}
+void Client::setPassReceived()
+{
+	this->passReceived = true;
+}
+void Client::setModeReceived()
+{
+	this->modeReceived = true;
+}
+void Client::setAuthenticated()
+{
+	this->authenticated = true;
+}
+void Client::joinChannel(const std::string &channel, bool is_operator)
+{
+	joinedChannels[channel] = is_operator;
+}
+
+void Client::leaveChannel(const std::string &channel)
+{
+	joinedChannels.erase(channel);
+}
+bool Client::isOperator(const std::string &channel)
+{
+	if (joinedChannels.find(channel) != joinedChannels.end())
+		return true;
+	return false;
+}
+void Client::setOperator(const std::string &channel, bool is_operator)
+{
+	if (isInChannel(channel))
+		joinedChannels[channel] = is_operator;
+}
+
+std::string Client::getNick() const
+{
+	return this->nick;
+}
+
+std::string Client::getUser() const
+{
+	return this->user;
+}
+
+bool Client::hasReceivedNick() const
+{
+	return this->nickReceived;
+}
+
+bool Client::hasReceivedUser() const
+{
+	return this->userReceived;
+}
+
+bool Client::hasReceivedPass() const
+{
+	return this->passReceived;
+}
+
+bool Client::hasReceivedMode() const
+{
+	return this->modeReceived;
+}
+
+bool Client::isAuthenticated() const
+{
+	return this->authenticated;
+}
+
+int Client::getFd() const
+{
+	return this->fd;
+}
+
+const std::map<std::string, bool>& Client::getJoinedChannels() const
+{
+	return this->joinedChannels;
+}
+

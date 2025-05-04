@@ -1,28 +1,53 @@
 #include "../../inc/irc.hpp"
 
 void Server::cmdPrivMsg(int fd, const std::string& message) {
-	std::stringstream ss(message);
-	std::string cmd, target;
-	ss >> cmd >> target;
+    std::istringstream iss(message);
+    std::string command, target, msgPart;
+    iss >> command >> target;
 
-	size_t colonPos = message.find(":", 1);
-	if (target.empty() || colonPos == std::string::npos) {
-		send(fd, ":localhost 411 * :No recipient given (PRIVMSG)\r\n", 46, 0);
-		return;
+    if (target.empty()) {
+        ft_send(fd, ERR_NO_RECIPIENT);
+        return;
+    }
+
+    std::getline(iss, msgPart); // everything after the target
+
+    if (msgPart.empty() || msgPart == " :" || msgPart == ":") {
+        ft_send(fd, ERR_NO_RECIPIENT);
+        return;
+    }
+
+    // Clean up the message part
+    if (msgPart[0] == ' ')
+	{
+        msgPart = msgPart.substr(1);
+	}
+    if (msgPart[0] == ':')
+	{
+        msgPart = msgPart.substr(1);
 	}
 
-	std::string msgText = message.substr(colonPos + 1);
+	std::string fullMsg = msgPart + "\r\n";
 
-	if (target[0] == '#') {
-		// Message to channel
-		if (channels_.find(target) == channels_.end() || !channels_[target].hasClient(fd)) {
-			std::string msg = ":localhost 442 * " + target + " :You're not on that channel\r\n";
-			send(fd, msg.c_str(), msg.length(), 0);			
-			return;
-		}
-		std::string nick = clients_[fd].nick;
-		channels_[target].broadcast(fd, msgText, nick, fd);
-	} else {
-		// TODO: Message to another user (by nickname)
-	}
+    if (target[0] == '#') {
+        // It's a channel message
+        if (channels_.find(target) == channels_.end()) {
+            ft_send(fd, ERR_NO_SUCH_CHANNEL(target));
+            return;
+        }
+        if (!clients_[fd].isInChannel(target)) {
+            ft_send(fd, ERR_NOT_IN_CHANNEL(target));
+            return;
+        }
+
+        channels_[target].broadcast(fd, fullMsg, clients_[fd].getNick(), fd);
+    } else {
+        // It's a private message to a user
+        int targetFd = getClientFdByNick(target);
+        if (targetFd == -1) {
+            ft_send(fd, ERR_NO_SUCH_CHANNEL(target)); // You may want to define ERR_NOSUCHNICK
+            return;
+        }
+        ft_send(targetFd, fullMsg);
+    }
 }
