@@ -51,107 +51,107 @@ void test_move_constructor() {
 // Once connected, the server sends a message to the client and then
 // the client replies back. (Since our Socket is non‑blocking, we use
 // short retry loops to wait for accept() and for receiving data.)
-void test_listener_accept_send_receive() {
-    try {
-        // Create a listener socket, bind it, and start listening.
-        Socket listener;
-        listener.makeListener(6668);
+// void test_listener_accept_send_receive() {
+//     try {
+//         // Create a listener socket, bind it, and start listening.
+//         Socket listener;
+//         listener.makeListener(6668);
 
-        // Retrieve the actual port assigned using getsockname.
-        sockaddr_in sin{};
-        socklen_t addrLen = sizeof(sin);
-        assert(getsockname(listener.getFd(), reinterpret_cast<sockaddr*>(&sin), &addrLen) == 0);
-        uint16_t port = ntohs(sin.sin_port);
-        std::cout << "[test_listener_accept_send_receive] Listener bound on port: " << port << "\n";
+//         // Retrieve the actual port assigned using getsockname.
+//         sockaddr_in sin{};
+//         socklen_t addrLen = sizeof(sin);
+//         assert(getsockname(listener.getFd(), reinterpret_cast<sockaddr*>(&sin), &addrLen) == 0);
+//         uint16_t port = ntohs(sin.sin_port);
+//         std::cout << "[test_listener_accept_send_receive] Listener bound on port: " << port << "\n";
 
-        // Spawn a client thread that connects to the listener.
-        std::thread client_thread([port]() {
-            int client_fd = ::socket(AF_INET, SOCK_STREAM, 0);
-            if (client_fd < 0) {
-                perror("client socket() failed");
-                std::exit(1);
-            }
-            sockaddr_in serv{};
-            serv.sin_family = AF_INET;
-            serv.sin_port = htons(port);
-            if (::inet_pton(AF_INET, "127.0.0.1", &serv.sin_addr) != 1) {
-                perror("inet_pton failed");
-                std::exit(1);
-            }
+//         // Spawn a client thread that connects to the listener.
+//         std::thread client_thread([port]() {
+//             int client_fd = ::socket(AF_INET, SOCK_STREAM, 0);
+//             if (client_fd < 0) {
+//                 perror("client socket() failed");
+//                 std::exit(1);
+//             }
+//             sockaddr_in serv{};
+//             serv.sin_family = AF_INET;
+//             serv.sin_port = htons(port);
+//             if (::inet_pton(AF_INET, "127.0.0.1", &serv.sin_addr) != 1) {
+//                 perror("inet_pton failed");
+//                 std::exit(1);
+//             }
 
-            // Connect to the server.
-            int res = ::connect(client_fd, reinterpret_cast<sockaddr*>(&serv), sizeof(serv));
-            if (res < 0) {
-                perror("client connect() failed");
-                std::exit(1);
-            }
+//             // Connect to the server.
+//             int res = ::connect(client_fd, reinterpret_cast<sockaddr*>(&serv), sizeof(serv));
+//             if (res < 0) {
+//                 perror("client connect() failed");
+//                 std::exit(1);
+//             }
 
-            // Wait for server to send its message.
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+//             // Wait for server to send its message.
+//             std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
-            // Receive message from server.
-            char buffer[256] = {0};
-            ssize_t n = ::recv(client_fd, buffer, sizeof(buffer), 0);
-            if (n < 0) {
-                perror("client recv() failed");
-                std::exit(1);
-            }
-            std::string serverMsg(buffer, static_cast<size_t>(n));
-            std::cout << "[client thread] Received from server: \"" << serverMsg << "\"\n";
+//             // Receive message from server.
+//             char buffer[256] = {0};
+//             ssize_t n = ::recv(client_fd, buffer, sizeof(buffer), 0);
+//             if (n < 0) {
+//                 perror("client recv() failed");
+//                 std::exit(1);
+//             }
+//             std::string serverMsg(buffer, static_cast<size_t>(n));
+//             std::cout << "[client thread] Received from server: \"" << serverMsg << "\"\n";
 
-            // Send a response to the server.
-            const char* response = "Hello from client";
-            n = ::send(client_fd, response, strlen(response), 0);
-            if (n < 0) {
-                perror("client send() failed");
-                std::exit(1);
-            }
-            ::close(client_fd);
-        });
+//             // Send a response to the server.
+//             const char* response = "Hello from client";
+//             n = ::send(client_fd, response, strlen(response), 0);
+//             if (n < 0) {
+//                 perror("client send() failed");
+//                 std::exit(1);
+//             }
+//             ::close(client_fd);
+//         });
 
-        // Retry for a short period because Socket is non-blocking.
-        Socket acceptedSocket;
-        const int maxRetries = 50;
-        int retries = maxRetries;
-        bool accepted = false;
-        while (retries-- > 0) {
-            accepted = listener.accept(acceptedSocket);
-            if (accepted) {
-                break;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-        assert(accepted);
-        std::cout << "[test_listener_accept_send_receive] Accepted connection\n";
+//         // Retry for a short period because Socket is non-blocking.
+//         Socket acceptedSocket;
+//         const int maxRetries = 50;
+//         int retries = maxRetries;
+//         bool accepted = false;
+//         while (retries-- > 0) {
+//             accepted = listener.accept(acceptedSocket);
+//             if (accepted) {
+//                 break;
+//             }
+//             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//         }
+//         assert(accepted);
+//         std::cout << "[test_listener_accept_send_receive] Accepted connection\n";
 
-        // Test sending message from server to client.
-        std::string serverMessage = "Hello from server";
-        ssize_t sent = acceptedSocket.send(serverMessage);
-        std::cout << "[test_listener_accept_send_receive] Server sent " << sent
-                  << " bytes to client.\n";
-        assert(sent == static_cast<ssize_t>(serverMessage.size()));
+//         // Test sending message from server to client.
+//         std::string serverMessage = "Hello from server";
+//         ssize_t sent = acceptedSocket.send(serverMessage);
+//         std::cout << "[test_listener_accept_send_receive] Server sent " << sent
+//                   << " bytes to client.\n";
+//         assert(sent == static_cast<ssize_t>(serverMessage.size()));
 
-        // Wait and receive response from the client.
-        std::string clientResponse;
-        ssize_t received = 0;
-        for (int i = 0; i < 10; i++) {
-            received = acceptedSocket.receive(clientResponse);
-            if (received > 0)
-                break;
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-        std::cout << "[test_listener_accept_send_receive] Server received " << received
-                  << " bytes: \"" << clientResponse << "\"\n";
-        assert(received > 0);
-        assert(clientResponse == "Hello from client");
+//         // Wait and receive response from the client.
+//         std::string clientResponse;
+//         ssize_t received = 0;
+//         for (int i = 0; i < 10; i++) {
+//             received = acceptedSocket.receive(clientResponse);
+//             if (received > 0)
+//                 break;
+//             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//         }
+//         std::cout << "[test_listener_accept_send_receive] Server received " << received
+//                   << " bytes: \"" << clientResponse << "\"\n";
+//         assert(received > 0);
+//         assert(clientResponse == "Hello from client");
 
-        client_thread.join();
-        std::cout << "[test_listener_accept_send_receive] Listener/accept/send/receive test passed.\n";
-    } catch (const std::exception& e) {
-        std::cerr << "[test_listener_accept_send_receive] Exception: " << e.what() << "\n";
-        assert(false);
-    }
-}
+//         client_thread.join();
+//         std::cout << "[test_listener_accept_send_receive] Listener/accept/send/receive test passed.\n";
+//     } catch (const std::exception& e) {
+//         std::cerr << "[test_listener_accept_send_receive] Exception: " << e.what() << "\n";
+//         assert(false);
+//     }
+// }
 
 
 
@@ -189,7 +189,7 @@ int main() {
 	test_constructor();
     test_param_constructor();
 	test_move_constructor();
-	test_listener_accept_send_receive();
+	// test_listener_accept_send_receive();
 	test_move_assignment();
 
 	return 0;

@@ -59,10 +59,9 @@ Socket::~Socket() noexcept {
 
 void	Socket::makeListener(uint16_t port) {
 	if (port < 1024) {
-		throw std::logic_error("Listener port must be valid");
+		throw std::logic_error("Listener port must be valid and not between 1-1023");
 	}
 
-	// Enable SO_REUSEADDR to avoid "address in use" errors on server restarting gracefully via same port
 	int opt = 1;
     if (setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
         throw std::system_error(errno, std::generic_category(), "setsockopt(SO_REUSEADDR) failed");
@@ -95,57 +94,4 @@ bool	Socket::accept(Socket& toSocket) const {
 	}
 	toSocket = Socket(clientFd, clientAddr);
 	return true;
-}
-
-size_t Socket::send(std::string_view data) const {
-	size_t totalSent = 0;
-	while (totalSent < data.size()) {
-		ssize_t n = ::send(fd_, data.data() + totalSent, data.size() - totalSent, MSG_NOSIGNAL);
-		if (n > 0) {
-			totalSent += n;
-		} else if (n == -1) {
-			if (errno == EINTR) {
-				continue;  // Interrupted; retry.
-			}
-			else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				break;  // Non-fatal, temporary conditions.
-			}
-			else {
-				throw std::system_error(errno, std::generic_category(), "write() failed");// Fatal error
-			}
-		} else {
-			break; // n == 0; break out to avoid potential infinite loop.
-		}
-	}
-	return totalSent;
-}
-
-ssize_t Socket::receive(std::string &buf) const {
-	char tmp[4096];
-	ssize_t n = 0;
-
-	while (true) {
-		n = ::read(fd_, tmp, sizeof(tmp));
-		if (n > 0) {
-			break;
-		} else if (n == 0) {
-			break;// End-of-file: the peer has closed the connection.
-		} else {
-			if (errno == EINTR) { // Interrupted by a signal, retry the read.
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) { // no data available; return 0 bytes read.
-				n = 0;
-				break;
-			} else {
-				throw std::system_error(errno, std::generic_category(), "read() failed");
-			}
-		}
-	}
-
-	if (n > 0) {
-		buf.assign(tmp, static_cast<size_t>(n));
-	} else {
-		buf.clear();
-	}
-	return n;
 }

@@ -35,8 +35,6 @@ public:
 
 	bool	accept(Socket& toSocket) const;
 	void	makeListener(uint16_t port);
-	size_t	send(std::string_view data) const;
-	ssize_t	receive(std::string& buf) const;
 
 	int			getFd() const noexcept {return fd_;}
 	sockaddr_in getAddr() const {return addr_;}
