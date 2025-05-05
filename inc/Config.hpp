@@ -5,6 +5,7 @@
 #include <string>
 #include <system_error>
 #include <utility>//std::exchange
+#include <cctype>//std::isalnum
 
 class Config {
 	int					port_;

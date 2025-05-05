@@ -29,8 +29,7 @@ void	Config::validate_() {
 									"(but check /etc/services for unavailable ones)");
 	}
 	if (!isValidPassword_()) {
-		throw std::invalid_argument("Invalid password. Password cannot be empty and must be made of: "
-									+ allowedPassChars_);
+		throw std::invalid_argument("Invalid password. Special chars allowed: -_!?# and minimum length: 4");
 	}
 }
 
@@ -54,7 +53,10 @@ bool Config::isValidPort_() {
 }
 
 bool Config::isValidPassword_() {
-	if (password_.empty() || password_.find_first_not_of(allowedPassChars_) != std::string::npos) {
+	if (password_.empty()) {
+		return false;
+	}
+	if (password_.find_first_not_of(allowedPassChars_) != std::string::npos) {
 		return false;
 	}
     if (password_.length() < minPassLen_) {
