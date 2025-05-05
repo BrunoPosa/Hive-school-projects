@@ -118,6 +118,8 @@ void Server::acceptNewConnection() {
 	if (send(clientFd, welcome.c_str(), welcome.size(), 0) < 0) {
 		std::cerr << "send() error: " << strerror(errno) << std::endl;
 	}
+
+
 	// Initialize new client
 	clients_[clientFd] = Client();  // Sets registered=false by default
 	

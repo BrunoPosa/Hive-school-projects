@@ -37,6 +37,7 @@ public:
 	void setPort(const int port) { port_ = port; }
 	void setPassword(const std::string& password) { password_ = password; }
 	// void setServerFd(int fd) { serverFd_ = fd; } // TODO change this to work with Socket
+	// void setServerFd(int fd) { serverFd_ = fd; } // TODO change this to work with Socket
 	// getters
 	const std::string& getPassword() const { return password_; }
 
@@ -71,6 +72,11 @@ private:
 
 	int port_;
 	std::string password_;
+
+    Socket               serverFd_; // socket wrapper for serverFd_
+    std::map<int, Socket> sockets_; // per-client socket objects
+
+	// std::vector<int> clientFds_;                            // Vector of client file descriptors
 
     Socket               serverFd_; // socket wrapper for serverFd_
     std::map<int, Socket> sockets_; // per-client socket objects

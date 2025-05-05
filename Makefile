@@ -1,8 +1,11 @@
 NAME        = ircserv
 FSANITNAME    = $(NAME)Fsan
 VALGRNAME    = $(NAME)Val
+FSANITNAME    = $(NAME)Fsan
+VALGRNAME    = $(NAME)Val
 
 CXX            = c++
+FLAGS        = -std=c++17 -Wall -Wextra -Werror #-O3 #-DNDEBUG
 FLAGS        = -std=c++17 -Wall -Wextra -Werror #-O3 #-DNDEBUG
 DEBUGFLAGS    = -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
 VALGRFLAGS    = -Wpedantic -Wshadow -g -O0
@@ -53,10 +56,12 @@ fs: fclean
 	echo ########################################################
 	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o $(FSANITNAME) $(SRCS)
 	./$(FSANITNAME)
+	./$(FSANITNAME)
 
 val: fclean
 	echo ########################################################
 	$(CXX) $(FLAGS) $(VALGRFLAGS) -o $(VALGRNAME) $(SRCS)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME)
 	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME)
 
 git: fclean
@@ -72,3 +77,4 @@ git: fclean
 
 
 .PHONY: all clean fclean re fs val git
+

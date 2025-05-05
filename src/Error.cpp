@@ -44,6 +44,7 @@ void Server::handleClientError(int errorCode, size_t index) {
 
     // Clean up resources
     // close(fd);
+    // close(fd);
     pollFds_.erase(pollFds_.begin() + index);
     clients_.erase(fd);
 }
