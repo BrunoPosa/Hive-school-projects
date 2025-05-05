@@ -9,45 +9,30 @@ VALGRFLAGS    = -Wpedantic -Wshadow -g -O0
 RM            = rm -rf
 
 
-HEADIR		=	inc/
-HEADERS    =    $(HEADIR)irc.hpp \
-				$(HEADIR)Socket.hpp \
-				$(HEADIR)Config.hpp \
+INCDIR		= inc/
+HEADERS    =    $(INCDIR)irc.hpp \
+				$(INCDIR)error.hpp \
+				$(INCDIR)Client.hpp \
+				$(INCDIR)Channel.hpp \
+				$(INCDIR)Socket.hpp
 
-<<<<<<< HEAD
-SRCDIR		=	src/
-SRCS    =   $(SRCDIR)main.cpp \
-			$(SRCDIR)Config.cpp \
-			$(SRCDIR)Server.cpp \
-			$(SRCDIR)Socket.cpp \
-			$(SRCDIR)Client.cpp \
-			$(SRCDIR)Error.cpp \
-			$(SRCDIR)cmd/Nick.cpp \
-			$(SRCDIR)cmd/User.cpp \
-			$(SRCDIR)cmd/Join.cpp \
-			$(SRCDIR)cmd/PrivMsg.cpp \
-=======
-HEADERS    =    inc/irc.hpp \
-				inc/error.hpp \
-				inc/Client.hpp \
-				inc/Channel.hpp 
-
-SRCS    =    src/main.cpp \
-			 src/ArgCheck.cpp \
-			 src/Channel.cpp \
-			 src/Client.cpp \
-			 src/Error.cpp \
-			 src/ProcessCmd.cpp \
-			 src/Server.cpp \
-			 src/cmd/Join.cpp \
-			 src/cmd/Kick.cpp \
-			 src/cmd/Mode.cpp \
-			 src/cmd/Nick.cpp \
-			 src/cmd/Ping.cpp \
-			 src/cmd/PrivMsg.cpp \
-			 src/cmd/Topic.cpp \
-			 src/cmd/User.cpp 
->>>>>>> d44b94b (more cmds done)
+SRCDIR	= 	src/
+SRCS    =    $(SRCDIR)main.cpp \
+			 $(SRCDIR)Socket.cpp \
+			 $(SRCDIR)ArgCheck.cpp \
+			 $(SRCDIR)Channel.cpp \
+			 $(SRCDIR)Client.cpp \
+			 $(SRCDIR)Error.cpp \
+			 $(SRCDIR)ProcessCmd.cpp \
+			 $(SRCDIR)Server.cpp \
+			 $(SRCDIR)cmd/Join.cpp \
+			 $(SRCDIR)cmd/Kick.cpp \
+			 $(SRCDIR)cmd/Mode.cpp \
+			 $(SRCDIR)cmd/Nick.cpp \
+			 $(SRCDIR)cmd/Ping.cpp \
+			 $(SRCDIR)cmd/PrivMsg.cpp \
+			 $(SRCDIR)cmd/Topic.cpp \
+			 $(SRCDIR)cmd/User.cpp 
 
 
 

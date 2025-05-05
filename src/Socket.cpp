@@ -54,7 +54,6 @@ Socket::~Socket() noexcept {
 			cerr << "Failed to close fd " << fd_ << ": " << std::strerror(errno) << endl;
 		}
 		fd_ = -1;
-		// cout << "closed socket" << endl;
 	}
 }
 
