@@ -47,6 +47,7 @@ void Server::handleClientError(int errorCode, size_t index) {
     // close(fd);
     pollFds_.erase(pollFds_.begin() + index);
     clients_.erase(fd);
+    sockets_.erase(fd);
 }
 
 void ft_send(int fd, const std::string& message) {
