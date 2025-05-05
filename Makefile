@@ -14,12 +14,13 @@ HEADERS    =    $(INCDIR)irc.hpp \
 				$(INCDIR)error.hpp \
 				$(INCDIR)Client.hpp \
 				$(INCDIR)Channel.hpp \
-				$(INCDIR)Socket.hpp
+				$(INCDIR)Socket.hpp \
+				$(INCDIR)Config.hpp \
 
 SRCDIR	= 	src/
 SRCS    =    $(SRCDIR)main.cpp \
+			 $(SRCDIR)Config.cpp \
 			 $(SRCDIR)Socket.cpp \
-			 $(SRCDIR)ArgCheck.cpp \
 			 $(SRCDIR)Channel.cpp \
 			 $(SRCDIR)Client.cpp \
 			 $(SRCDIR)Error.cpp \

@@ -46,12 +46,9 @@ void Server::handleClientError(int errorCode, size_t index) {
     // close(fd);
     pollFds_.erase(pollFds_.begin() + index);
     clients_.erase(fd);
-<<<<<<< HEAD
     sockets_.erase(fd);
-=======
 }
 
 void ft_send(int fd, const std::string& message) {
     send(fd, message.c_str(), message.length(), 0);
->>>>>>> d44b94b (more cmds done)
 }

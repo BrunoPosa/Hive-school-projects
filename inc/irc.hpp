@@ -20,59 +20,29 @@
 #include <unordered_map>
 #include <sstream>
 #include <stdexcept>
-<<<<<<< HEAD
-#include <sys/socket.h> // For socket functions
-#include <netinet/in.h> 
-#include <unistd.h> // For close function
-#include <cstring> 
-#include <cerrno> 
-#include <stdexcept> // For std::runtime_error
-#include <poll.h>
-#include <arpa/inet.h> // For inet_ntop
-#include <sstream> // For std::cerr
-#include <fcntl.h> // For fcntl
-#include <unordered_map> // For std::unordered_map
 
-#include "../inc/Socket.hpp"
-#include "../inc/Config.hpp"
-=======
 #include <cctype>
 
 // Project Headers
->>>>>>> d44b94b (more cmds done)
 #include "error.hpp"
 #include "Client.hpp"
 #include "Channel.hpp"
 #include "Socket.hpp"
+#include "Config.hpp"
 
 class Server {
 public:
-<<<<<<< HEAD
-    int getPort() const noexcept {return cnfg_.getPort();}
+
+Server();// Default constructor
+Server(Config&& configuration);    // Parameterized constructor
+~Server();
+
+int getPort() const noexcept {return cnfg_.getPort();}
+int getServerFd() const { return serverFd_.getFd(); }
+int getClientFdByNick(const std::string& nick) const;
+std::string getNickByFd(int fd) const;
 
 	void run(); // Start the server
-	Server();// Default constructor
-	Server(Config&& configuration);    // Parameterized constructor
-	~Server();
-=======
-	Server();// Default constructor
-	Server(Config&& configuration);    // Parameterized constructor
-	~Server();
-
-	// setters
-	void setPort(const int port) { port_ = port; }
-	void setPassword(const std::string& password) { password_ = password; }
-	// void setServerFd(int fd) { serverFd_ = fd; } // TODO change this to work with Socket
-	// getters
-	const std::string& getPassword() const { return password_; }
-
-	int getPort() const { return port_; }
-	int getServerFd() const { return serverFd_.getFd(); }
-	int getClientFdByNick(const std::string& nick) const;
-	std::string getNickByFd(int fd) const;
-
-	void run(); // Start the server
->>>>>>> d44b94b (more cmds done)
 private:
 
 	void setupServer();                                     // Set up the server
@@ -96,9 +66,9 @@ private:
 	
 	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
 
-	Config  cnfg_;
-    Socket               serverFd_; // socket wrapper for serverFd_
-    std::map<int, Socket> sockets_; // per-client socket objects
+	Config					cnfg_;
+	Socket					serverFd_; // socket wrapper for serverFd_
+	std::map<int, Socket>	sockets_; // per-client socket objects
 
 	// std::vector<int> clientFds_;                            // Vector of client file descriptors
 	std::vector<struct pollfd> pollFds_;                    // Vector of poll file descriptors for clients

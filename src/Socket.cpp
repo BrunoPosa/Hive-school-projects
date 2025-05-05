@@ -1,5 +1,4 @@
 
-<<<<<<< HEAD
 #include "../inc/Socket.hpp"
 
 using std::string;
