@@ -16,7 +16,7 @@ HEADERS    =    inc/irc.hpp \
 				inc/Channel.hpp 
 
 SRCS    =    src/main.cpp \
-			 src/argCheck.cpp \
+			 src/ArgCheck.cpp \
 			 src/Channel.cpp \
 			 src/Client.cpp \
 			 src/Error.cpp \
@@ -27,7 +27,7 @@ SRCS    =    src/main.cpp \
 			 src/cmd/Mode.cpp \
 			 src/cmd/Nick.cpp \
 			 src/cmd/Ping.cpp \
-			 src/cmd/Privmsg.cpp \
+			 src/cmd/PrivMsg.cpp \
 			 src/cmd/Topic.cpp \
 			 src/cmd/User.cpp 
 
