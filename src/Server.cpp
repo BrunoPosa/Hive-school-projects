@@ -15,7 +15,6 @@ Server::~Server() {
 
 void Server::sendWelcome(int fd) {
 	const std::string& nick = clients_[fd].getNick();
-	const std::string& nick = clients_[fd].getNick();
 	std::string welcome = 
 		":localhost 001 " + nick + " :Welcome to the Internet Relay Network\r\n" +
 		":localhost 002 " + nick + " :Your host is localhost\r\n" +
