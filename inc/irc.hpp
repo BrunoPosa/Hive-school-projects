@@ -26,6 +26,7 @@
 #include "error.hpp"
 #include "Client.hpp"
 #include "Channel.hpp"
+#include "Socket.hpp"
 
 class Server {
 public:
@@ -42,7 +43,7 @@ public:
 	const std::string& getPassword() const { return password_; }
 
 	int getPort() const { return port_; }
-	int getServerFd() const { return serverFd_; }
+	int getServerFd() const { return serverFd_.getFd(); }
 	int getClientFdByNick(const std::string& nick) const;
 	std::string getNickByFd(int fd) const;
 
@@ -72,9 +73,6 @@ private:
 
 	int port_;
 	std::string password_;
-
-    Socket               serverFd_; // socket wrapper for serverFd_
-    std::map<int, Socket> sockets_; // per-client socket objects
 
 	// std::vector<int> clientFds_;                            // Vector of client file descriptors
 

@@ -1,8 +1,6 @@
 NAME        = ircserv
 FSANITNAME    = $(NAME)Fsan
 VALGRNAME    = $(NAME)Val
-FSANITNAME    = $(NAME)Fsan
-VALGRNAME    = $(NAME)Val
 
 CXX            = c++
 FLAGS        = -std=c++17 -Wall -Wextra -Werror #-O3 #-DNDEBUG
@@ -12,27 +10,30 @@ VALGRFLAGS    = -Wpedantic -Wshadow -g -O0
 RM            = rm -rf
 
 
+INCDIR		= inc/
+HEADERS    =    $(INCDIR)irc.hpp \
+				$(INCDIR)error.hpp \
+				$(INCDIR)Client.hpp \
+				$(INCDIR)Channel.hpp \
+				$(INCDIR)Socket.hpp
 
-HEADERS    =    inc/irc.hpp \
-				inc/error.hpp \
-				inc/Client.hpp \
-				inc/Channel.hpp 
-
-SRCS    =    src/main.cpp \
-			 src/ArgCheck.cpp \
-			 src/Channel.cpp \
-			 src/Client.cpp \
-			 src/Error.cpp \
-			 src/ProcessCmd.cpp \
-			 src/Server.cpp \
-			 src/cmd/Join.cpp \
-			 src/cmd/Kick.cpp \
-			 src/cmd/Mode.cpp \
-			 src/cmd/Nick.cpp \
-			 src/cmd/Ping.cpp \
-			 src/cmd/PrivMsg.cpp \
-			 src/cmd/Topic.cpp \
-			 src/cmd/User.cpp 
+SRCDIR	= 	src/
+SRCS    =    $(SRCDIR)main.cpp \
+			 $(SRCDIR)Socket.cpp \
+			 $(SRCDIR)ArgCheck.cpp \
+			 $(SRCDIR)Channel.cpp \
+			 $(SRCDIR)Client.cpp \
+			 $(SRCDIR)Error.cpp \
+			 $(SRCDIR)ProcessCmd.cpp \
+			 $(SRCDIR)Server.cpp \
+			 $(SRCDIR)cmd/Join.cpp \
+			 $(SRCDIR)cmd/Kick.cpp \
+			 $(SRCDIR)cmd/Mode.cpp \
+			 $(SRCDIR)cmd/Nick.cpp \
+			 $(SRCDIR)cmd/Ping.cpp \
+			 $(SRCDIR)cmd/PrivMsg.cpp \
+			 $(SRCDIR)cmd/Topic.cpp \
+			 $(SRCDIR)cmd/User.cpp 
 
 
 
