@@ -20,8 +20,7 @@ void Server::sendWelcome(int fd) {
 		":localhost 002 " + nick + " :Your host is localhost\r\n" +
 		":localhost 003 " + nick + " :This server was created today\r\n" +
 		":localhost 004 " + nick + " :localhost 1.0\r\n";
-	// send(fd, welcome.c_str(), welcome.size(), 0);
-	sockets_[fd].send(welcome);
+	send(fd, welcome.c_str(), welcome.size(), 0);
 }
 
 void Server::checkRegistration(int fd) {
@@ -116,10 +115,10 @@ void Server::acceptNewConnection() {
 
 	// Send welcome message
 	std::string welcome = "Welcome to ft_irc!\r\n";
-	// if (send(clientFd, welcome.c_str(), welcome.size(), 0) < 0) {
-	// 	std::cerr << "send() error: " << strerror(errno) << std::endl;
-	// }
-	sockets_[clientFd].send(welcome);
+	if (send(clientFd, welcome.c_str(), welcome.size(), 0) < 0) {
+		std::cerr << "send() error: " << strerror(errno) << std::endl;
+	}
+
 
 	// Initialize new client
 	clients_[clientFd] = Client();  // Sets registered=false by default
@@ -128,6 +127,5 @@ void Server::acceptNewConnection() {
 	std::string motd = 
 		":localhost 375 * :- Message of the Day -\r\n"
 		":localhost 376 * :End of MOTD\r\n";
-	// send(clientFd, motd.c_str(), motd.size(), 0);
-	sockets_[clientFd].send(motd);
+	send(clientFd, motd.c_str(), motd.size(), 0);
 }
