@@ -10,6 +10,7 @@
 #include <system_error>
 #include <sys/socket.h> //SOMAXCONN, listen()
 #include <cassert>
+#include <utility>//std::exchange
 
 /**
  * @brief RAII wrapper for a non‑blocking TCP/IPv4 socket.
@@ -26,17 +27,15 @@
 
 public:
 	Socket();
-	explicit Socket(int fd, sockaddr_in addr, bool isListener) noexcept;
+	explicit Socket(int fd, sockaddr_in addr);
 	Socket(const Socket& other)				= delete;
 	Socket& operator=(const Socket& other)	= delete;
 	Socket(Socket&& other) noexcept;
 	Socket& operator=(Socket&& other) noexcept;
 	~Socket() noexcept;
 
-	bool	accept(Socket& toSocket) const noexcept;
+	bool	accept(Socket& toSocket) const;
 	void	makeListener(uint16_t port);
-	ssize_t	send(std::string_view data) const;
-	ssize_t	receive(std::string& buf) const;
 
 	int			getFd() const noexcept {return fd_;}
 	sockaddr_in getAddr() const {return addr_;}

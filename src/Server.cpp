@@ -20,8 +20,7 @@ void Server::sendWelcome(int fd) {
 		":localhost 002 " + nick + " :Your host is localhost\r\n" +
 		":localhost 003 " + nick + " :This server was created today\r\n" +
 		":localhost 004 " + nick + " :localhost 1.0\r\n";
-	// send(fd, welcome.c_str(), welcome.size(), 0);
-	sockets_[fd].send(welcome);
+	send(fd, welcome.c_str(), welcome.size(), 0);
 }
 
 void Server::checkRegistration(int fd) {
