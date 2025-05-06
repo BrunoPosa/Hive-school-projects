@@ -13,7 +13,7 @@ void Server::cmdJoin(int fd, const std::string& message) {
     }
 
     if (channels_.find(channel) == channels_.end()) {
-        channels_[channel] = Channel(channel); // Create a new channel if it doesn't exist
+        channels_[channel] = Channel(channel, &clients_); // Create a new channel if it doesn't exist
     }
 
     if (clients_[fd].isInChannel(channel)) {
@@ -27,6 +27,6 @@ void Server::cmdJoin(int fd, const std::string& message) {
 
     // Notify all users in the channel (except the one joining)
     std::string joinMessage = ":" + clients_[fd].getNick() + " JOIN :" + channel + "\r\n";
-    channels_[channel].broadcast(fd, joinMessage, clients_[fd].getNick(), -1); // Send to all
+    channels_[channel].broadcast(joinMessage, clients_[fd].getNick(), -1); // Send to all
 }
 

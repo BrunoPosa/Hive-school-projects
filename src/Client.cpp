@@ -1,65 +1,146 @@
 #include "../inc/irc.hpp"
 
-void Server::handleClient(size_t index) {
-	char buffer[1024];
-	ssize_t bytesRead = recv(pollFds_[index].fd, buffer, sizeof(buffer) - 1, 0);
-	if (bytesRead <= 0) {
-		handleClientError(bytesRead == 0 ? 0 : errno, index);
-		return;
-	}
-	
-	buffer[bytesRead] = '\0'; // Null-terminate
-	int fd = pollFds_[index].fd;
-	// Split the input by \r\n and process each command
-	std::string input(buffer);
-	size_t pos = 0;
-	std::string line;
-	while ((pos = input.find("\r\n")) != std::string::npos) {
-		line = input.substr(0, pos);
-		processCommand(fd, line);
-		input.erase(0, pos + 2); // Move past \r\n
-	}
+Client::Client()
+:	so_{},
+	sendBuf_{},
+	recvBuf_{},
+	nick_{"guest"},
+	usrnm_{"guest"},
+	joinedChannels{},
+	authenticated{false},
+	nickReceived{false},
+	userReceived{false},
+	passReceived{false},
+	modeReceived{false},
+	whois{false}
+{
+	sendBuf_.reserve(IRC_BUFFER_SIZE);
+	recvBuf_.reserve(IRC_BUFFER_SIZE);
 }
 
-Client::~Client() {} // 
-
-Client::Client(int fd) : fd(fd), nick("guest"), user("guest") // Constructor with fd
+Client::Client(Socket&& so)  // Parameterized constructor
+:	so_{std::move(so)},
+	sendBuf_{},
+	recvBuf_{},
+	nick_{"guest"},
+	usrnm_{"guest"},
+	joinedChannels{},
+	authenticated{false},
+	nickReceived{false},
+	userReceived{false},
+	passReceived{false},
+	modeReceived{false},
+	whois{false}
 {
-	this->authenticated = false;
-	this->nickReceived = false;
-	this->userReceived = false;
-	this->passReceived = false;
-	this->modeReceived = false;
-	this->whois = false;
+	sendBuf_.reserve(IRC_BUFFER_SIZE);
+	recvBuf_.reserve(IRC_BUFFER_SIZE);
 }
 
-Client::Client() : fd(-1), nick("guest"), user("guest") // Constructor without fd
-{
-	this->authenticated = false;
-	this->nickReceived = false;
-	this->userReceived = false;
-	this->passReceived = false;
-	this->modeReceived = false;
-	this->whois = false;
-}
+Client::Client(Client&& other) noexcept
+	:	so_{std::move(other.so_)},
+		sendBuf_{std::move(other.sendBuf_)},
+		recvBuf_{std::move(other.recvBuf_)},
+		nick_{std::move(other.nick_)},
+		usrnm_{std::move(other.usrnm_)},
+		joinedChannels{std::move(other.joinedChannels)},
+		authenticated{std::exchange(other.authenticated, false)},
+		nickReceived{std::exchange(other.nickReceived, false)},
+		userReceived{std::exchange(other.userReceived, false)},
+		passReceived{std::exchange(other.passReceived, false)},
+		modeReceived{std::exchange(other.modeReceived, false)},
+		whois{std::exchange(other.modeReceived, false)}
+{}
 
-Client::Client(std::string nick, std::string user, int fd): fd(fd), nick(nick), user(user) {}
-
-Client::Client(const Client &other)
-{
-	*this = other;
-}
-
-Client &Client::operator=(const Client &other)
-{
-	if (this != &other)
-	{
-		this->nick = other.nick;
-		this->user = other.user;
-		this->fd = other.fd;
-		this->joinedChannels = other.joinedChannels;
+Client&	Client::operator=(Client&& other) noexcept {
+	if (this != &other) {
+		so_ = std::move(other.so_);
+		sendBuf_ = std::move(other.sendBuf_);
+		recvBuf_ = std::move(other.recvBuf_);
+		nick_ = std::move(other.nick_);
+		usrnm_ = std::move(other.usrnm_);
+		joinedChannels = std::move(other.joinedChannels);
+		authenticated = std::exchange(other.authenticated, false);
+		nickReceived = std::exchange(other.nickReceived, false);
+		userReceived = std::exchange(other.userReceived, false);
+		passReceived = std::exchange(other.passReceived, false);
+		modeReceived = std::exchange(other.modeReceived, false);
+		whois = std::exchange(other.modeReceived, false);
 	}
 	return *this;
+}
+
+bool	Client::appendToSendBuf(const std::string& data) {
+	if (data.empty()){
+		return true;
+	}
+	if (sendBuf_.size() + data.size() > IRC_BUFFER_SIZE) {
+		std::cerr << "sendBuf_ at client fd " << so_.getFd() << " is filling up" << std::endl;
+		return false;
+	}
+	try {
+		sendBuf_.append(data);
+	} catch (std::exception& e) {
+		std::cerr << "sendBuf append failed: " << e.what() << std::endl;
+		return false;
+	}
+	return true;
+}
+
+//calls send() and returns true if all went well, false on fail (client connection should be deleted) 
+bool	Client::sendFromBuf() {
+	if (sendBuf_.empty() == true) {
+		return true;
+		//best performance is to implement switching of POLLOUT flag on and off in the pollfd struct when the relevant client's sendBuffer is empty
+	}
+
+	ssize_t sent = send(so_.getFd(), sendBuf_.data(), sendBuf_.size(), MSG_NOSIGNAL);
+	if (sent > 0) {
+		sendBuf_.erase(0, sent);
+	} else if (sent == -1) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
+			return true;
+		} else {
+			std::cerr << "Error with client:" << so_.getIpStr() << " FD: " << so_.getFd() << " send() error: " << strerror(errno) << std::endl;
+			return false;
+		}
+	} else if (sent == 0) {
+		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl;
+		return false;
+	}
+	return true;
+}
+
+//on returning false, the client connection in question should be closed
+bool	Client::receiveAndProcess(Server* server) {
+	char buffer[IRC_BUFFER_SIZE];
+
+	ssize_t bytesRead = recv(so_.getFd(), buffer, sizeof(buffer), MSG_NOSIGNAL);
+	if (bytesRead == 0) {
+		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl;
+		return false;
+	} else if (bytesRead == -1) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
+			return true;
+		} else {
+			std::cerr << "Error with client:" << so_.getIpStr() << " FD: " << so_.getFd() << " send() error: " << strerror(errno) << std::endl;
+			return false;
+		}
+	}
+
+	if (recvBuf_.size() + bytesRead > IRC_BUFFER_SIZE) {
+		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
+		return false;
+	}
+	recvBuf_.append(buffer, bytesRead);//in case of partial data, Client stores it in recvBuf_ and we add new data to it to get a full message
+	
+	size_t pos = 0;
+	std::string line;
+	while ((pos = recvBuf_.find("\r\n")) != std::string::npos) {	// Split the input by \r\n and process each command
+		line = recvBuf_.substr(0, pos);
+		server->processCommand(so_.getFd(), line);
+		recvBuf_.erase(0, pos + 2); // Move past \r\n
+	}
+	return true;
 }
 
 bool Client::isInChannel(const std::string &channel)
@@ -76,35 +157,6 @@ bool Client::getOperator(const std::string &channel)
 	return false;
 }
 
-void Client::setNick(const std::string &nick)
-{
-	this->nick = nick;
-}
-
-void Client::setUser(const std::string &user)
-{
-	this->user = user;
-}
-void Client::setNickReceived()
-{
-	this->nickReceived = true;
-}
-void Client::setUserReceived()
-{
-	this->userReceived = true;
-}
-void Client::setPassReceived()
-{
-	this->passReceived = true;
-}
-void Client::setModeReceived()
-{
-	this->modeReceived = true;
-}
-void Client::setAuthenticated()
-{
-	this->authenticated = true;
-}
 void Client::joinChannel(const std::string &channel, bool is_operator)
 {
 	joinedChannels[channel] = is_operator;
@@ -125,49 +177,3 @@ void Client::setOperator(const std::string &channel, bool is_operator)
 	if (isInChannel(channel))
 		joinedChannels[channel] = is_operator;
 }
-
-std::string Client::getNick() const
-{
-	return this->nick;
-}
-
-std::string Client::getUser() const
-{
-	return this->user;
-}
-
-bool Client::hasReceivedNick() const
-{
-	return this->nickReceived;
-}
-
-bool Client::hasReceivedUser() const
-{
-	return this->userReceived;
-}
-
-bool Client::hasReceivedPass() const
-{
-	return this->passReceived;
-}
-
-bool Client::hasReceivedMode() const
-{
-	return this->modeReceived;
-}
-
-bool Client::isAuthenticated() const
-{
-	return this->authenticated;
-}
-
-int Client::getFd() const
-{
-	return this->fd;
-}
-
-const std::map<std::string, bool>& Client::getJoinedChannels() const
-{
-	return this->joinedChannels;
-}
-

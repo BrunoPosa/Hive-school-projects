@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 #include <iostream>
+#include <arpa/inet.h> //inet_ntop
 #include <netinet/in.h>
 #include <system_error>
 #include <sys/socket.h> //SOMAXCONN, listen()
@@ -38,8 +39,10 @@ public:
 	void	makeListener(uint16_t port);
 
 	int			getFd() const noexcept {return fd_;}
-	sockaddr_in getAddr() const {return addr_;}
+	sockaddr_in getAddr() const noexcept {return addr_;}
+	std::string	getIpStr() const;
 	bool		isListener() const noexcept {return isListening_;}
+	//add getter for IPaddress string
 };
 
 #endif

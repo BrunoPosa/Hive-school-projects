@@ -41,30 +41,36 @@
 #include "Socket.hpp"
 #include "Config.hpp"
 
+
+#define REDIRC "\033[1;31m"
+#define YELLOWIRC "\033[33m"
+#define GREENIRC "\033[1;32m"
+#define RESETIRC "\033[0m"
+
 class Server {
 public:
 
-Server();// Default constructor
-Server(Config&& configuration);    // Parameterized constructor
-~Server();
+	Server();
+	Server(Config&& configuration);    // Parameterized constructor
+	~Server();
 
-int getPort() const noexcept {return cnfg_.getPort();}
-int getServerFd() const { return serverFd_.getFd(); }
-int getClientFdByNick(const std::string& nick) const;
-std::string getNickByFd(int fd) const;
-
+	int getPort() const noexcept {return cnfg_.getPort();}
+	int getServerFd() const { return serverFd_.getFd(); }
+	int getClientFdByNick(const std::string& nick) const;
+	std::string getNickByFd(int fd) const;
+	void processCommand(int fd, const std::string& message);// Process incoming commands
 	void run(); // Start the server
-private:
 
+private:
+	void ft_send(int fd, const std::string& message);
 	void setupServer();                                     // Set up the server
 	void mainLoop();                                        // Main loop for handling connections
-	void acceptNewConnection();                             // Accept new connections
-	void handleClient(size_t index);                        // Handle client communication
+	void acceptNewConnection();                            // Accept new connections
+	void	addClient(Socket& sock);
+	void	rmClient(unsigned int rmPollfdIndex, int rmFd);
 	void checkRegistration(int fd);                         // Check if client is registered
 	void sendWelcome(int fd);                               // Send welcome message to client
-	void handleClientError(int errorCode, size_t index);    // Handle client errors
 	
-	void processCommand(int fd, const std::string& message);// Process incoming commands
 	
 	void cmdNick(int fd, const std::string& message);       // Handle NICK command
 	void cmdUser(int fd, const std::string& message);       // Handle USER command
@@ -79,9 +85,7 @@ private:
 
 	Config					cnfg_;
 	Socket					serverFd_; // socket wrapper for serverFd_
-	std::map<int, Socket>	sockets_; // per-client socket objects
 
-	// std::vector<int> clientFds_;                            // Vector of client file descriptors
 	std::vector<struct pollfd> pollFds_;                    // Vector of poll file descriptors for clients
 	std::map<int, Client> clients_;                         // Map of client file descriptors to Client objects
 	int defaultUserCount_ = 0;                              // Default user count for the server

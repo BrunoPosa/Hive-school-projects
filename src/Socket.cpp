@@ -11,7 +11,8 @@ Socket::Socket()
 	addr_{},
 	isListening_{false}
 {
-	if (fd_ < 0) {
+	// cout << "\e[33m" << "Socket created." << "\e[0m" << endl;
+	if (fd_ < 0) {//what happens if this if is removed (the socket creation fails)
 		throw std::system_error(errno, std::generic_category(), "socket() failed");
 	}
 }
@@ -62,9 +63,9 @@ void	Socket::makeListener(uint16_t port) {
 	}
 
 	int opt = 1;
-    if (setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-        throw std::system_error(errno, std::generic_category(), "setsockopt(SO_REUSEADDR) failed");
-    }
+	if (setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+		throw std::system_error(errno, std::generic_category(), "setsockopt(SO_REUSEADDR) failed");
+	}
 
 	addr_ = {};
 	addr_.sin_family      = AF_INET;
@@ -93,4 +94,13 @@ bool	Socket::accept(Socket& toSocket) const {
 	}
 	toSocket = Socket(clientFd, clientAddr);
 	return true;
+}
+
+std::string	Socket::getIpStr() const {
+	char ipStr[INET_ADDRSTRLEN];
+
+	if (inet_ntop(AF_INET, &addr_.sin_addr, ipStr, INET_ADDRSTRLEN) == nullptr) {
+		std::cerr << "inet_ntop error: " << strerror(errno) << std::endl;
+	}
+	return ipStr;
 }

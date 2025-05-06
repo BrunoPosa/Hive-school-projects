@@ -13,21 +13,32 @@ Server::~Server() {
 	// Cleanup resources if needed
 }
 
+void Server::ft_send(int fd, const std::string& message) {
+	try {
+		clients_.at(fd).appendToSendBuf(message);
+	} catch (std::out_of_range& e) {
+		std::cerr << "clients_ map access at nonexisting key:" << fd << " - " << e.what() << std::endl;
+	}
+}
+
 void Server::sendWelcome(int fd) {
-	const std::string& nick = clients_[fd].getNick();
+	std::string nick;
+	auto clientIt = clients_.find(fd);
+	if (clientIt != clients_.end()) {
+		nick = clients_.at(fd).getNick();
+	}
 	std::string welcome = 
 		":localhost 001 " + nick + " :Welcome to the Internet Relay Network\r\n" +
 		":localhost 002 " + nick + " :Your host is localhost\r\n" +
 		":localhost 003 " + nick + " :This server was created today\r\n" +
 		":localhost 004 " + nick + " :localhost 1.0\r\n";
-	send(fd, welcome.c_str(), welcome.size(), 0);
+	ft_send(fd, welcome.c_str());
 }
 
 void Server::checkRegistration(int fd) {
-	Client& client = clients_[fd];
-	if (!client.getNick().empty() && !client.getUser().empty() && !client.isAuthenticated()) {
-        client.setAuthenticated();  // Assuming you want to set them as authenticated
-        sendWelcome(fd);
+	if (!clients_[fd].getNick().empty() && !clients_[fd].getUser().empty() && !clients_[fd].isAuthenticated()) {
+		clients_[fd].setAuthenticated();  // Assuming you want to set them as authenticated
+		sendWelcome(fd);
 	}
 }
 
@@ -37,47 +48,58 @@ void Server::run() {
 	mainLoop(); // Start the main loop
 }
 void Server::setupServer() {
-    serverFd_.makeListener(cnfg_.getPort());// Socket wrapper to bind+listen+non-blocking
+	serverFd_.makeListener(cnfg_.getPort());// Socket wrapper to bind+listen+non-blocking
 	// Initialize pollFds_ with server socket
 	pollFds_.clear();
-	pollFds_.push_back((pollfd){serverFd_.getFd(), POLLIN, 0});
-	std::cout << "Server setup complete on port " << cnfg_.getPort() << std::endl;
+	pollFds_.push_back({serverFd_.getFd(), POLLIN, 0});
+	std::cout << "Server setup complete on port " << cnfg_.getPort() << std::endl;//add IP address
 }
 void Server::mainLoop() {
 	std::cout << "Entering main loop with " << pollFds_.size() << " file descriptors" << std::endl;
 	
 	while (true) {
-		
-		int ready = poll(&pollFds_[0], pollFds_.size(), -1);
+		int ready = poll(pollFds_.data(), pollFds_.size(), -1);
 		if (ready < 0) {
 			std::cerr << "poll() error: " << strerror(errno) << std::endl;
 			if (errno == EINTR) continue;
 			throw std::runtime_error("poll() failed");
 		}
 		else if (ready == 0) {
-			std::cout << "poll() timeout (shouldn't happen with infinite timeout)" << std::endl;
+			std::cerr << "poll() timeout (shouldn't happen with infinite timeout)" << std::endl;
 			continue;
 		}
 		
 		// Check all file descriptors, not just server socket
-		for (size_t i = 0; i < pollFds_.size(); i++) {
+		//Fix iteration through this loop so when an FD is erased -
+		//e.g. during send/recv() - the loop indexes continue correctly, and try optimizing performance
+		int fd = 0;
+		for (unsigned long i = pollFds_.size(); i-- > 0;) {
+			fd = pollFds_.at(i).fd;
+
+			if (pollFds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+				std::cerr << "Error condition on fd " << fd << std::endl;
+				rmClient(i, fd);
+				continue;
+			}
 			if (pollFds_[i].revents & POLLIN) {
-				if (pollFds_.at(i).fd == serverFd_.getFd()) { // Server socket
+				if (fd == serverFd_.getFd()) {
 					acceptNewConnection();
-				}
-				else { // Client socket
-					handleClient(i);
+				} else {
+					if (clients_.at(fd).receiveAndProcess(this) == false) {
+						rmClient(i, fd);
+						continue;
+					}
 				}
 			}
-			if (pollFds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
-				std::cerr << "Error condition on fd " << pollFds_[i].fd << std::endl;
-				pollFds_.erase(pollFds_.begin() + i);
-				sockets_.erase(pollFds_.at(i).fd);
-				i--; // Adjust index after erase
+			if (pollFds_[i].revents & POLLOUT) {
+				if (clients_.at(fd).sendFromBuf() == false) {
+					rmClient(i, fd);
+				}
 			}
 		}
 	}
 }
+
 void Server::acceptNewConnection() {
 	Socket	clientSock;
 	while (serverFd_.accept(clientSock) == false) { //can be while(maxRetries_ private const) or similar
@@ -103,40 +125,75 @@ void Server::acceptNewConnection() {
 				throw std::system_error(errno, std::generic_category(), "accept() failed");// Fatal errors
 		}
 	};
-	int		clientFd   = clientSock.getFd();
 
 	std::cout << "Accepted new connection from " 
-			  << inet_ntoa(clientSock.getAddr().sin_addr) << ":"
+			  << clientSock.getIpStr() << ":"
 			  << ntohs(clientSock.getAddr().sin_port) 
-			  << " (FD: " << clientFd << ")" << std::endl;
-
-	pollFds_.push_back((pollfd){clientFd, POLLIN | POLLOUT, 0});
-	sockets_.emplace(clientFd, std::move(clientSock));
-
-	// Send welcome message
-	std::string welcome = "Welcome to ft_irc!\nPlease register with NICK and USER\r\n";
-	if (send(clientFd, welcome.c_str(), welcome.size(), 0) < 0) {
-		std::cerr << "send() error: " << strerror(errno) << std::endl;
-	}
-
+			  << " (FD: " << clientSock.getFd() << ")" << std::endl;
 
 	// Initialize new client
-	clients_[clientFd] = Client();  // Sets registered=false by default
-	
+	addClient(clientSock);
+}
+
+//removes Client from its own joinedChannels Channel objects, server's pollFds_ vector, and server's clients_ map
+void Server::rmClient(unsigned int rmPollfdIndex, int rmFd) {
+	for (const auto& [channelName, _] : clients_.at(rmFd).getJoinedChannels()) { // Iterate over joined channel names
+		auto channelIt = channels_.find(channelName); // Find the Channel in the map
+
+		if (channelIt != channels_.end()) {
+			channelIt->second.removeClient(rmFd); // Call removeClient on the Channel object
+		}
+	}
+
+	if (rmPollfdIndex > 0 && rmPollfdIndex < pollFds_.size()) {
+		pollFds_.erase(pollFds_.begin() + rmPollfdIndex);
+	} else {
+		std::cerr << "could not rmClient pollfdIndex:" << rmPollfdIndex << std::endl;
+	}
+
+	auto clientIt = clients_.find(rmFd);
+	if (clientIt != clients_.end()) {
+		clients_.erase(clientIt);
+	} else {
+		std::cerr << "could not rmClient from map at fd:" << rmFd << std::endl;
+	}
+}
+
+//constructs Client with the given socket and adds its fd to pollFds_ and the object itself to clients_ map
+void Server::addClient(Socket& sock) {
+	int fd = sock.getFd();
+	try {
+		pollFds_.push_back({sock.getFd(), POLLIN | POLLOUT, 0});
+	} catch (std::exception& e) {
+		std::cerr << "addClient to pollFds_ (fd: " << fd << ") failed: " << e.what() << std::endl;
+		return ;
+	}
+	try {
+		clients_.emplace(fd, Client(std::move(sock)));	
+	} catch (std::exception& e) {
+		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
+		rmClient(pollFds_.size() - 1, fd);
+		return;
+	}
+
+	// Send welcome message
+	std::string welcome = "Welcome to " + cnfg_.getServName() + "!\nPlease register with NICK and USER\r\n";
+	ft_send(fd, welcome.c_str());
+
 	// Send initial MOTD (makes irssi happy)
 	std::string motd = 
 		":localhost 375 * :- Message of the Day -\r\n"
 		":localhost 376 * :Another day another slay\r\n";
-	send(clientFd, motd.c_str(), motd.size(), 0);
+	ft_send(fd, motd.c_str());
 }
 
 int Server::getClientFdByNick(const std::string& nick) const {
-    for (std::map<int, Client>::const_iterator it = clients_.begin(); it != clients_.end(); ++it) {
-        if (it->second.getNick() == nick) {
-            return it->first;
-        }
-    }
-    return -1; // Not found
+	for (std::map<int, Client>::const_iterator it = clients_.begin(); it != clients_.end(); ++it) {
+		if (it->second.getNick() == nick) {
+			return it->first;
+		}
+	}
+	return -1; // Not found
 }
 
 std::string Server::getNickByFd(int fd) const {
@@ -146,3 +203,4 @@ std::string Server::getNickByFd(int fd) const {
 	}
 	return ""; // Not found
 }
+

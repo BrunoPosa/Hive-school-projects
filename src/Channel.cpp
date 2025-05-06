@@ -1,28 +1,42 @@
 #include "../inc/irc.hpp"
 
-Channel::Channel()
-: name(""), topic(""), pwd(""), userLimit(-1), inviteOnly(false), topicRestrictedToOperators(true) {}
+Channel::Channel(std::map<int, Client>* ptrToAllClients)
+: name(""), topic(""), pwd(""), userLimit(-1), inviteOnly_(false), topicRestrictedToOperators(true), allClientsPtr_(ptrToAllClients) {}
 
-Channel::Channel(const std::string &name)
-: name(name), topic(""), pwd(""), userLimit(-1), inviteOnly(false), topicRestrictedToOperators(true) {}
+Channel::Channel(const std::string &name, std::map<int, Client>* ptrToAllClients)
+: name(name), topic(""), pwd(""), userLimit(-1), inviteOnly_(false), topicRestrictedToOperators(true), allClientsPtr_(ptrToAllClients) {}
 
-Channel::~Channel() {}
+Channel::~Channel() {
+    allClientsPtr_ = nullptr;
+}
 
 Channel::Channel(const Channel &other)
-{
-    *this = other;
-}
+    : name(other.name),
+      topic(other.topic),
+      pwd(other.pwd),
+      invitedUsers(other.invitedUsers),
+      chClients_(other.chClients_),
+      operators(other.operators),
+      userLimit(other.userLimit),
+      inviteOnly_(other.inviteOnly_),
+      topicRestrictedToOperators(other.topicRestrictedToOperators),
+      allClientsPtr_(other.allClientsPtr_)
+{}
 
 Channel &Channel::operator=(const Channel &other)
 {
     if (this != &other)
     {
-        this->name = other.getName();
-        this->topic = other.getTopic();
-        this->pwd = other.getPwd();
-        this->userLimit = other.getUserLimit();
-        this->inviteOnly = other.getInviteOnly();
-        this->topicRestrictedToOperators = other.getTopicRestricted();
+        this->name = other.name;
+        this->topic = other.topic;
+        this->pwd = other.pwd;
+        this->invitedUsers = other.invitedUsers;
+        this->chClients_ = other.chClients_;
+        this->operators = other.operators;
+        this->userLimit = other.userLimit;
+        this->inviteOnly_ = other.inviteOnly_;
+        this->topicRestrictedToOperators = other.topicRestrictedToOperators;
+        this->allClientsPtr_ = other.allClientsPtr_;
     }
     return *this;
 }
@@ -51,7 +65,7 @@ int Channel::getUserLimit() const
 
 bool Channel::getInviteOnly() const
 {
-    return this->inviteOnly;
+    return this->inviteOnly_;
 }
 
 bool Channel::getIsUserInvited(const int& fd) const
@@ -66,6 +80,7 @@ bool Channel::getTopicRestricted() const
 
 // In Channel.cpp
 int Channel::getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const {
+std::cout << "getCLientFDbyNick" << std::endl;
     for (std::map<int, Client>::const_iterator it = clients.begin(); it != clients.end(); ++it){
         int fd = it->first;
         std::map<int, Client>::const_iterator cit = clients.find(fd);
@@ -90,7 +105,7 @@ void Channel::setUserLimit(int limit)
 
 void Channel::setInviteOnly(bool inviteOnly)
 {
-    this->inviteOnly = inviteOnly;
+    this->inviteOnly_ = inviteOnly;
 }
 
 void Channel::setTopicRestrictedToOperators(bool restricted)
@@ -120,29 +135,35 @@ void Channel::setTopic(const std::string& newTopic)
 
 void Channel::addClient(int fd)
 {
-    if (std::find(this->clients.begin(), this->clients.end(), fd) == this->clients.end())
-        this->clients.push_back(fd);
+    if (std::find(this->chClients_.begin(), this->chClients_.end(), fd) == this->chClients_.end())
+        this->chClients_.push_back(fd);
 }
 
 void Channel::removeClient(int fd)
 {
-    std::vector<int>::iterator it = std::find(this->clients.begin(), this->clients.end(), fd);
-    if (it != this->clients.end())
-        this->clients.erase(it);
+    std::vector<int>::iterator it = std::find(this->chClients_.begin(), this->chClients_.end(), fd);
+    if (it != this->chClients_.end())
+        this->chClients_.erase(it);
 }
 
-void Channel::broadcast(int sender_fd, const std::string& message, const std::string& sender_nick, int except_fd) // send to all clients except the sender
+void Channel::broadcast(const std::string& message, const std::string& sender_nick, int except_fd) // send to all clients except the sender
 {
-    (void) sender_fd; // Unused parameter, can be removed if not needed
     std::string fullMessage = ":" + sender_nick + " PRIVMSG " + this->name + " :" + message + "\r\n";
-    for (std::vector<int>::iterator it = this->clients.begin(); it != this->clients.end(); ++it)
+    int cliFd = 0;
+    for (unsigned long i = chClients_.size(); i-- > 0;)
     {
-        if (*it != except_fd)
+        cliFd = chClients_.at(i);
+        if (cliFd != except_fd && allClientsPtr_ != nullptr)
         {
-            send(*it, fullMessage.c_str(), fullMessage.length(), 0);
+            try {
+                allClientsPtr_->at(cliFd).appendToSendBuf(fullMessage.c_str());
+            } catch (std::exception& e) {
+                std::cerr << "channel broadcast - accessing Client map at key: " << cliFd << " failed." << e.what() << std::endl;
+            }
         }
     }
 }
+
 
 bool Channel::isOperator(int fd) const {
     return std::find(this->operators.begin(), this->operators.end(), fd) != this->operators.end();

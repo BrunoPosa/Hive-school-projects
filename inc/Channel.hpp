@@ -13,18 +13,20 @@ class Channel
         std::string topic;
         std::string pwd;
         std::vector<int> invitedUsers;
-        std::vector<int> clients; // List of client file descriptors in the channel
+        std::vector<int> chClients_; // List of client file descriptors in the channel
         std::vector<int> operators; // List of operator file descriptors in the channel
-
+        
         int userLimit;
-        bool inviteOnly; // i
+        bool inviteOnly_; // i
         bool topicRestrictedToOperators;  // t
+        std::map<int, Client>* allClientsPtr_;
 
     public:
-        ~Channel();
-        Channel();
-        Channel(const std::string &name);
+        Channel() = default;
+        Channel(std::map<int, Client>* ptrToAllClients);
+        Channel(const std::string &name, std::map<int, Client>* ptrToAllClients);
         Channel(const Channel &other);
+        ~Channel();
 
         Channel &operator=(const Channel &src);
 
@@ -53,5 +55,5 @@ class Channel
         void setTopic(const std::string& newTopic);
         void addClient(int fd); // Add a client to the channel
         void removeClient(int fd); // Remove a client from the channel
-        void broadcast(int sender_fd, const std::string& message, const std::string& sender_nick, int except_fd = -1); // Send a message to all clients in the channel except the sender
+        void broadcast(const std::string& message, const std::string& sender_nick, int except_fd = -1); // Send a message to all clients in the channel except the sender
 };
