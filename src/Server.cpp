@@ -1,19 +1,16 @@
 #include "../inc/irc.hpp"
 
 // Default constructor
-Server::Server() : port_(0), password_(""), serverFd_(-1) {
+Server::Server() : cnfg_{}, serverFd_{} {
 	// Initialize default values
 }
 // Parameterized constructor
-Server::Server(const int port, const std::string& password) : port_(port), password_(password), serverFd_(-1) {
+Server::Server(Config&& configuration) : cnfg_{std::move(configuration)}, serverFd_{} {
 	// Initialize with provided values
 }
 // Destructor
 Server::~Server() {
 	// Cleanup resources if needed
-	if (serverFd_ != -1) {
-		close(serverFd_);
-	}
 }
 
 void Server::sendWelcome(int fd) {
@@ -40,34 +37,11 @@ void Server::run() {
 	mainLoop(); // Start the main loop
 }
 void Server::setupServer() {
-	serverFd_ = socket(AF_INET, SOCK_STREAM, 0);
-	if (serverFd_ < 0) {
-		throw std::runtime_error("Failed to create socket: " + std::string(strerror(errno)));
-	}
-	// Set socket to non-blocking
-	int flags = fcntl(serverFd_, F_GETFL, 0);
-	fcntl(serverFd_, F_SETFL, flags | O_NONBLOCK);
-
-	sockaddr_in serverAddr;
-	memset(&serverAddr, 0, sizeof(serverAddr));
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_addr.s_addr = INADDR_ANY;
-	serverAddr.sin_port = htons(port_);
-
-	if (bind(serverFd_, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
-		close(serverFd_);
-		throw std::runtime_error("Failed to bind socket: " + std::string(strerror(errno)));
-	}
-
-	if (listen(serverFd_, 5) < 0) {
-		close(serverFd_);
-		throw std::runtime_error("Failed to listen on socket: " + std::string(strerror(errno)));
-	}
-
+    serverFd_.makeListener(cnfg_.getPort());// Socket wrapper to bind+listen+non-blocking
 	// Initialize pollFds_ with server socket
 	pollFds_.clear();
-	pollFds_.push_back((pollfd){serverFd_, POLLIN, 0});
-	std::cout << "Server setup complete on port " << port_ << std::endl;
+	pollFds_.push_back((pollfd){serverFd_.getFd(), POLLIN, 0});
+	std::cout << "Server setup complete on port " << cnfg_.getPort() << std::endl;
 }
 void Server::mainLoop() {
 	std::cout << "Entering main loop with " << pollFds_.size() << " file descriptors" << std::endl;
@@ -88,7 +62,7 @@ void Server::mainLoop() {
 		// Check all file descriptors, not just server socket
 		for (size_t i = 0; i < pollFds_.size(); i++) {
 			if (pollFds_[i].revents & POLLIN) {
-				if (i == 0) { // Server socket
+				if (pollFds_.at(i).fd == serverFd_.getFd()) { // Server socket
 					acceptNewConnection();
 				}
 				else { // Client socket
@@ -97,44 +71,55 @@ void Server::mainLoop() {
 			}
 			if (pollFds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
 				std::cerr << "Error condition on fd " << pollFds_[i].fd << std::endl;
-				close(pollFds_[i].fd);
 				pollFds_.erase(pollFds_.begin() + i);
+				sockets_.erase(pollFds_.at(i).fd);
 				i--; // Adjust index after erase
 			}
 		}
 	}
 }
 void Server::acceptNewConnection() {
-	sockaddr_in clientAddr;
-	socklen_t clientAddrLen = sizeof(clientAddr);
-	int clientFd = accept(serverFd_, (struct sockaddr*)&clientAddr, &clientAddrLen);
-	
-	if (clientFd < 0) {
-		if (errno == EWOULDBLOCK || errno == EAGAIN) {
-			// No pending connections available right now
-			std::cout << "accept() would block" << std::endl;
-		} else {
-			std::cerr << "accept() error: " << strerror(errno) << std::endl;
+	Socket	clientSock;
+	while (serverFd_.accept(clientSock) == false) { //can be while(maxRetries_ private const) or similar
+		switch (errno)
+		{
+			case EINTR:
+				continue;
+			#if EAGAIN != EWOULDBLOCK
+			case EAGAIN:
+			#endif
+			case EWOULDBLOCK:
+			case ECONNABORTED:
+			case ENETDOWN:
+			case EPROTO:
+			case ENOPROTOOPT:
+			case EHOSTDOWN:
+			case ENONET:
+			case EHOSTUNREACH:
+			case EOPNOTSUPP:
+			case ENETUNREACH:
+				return;
+			default:
+				throw std::system_error(errno, std::generic_category(), "accept() failed");// Fatal errors
 		}
-		return;
-	}
-
-	// Set client socket to non-blocking
-	int flags = fcntl(clientFd, F_GETFL, 0);
-	fcntl(clientFd, F_SETFL, flags | O_NONBLOCK);
+	};
+	int		clientFd   = clientSock.getFd();
 
 	std::cout << "Accepted new connection from " 
-			  << inet_ntoa(clientAddr.sin_addr) << ":"
-			  << ntohs(clientAddr.sin_port) 
+			  << inet_ntoa(clientSock.getAddr().sin_addr) << ":"
+			  << ntohs(clientSock.getAddr().sin_port) 
 			  << " (FD: " << clientFd << ")" << std::endl;
 
 	pollFds_.push_back((pollfd){clientFd, POLLIN | POLLOUT, 0});
-	
+	sockets_.emplace(clientFd, std::move(clientSock));
+
 	// Send welcome message
 	std::string welcome = "Welcome to ft_irc!\nPlease register with NICK and USER\r\n";
 	if (send(clientFd, welcome.c_str(), welcome.size(), 0) < 0) {
 		std::cerr << "send() error: " << strerror(errno) << std::endl;
 	}
+
+
 	// Initialize new client
 	clients_[clientFd] = Client();  // Sets registered=false by default
 	

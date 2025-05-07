@@ -1,35 +1,40 @@
 NAME        = ircserv
-FSANITNAME    = ircFsan
-VALGRNAME    = ircVal
+FSANITNAME    = $(NAME)Fsan
+VALGRNAME    = $(NAME)Val
 
 CXX            = c++
-FLAGS        = -std=c++20 -Wall -Wextra -Werror #-O3
+FLAGS        = -std=c++17 -Wall -Wextra -Werror #-O3 #-DNDEBUG
+FLAGS        = -std=c++17 -Wall -Wextra -Werror #-O3 #-DNDEBUG
 DEBUGFLAGS    = -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
 VALGRFLAGS    = -Wpedantic -Wshadow -g -O0
 RM            = rm -rf
 
 
+INCDIR		= inc/
+HEADERS    =    $(INCDIR)irc.hpp \
+				$(INCDIR)error.hpp \
+				$(INCDIR)Client.hpp \
+				$(INCDIR)Channel.hpp \
+				$(INCDIR)Socket.hpp \
+				$(INCDIR)Config.hpp \
 
-HEADERS    =    inc/irc.hpp \
-				inc/error.hpp \
-				inc/Client.hpp \
-				inc/Channel.hpp 
-
-SRCS    =    src/main.cpp \
-			 src/ArgCheck.cpp \
-			 src/Channel.cpp \
-			 src/Client.cpp \
-			 src/Error.cpp \
-			 src/ProcessCmd.cpp \
-			 src/Server.cpp \
-			 src/cmd/Join.cpp \
-			 src/cmd/Kick.cpp \
-			 src/cmd/Mode.cpp \
-			 src/cmd/Nick.cpp \
-			 src/cmd/Ping.cpp \
-			 src/cmd/PrivMsg.cpp \
-			 src/cmd/Topic.cpp \
-			 src/cmd/User.cpp 
+SRCDIR	= 	src/
+SRCS    =    $(SRCDIR)main.cpp \
+			 $(SRCDIR)Config.cpp \
+			 $(SRCDIR)Socket.cpp \
+			 $(SRCDIR)Channel.cpp \
+			 $(SRCDIR)Client.cpp \
+			 $(SRCDIR)Error.cpp \
+			 $(SRCDIR)ProcessCmd.cpp \
+			 $(SRCDIR)Server.cpp \
+			 $(SRCDIR)cmd/Join.cpp \
+			 $(SRCDIR)cmd/Kick.cpp \
+			 $(SRCDIR)cmd/Mode.cpp \
+			 $(SRCDIR)cmd/Nick.cpp \
+			 $(SRCDIR)cmd/Ping.cpp \
+			 $(SRCDIR)cmd/PrivMsg.cpp \
+			 $(SRCDIR)cmd/Topic.cpp \
+			 $(SRCDIR)cmd/User.cpp 
 
 
 
@@ -52,12 +57,14 @@ re: fclean all
 fs: fclean
 	echo ########################################################
 	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o $(FSANITNAME) $(SRCS)
-	./$(FSANITNAME) 'c'
+	./$(FSANITNAME)
+	./$(FSANITNAME)
 
 val: fclean
 	echo ########################################################
 	$(CXX) $(FLAGS) $(VALGRFLAGS) -o $(VALGRNAME) $(SRCS)
-	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME) 'c'
+	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME)
 
 git: fclean
 	clear
@@ -72,3 +79,4 @@ git: fclean
 
 
 .PHONY: all clean fclean re fs val git
+
