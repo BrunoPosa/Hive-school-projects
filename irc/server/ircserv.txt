@@ -140,6 +140,31 @@ you don’t want to copy, you want to transfer the ownership, like in this case:
 vec.push_back(Socket()); // Here, a temporary Socket is created and moved into the vector```
 
 
+-cornerstone of nonblocking I/O via multiplexing is that a single socket via poll system allows notifying when it's ready for writing and reading and those are mutually nonexclusive - they can happen asynchronously.
+-So we send() when the socket is ready for the POLLOUT operation, and there is data in the send buffer to be sent.
+-We recv() when there is a POLLIN event from the socket, but because a recv() call may not give us the full command at once (irc line, ending in "\r\n"), we need to accumulate data and append any received bytes into the readBuffer. Once the end of the command is detected, parse it - and carefully leave any incomplete message in the buffer for the next read. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 https://www.scottklement.com/rpg/socktut/nonblocking.html:
 ```
@@ -214,3 +239,361 @@ The "non-blocking" mode is set by changing one of the socket's "flags". The flag
   mouse movements).
 
 [an error occurred while processing this directive]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================== 
+Send/Recv a la Copilot: https://copilot.microsoft.com/shares/MjeewSVRy6k7spppxTpCj
+==================
+
+Below is an approach you can adopt that keeps your nonblocking, poll-driven architecture robust, modular, and maintainable:
+
+---
+
+### Use Per-Client Buffers
+
+**Why?**  
+Because nonblocking sockets almost always return less-than‑expected amounts of data (or even none) when you try to send or receive messages, each client should maintain two buffers: one for incoming data (a read buffer) and one for outgoing data (a write buffer). This lets you accumulate incoming fragments until you have a complete message (for example, until you detect the IRC-standard “\r\n” line ending), and it lets you queue up outgoing data if a send call only writes part of your intended message.
+
+**How?**  
+Each `Client` object might include data members like:
+
+```cpp
+class Client {
+public:
+    int socket;
+    std::string readBuffer;  // Stores fragments of inbound commands.
+    std::string writeBuffer; // Stores unsent outbound messages.
+    // Additional client info (nicknames, state, etc.)
+};
+```
+
+---
+
+### Reading Data (recv)
+
+1. **Polling for POLLIN:**  
+   In your main poll loop, when a client’s file descriptor is flagged with `POLLIN`, you should call `recv()` in a loop until you get `EAGAIN` or `EWOULDBLOCK`. This way, even if there’s more than one message in the socket’s buffer, you won’t miss any.
+
+2. **Accumulate Data:**  
+   Append any received bytes into the client’s `readBuffer`. Once you detect a full line (typically ending with “\r\n” in IRC protocol), parse out the command and process it. Be careful to leave any incomplete message in the buffer for the next read.
+
+3. **Handle Disconnects and Errors:**  
+   If `recv()` returns 0, the client has disconnected. If it returns -1 with an error other than `EAGAIN` or `EWOULDBLOCK`, then handle the error appropriately (e.g., log the issue and close the connection).
+
+**Example:**
+
+```cpp
+void handleClientRead(Client &client) {
+    char buf[4096];
+    ssize_t bytesRead = recv(client.socket, buf, sizeof(buf), 0);
+    if (bytesRead > 0) {
+        client.readBuffer.append(buf, bytesRead);
+        // Process complete messages (e.g., look for "\r\n")
+        size_t pos;
+        while ((pos = client.readBuffer.find("\r\n")) != std::string::npos) {
+            std::string message = client.readBuffer.substr(0, pos);
+            client.readBuffer.erase(0, pos + 2);
+            // Process the command/message
+        }
+    } else if (bytesRead == 0) {
+        // Client disconnected gracefully.
+        close(client.socket);
+        // Remove client from clients map, cleanup, etc.
+    } else {
+        if (errno != EAGAIN && errno != EWOULDBLOCK) {
+            // Log error and close connection if required.
+        }
+    }
+}
+```
+
+---
+
+### Writing Data (send)
+
+1. **Queue Outgoing Data:**  
+   Whenever you need to send a message (like the welcome message or a broadcast to channel members), append the message to the client’s `writeBuffer`. For instance, immediately after accepting a new client, you might do:
+
+   ```cpp
+   client.writeBuffer += "Welcome to IRC, " + client.nickname + "\r\n";
+   ```
+
+2. **Watch for POLLOUT:**  
+   In your poll loop, if a socket is flagged with `POLLOUT` (or if you know there’s data waiting in the `writeBuffer`), call `send()` to flush as many bytes as possible. Because `send()` may only send part of the data, always adjust (or remove) the sent portion from your buffer.
+
+3. **Handle Partial Sends:**  
+   If `send()` returns a value less than the size of your buffer, keep the remaining data. If it returns `-1` with `errno == EAGAIN` or `EWOULDBLOCK`, wait until the poll indicates the socket is writable again.
+
+**Example:**
+
+```cpp
+void handleClientWrite(Client &client) {
+    if (client.writeBuffer.empty())
+        return;
+
+    ssize_t sent = send(client.socket, client.writeBuffer.data(), client.writeBuffer.size(), 0);
+    if (sent > 0) {
+        client.writeBuffer.erase(0, sent);
+    } else if (sent == -1 && errno != EAGAIN && errno != EWOULDBLOCK) {
+        // Handle error (log it and close the connection if necessary)
+        close(client.socket);
+    }
+}
+```
+
+Don’t forget to update your `pollfd` structure for the client’s socket. If there is data in `writeBuffer`, ensure you’re monitoring for `POLLOUT` events. When the buffer is empty, you can remove `POLLOUT` from the events mask.
+
+---
+
+### Broadcasting Messages to Channel Members
+
+When a message is sent in a channel:
+
+1. **Iterate Over Channel's Clients:**  
+   Use your channels vector (or however you track memberships) to iterate through the connected clients.
+
+2. **Queue the Message:**  
+   For each client (except maybe the originating client, if needed), append the message to their `writeBuffer`.
+
+3. **Trigger Writing:**  
+   Make sure that relevant sockets are added with the `POLLOUT` flag if they already aren’t.
+
+**Pseudo-code Example:**
+
+```cpp
+void broadcastToChannel(const Channel &channel, const std::string &message) {
+    for (Client* client : channel.clients) {
+        client->writeBuffer += message + "\r\n";
+        // Ensure that the poll event for this client's socket includes POLLOUT.
+    }
+}
+```
+
+---
+
+### Error Handling and Robustness
+
+- **Nonblocking Semantics:**  
+  Always be prepared for a `send()` to return `EAGAIN` or `recv()` to return `EWOULDBLOCK`. Your design with buffers handles this cleanly.
+
+- **Partial Data:**  
+  Since partial reads/writes are common, never assume that a complete message will be processed in one call. Gradually build and then parse your buffers.
+
+- **Poll Maintenance:**  
+  Update your `pollfd` array after any change in the client’s state (e.g., adding or removing `POLLOUT` when you write to a client or finish a send operation).
+
+- **Resource Cleanup:**  
+  Always clean up sockets and remove clients from your maps/vectors when a socket disconnects or encounters an unrecoverable error.
+
+---
+
+### Summing Up
+
+The key to a robust implementation in your ft_irc server is managing state effectively:
+- **Per-Client Buffers:** Use these to avoid losing data when partial sends/receives occur.
+- **Event-Driven I/O:** Leverage poll’s event notifications to know exactly when to read or write, ensuring nonblocking operations work seamlessly.
+- **Graceful Error Handling:** Check return values from `send()` and `recv()`, handle partial transfers, and act on errors in a predictable way.
+- **Structured Broadcasts:** When sending channel messages or welcome messages, queue them in the proper output buffers and ensure poll monitors these sockets for writability.
+
+By following this pattern, you’ll find your server both efficient and resilient, capable of handling simultaneous clients and commands gracefully.
+
+---
+
+### Further Considerations
+
+- **Advanced I/O Libraries:**  
+  If your project scope permits in the future, consider integrating an advanced event-driven library (like Boost.Asio or libuv). These libraries abstract some of these low-level details while still maintaining nonblocking behavior and efficient event management.
+
+- **Protocol Parsing:**  
+  As IRC protocols can get complex, ensure your command parser robustly handles edge cases and malformed inputs. Consider state machines for parsing commands that span multiple reads.
+
+- **Performance:**  
+  Nonblocking I/O and poll work well, but as your user base grows, you might explore more scalable event models like epoll (on Linux) or kqueue (on BSD/Mac) for further performance improvements.
+
+Now that you have a solid blueprint, what parts of the implementation or design do you see as the most challenging? Would you like to see more code samples or dive deeper into any specific aspect?
+
+
+
+#include <poll.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <errno.h>
+#include <cstring>
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+
+// Basic client struct with per-socket buffers.
+struct Client {
+    int sockfd;
+    std::string readBuffer;
+    std::string writeBuffer;
+    // Additional client-related info could go here.
+};
+
+// Global data structure storing clients by socket descriptor.
+std::map<int, Client*> clients;
+
+// The pollfd vector that you'll update each iteration.
+std::vector<struct pollfd> pollfds;
+
+// Refresh the pollfds array to include each client's current events.
+// Notice that if a client's writeBuffer is non-empty, the POLLOUT event is added.
+void refreshPollfds() {
+    pollfds.clear();
+    for (auto& pair : clients) {
+        int fd = pair.first;
+        Client* client = pair.second;
+        struct pollfd pfd;
+        pfd.fd = fd;
+        pfd.events = POLLIN; // Always want to read.
+        if (!client->writeBuffer.empty())
+            pfd.events |= POLLOUT; // Add POLLOUT if there's pending outgoing data.
+        pfd.revents = 0;
+        pollfds.push_back(pfd);
+    }
+}
+
+// Handle reading from a client socket when POLLIN is set.
+void handleClientRead(Client* client) {
+    char buf[4096];
+    ssize_t bytes = recv(client->sockfd, buf, sizeof(buf), 0);
+    if (bytes > 0) {
+        // Append to the client's read buffer.
+        client->readBuffer.append(buf, bytes);
+        // Process complete messages if a full command is received. For IRC, you might use "\r\n".
+        size_t pos;
+        while ((pos = client->readBuffer.find("\r\n")) != std::string::npos) {
+            std::string message = client->readBuffer.substr(0, pos);
+            client->readBuffer.erase(0, pos + 2);
+            // Process the IRC command/message.
+            std::cout << "Received message: " << message << std::endl;
+        }
+    } else if (bytes == 0) {
+        // A return of 0 means the client disconnected.
+        std::cout << "Client disconnected (read 0 bytes)" << std::endl;
+        close(client->sockfd);
+        delete client;
+        clients.erase(client->sockfd);
+    } else {
+        // An error occurred.
+        if (errno != EAGAIN && errno != EWOULDBLOCK) {
+            std::cerr << "recv error on fd " << client->sockfd
+                      << ": " << strerror(errno) << std::endl;
+            close(client->sockfd);
+            delete client;
+            clients.erase(client->sockfd);
+        }
+    }
+}
+
+// Handle writing pending data to a client socket when POLLOUT is set.
+void handleClientWrite(Client* client) {
+    if (client->writeBuffer.empty())
+        return;
+
+    ssize_t sent = send(client->sockfd, client->writeBuffer.data(), client->writeBuffer.size(), 0);
+    if (sent > 0) {
+        // Remove sent data from the buffer.
+        client->writeBuffer.erase(0, sent);
+    } else if (sent == -1 && errno != EAGAIN && errno != EWOULDBLOCK) {
+        std::cerr << "send error on fd " << client->sockfd
+                  << ": " << strerror(errno) << std::endl;
+        close(client->sockfd);
+        delete client;
+        clients.erase(client->sockfd);
+    }
+}
+
+int main() {
+    // Set up your listening socket and accept connections into the `clients` map.
+    // For this example, assume clients get added to 'clients' as they connect.
+
+    const int timeout = 1000;  // Timeout in milliseconds.
+    while (true) {
+        // Update pollfds based on the current clients and their buffer states.
+        refreshPollfds();
+
+        int ready = poll(pollfds.data(), pollfds.size(), timeout);
+        if (ready < 0) {
+            perror("poll");
+            break;
+        }
+
+        for (auto& pfd : pollfds) {
+            // Handle errors. POLLERR, POLLHUP, or POLLNVAL indicate issues.
+            if (pfd.revents & (POLLERR | POLLHUP | POLLNVAL)) {
+                std::cerr << "Error on socket " << pfd.fd << std::endl;
+                if (clients.find(pfd.fd) != clients.end()) {
+                    close(pfd.fd);
+                    delete clients[pfd.fd];
+                    clients.erase(pfd.fd);
+                }
+                continue;
+            }
+
+            // Retrieve the client reference based on the file descriptor.
+            auto it = clients.find(pfd.fd);
+            if (it == clients.end())
+                continue;
+            Client* client = it->second;
+
+            // If the socket is flagged as ready for reading, process incoming data.
+            if (pfd.revents & POLLIN)
+                handleClientRead(client);
+
+            // If the socket is flagged as ready for writing, flush outgoing data.
+            if (pfd.revents & POLLOUT)
+                handleClientWrite(client);
+        }
+
+        // Additional activities may take place here,
+        // such as managing new connections, handling timeouts, etc.
+    }
+
+    // Cleanup remaining clients.
+    for(auto& pair : clients) {
+        close(pair.second->sockfd);
+        delete pair.second;
+    }
+    return 0;
+}
+
