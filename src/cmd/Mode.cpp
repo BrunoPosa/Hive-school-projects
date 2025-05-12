@@ -33,32 +33,70 @@ void Server::cmdMode(int fd, const std::string& message) {
         return;
     }
 
-    // Example: +o nick
-    if (modeStr == "+o") {
-        if (param.empty()) {
-            ft_send(fd, ERR_NEEDMOREPARAMS);
-            return;
-        }
-
-        // Find client by nickname
-        int targetFd = -1;
-        for (std::map<int, Client>::iterator it = clients_.begin(); it != clients_.end(); ++it) {
-            if (it->second.getNick() == param) {
-                targetFd = it->first;
-                break;
+    // Example: +
+    if (modeStr[0] == '+') {
+        if (modeStr == "+i") {
+            channel.setInviteOnly(true);
+            std::clog << "Debug: Invite-only mode set" << std::endl;
+            std::clog << channel.getInviteOnly() << std::endl;
+            ft_send(fd, RPL_MODESET(target, "+i"));
+        } else if (modeStr == "+t") {
+            channel.setTopicRestrictedToOperators(true);
+            ft_send(fd, RPL_MODESET(target, "+t"));
+        } else if (modeStr == "+k") {
+            if (param.empty()) {
+                ft_send(fd, ERR_NEEDMOREPARAMS);
+                return;
             }
+            channel.setPassword(param);
+            ft_send(fd, RPL_MODESET(target, "+k " + param));
+        } else if (modeStr == "+o") {
+            int targetFd = channel.getClientFdByNick(param, clients_);
+            if (targetFd == -1) {
+                ft_send(fd, ERR_NOSUCHNICK(param));
+                return;
+            }
+            channel.addOperator(targetFd);
+            ft_send(fd, RPL_MODESET(target, "+o " + param));
+        } else if (modeStr == "+l") {
+            int limit = std::stoi(param);
+            channel.setUserLimit(limit);
+            ft_send(fd, RPL_MODESET(target, "+l " + param));
+        } else {
+            ft_send(fd, ERR_UNKNOWNMODE(modeStr));
         }
-
-        if (targetFd == -1 || !channel.hasClient(targetFd)) {
-            ft_send(fd, ERR_USERNOTINCHANNEL(param, target));
-            return;
-        }
-
-        channel.addOperator(targetFd);
-        std::string msg = ":" + clients_[fd].getNick() + " MODE " + target + " +o " + param + "\r\n";
-        channel.broadcast(fd, msg, clients_[fd].getNick());
     }
-    else {
+    // Example: -
+    else if (modeStr[0] == '-') {
+        if (modeStr == "-i") {
+            channel.setInviteOnly(false);
+            ft_send(fd, RPL_MODESET(target, "-i"));
+        } else if (modeStr == "-t") {
+            channel.setTopicRestrictedToOperators(false);
+            ft_send(fd, RPL_MODESET(target, "-t"));
+        } else if (modeStr == "-k") {
+            channel.setPassword("");
+            ft_send(fd, RPL_MODESET(target, "-k"));
+        } else if (modeStr == "-o") {
+            int targetFd = channel.getClientFdByNick(param, clients_);
+            if (targetFd == -1) {
+                ft_send(fd, ERR_NOSUCHNICK(param));
+                return;
+            }
+            channel.removeOperator(targetFd);
+            ft_send(fd, RPL_MODESET(target, "-o " + param));
+        } else if (modeStr == "-l") {
+            if (param.empty()) {
+                ft_send(fd, ERR_NEEDMOREPARAMS);
+                return;
+        }
+        } else if (modeStr == "-l") {
+            channel.setUserLimit(-1); // Remove user limit
+            ft_send(fd, RPL_MODESET(target, "-l"));
+        } else {
+            ft_send(fd, ERR_UNKNOWNMODE(modeStr));
+        }
+    } else {
         ft_send(fd, ERR_UNKNOWNMODE(modeStr));
     }
 }

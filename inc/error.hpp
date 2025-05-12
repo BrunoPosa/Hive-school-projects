@@ -44,3 +44,5 @@ void ft_send(int fd, const std::string& message);
 
 // KICK
 #define ERR_USERNOTINCHANNEL(nick, chan) (":localhost 441 " + nick + " " + chan + " :They aren't on that channel\r\n")
+
+#define RPL_MODESET(chan, mode) (":localhost 324 " + chan + " " + mode + "\r\n")

@@ -7,27 +7,34 @@ void Server::cmdJoin(int fd, const std::string& message) {
     iss >> command >> channel;
 
     if (channel.empty()) {
-        std::string errMsg = ERR_NEEDMOREPARAMS;
-        ft_send(fd, errMsg);
+        ft_send(fd, ERR_NEEDMOREPARAMS);
         return;
     }
 
+    // If channel doesn't exist, create and auto-op
     if (channels_.find(channel) == channels_.end()) {
-        channels_[channel] = Channel(channel); // Create a new channel if it doesn't exist
-        channels_[channel].addOperator(fd); // Add the client as an operator in the new channel
+        channels_[channel] = Channel(channel);
+        channels_[channel].addOperator(fd);
+    } else {
+        // If invite-only and not invited, reject
+        if (channels_[channel].getInviteOnly() && !channels_[channel].getIsUserInvited(fd)) {
+            ft_send(fd, ERR_CHANOPRIVSNEEDED(channel));
+            return;
+        }
+
+        // Already in the channel?
+        if (clients_[fd].isInChannel(channel)) {
+            ft_send(fd, ERR_USERONCHANNEL(channel));
+            return;
+        }
     }
 
-    if (clients_[fd].isInChannel(channel)) {
-        std::string errMsg = ERR_USERONCHANNEL(channel);
-        ft_send(fd, errMsg);
-        return;
-    }
+    // Passed all checks — join
+    std::cerr << "Client " << clients_[fd].getNick() << " joined channel: " << channel << std::endl;
+    clients_[fd].joinChannel(channel, false);
+    channels_[channel].addClient(fd);
 
-    clients_[fd].joinChannel(channel, false); // Your client-side method
-    channels_[channel].addClient(fd);         // Add to channel list
-
-    // Notify all users in the channel (except the one joining)
     std::string joinMessage = ":" + clients_[fd].getNick() + " JOIN :" + channel + "\r\n";
-    channels_[channel].broadcast(fd, joinMessage, clients_[fd].getNick(), -1); // Send to all
+    channels_[channel].broadcast(fd, joinMessage, clients_[fd].getNick(), -1);
 }
 
