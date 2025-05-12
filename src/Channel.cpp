@@ -64,6 +64,10 @@ bool Channel::getTopicRestricted() const
     return this->topicRestrictedToOperators;
 }
 
+bool Channel::hasClient(int fd) const {
+    return std::find(clients.begin(), clients.end(), fd) != clients.end();
+}
+
 // In Channel.cpp
 int Channel::getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const {
     for (std::map<int, Client>::const_iterator it = clients.begin(); it != clients.end(); ++it){

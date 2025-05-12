@@ -14,6 +14,7 @@ void Server::cmdJoin(int fd, const std::string& message) {
 
     if (channels_.find(channel) == channels_.end()) {
         channels_[channel] = Channel(channel); // Create a new channel if it doesn't exist
+        channels_[channel].addOperator(fd); // Add the client as an operator in the new channel
     }
 
     if (clients_[fd].isInChannel(channel)) {

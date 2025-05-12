@@ -40,6 +40,7 @@ class Channel
         bool getIsUserInvited(const int& fd) const;
         bool getTopicRestricted() const;
         bool isOperator(int fd) const; // Check if a client is an operator in the channel
+        bool hasClient(int fd) const; // Check if a client is in the channel
         
 
         void addOperator(int fd); // Add a client as an operator in the channel

@@ -3,20 +3,18 @@
 // Mode.cpp
 void Server::cmdMode(int fd, const std::string& message) {
     std::istringstream iss(message);
-    std::string command, target, modeStr;
+    std::string command, target, modeStr, param;
+    iss >> command >> target >> modeStr >> param;
 
-    iss >> command >> target >> modeStr;
-
-    std::clog << "Debug: Channel found channelname: " << target << std::endl;
-    std::clog << "Debug: Channel found mode: " << modeStr << std::endl;
+    std::clog << "Debug: Channel: " << target << ", Mode: " << modeStr << ", Param: " << param << std::endl;
 
     if (target.empty() || modeStr.empty()) {
         ft_send(fd, ERR_NEEDMOREPARAMS);
         return;
     }
 
-    // Handle user mode requests (skip for now)
-    if (target == "*" || target[0] != '#') {
+    // Ignore user mode for now
+    if (target[0] != '#') {
         std::clog << "Debug: Ignoring user mode command for now" << std::endl;
         return;
     }
@@ -27,19 +25,40 @@ void Server::cmdMode(int fd, const std::string& message) {
         return;
     }
 
-    // Process the mode string
-    for (size_t i = 0; i < modeStr.size(); ++i) {
-        char mode = modeStr[i];
-        switch (mode) {
-            case '+':
-                std::cerr << "Debug: Adding" << std::endl;
-                break;
-            case '-':
-                std::cerr << "Debug: Removing" << std::endl;
-                break;
-            default:
-                ft_send(fd, ERR_UNKNOWNMODE(std::string(1, mode)));
-                return;
+    Channel& channel = channels_[target];
+
+    // Check if the client is an operator in the channel
+    if (!channel.isOperator(fd)) {
+        ft_send(fd, ERR_CHANOPRIVSNEEDED(target));
+        return;
+    }
+
+    // Example: +o nick
+    if (modeStr == "+o") {
+        if (param.empty()) {
+            ft_send(fd, ERR_NEEDMOREPARAMS);
+            return;
         }
+
+        // Find client by nickname
+        int targetFd = -1;
+        for (std::map<int, Client>::iterator it = clients_.begin(); it != clients_.end(); ++it) {
+            if (it->second.getNick() == param) {
+                targetFd = it->first;
+                break;
+            }
+        }
+
+        if (targetFd == -1 || !channel.hasClient(targetFd)) {
+            ft_send(fd, ERR_USERNOTINCHANNEL(param, target));
+            return;
+        }
+
+        channel.addOperator(targetFd);
+        std::string msg = ":" + clients_[fd].getNick() + " MODE " + target + " +o " + param + "\r\n";
+        channel.broadcast(fd, msg, clients_[fd].getNick());
+    }
+    else {
+        ft_send(fd, ERR_UNKNOWNMODE(modeStr));
     }
 }
