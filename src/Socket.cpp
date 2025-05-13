@@ -97,7 +97,7 @@ bool	Socket::accept(Socket& toSocket) const {
 }
 
 std::string	Socket::getIpStr() const {
-	char ipStr[INET_ADDRSTRLEN];
+	char ipStr[INET_ADDRSTRLEN] = {};
 
 	if (inet_ntop(AF_INET, &addr_.sin_addr, ipStr, INET_ADDRSTRLEN) == nullptr) {
 		std::cerr << "inet_ntop error: " << strerror(errno) << std::endl;

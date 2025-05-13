@@ -35,20 +35,16 @@ void	Config::validate_() {
 
 bool Config::isValidPort_() {
 	if (portStr_.empty() || portStr_.at(0) == '0') {
-		return false; // Port cannot start with '0'
+		return false;
 	}
 	if (portStr_.find_first_not_of("0123456789") != std::string::npos) {
-		return false; // Not a valid integer
+		return false;
 	}
 	try {
-		int port = std::stoi(portStr_.data()); // Convert string to int
-		return (port >= 1024 && port <= 65535); // Check if port is in valid range
-	} catch (const std::invalid_argument& e) {
-		return false; // Not a valid integer
-	} catch (const std::out_of_range& e) {
-		return false; // Out of range for int
+		int port = std::stoi(portStr_.data());
+		return (port >= 1024 && port <= 65535);
 	} catch (std::exception&) {
-		return false; // Catch any other exceptions
+		return false;
 	}
 }
 

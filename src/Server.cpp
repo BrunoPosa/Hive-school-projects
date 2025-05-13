@@ -1,17 +1,6 @@
 #include "../inc/Server.hpp"
 
-// Default constructor
-Server::Server() : cnfg_{}, serverFd_{} {
-	// Initialize default values
-}
-// Parameterized constructor
-Server::Server(Config&& configuration) : cnfg_{std::move(configuration)}, serverFd_{} {
-	// Initialize with provided values
-}
-// Destructor
-Server::~Server() {
-	// Cleanup resources if needed
-}
+Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listener_{} {}
 
 void Server::ft_send(int fd, const std::string& message) {
 	try {
@@ -43,17 +32,15 @@ void Server::checkRegistration(int fd) {
 }
 
 void Server::run() {
-	std::cout << "Starting server..." << std::endl; // Debug output
-	setupServer(); // Set up the server
-	mainLoop(); // Start the main loop
-}
-void Server::setupServer() {
-	serverFd_.makeListener(cnfg_.getPort());// Socket wrapper to bind+listen+non-blocking
-	// Initialize pollFds_ with server socket
+	std::cout << "Starting server..." << std::endl;
+	listener_.makeListener(cfg_.getPort());// Socket wrapper to bind+listen+non-blocking
+
 	pollFds_.clear();
-	pollFds_.push_back({serverFd_.getFd(), POLLIN, 0});
-	std::cout << "Server setup complete on port " << cnfg_.getPort() << std::endl;//add IP address
+	pollFds_.push_back({listener_.getFd(), POLLIN, 0});
+	std::cout << "Server setup complete on port " << cfg_.getPort() << std::endl;//add IP address
+	mainLoop();
 }
+
 void Server::mainLoop() {
 	std::cout << "Entering main loop with " << pollFds_.size() << " file descriptors" << std::endl;
 	
@@ -68,10 +55,7 @@ void Server::mainLoop() {
 			std::cerr << "poll() timeout (shouldn't happen with infinite timeout)" << std::endl;
 			continue;
 		}
-		
-		// Check all file descriptors, not just server socket
-		//Fix iteration through this loop so when an FD is erased -
-		//e.g. during send/recv() - the loop indexes continue correctly, and try optimizing performance
+
 		int fd = 0;
 		for (unsigned long i = pollFds_.size(); i-- > 0;) {
 			fd = pollFds_.at(i).fd;
@@ -82,7 +66,7 @@ void Server::mainLoop() {
 				continue;
 			}
 			if (pollFds_[i].revents & POLLIN) {
-				if (fd == serverFd_.getFd()) {
+				if (fd == listener_.getFd()) {
 					acceptNewConnection();
 				} else {
 					if (clients_.at(fd).receiveAndProcess(this) == false) {
@@ -102,36 +86,24 @@ void Server::mainLoop() {
 
 void Server::acceptNewConnection() {
 	Socket	clientSock;
-	while (serverFd_.accept(clientSock) == false) { //can be while(maxRetries_ private const) or similar
-		switch (errno)
-		{
-			case EINTR:
-				continue;
-			#if EAGAIN != EWOULDBLOCK
-			case EAGAIN:
-			#endif
-			case EWOULDBLOCK:
-			case ECONNABORTED:
-			case ENETDOWN:
-			case EPROTO:
-			case ENOPROTOOPT:
-			case EHOSTDOWN:
-			case ENONET:
-			case EHOSTUNREACH:
-			case EOPNOTSUPP:
-			case ENETUNREACH:
-				return;
-			default:
-				throw std::system_error(errno, std::generic_category(), "accept() failed");// Fatal errors
+	int		retries = 0;
+
+	while (listener_.accept(clientSock) == false) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			return;
+		} else if (retries++ == maxRetries_) {
+			std::cerr << "Accept4 failed:" << strerror(errno) << "for max " << maxRetries_ << " times." << std::endl;
+			return;
+		} else {//EINTR and any transient or permanent error -> we log and retry up to maxRetries_ times
+			std::cerr << "Accept4 failed:" << strerror(errno) << std::endl;
 		}
-	};
+	}
 
 	std::cout << "Accepted new connection from " 
 			  << clientSock.getIpStr() << ":"
 			  << ntohs(clientSock.getAddr().sin_port) 
 			  << " (FD: " << clientSock.getFd() << ")" << std::endl;
 
-	// Initialize new client
 	addClient(clientSock);
 }
 
@@ -177,7 +149,7 @@ void Server::addClient(Socket& sock) {
 	}
 
 	// Send welcome message
-	std::string welcome = "Welcome to " + cnfg_.getServName() + "!\nPlease register with NICK and USER\r\n";
+	std::string welcome = "Welcome to " + cfg_.getServName() + "!\nPlease register with NICK and USER\r\n";
 	ft_send(fd, welcome.c_str());
 
 	// Send initial MOTD (makes irssi happy)

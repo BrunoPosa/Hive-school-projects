@@ -19,7 +19,6 @@
  * On construction, creates a socket and sets it non‑blocking.
  * Closes on destruction.
  * Throws on failures.
- * Throws on failures.
  */
  class Socket {
 	int			fd_;
@@ -42,7 +41,6 @@ public:
 	sockaddr_in getAddr() const noexcept {return addr_;}
 	std::string	getIpStr() const;
 	bool		isListener() const noexcept {return isListening_;}
-	//add getter for IPaddress string
 };
 
 #endif
