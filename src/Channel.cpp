@@ -1,4 +1,4 @@
-#include "../inc/irc.hpp"
+#include "../inc/Server.hpp"
 
 Channel::Channel(std::map<int, Client>* ptrToAllClients)
 : name(""), topic(""), pwd(""), userLimit(-1), inviteOnly_(false), topicRestrictedToOperators(true), allClientsPtr_(ptrToAllClients) {}

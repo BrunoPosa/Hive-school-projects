@@ -1,4 +1,4 @@
-#include "../inc/irc.hpp"
+#include "../inc/Server.hpp"
 
 // void Server::handleClientError(int errorCode, size_t index) {
 //     struct sockaddr_in clientAddr;

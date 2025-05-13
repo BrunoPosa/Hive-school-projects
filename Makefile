@@ -10,7 +10,7 @@ RM            = rm -rf
 
 
 INCDIR		= inc/
-HEADERS    =    $(INCDIR)irc.hpp \
+HEADERS    =    $(INCDIR)Server.hpp \
 				$(INCDIR)error.hpp \
 				$(INCDIR)Client.hpp \
 				$(INCDIR)Channel.hpp \

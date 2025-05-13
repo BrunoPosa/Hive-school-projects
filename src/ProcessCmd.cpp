@@ -1,4 +1,4 @@
-#include "../inc/irc.hpp"
+#include "../inc/Server.hpp"
 
 //processCommand function to handle incoming commands from clients
 void Server::processCommand(int fd, const std::string& message)

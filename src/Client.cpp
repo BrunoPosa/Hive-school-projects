@@ -1,4 +1,4 @@
-#include "../inc/irc.hpp"
+#include "../inc/Server.hpp"
 
 Client::Client()
 :	so_{},

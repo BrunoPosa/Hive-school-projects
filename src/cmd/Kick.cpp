@@ -1,4 +1,4 @@
-#include "../../inc/irc.hpp"
+#include "../../inc/Server.hpp"
 
 void Server::kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick) {
     Channel& channel = channels_[channelName];

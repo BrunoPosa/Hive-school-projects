@@ -1,4 +1,4 @@
-#include "../../inc/irc.hpp"
+#include "../../inc/Server.hpp"
 
 void Server::cmdNick(int fd, const std::string& message) {
     std::istringstream iss(message);

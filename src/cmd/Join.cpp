@@ -1,4 +1,4 @@
-#include "../../inc/irc.hpp"
+#include "../../inc/Server.hpp"
 
 
 void Server::cmdJoin(int fd, const std::string& message) {

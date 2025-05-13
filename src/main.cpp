@@ -1,4 +1,4 @@
-#include "../inc/irc.hpp"
+#include "../inc/Server.hpp"
 //irc server
 // ./irc <port> <password>
 int main(int argc, char* argv[]) {

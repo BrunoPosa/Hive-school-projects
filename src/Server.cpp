@@ -1,4 +1,4 @@
-#include "../inc/irc.hpp"
+#include "../inc/Server.hpp"
 
 // Default constructor
 Server::Server() : cnfg_{}, serverFd_{} {

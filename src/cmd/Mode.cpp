@@ -1,4 +1,4 @@
-#include "../../inc/irc.hpp"
+#include "../../inc/Server.hpp"
 
 // Mode.cpp
 void Server::cmdMode(int fd, const std::string& message) {
