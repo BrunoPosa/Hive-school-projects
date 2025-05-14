@@ -122,23 +122,28 @@ bool	Client::receiveAndProcess(Server* server) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
 			return true;
 		} else {
-			std::cerr << "Error with client:" << so_.getIpStr() << " FD: " << so_.getFd() << " send() error: " << strerror(errno) << std::endl;
+			std::cerr << "Error with client:" << so_.getIpStr() << " FD: " << so_.getFd() << " recv() error: " << strerror(errno) << std::endl;
 			return false;
 		}
 	}
 
-	if (recvBuf_.size() + bytesRead > IRC_BUFFER_SIZE) {
-		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
+	try {
+		if (recvBuf_.size() + bytesRead > IRC_BUFFER_SIZE) {
+			std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
+			return false;
+		}
+		recvBuf_.append(buffer, bytesRead);//in case of partial data, Client stores it in recvBuf_ and we add new data to it to get a full message
+		
+		size_t pos = 0;
+		std::string line;
+		while ((pos = recvBuf_.find("\r\n")) != std::string::npos) {	// Split the input by \r\n and process each command
+			line = recvBuf_.substr(0, pos);
+			server->processCommand(so_.getFd(), line);
+			recvBuf_.erase(0, pos + 2); // Move past \r\n
+		}
+	} catch (std::exception& e) {
+		std::cerr << "Processing data failed! Client fd:" << so_.getFd() << std::endl;
 		return false;
-	}
-	recvBuf_.append(buffer, bytesRead);//in case of partial data, Client stores it in recvBuf_ and we add new data to it to get a full message
-	
-	size_t pos = 0;
-	std::string line;
-	while ((pos = recvBuf_.find("\r\n")) != std::string::npos) {	// Split the input by \r\n and process each command
-		line = recvBuf_.substr(0, pos);
-		server->processCommand(so_.getFd(), line);
-		recvBuf_.erase(0, pos + 2); // Move past \r\n
 	}
 	return true;
 }

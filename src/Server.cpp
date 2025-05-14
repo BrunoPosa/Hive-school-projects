@@ -43,28 +43,21 @@ void Server::run() {
 
 void Server::mainLoop() {
 	std::cout << "Entering main loop with " << pollFds_.size() << " file descriptors" << std::endl;
+	int fd = 0;
 	
 	while (true) {
-		int ready = poll(pollFds_.data(), pollFds_.size(), -1);
-		if (ready < 0) {
+		if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
 			std::cerr << "poll() error: " << strerror(errno) << std::endl;
-			if (errno == EINTR) continue;
-			throw std::runtime_error("poll() failed");
-		}
-		else if (ready == 0) {
-			std::cerr << "poll() timeout (shouldn't happen with infinite timeout)" << std::endl;
-			continue;
+			if (errno == EINTR) {
+				continue;
+			} else {
+				throw std::runtime_error("poll() failed");
+			}
 		}
 
-		int fd = 0;
 		for (unsigned long i = pollFds_.size(); i-- > 0;) {
 			fd = pollFds_.at(i).fd;
 
-			if (pollFds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
-				std::cerr << "Error condition on fd " << fd << std::endl;
-				rmClient(i, fd);
-				continue;
-			}
 			if (pollFds_[i].revents & POLLIN) {
 				if (fd == listener_.getFd()) {
 					acceptNewConnection();
@@ -74,6 +67,14 @@ void Server::mainLoop() {
 						continue;
 					}
 				}
+			}
+			if (pollFds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+				std::cerr << "Error revents value: " << pollFds_[i].revents << " on fd " << fd << std::endl;
+				if (fd == listener_.getFd()) {
+					return;
+				}
+				rmClient(i, fd);
+				continue;
 			}
 			if (pollFds_[i].revents & POLLOUT) {
 				if (clients_.at(fd).sendFromBuf() == false) {

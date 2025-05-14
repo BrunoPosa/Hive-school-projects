@@ -11,11 +11,10 @@ int main(int argc, char* argv[]) {
 
 		server.run();
 
-		std::cout << "Server Port: " << server.getPort() << std::endl;
+		std::cout << "Closing server.." << std::endl;
 
 	} catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
-		return 1;
 	}
-	return 0;
+	return 1;
 }
