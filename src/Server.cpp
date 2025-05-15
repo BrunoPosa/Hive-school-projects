@@ -34,8 +34,9 @@ void Server::checkRegistration(int fd) {
 void Server::run() {
 	listener_.makeListener(cfg_.getPort());//bind+listen+non-blocking
 	pollFds_.push_back({listener_.getFd(), POLLIN, 0});
-	std::cout << "Server setup complete on port " << cfg_.getPort()
-		<< "Entering main loop with " << pollFds_.size() << " file descriptors" << std::endl;//add IP address
+	
+	std::cout << "Server starting on port " << cfg_.getPort()
+		<< " with " << pollFds_.size() << " fds" << std::endl;//add IP address
 
 	while (true) {
 		if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
@@ -46,37 +47,30 @@ void Server::run() {
 				throw std::runtime_error("poll() failed");
 			}
 		}
-		reventsHandler();
+		handleAllEvents();
 	}
 }
 
-void Server::reventsHandler() {
-	int fd = 0;
+void Server::handleAllEvents() {
+	pollfd	pfd = {};
 
-	for (unsigned long i = pollFds_.size(); i-- > 0;) {
-		fd = pollFds_.at(i).fd;
+	for (int i = pollFds_.size(); i-- > 0;) {
+		pfd = pollFds_.at(i);
 
-		if (pollFds_[i].revents & POLLIN) {
-			if (fd == listener_.getFd()) {
+		if (POLLIN & pfd.revents) {
+			if (pfd.fd == listener_.getFd()) {
 				acceptNewConnection();
-			} else {
-				if (clients_.at(fd).receiveAndProcess(this) == false) {
-					rmClient(i, fd);
-					continue;
-				}
+			} else if (clients_.at(pfd.fd).receiveAndProcess(this) == false) {
+				rmClient(i, pfd.fd);
+				continue;
 			}
 		}
-		if (pollFds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
-			std::cerr << "Error revents value: " << pollFds_[i].revents << " on fd " << fd << std::endl;
-			if (fd == listener_.getFd()) {
-				return;
-			}
-			rmClient(i, fd);
-			continue;
-		}
-		if (pollFds_[i].revents & POLLOUT) {
-			if (clients_.at(fd).sendFromBuf() == false) {
-				rmClient(i, fd);
+		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
+			std::cerr << "revents error value: " << pfd.revents << " on fd " << pfd.fd << std::endl;
+			rmClient(i, pfd.fd);
+		} else if (POLLOUT & pfd.revents) {
+			if (clients_.at(pfd.fd).sendFromBuf() == false) {
+				rmClient(i, pfd.fd);
 			}
 		}
 	}
