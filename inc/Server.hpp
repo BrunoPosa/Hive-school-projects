@@ -58,7 +58,7 @@ private:
 	const int	maxRetries_ = 10;
 
 	void	ft_send(int fd, const std::string& message);
-	void	mainLoop();
+	void	reventsHandler();
 	void	acceptNewConnection();
 	void	addClient(Socket& sock);
 	void	rmClient(unsigned int rmPollfdIndex, int rmFd);

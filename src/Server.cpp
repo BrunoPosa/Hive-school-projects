@@ -32,19 +32,11 @@ void Server::checkRegistration(int fd) {
 }
 
 void Server::run() {
-	std::cout << "Starting server..." << std::endl;
-	listener_.makeListener(cfg_.getPort());// Socket wrapper to bind+listen+non-blocking
-
-	pollFds_.clear();
+	listener_.makeListener(cfg_.getPort());//bind+listen+non-blocking
 	pollFds_.push_back({listener_.getFd(), POLLIN, 0});
-	std::cout << "Server setup complete on port " << cfg_.getPort() << std::endl;//add IP address
-	mainLoop();
-}
+	std::cout << "Server setup complete on port " << cfg_.getPort()
+		<< "Entering main loop with " << pollFds_.size() << " file descriptors" << std::endl;//add IP address
 
-void Server::mainLoop() {
-	std::cout << "Entering main loop with " << pollFds_.size() << " file descriptors" << std::endl;
-	int fd = 0;
-	
 	while (true) {
 		if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
 			std::cerr << "poll() error: " << strerror(errno) << std::endl;
@@ -54,32 +46,37 @@ void Server::mainLoop() {
 				throw std::runtime_error("poll() failed");
 			}
 		}
+		reventsHandler();
+	}
+}
 
-		for (unsigned long i = pollFds_.size(); i-- > 0;) {
-			fd = pollFds_.at(i).fd;
+void Server::reventsHandler() {
+	int fd = 0;
 
-			if (pollFds_[i].revents & POLLIN) {
-				if (fd == listener_.getFd()) {
-					acceptNewConnection();
-				} else {
-					if (clients_.at(fd).receiveAndProcess(this) == false) {
-						rmClient(i, fd);
-						continue;
-					}
-				}
-			}
-			if (pollFds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
-				std::cerr << "Error revents value: " << pollFds_[i].revents << " on fd " << fd << std::endl;
-				if (fd == listener_.getFd()) {
-					return;
-				}
-				rmClient(i, fd);
-				continue;
-			}
-			if (pollFds_[i].revents & POLLOUT) {
-				if (clients_.at(fd).sendFromBuf() == false) {
+	for (unsigned long i = pollFds_.size(); i-- > 0;) {
+		fd = pollFds_.at(i).fd;
+
+		if (pollFds_[i].revents & POLLIN) {
+			if (fd == listener_.getFd()) {
+				acceptNewConnection();
+			} else {
+				if (clients_.at(fd).receiveAndProcess(this) == false) {
 					rmClient(i, fd);
+					continue;
 				}
+			}
+		}
+		if (pollFds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+			std::cerr << "Error revents value: " << pollFds_[i].revents << " on fd " << fd << std::endl;
+			if (fd == listener_.getFd()) {
+				return;
+			}
+			rmClient(i, fd);
+			continue;
+		}
+		if (pollFds_[i].revents & POLLOUT) {
+			if (clients_.at(fd).sendFromBuf() == false) {
+				rmClient(i, fd);
 			}
 		}
 	}

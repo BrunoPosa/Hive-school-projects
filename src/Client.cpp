@@ -90,7 +90,6 @@ bool	Client::appendToSendBuf(const std::string& data) {
 bool	Client::sendFromBuf() {
 	if (sendBuf_.empty() == true) {
 		return true;
-		//best performance is to implement switching of POLLOUT flag on and off in the pollfd struct when the relevant client's sendBuffer is empty
 	}
 
 	ssize_t sent = send(so_.getFd(), sendBuf_.data(), sendBuf_.size(), MSG_NOSIGNAL);
