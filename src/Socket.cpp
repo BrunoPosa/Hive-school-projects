@@ -1,6 +1,6 @@
 
 #include "../inc/Socket.hpp"
-
+#include "../inc/Server.hpp"
 using std::string;
 using std::cerr;
 using std::cout;
@@ -11,8 +11,7 @@ Socket::Socket()
 	addr_{},
 	isListening_{false}
 {
-	// cout << "\e[33m" << "Socket created." << "\e[0m" << endl;
-	if (fd_ < 0) {//what happens if this if is removed (the socket creation fails)
+	if (fd_ < 0) {
 		throw std::system_error(errno, std::generic_category(), "socket() failed");
 	}
 }

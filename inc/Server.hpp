@@ -1,5 +1,6 @@
 #pragma once
 
+extern short g_state;
 
 // System
 #include <sys/socket.h>
@@ -41,6 +42,10 @@
 #include "Socket.hpp"
 #include "Config.hpp"
 
+enum IRCState : short {
+    IRC_RUNNING   = 0x1,
+    IRC_ACCEPTING = 0x2
+};
 
 #define REDIRC "\033[1;31m"
 #define YELLOWIRC "\033[33m"
@@ -55,7 +60,6 @@ private:
 	std::map<int, Client>	clients_;
 	std::map<std::string, Channel>	channels_;
 	int defaultUserCount_ = 0;
-	const int	maxRetries_ = 10;
 
 	void	ft_send(int fd, const std::string& message);
 	void	handleAllEvents();

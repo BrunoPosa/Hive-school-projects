@@ -1,5 +1,7 @@
 #include "../inc/Server.hpp"
 
+short	g_state = 0;
+
 Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listener_{} {}
 
 void Server::ft_send(int fd, const std::string& message) {
@@ -35,16 +37,18 @@ void Server::run() {
 	listener_.makeListener(cfg_.getPort());//bind+listen+non-blocking
 	pollFds_.push_back({listener_.getFd(), POLLIN, 0});
 	
+	g_state = IRC_RUNNING | IRC_ACCEPTING;
+
 	std::cout << "Server starting on port " << cfg_.getPort()
 		<< " with " << pollFds_.size() << " fds" << std::endl;//add IP address
 
-	while (true) {
+	while (IRC_RUNNING & g_state) {
 		if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
-			std::cerr << "poll() error: " << strerror(errno) << std::endl;
+			std::cerr << "poll() -1 with: " << strerror(errno) << std::endl;
 			if (errno == EINTR) {
 				continue;
-			} else {
-				throw std::runtime_error("poll() failed");
+			} else if (errno == EINVAL) {
+				g_state &= ~IRC_ACCEPTING;//////////////////////////////////////
 			}
 		}
 		handleAllEvents();
@@ -78,16 +82,13 @@ void Server::handleAllEvents() {
 
 void Server::acceptNewConnection() {
 	Socket	clientSock;
-	int		retries = 0;
 
-	while (listener_.accept(clientSock) == false) {
-		if (errno == EAGAIN || errno == EWOULDBLOCK) {
-			return;
-		} else if (retries++ == maxRetries_) {
-			std::cerr << "Accept4 failed:" << strerror(errno) << "for max " << maxRetries_ << " times." << std::endl;
+	if (listener_.accept(clientSock) == false) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNABORTED || errno == EINTR) {
 			return;
 		} else {//EINTR and any transient or permanent error -> we log and retry up to maxRetries_ times
 			std::cerr << "Accept4 failed:" << strerror(errno) << std::endl;
+			return;
 		}
 	}
 
