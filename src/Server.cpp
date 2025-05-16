@@ -4,40 +4,11 @@ short	g_state = 0;
 
 Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listener_{} {}
 
-void Server::ft_send(int fd, const std::string& message) {
-	try {
-		clients_.at(fd).toSend(message);
-	} catch (std::out_of_range& e) {
-		std::cerr << "clients_ map access at nonexisting key:" << fd << " - " << e.what() << std::endl;
-	}
-}
-
-void Server::sendWelcome(int fd) {
-	std::string nick;
-	auto clientIt = clients_.find(fd);
-	if (clientIt != clients_.end()) {
-		nick = clients_.at(fd).getNick();
-	}
-	std::string welcome = 
-		":localhost 001 " + nick + " :Welcome to the Internet Relay Network\r\n" +
-		":localhost 002 " + nick + " :Your host is localhost\r\n" +
-		":localhost 003 " + nick + " :This server was created today\r\n" +
-		":localhost 004 " + nick + " :localhost 1.0\r\n";
-	ft_send(fd, welcome.c_str());
-}
-
-void Server::checkRegistration(int fd) {
-	if (!clients_[fd].getNick().empty() && !clients_[fd].getUser().empty() && !clients_[fd].isAuthenticated()) {
-		clients_[fd].setAuthenticated();  // Assuming you want to set them as authenticated
-		sendWelcome(fd);
-	}
-}
-
 void Server::run() {
 	listener_.make();
 	listener_.listen(cfg_.getPort());
 	pollFds_.push_back({listener_.getFd(), POLLIN, 0});
-	
+
 	g_state = IRC_RUNNING | IRC_ACCEPTING;
 
 	std::cout << "Server starting on port " << cfg_.getPort()
@@ -95,12 +66,44 @@ void Server::acceptNewConnection() {
 		return;
 	}
 
-	std::cout << "Accepted new connection from " 
-			  << clientSock.getIpStr() << ":"
-			  << ntohs(clientSock.getAddr().sin_port) 
-			  << " (FD: " << clientSock.getFd() << ")" << std::endl;
+	std::cout << YELLOWIRC
+			<< "Accepted new connection from " 
+			<< clientSock.getIpStr() << ":"
+			<< ntohs(clientSock.getAddr().sin_port) 
+			<< " (FD: " << clientSock.getFd() << ")" << RESETIRC << std::endl;
 
+	int fd = clientSock.getFd();
 	addClient(clientSock);
+
+	try {
+		clients_.at(fd).toSend(
+			"Welcome to "
+			+ cfg_.getServName()
+			+ "!\nPlease register with NICK and USER\r\n"
+			":localhost 375 * :- Message of the Day -\r\n"
+			":localhost 376 * :Another day another slay\r\n");
+
+	} catch (std::exception& e) {
+		std::cerr << "acceptNewConnection() with fd: " << fd << " failed: " << e.what() << std::endl;
+	}
+}
+
+//constructs Client with the given socket and adds its fd to pollFds_ and the object itself to clients_ map
+void Server::addClient(Socket& sock) {
+	int fd = sock.getFd();
+	try {
+		pollFds_.push_back({sock.getFd(), POLLIN | POLLOUT, 0});
+	} catch (std::exception& e) {
+		std::cerr << "addClient to pollFds_ (fd: " << fd << ") failed: " << e.what() << std::endl;
+		return;
+	}
+	try {
+		clients_.emplace(fd, Client(std::move(sock)));	
+	} catch (std::exception& e) {
+		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
+		rmClient(pollFds_.size() - 1, fd);
+		return;
+	}
 }
 
 //removes Client from its own joinedChannels Channel objects, server's pollFds_ vector, and server's clients_ map
@@ -135,48 +138,48 @@ void Server::rmClient(unsigned int rmPollfdIndex, int rmFd) {
 	}
 }
 
-//constructs Client with the given socket and adds its fd to pollFds_ and the object itself to clients_ map
-void Server::addClient(Socket& sock) {
-	int fd = sock.getFd();
-	try {
-		pollFds_.push_back({sock.getFd(), POLLIN | POLLOUT, 0});
-	} catch (std::exception& e) {
-		std::cerr << "addClient to pollFds_ (fd: " << fd << ") failed: " << e.what() << std::endl;
-		return ;
-	}
-	try {
-		clients_.emplace(fd, Client(std::move(sock)));	
-	} catch (std::exception& e) {
-		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
-		rmClient(pollFds_.size() - 1, fd);
-		return;
-	}
-	try {
-		std::string welcome = "Welcome to " + cfg_.getServName() + "!\nPlease register with NICK and USER\r\n";
-		ft_send(fd, welcome.c_str());
-
-		std::string motd = 
-			":localhost 375 * :- Message of the Day -\r\n"
-			":localhost 376 * :Another day another slay\r\n";
-		ft_send(fd, motd.c_str());
-	} catch (std::bad_alloc& e) {
-		std::cerr << "addClient to pollFds_ (fd: " << fd << ") failed: " << e.what() << std::endl;
-	}
-}
-
 void	Server::splitAndProcess(int fromFd) {
 	try {
 		size_t pos = 0;
 		std::string line;
 		std::string	msgs = clients_.at(fromFd).getMsgs();
 
-		while ((pos = msgs.find("\r\n")) != std::string::npos) {	// Split the input by \r\n and process each command
+		while ((pos = msgs.find("\r\n")) != std::string::npos) {
 			line = msgs.substr(0, pos);
 			processCommand(fromFd, line);
-			msgs.erase(0, pos + 2); // Move past \r\n
+			msgs.erase(0, pos + 2);
 		}
 	} catch (std::bad_alloc& e) {
 		std::cerr << "Error during splitAndProcess(): " << e.what() << "Client fd:" << fromFd << std::endl;
+	}
+}
+
+void Server::ft_send(int fd, const std::string& message) {
+	try {
+		clients_.at(fd).toSend(message);
+	} catch (std::out_of_range& e) {
+		std::cerr << "clients_ map access at nonexisting key:" << fd << " - " << e.what() << std::endl;
+	}
+}
+
+void Server::sendWelcome(Client& client) {
+	try {
+		std::string nick = client.getNick();
+
+		client.toSend(
+			":localhost 001 " + nick + " :Welcome to the Internet Relay Network\r\n"
+			":localhost 002 " + nick + " :Your host is localhost\r\n"
+			":localhost 003 " + nick + " :This server was created today\r\n"
+			":localhost 004 " + nick + " :localhost 1.0\r\n");
+	} catch (std::bad_alloc& e) {
+		std::cerr << "sendWelcome() failed: " << e.what() << std::endl;
+	}
+}
+
+void Server::checkRegistration(int fd) {
+	if (!clients_[fd].getNick().empty() && !clients_[fd].getUser().empty() && !clients_[fd].isAuthenticated()) {
+		clients_[fd].setAuthenticated();  // Assuming you want to set them as authenticated
+		sendWelcome(clients_.at(fd));
 	}
 }
 

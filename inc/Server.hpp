@@ -67,7 +67,7 @@ private:
 	void	addClient(Socket& sock);
 	void	rmClient(unsigned int rmPollfdIndex, int rmFd);
 	void	checkRegistration(int fd);
-	void	sendWelcome(int fd);
+	void	sendWelcome(Client& client);
 	void	splitAndProcess(int fromFd);
 	void	processCommand(int fd, const std::string& message);
 
