@@ -156,7 +156,7 @@ void Channel::broadcast(const std::string& message, const std::string& sender_ni
         if (cliFd != except_fd && allClientsPtr_ != nullptr)
         {
             try {
-                allClientsPtr_->at(cliFd).appendToSendBuf(fullMessage.c_str());
+                allClientsPtr_->at(cliFd).toSend(fullMessage.c_str());
             } catch (std::exception& e) {
                 std::cerr << "channel broadcast - accessing Client map at key: " << cliFd << " failed." << e.what() << std::endl;
             }

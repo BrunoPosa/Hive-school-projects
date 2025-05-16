@@ -69,30 +69,29 @@ Client&	Client::operator=(Client&& other) noexcept {
 	return *this;
 }
 
-bool	Client::appendToSendBuf(const std::string& data) {
+void	Client::toSend(const std::string& data) {
 	if (data.empty()){
-		return true;
+		return;
 	}
+
 	if (sendBuf_.size() + data.size() > IRC_BUFFER_SIZE) {
 		std::cerr << "sendBuf_ at client fd " << so_.getFd() << " is filling up" << std::endl;
-		return false;
 	}
+
 	try {
 		sendBuf_.append(data);
-	} catch (std::exception& e) {
-		std::cerr << "sendBuf append failed: " << e.what() << std::endl;
-		return false;
+	} catch (std::bad_alloc& e) {
+		std::cerr << "toSend() append failed: " << e.what() << std::endl;
 	}
-	return true;
 }
 
 //calls send() and returns true if all went well, false on fail (client connection should be deleted) 
-bool	Client::sendFromBuf() {
+bool	Client::send() {
 	if (sendBuf_.empty() == true) {
 		return true;
 	}
 
-	ssize_t sent = send(so_.getFd(), sendBuf_.data(), sendBuf_.size(), MSG_NOSIGNAL);
+	ssize_t sent = ::send(so_.getFd(), sendBuf_.data(), sendBuf_.size(), MSG_NOSIGNAL);
 	if (sent < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
 			return true;
@@ -114,7 +113,7 @@ bool	Client::sendFromBuf() {
 	on returning false, the client connection in question should be closed.
 	in case of partial data, Client stores it in recvBuf_ and we add new data to it to get a full message
 */
-bool	Client::receiveAndProcess(Server* server) {
+bool	Client::receive() {
 	char buffer[IRC_BUFFER_SIZE];
 
 	ssize_t bytesRead = recv(so_.getFd(), buffer, sizeof(buffer), MSG_NOSIGNAL);
@@ -130,25 +129,34 @@ bool	Client::receiveAndProcess(Server* server) {
 		return false;
 	}
 
-	try {
-		if (recvBuf_.size() + bytesRead > IRC_BUFFER_SIZE) {
-			std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
-			return false;
-		}
-		recvBuf_.append(buffer, bytesRead);
-		
-		size_t pos = 0;
-		std::string line;
-		while ((pos = recvBuf_.find("\r\n")) != std::string::npos) {	// Split the input by \r\n and process each command
-			line = recvBuf_.substr(0, pos);
-			server->processCommand(so_.getFd(), line);
-			recvBuf_.erase(0, pos + 2); // Move past \r\n
-		}
-	} catch (std::exception& e) {
-		std::cerr << "Processing data failed! Client fd:" << so_.getFd() << std::endl;
+	if (recvBuf_.size() + bytesRead > IRC_BUFFER_SIZE) {
+		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
 		return false;
 	}
+
+	try {
+		recvBuf_.append(buffer, bytesRead);
+	} catch (std::exception& e) {
+		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
+	}
 	return true;
+}
+
+std::string	Client::getMsgs() {
+	try {
+		size_t	pos = recvBuf_.rfind("\r\n");
+		std::string	completeLines;
+
+		if (pos != std::string::npos) {
+			completeLines = recvBuf_.substr(0, pos + 2);
+			recvBuf_.erase(0, pos + 2);
+		}
+		return completeLines;
+
+	} catch (std::exception& e) {
+		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
+	}
+	return "";
 }
 
 bool Client::isInChannel(const std::string &channel)

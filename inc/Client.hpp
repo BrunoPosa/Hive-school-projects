@@ -33,12 +33,13 @@ class Client {
 		
 		//I/O
 		bool	hasDataToSend() const { return !sendBuf_.empty();}
-		bool	appendToSendBuf(const std::string& data);
-		bool	sendFromBuf();
-		bool	receiveAndProcess(Server* server);
+		void	toSend(const std::string& data);
+		bool	send();
+		bool	receive();
 
 		int		getFd() const	{ return this->so_.getFd(); }
 		std::string getIP() const {return so_.getIpStr();}
+		std::string	getMsgs();
 
 		bool hasReceivedNick() const { return nickReceived; }
 		bool hasReceivedUser() const { return userReceived; }

@@ -6,7 +6,7 @@ Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listener_{} {}
 
 void Server::ft_send(int fd, const std::string& message) {
 	try {
-		clients_.at(fd).appendToSendBuf(message);
+		clients_.at(fd).toSend(message);
 	} catch (std::out_of_range& e) {
 		std::cerr << "clients_ map access at nonexisting key:" << fd << " - " << e.what() << std::endl;
 	}
@@ -34,8 +34,8 @@ void Server::checkRegistration(int fd) {
 }
 
 void Server::run() {
-	listener_.init();
-	listener_.makeListener(cfg_.getPort());
+	listener_.make();
+	listener_.listen(cfg_.getPort());
 	pollFds_.push_back({listener_.getFd(), POLLIN, 0});
 	
 	g_state = IRC_RUNNING | IRC_ACCEPTING;
@@ -46,7 +46,7 @@ void Server::run() {
 	while (IRC_RUNNING & g_state) {
 		if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
 			if (errno == EINVAL || errno == ENOMEM) {
-				g_state &= ~IRC_ACCEPTING;//////////////////////////////////////
+				g_state &= ~IRC_ACCEPTING;
 			}
 			std::cerr << "poll() -1 with: " << strerror(errno) << std::endl;
 			continue;
@@ -62,18 +62,21 @@ void Server::handleAllEvents() {
 		pfd = pollFds_.at(i);
 
 		if (POLLIN & pfd.revents) {
-			if (pfd.fd == listener_.getFd()) {
+			if (pfd.fd == listener_.getFd() && (IRC_ACCEPTING & g_state)) {
 				acceptNewConnection();
-			} else if (clients_.at(pfd.fd).receiveAndProcess(this) == false) {
-				rmClient(i, pfd.fd);
-				continue;
+			} else {
+				if (clients_.at(pfd.fd).receive() == false) {
+					rmClient(i, pfd.fd);
+					continue;
+				}
+				splitAndProcess(pfd.fd);
 			}
 		}
 		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
-			std::cerr << "revents error value: " << pfd.revents << " on fd " << pfd.fd << std::endl;
+			std::cerr << "revents error: " << pfd.revents << " on fd " << pfd.fd << std::endl;
 			rmClient(i, pfd.fd);
 		} else if (POLLOUT & pfd.revents) {
-			if (clients_.at(pfd.fd).sendFromBuf() == false) {
+			if (clients_.at(pfd.fd).send() == false) {
 				rmClient(i, pfd.fd);
 			}
 		}
@@ -84,13 +87,12 @@ void Server::acceptNewConnection() {
 	Socket	clientSock;
 
 	if (listener_.accept(clientSock) == false) {
-		if (errno == EAGAIN || errno == EWOULDBLOCK) {
-			return;
-		} else if (errno == EMFILE || errno == ENFILE || errno == ENOMEM || errno == ENOBUFS) {
+		if (errno == EMFILE || errno == ENFILE || errno == ENOMEM || errno == ENOBUFS) {
 			g_state &= ~IRC_ACCEPTING; //stop accepting
-		} else {
+		} else if (errno != EAGAIN && errno != EWOULDBLOCK) {
 			std::cerr << "accept4() error: " << strerror(errno) << std::endl;
 		}
+		return;
 	}
 
 	std::cout << "Accepted new connection from " 
@@ -103,25 +105,33 @@ void Server::acceptNewConnection() {
 
 //removes Client from its own joinedChannels Channel objects, server's pollFds_ vector, and server's clients_ map
 void Server::rmClient(unsigned int rmPollfdIndex, int rmFd) {
-	for (const auto& [channelName, _] : clients_.at(rmFd).getJoinedChannels()) { // Iterate over joined channel names
-		auto channelIt = channels_.find(channelName); // Find the Channel in the map
+	try {
+		for (const auto& [channelName, _] : clients_.at(rmFd).getJoinedChannels()) {
+			auto channelIt = channels_.find(channelName);
 
-		if (channelIt != channels_.end()) {
-			channelIt->second.removeClient(rmFd); // Call removeClient on the Channel object
+			if (channelIt != channels_.end()) {
+				channelIt->second.removeClient(rmFd);
+			}
 		}
-	}
 
-	if (rmPollfdIndex > 0 && rmPollfdIndex < pollFds_.size()) {
-		pollFds_.erase(pollFds_.begin() + rmPollfdIndex);
-	} else {
-		std::cerr << "could not rmClient pollfdIndex:" << rmPollfdIndex << std::endl;
-	}
+		if (rmPollfdIndex > 0 && rmPollfdIndex < pollFds_.size()) {
+			pollFds_.erase(pollFds_.begin() + rmPollfdIndex);
+		} else {
+			std::cerr << "could not rmClient pollfdIndex:" << rmPollfdIndex << std::endl;
+		}
 
-	auto clientIt = clients_.find(rmFd);
-	if (clientIt != clients_.end()) {
-		clients_.erase(clientIt);
-	} else {
-		std::cerr << "could not rmClient from map at fd:" << rmFd << std::endl;
+		auto clientIt = clients_.find(rmFd);
+		if (clientIt != clients_.end()) {
+			clients_.erase(clientIt);
+		} else {
+			std::cerr << "could not rmClient from map at fd:" << rmFd << std::endl;
+		}
+
+		if (IRC_ACCEPTING ^ g_state) {
+			g_state |= IRC_ACCEPTING; //raise back accepting flag if it was down
+		}
+	} catch (std::exception& e) {
+		std::cerr << "rmClient (fd: " << rmFd << ") failed: " << e.what() << std::endl;
 	}
 }
 
@@ -141,16 +151,33 @@ void Server::addClient(Socket& sock) {
 		rmClient(pollFds_.size() - 1, fd);
 		return;
 	}
+	try {
+		std::string welcome = "Welcome to " + cfg_.getServName() + "!\nPlease register with NICK and USER\r\n";
+		ft_send(fd, welcome.c_str());
 
-	// Send welcome message
-	std::string welcome = "Welcome to " + cfg_.getServName() + "!\nPlease register with NICK and USER\r\n";
-	ft_send(fd, welcome.c_str());
+		std::string motd = 
+			":localhost 375 * :- Message of the Day -\r\n"
+			":localhost 376 * :Another day another slay\r\n";
+		ft_send(fd, motd.c_str());
+	} catch (std::bad_alloc& e) {
+		std::cerr << "addClient to pollFds_ (fd: " << fd << ") failed: " << e.what() << std::endl;
+	}
+}
 
-	// Send initial MOTD (makes irssi happy)
-	std::string motd = 
-		":localhost 375 * :- Message of the Day -\r\n"
-		":localhost 376 * :Another day another slay\r\n";
-	ft_send(fd, motd.c_str());
+void	Server::splitAndProcess(int fromFd) {
+	try {
+		size_t pos = 0;
+		std::string line;
+		std::string	msgs = clients_.at(fromFd).getMsgs();
+
+		while ((pos = msgs.find("\r\n")) != std::string::npos) {	// Split the input by \r\n and process each command
+			line = msgs.substr(0, pos);
+			processCommand(fromFd, line);
+			msgs.erase(0, pos + 2); // Move past \r\n
+		}
+	} catch (std::bad_alloc& e) {
+		std::cerr << "Error during splitAndProcess(): " << e.what() << "Client fd:" << fromFd << std::endl;
+	}
 }
 
 int Server::getClientFdByNick(const std::string& nick) const {
@@ -169,4 +196,3 @@ std::string Server::getNickByFd(int fd) const {
 	}
 	return ""; // Not found
 }
-

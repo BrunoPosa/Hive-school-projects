@@ -34,9 +34,9 @@ public:
 	Socket& operator=(Socket&& other) noexcept;
 	~Socket() noexcept;
 
-	void	init();
+	void	make();
+	void	listen(uint16_t port);
 	bool	accept(Socket& toSocket) const;
-	void	makeListener(uint16_t port);
 
 	int			getFd() const noexcept {return fd_;}
 	sockaddr_in getAddr() const noexcept {return addr_;}

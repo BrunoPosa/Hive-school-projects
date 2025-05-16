@@ -52,20 +52,20 @@ Socket::~Socket() noexcept {
 	}
 }
 
-void	Socket::init() {
+void	Socket::make() {
 	fd_ = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
 	if (fd_ < 0) {
 		throw std::system_error(errno, std::generic_category(), "socket() failed");
 	}
 }
 
-void	Socket::makeListener(uint16_t port) {
+void	Socket::listen(uint16_t port) {
 	if (port < 1024) {
 		throw std::logic_error("Listener port must be valid and not between 1-1023");
 	}
 
 	int opt = 1;
-	if (setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+	if (::setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
 		throw std::system_error(errno, std::generic_category(), "setsockopt(SO_REUSEADDR) failed");
 	}
 
@@ -94,7 +94,7 @@ bool	Socket::accept(Socket& toSocket) const {
 	if (clientFd < 0) {
 		return false;
 	}
-	toSocket = std::move(Socket(clientFd, clientAddr));
+	toSocket = Socket(clientFd, clientAddr);
 	return true;
 }
 

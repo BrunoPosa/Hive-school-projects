@@ -68,6 +68,8 @@ private:
 	void	rmClient(unsigned int rmPollfdIndex, int rmFd);
 	void	checkRegistration(int fd);
 	void	sendWelcome(int fd);
+	void	splitAndProcess(int fromFd);
+	void	processCommand(int fd, const std::string& message);
 
 	void	cmdNick(int fd, const std::string& message);
 	void	cmdUser(int fd, const std::string& message);
@@ -88,6 +90,5 @@ public:
 	int	getServerFd() const { return listener_.getFd(); }
 	int	getClientFdByNick(const std::string& nick) const;
 	std::string	getNickByFd(int fd) const;
-	void	processCommand(int fd, const std::string& message);
 	void	run();
 };
