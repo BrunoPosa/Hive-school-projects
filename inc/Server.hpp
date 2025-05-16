@@ -1,7 +1,5 @@
 #pragma once
 
-extern short g_state;
-
 // System
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -42,6 +40,8 @@ extern short g_state;
 #include "Socket.hpp"
 #include "Config.hpp"
 
+extern short g_state;
+
 enum IRCState : short {
     IRC_RUNNING   = 0x1,
     IRC_ACCEPTING = 0x2
@@ -55,12 +55,12 @@ enum IRCState : short {
 class Server {
 private:
 	Config	cfg_;
-	Socket	listener_;
+	Socket	listenSo_;
 	std::vector<struct pollfd>	pollFds_;
 	std::map<int, Client>	clients_;
 	std::map<std::string, Channel>	channels_;
 	int defaultUserCount_ = 0;
-int counter;
+
 	void	handleAllEvents();
 	void	acceptNewConnection();
 	void	addClient(Socket& sock);
@@ -89,7 +89,7 @@ public:
 
 	void	run();
 	int	getPort() const noexcept {return cfg_.getPort();}
-	int	getServerFd() const { return listener_.getFd(); }
+	int	getServerFd() const { return listenSo_.getFd(); }
 	int	getClientFdByNick(const std::string& nick) const;
 	std::string	getNickByFd(int fd) const;
 };

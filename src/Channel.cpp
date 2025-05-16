@@ -1,25 +1,25 @@
 #include "../inc/Server.hpp"
 
 Channel::Channel(std::map<int, Client>* ptrToAllClients)
-: name(""), topic(""), pwd(""), userLimit(-1), inviteOnly_(false), topicRestrictedToOperators(true), allClientsPtr_(ptrToAllClients) {}
+: name_(""), topic_(""), pwd_(""), userLimit_(-1), inviteOnly_(false), topicRestrictedToOperators_(true), allClientsPtr_(ptrToAllClients) {}
 
 Channel::Channel(const std::string &name, std::map<int, Client>* ptrToAllClients)
-: name(name), topic(""), pwd(""), userLimit(-1), inviteOnly_(false), topicRestrictedToOperators(true), allClientsPtr_(ptrToAllClients) {}
+: name_(name), topic_(""), pwd_(""), userLimit_(-1), inviteOnly_(false), topicRestrictedToOperators_(true), allClientsPtr_(ptrToAllClients) {}
 
 Channel::~Channel() {
     allClientsPtr_ = nullptr;
 }
 
 Channel::Channel(const Channel &other)
-    : name(other.name),
-      topic(other.topic),
-      pwd(other.pwd),
-      invitedUsers(other.invitedUsers),
+    : name_(other.name_),
+      topic_(other.topic_),
+      pwd_(other.pwd_),
+      invitedUsers_(other.invitedUsers_),
       chClients_(other.chClients_),
-      operators(other.operators),
-      userLimit(other.userLimit),
+      operators_(other.operators_),
+      userLimit_(other.userLimit_),
       inviteOnly_(other.inviteOnly_),
-      topicRestrictedToOperators(other.topicRestrictedToOperators),
+      topicRestrictedToOperators_(other.topicRestrictedToOperators_),
       allClientsPtr_(other.allClientsPtr_)
 {}
 
@@ -27,15 +27,15 @@ Channel &Channel::operator=(const Channel &other)
 {
     if (this != &other)
     {
-        this->name = other.name;
-        this->topic = other.topic;
-        this->pwd = other.pwd;
-        this->invitedUsers = other.invitedUsers;
+        this->name_ = other.name_;
+        this->topic_ = other.topic_;
+        this->pwd_ = other.pwd_;
+        this->invitedUsers_ = other.invitedUsers_;
         this->chClients_ = other.chClients_;
-        this->operators = other.operators;
-        this->userLimit = other.userLimit;
+        this->operators_ = other.operators_;
+        this->userLimit_ = other.userLimit_;
         this->inviteOnly_ = other.inviteOnly_;
-        this->topicRestrictedToOperators = other.topicRestrictedToOperators;
+        this->topicRestrictedToOperators_ = other.topicRestrictedToOperators_;
         this->allClientsPtr_ = other.allClientsPtr_;
     }
     return *this;
@@ -45,22 +45,22 @@ Channel &Channel::operator=(const Channel &other)
 
 const std::string& Channel::getName() const
 {
-    return this->name;
+    return this->name_;
 }
 
 const std::string& Channel::getTopic() const
 {
-    return this->topic;
+    return this->topic_;
 }
 
 const std::string& Channel::getPwd() const
 {
-    return this->pwd;
+    return this->pwd_;
 }
 
 int Channel::getUserLimit() const
 {
-    return this->userLimit;
+    return this->userLimit_;
 }
 
 bool Channel::getInviteOnly() const
@@ -70,12 +70,12 @@ bool Channel::getInviteOnly() const
 
 bool Channel::getIsUserInvited(const int& fd) const
 {
-    return std::find(this->invitedUsers.begin(), this->invitedUsers.end(), fd) != this->invitedUsers.end();
+    return std::find(this->invitedUsers_.begin(), this->invitedUsers_.end(), fd) != this->invitedUsers_.end();
 }
 
 bool Channel::getTopicRestricted() const
 {
-    return this->topicRestrictedToOperators;
+    return this->topicRestrictedToOperators_;
 }
 
 // In Channel.cpp
@@ -95,12 +95,12 @@ std::cout << "getCLientFDbyNick" << std::endl;
 
 void Channel::setPassword(const std::string& newPassword)
 {
-    this->pwd = newPassword;
+    this->pwd_ = newPassword;
 }
 
 void Channel::setUserLimit(int limit)
 {
-    this->userLimit = limit;
+    this->userLimit_ = limit;
 }
 
 void Channel::setInviteOnly(bool inviteOnly)
@@ -110,27 +110,27 @@ void Channel::setInviteOnly(bool inviteOnly)
 
 void Channel::setTopicRestrictedToOperators(bool restricted)
 {
-    this->topicRestrictedToOperators = restricted;
+    this->topicRestrictedToOperators_ = restricted;
 }
 
 ////////////////////////////////////////////////////////////////
 
 void Channel::addInvitedUser(const int& client_fd)
 {
-    if (std::find(this->invitedUsers.begin(), this->invitedUsers.end(), client_fd) == this->invitedUsers.end())
-        this->invitedUsers.push_back(client_fd);
+    if (std::find(this->invitedUsers_.begin(), this->invitedUsers_.end(), client_fd) == this->invitedUsers_.end())
+        this->invitedUsers_.push_back(client_fd);
 }
 
 void Channel::removeInvitedUser(const int& client_fd)
 {
-    std::vector<int>::iterator it = std::find(this->invitedUsers.begin(), this->invitedUsers.end(), client_fd);
-    if (it != this->invitedUsers.end())
-        this->invitedUsers.erase(it);
+    std::vector<int>::iterator it = std::find(this->invitedUsers_.begin(), this->invitedUsers_.end(), client_fd);
+    if (it != this->invitedUsers_.end())
+        this->invitedUsers_.erase(it);
 }
 
 void Channel::setTopic(const std::string& newTopic)
 {
-    this->topic = newTopic;
+    this->topic_ = newTopic;
 }
 
 void Channel::addClient(int fd)
@@ -148,7 +148,7 @@ void Channel::removeClient(int fd)
 
 void Channel::broadcast(const std::string& message, const std::string& sender_nick, int except_fd) // send to all clients except the sender
 {
-    std::string fullMessage = ":" + sender_nick + " PRIVMSG " + this->name + " :" + message + "\r\n";
+    std::string fullMessage = ":" + sender_nick + " PRIVMSG " + this->name_ + " :" + message + "\r\n";
     int cliFd = 0;
     for (unsigned long i = chClients_.size(); i-- > 0;)
     {
@@ -166,16 +166,16 @@ void Channel::broadcast(const std::string& message, const std::string& sender_ni
 
 
 bool Channel::isOperator(int fd) const {
-    return std::find(this->operators.begin(), this->operators.end(), fd) != this->operators.end();
+    return std::find(this->operators_.begin(), this->operators_.end(), fd) != this->operators_.end();
 }
 
 void Channel::addOperator(int fd) {
     if (!isOperator(fd))
-        this->operators.push_back(fd);
+        this->operators_.push_back(fd);
 }
 
 void Channel::removeOperator(int fd) {
-    std::vector<int>::iterator it = std::find(this->operators.begin(), this->operators.end(), fd);
-    if (it != this->operators.end())
-        this->operators.erase(it);
+    std::vector<int>::iterator it = std::find(this->operators_.begin(), this->operators_.end(), fd);
+    if (it != this->operators_.end())
+        this->operators_.erase(it);
 }

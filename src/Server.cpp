@@ -6,12 +6,12 @@ using std::string;
 
 short	g_state = 0;
 
-Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listener_{}, counter{0} {}
+Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listenSo_{} {}
 
 void Server::run() {
-	listener_.make();
-	listener_.listen(cfg_.getPort());
-	pollFds_.push_back({listener_.getFd(), POLLIN, 0});
+	listenSo_.make();
+	listenSo_.listen(cfg_.getPort());
+	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
 
 	g_state = IRC_RUNNING | IRC_ACCEPTING;
 
@@ -37,7 +37,7 @@ void Server::handleAllEvents() {
 		pfd = pollFds_.at(i);
 
 		if (POLLIN & pfd.revents) {
-			if (pfd.fd == listener_.getFd()) {
+			if (pfd.fd == listenSo_.getFd()) {
 				if (IRC_ACCEPTING & g_state) { acceptNewConnection(); }
 			} else {
 				if (clients_.at(pfd.fd).receive() == false) {
@@ -61,7 +61,7 @@ void Server::handleAllEvents() {
 void Server::acceptNewConnection() {
 	Socket	clientSock;
 
-	if (listener_.accept(clientSock) == false) {
+	if (listenSo_.accept(clientSock) == false) {
 		if (errno == EMFILE || errno == ENFILE || errno == ENOMEM || errno == ENOBUFS) {
 			g_state &= ~IRC_ACCEPTING; //stop accepting
 		} else if (errno != EAGAIN && errno != EWOULDBLOCK) {

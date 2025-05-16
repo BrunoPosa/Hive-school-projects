@@ -9,16 +9,16 @@
 class Channel
 {
     private:
-        std::string name;
-        std::string topic;
-        std::string pwd;
-        std::vector<int> invitedUsers;
+        std::string name_;
+        std::string topic_;
+        std::string pwd_;
+        std::vector<int> invitedUsers_;
         std::vector<int> chClients_; // List of client file descriptors in the channel
-        std::vector<int> operators; // List of operator file descriptors in the channel
+        std::vector<int> operators_; // List of operator file descriptors in the channel
         
-        int userLimit;
+        int userLimit_;
         bool inviteOnly_; // i
-        bool topicRestrictedToOperators;  // t
+        bool topicRestrictedToOperators_;  // t
         std::map<int, Client>* allClientsPtr_;
 
     public:
