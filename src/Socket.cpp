@@ -7,14 +7,10 @@ using std::cout;
 using std::endl;
 
 Socket::Socket()
-:	fd_{::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP)},
+:	fd_{-1},
 	addr_{},
 	isListening_{false}
-{
-	if (fd_ < 0) {
-		throw std::system_error(errno, std::generic_category(), "socket() failed");
-	}
-}
+{}
 
 Socket::Socket(int fd, sockaddr_in addr)
 :	fd_{fd}, addr_{addr}, isListening_{false} {
@@ -56,6 +52,13 @@ Socket::~Socket() noexcept {
 	}
 }
 
+void	Socket::init() {
+	fd_ = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
+	if (fd_ < 0) {
+		throw std::system_error(errno, std::generic_category(), "socket() failed");
+	}
+}
+
 void	Socket::makeListener(uint16_t port) {
 	if (port < 1024) {
 		throw std::logic_error("Listener port must be valid and not between 1-1023");
@@ -91,7 +94,7 @@ bool	Socket::accept(Socket& toSocket) const {
 	if (clientFd < 0) {
 		return false;
 	}
-	toSocket = Socket(clientFd, clientAddr);
+	toSocket = std::move(Socket(clientFd, clientAddr));
 	return true;
 }
 

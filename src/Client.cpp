@@ -93,9 +93,7 @@ bool	Client::sendFromBuf() {
 	}
 
 	ssize_t sent = send(so_.getFd(), sendBuf_.data(), sendBuf_.size(), MSG_NOSIGNAL);
-	if (sent > 0) {
-		sendBuf_.erase(0, sent);
-	} else if (sent == -1) {
+	if (sent < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
 			return true;
 		} else {
@@ -103,27 +101,33 @@ bool	Client::sendFromBuf() {
 			return false;
 		}
 	} else if (sent == 0) {
-		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl;
+		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; // should we print this?
 		return false;
 	}
+
+	sendBuf_.erase(0, sent);
+
 	return true;
 }
 
-//on returning false, the client connection in question should be closed
+/*
+	on returning false, the client connection in question should be closed.
+	in case of partial data, Client stores it in recvBuf_ and we add new data to it to get a full message
+*/
 bool	Client::receiveAndProcess(Server* server) {
 	char buffer[IRC_BUFFER_SIZE];
 
 	ssize_t bytesRead = recv(so_.getFd(), buffer, sizeof(buffer), MSG_NOSIGNAL);
-	if (bytesRead == 0) {
-		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl;
-		return false;
-	} else if (bytesRead == -1) {
+	if (bytesRead < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
 			return true;
 		} else {
 			std::cerr << "Error with client:" << so_.getIpStr() << " FD: " << so_.getFd() << " recv() error: " << strerror(errno) << std::endl;
 			return false;
 		}
+	} else if (bytesRead == 0) {
+		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; /// should we print this?
+		return false;
 	}
 
 	try {
@@ -131,7 +135,7 @@ bool	Client::receiveAndProcess(Server* server) {
 			std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
 			return false;
 		}
-		recvBuf_.append(buffer, bytesRead);//in case of partial data, Client stores it in recvBuf_ and we add new data to it to get a full message
+		recvBuf_.append(buffer, bytesRead);
 		
 		size_t pos = 0;
 		std::string line;

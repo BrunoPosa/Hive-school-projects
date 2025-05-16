@@ -34,7 +34,8 @@ void Server::checkRegistration(int fd) {
 }
 
 void Server::run() {
-	listener_.makeListener(cfg_.getPort());//bind+listen+non-blocking
+	listener_.init();
+	listener_.makeListener(cfg_.getPort());
 	pollFds_.push_back({listener_.getFd(), POLLIN, 0});
 	
 	g_state = IRC_RUNNING | IRC_ACCEPTING;
@@ -44,12 +45,11 @@ void Server::run() {
 
 	while (IRC_RUNNING & g_state) {
 		if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
-			std::cerr << "poll() -1 with: " << strerror(errno) << std::endl;
-			if (errno == EINTR) {
-				continue;
-			} else if (errno == EINVAL) {
+			if (errno == EINVAL || errno == ENOMEM) {
 				g_state &= ~IRC_ACCEPTING;//////////////////////////////////////
 			}
+			std::cerr << "poll() -1 with: " << strerror(errno) << std::endl;
+			continue;
 		}
 		handleAllEvents();
 	}
@@ -84,11 +84,12 @@ void Server::acceptNewConnection() {
 	Socket	clientSock;
 
 	if (listener_.accept(clientSock) == false) {
-		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNABORTED || errno == EINTR) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
 			return;
-		} else {//EINTR and any transient or permanent error -> we log and retry up to maxRetries_ times
-			std::cerr << "Accept4 failed:" << strerror(errno) << std::endl;
-			return;
+		} else if (errno == EMFILE || errno == ENFILE || errno == ENOMEM || errno == ENOBUFS) {
+			g_state &= ~IRC_ACCEPTING; //stop accepting
+		} else {
+			std::cerr << "accept4() error: " << strerror(errno) << std::endl;
 		}
 	}
 
