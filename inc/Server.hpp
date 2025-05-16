@@ -60,16 +60,17 @@ private:
 	std::map<int, Client>	clients_;
 	std::map<std::string, Channel>	channels_;
 	int defaultUserCount_ = 0;
-
-	void	ft_send(int fd, const std::string& message);
+int counter;
 	void	handleAllEvents();
 	void	acceptNewConnection();
 	void	addClient(Socket& sock);
 	void	rmClient(unsigned int rmPollfdIndex, int rmFd);
-	void	checkRegistration(int fd);
-	void	sendWelcome(Client& client);
 	void	splitAndProcess(int fromFd);
 	void	processCommand(int fd, const std::string& message);
+
+	void	checkRegistration(int fd);
+	void	sendWelcome(Client& client);
+	void	ft_send(int fd, const std::string& message);
 
 	void	cmdNick(int fd, const std::string& message);
 	void	cmdUser(int fd, const std::string& message);
@@ -86,9 +87,9 @@ public:
 	explicit	Server(Config&& cfg);
 	~Server()	= default;
 
+	void	run();
 	int	getPort() const noexcept {return cfg_.getPort();}
 	int	getServerFd() const { return listener_.getFd(); }
 	int	getClientFdByNick(const std::string& nick) const;
 	std::string	getNickByFd(int fd) const;
-	void	run();
 };

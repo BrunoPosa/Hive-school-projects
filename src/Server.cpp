@@ -1,8 +1,12 @@
 #include "../inc/Server.hpp"
 
+using std::cout;
+using std::endl;
+using std::string;
+
 short	g_state = 0;
 
-Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listener_{} {}
+Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listener_{}, counter{0} {}
 
 void Server::run() {
 	listener_.make();
@@ -33,8 +37,8 @@ void Server::handleAllEvents() {
 		pfd = pollFds_.at(i);
 
 		if (POLLIN & pfd.revents) {
-			if (pfd.fd == listener_.getFd() && (IRC_ACCEPTING & g_state)) {
-				acceptNewConnection();
+			if (pfd.fd == listener_.getFd()) {
+				if (IRC_ACCEPTING & g_state) { acceptNewConnection(); }
 			} else {
 				if (clients_.at(pfd.fd).receive() == false) {
 					rmClient(i, pfd.fd);
@@ -84,7 +88,7 @@ void Server::acceptNewConnection() {
 			":localhost 376 * :Another day another slay\r\n");
 
 	} catch (std::exception& e) {
-		std::cerr << "acceptNewConnection() with fd: " << fd << " failed: " << e.what() << std::endl;
+		std::cerr << "acceptNewConnection() with fd: " << fd << " : " << e.what() << std::endl;
 	}
 }
 
@@ -154,14 +158,6 @@ void	Server::splitAndProcess(int fromFd) {
 	}
 }
 
-void Server::ft_send(int fd, const std::string& message) {
-	try {
-		clients_.at(fd).toSend(message);
-	} catch (std::out_of_range& e) {
-		std::cerr << "clients_ map access at nonexisting key:" << fd << " - " << e.what() << std::endl;
-	}
-}
-
 void Server::sendWelcome(Client& client) {
 	try {
 		std::string nick = client.getNick();
@@ -198,4 +194,12 @@ std::string Server::getNickByFd(int fd) const {
 		return it->second.getNick();
 	}
 	return ""; // Not found
+}
+
+void Server::ft_send(int fd, const std::string& message) {
+	try {
+		clients_.at(fd).toSend(message);
+	} catch (std::out_of_range& e) {
+		std::cerr << "clients_ map access at nonexisting key:" << fd << " - " << e.what() << std::endl;
+	}
 }
