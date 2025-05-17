@@ -19,29 +19,33 @@ void Server::run() {
 		<< " with " << pollFds_.size() << " fds" << std::endl;//add IP address
 
 	while (IRC_RUNNING & g_state) {
-		if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
-			if (errno == EINVAL || errno == ENOMEM) {
-				g_state &= ~IRC_ACCEPTING;
+		try {
+			if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
+				if (errno == EINVAL || errno == ENOMEM) {
+					g_state &= ~IRC_ACCEPTING;
+				}
+				std::cerr << "poll() -1 with: " << strerror(errno) << std::endl;
+				continue;
 			}
-			std::cerr << "poll() -1 with: " << strerror(errno) << std::endl;
-			continue;
+			handleEvents();
+		} catch (const std::exception& e) {
+			std::cerr << "Exception caught in main loop: " << e.what() << std::endl;
 		}
-		handleAllEvents();
 	}
 }
 
-void Server::handleAllEvents() {
-	pollfd	pfd = {};
-
-	for (int i = pollFds_.size(); i-- > 0;) {
-		pfd = pollFds_.at(i);
+void Server::handleEvents() {
+	for (int i = pollFds_.size() - 1; i >= 0; --i) {
+		pollfd&	pfd = pollFds_[i];
 
 		if (POLLIN & pfd.revents) {
 			if (pfd.fd == listenSo_.getFd()) {
-				if (IRC_ACCEPTING & g_state) { acceptNewConnection(); }
+				if (IRC_ACCEPTING & g_state) {
+					acceptNewConnection();
+				}
 			} else {
 				if (clients_.at(pfd.fd).receive() == false) {
-					rmClient(i, pfd.fd);
+					rmClient(pfd.fd);
 					continue;
 				}
 				splitAndProcess(pfd.fd);
@@ -49,10 +53,10 @@ void Server::handleAllEvents() {
 		}
 		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
 			std::cerr << "revents error: " << pfd.revents << " on fd " << pfd.fd << std::endl;
-			rmClient(i, pfd.fd);
+			rmClient(pfd.fd);
 		} else if (POLLOUT & pfd.revents) {
 			if (clients_.at(pfd.fd).send() == false) {
-				rmClient(i, pfd.fd);
+				rmClient(pfd.fd);
 			}
 		}
 	}
@@ -70,23 +74,17 @@ void Server::acceptNewConnection() {
 		return;
 	}
 
+	int fd = clientSock.getFd();
+	addClient(clientSock);
+
 	std::cout << YELLOWIRC
 			<< "Accepted new connection from " 
 			<< clientSock.getIpStr() << ":"
 			<< ntohs(clientSock.getAddr().sin_port) 
-			<< " (FD: " << clientSock.getFd() << ")" << RESETIRC << std::endl;
-
-	int fd = clientSock.getFd();
-	addClient(clientSock);
+			<< " (FD: " << fd << ")" << RESETIRC << std::endl;
 
 	try {
-		clients_.at(fd).toSend(
-			"Welcome to "
-			+ cfg_.getServName()
-			+ "!\nPlease register with NICK and USER\r\n"
-			":localhost 375 * :- Message of the Day -\r\n"
-			":localhost 376 * :Another day another slay\r\n");
-
+		clients_.at(fd).toSend(IrcMessages::welcome(clients_.at(fd).getNick(), cfg_.getServName()));
 	} catch (std::exception& e) {
 		std::cerr << "acceptNewConnection() with fd: " << fd << " : " << e.what() << std::endl;
 	}
@@ -105,26 +103,24 @@ void Server::addClient(Socket& sock) {
 		clients_.emplace(fd, Client(std::move(sock)));	
 	} catch (std::exception& e) {
 		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
-		rmClient(pollFds_.size() - 1, fd);
+		rmClient(fd);
 		return;
 	}
 }
 
 //removes Client from its own joinedChannels Channel objects, server's pollFds_ vector, and server's clients_ map
-void Server::rmClient(unsigned int rmPollfdIndex, int rmFd) {
+void Server::rmClient(int rmFd) {
 	try {
+		for (int i = pollFds_.size() - 1; i >= 0; --i) {
+			if (pollFds_.at(i).fd == rmFd) { pollFds_.erase(pollFds_.begin() + i); }
+		}
+
 		for (const auto& [channelName, _] : clients_.at(rmFd).getJoinedChannels()) {
 			auto channelIt = channels_.find(channelName);
 
 			if (channelIt != channels_.end()) {
 				channelIt->second.removeClient(rmFd);
 			}
-		}
-
-		if (rmPollfdIndex > 0 && rmPollfdIndex < pollFds_.size()) {
-			pollFds_.erase(pollFds_.begin() + rmPollfdIndex);
-		} else {
-			std::cerr << "could not rmClient pollfdIndex:" << rmPollfdIndex << std::endl;
 		}
 
 		auto clientIt = clients_.find(rmFd);
@@ -158,24 +154,10 @@ void	Server::splitAndProcess(int fromFd) {
 	}
 }
 
-void Server::sendWelcome(Client& client) {
-	try {
-		std::string nick = client.getNick();
-
-		client.toSend(
-			":localhost 001 " + nick + " :Welcome to the Internet Relay Network\r\n"
-			":localhost 002 " + nick + " :Your host is localhost\r\n"
-			":localhost 003 " + nick + " :This server was created today\r\n"
-			":localhost 004 " + nick + " :localhost 1.0\r\n");
-	} catch (std::bad_alloc& e) {
-		std::cerr << "sendWelcome() failed: " << e.what() << std::endl;
-	}
-}
-
 void Server::checkRegistration(int fd) {
 	if (!clients_[fd].getNick().empty() && !clients_[fd].getUser().empty() && !clients_[fd].isAuthenticated()) {
 		clients_[fd].setAuthenticated();  // Assuming you want to set them as authenticated
-		sendWelcome(clients_.at(fd));
+		clients_.at(fd).toSend(IrcMessages::motd());
 	}
 }
 

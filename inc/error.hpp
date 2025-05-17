@@ -43,3 +43,18 @@ class Server; // forward declare
 
 // KICK
 #define ERR_USERNOTINCHANNEL(nick, chan) (":localhost 441 " + nick + " " + chan + " :They aren't on that channel\r\n")
+
+namespace IrcMessages {
+
+	inline std::string	welcome(const std::string& nick, const std::string& servName) {
+		return (":localhost 001 " + nick + " :Welcome to the " + servName + " Internet Relay Network\r\n"
+			":localhost 002 " + nick + " :Your host is localhost\r\n"
+			":localhost 003 " + nick + " :This server was created today\r\n"
+			":localhost 004 " + nick + " :localhost 1.0\r\n");
+	}
+
+	inline std::string	motd() {
+		return (":localhost 375 * :- Message of the Day -\r\n"
+				":localhost 376 * :Another day another slay\r\n");
+	}
+}
