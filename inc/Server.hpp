@@ -55,10 +55,10 @@ enum IRCState : short {
 #define RESETIRC "\033[0m"
 
 class Server {
-	private:
+private:
 	Config	cfg_;
 	Socket	listenSo_;
-	char	state;
+	char	state;//atomic?
 	std::vector<struct pollfd>	pollFds_;
 	std::map<int, Client>	clients_;
 	std::map<std::string, Channel>	channels_;
@@ -84,7 +84,7 @@ class Server {
 	void	cmdKick(int sender_fd, const std::vector<std::string>& params);
 	void	kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
 	
-	public:
+public:
 	Server()	= default;
 	explicit	Server(Config&& cfg);
 	~Server()	= default;

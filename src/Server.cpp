@@ -31,7 +31,7 @@ void Server::run() {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 		}
 	}
-std::cerr << channels_.size() << " size of channels" << std::endl;
+
 	handleEvents();
 	for (auto& cliFd : clients_) {
 		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
@@ -116,7 +116,10 @@ void Server::addClient(Socket& sock) {
 	}
 }
 
-//removes Client from its own joinedChannels Channel objects, server's pollFds_ vector, and server's clients_ map
+/*
+	removes Client from all of its own joinedChannels (and destroys all channels where that client was the last remaining),
+	server's pollFds_ vector, and server's clients_ map
+*/
 void Server::rmClient(int rmFd) {
 	try {
 		for (int i = pollFds_.size() - 1; i >= 0; --i) {
@@ -128,21 +131,22 @@ void Server::rmClient(int rmFd) {
 
 			if (channelIt != channels_.end()) {
 				channelIt->second.removeClient(rmFd);
+				if (channelIt->second.isEmpty()) {
+					channels_.erase(channelName);
+				}
 			}
 		}
 
 		auto clientIt = clients_.find(rmFd);
 		if (clientIt != clients_.end()) {
 			clients_.erase(clientIt);
-		} else {
-			std::cerr << "could not rmClient from map at fd:" << rmFd << std::endl;
 		}
 
 		if (IRC_ACCEPTING ^ state) {
-			state |= IRC_ACCEPTING; //raise back accepting flag if it was down
+			state |= IRC_ACCEPTING; //start accepting again if the server was not accepting (due to maxing out)
 		}
 	} catch (std::exception& e) {
-		std::cerr << "rmClient (fd: " << rmFd << ") failed: " << e.what() << std::endl;
+		std::cerr << "Exception caught in rmClient(): " << e.what() << " fd: " << rmFd << std::endl;
 	}
 }
 
@@ -158,7 +162,7 @@ void	Server::splitAndProcess(int fromFd) {
 			msgs.erase(0, pos + 2);
 		}
 	} catch (std::bad_alloc& e) {
-		std::cerr << "Error during splitAndProcess(): " << e.what() << "Client fd:" << fromFd << std::endl;
+		std::cerr << "Exception caught in splitAndProcess(): " << e.what() << "Client fd:" << fromFd << std::endl;
 	}
 }
 
