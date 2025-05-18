@@ -17,11 +17,12 @@ void ft_send(int fd, const std::string& message);
 // JOIN
 #define ERR_NEEDMOREPARAMS ":localhost 461 JOIN :Not enough parameters\r\n"
 #define ERR_USERONCHANNEL(chan) (":localhost 443 " + chan + " :You are already on that channel\r\n")
+#define ERR_BADCHANNELKEY(chan) (":localhost 475 " + chan + " :Cannot join channel (+k)\r\n")
+#define ERR_CHANNELISFULL(chan) (":localhost 471 " + chan + " :Cannot join channel (+l)\r\n")
+#define ERR_INVITEONLYCHAN(chan) (":localhost 473 " + chan + " :Cannot join channel (+i)\r\n")
 
 // PRIVMSG
 #define ERR_NO_RECIPIENT ":localhost 411 :No recipient given\r\n"
-
-
 
 // USER
 #define ERR_NOT_ENOUGH_PARAMS ":localhost 461 USER :Not enough parameters\r\n"
@@ -32,7 +33,6 @@ void ft_send(int fd, const std::string& message);
 #define ERR_NO_PING_TARGET ":localhost 409 :No target for PING\r\n"
 
 // TOPIC
-
 #define RPL_NOTOPIC(nick, chan) (":localhost 331 " + nick + " " + chan + " :No topic is set\r\n")
 #define RPL_TOPIC(nick, chan, topic) (":localhost 332 " + nick + " " + chan + " :" + topic + "\r\n")
 
@@ -44,5 +44,4 @@ void ft_send(int fd, const std::string& message);
 
 // KICK
 #define ERR_USERNOTINCHANNEL(nick, chan) (":localhost 441 " + nick + " " + chan + " :They aren't on that channel\r\n")
-
 #define RPL_MODESET(chan, mode) (":localhost 324 " + chan + " " + mode + "\r\n")

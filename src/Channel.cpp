@@ -162,3 +162,15 @@ void Channel::removeOperator(int fd) {
     if (it != this->operators.end())
         this->operators.erase(it);
 }
+
+bool Channel::hasPassword() const {
+    return !this->pwd.empty();
+}
+
+bool Channel::hasUserLimit() const {
+    return this->userLimit > 0;
+}
+
+int Channel::getUserCount() const {
+    return this->clients.size();
+}
