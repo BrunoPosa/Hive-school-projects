@@ -4,33 +4,40 @@ using std::cout;
 using std::endl;
 using std::string;
 
-short	g_state = 0;
+Server	*g_servPtr = nullptr;
 
 Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listenSo_{} {}
 
 void Server::run() {
-	listenSo_.make();
-	listenSo_.listen(cfg_.getPort());
+	listenSo_.initListener(cfg_.getPort());
 	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
 
-	g_state = IRC_RUNNING | IRC_ACCEPTING;
+	state = IRC_RUNNING | IRC_ACCEPTING;
 
 	std::cout << "Server starting on port " << cfg_.getPort()
 		<< " with " << pollFds_.size() << " fds" << std::endl;//add IP address
 
-	while (IRC_RUNNING & g_state) {
+	while (IRC_RUNNING & state) {
 		try {
 			if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
 				if (errno == EINVAL || errno == ENOMEM) {
-					g_state &= ~IRC_ACCEPTING;
+					state &= ~IRC_ACCEPTING;
 				}
 				std::cerr << "poll() -1 with: " << strerror(errno) << std::endl;
 				continue;
 			}
 			handleEvents();
 		} catch (const std::exception& e) {
-			std::cerr << "Exception caught in main loop: " << e.what() << std::endl;
+			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 		}
+	}
+std::cerr << channels_.size() << " size of channels" << std::endl;
+	handleEvents();
+	for (auto& cliFd : clients_) {
+		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
+	}
+	if (poll(pollFds_.data(), pollFds_.size(), 1000) > 0) {
+		handleEvents();
 	}
 }
 
@@ -40,8 +47,9 @@ void Server::handleEvents() {
 
 		if (POLLIN & pfd.revents) {
 			if (pfd.fd == listenSo_.getFd()) {
-				if (IRC_ACCEPTING & g_state) {
+				if (IRC_ACCEPTING & state) {
 					acceptNewConnection();
+					continue;
 				}
 			} else {
 				if (clients_.at(pfd.fd).receive() == false) {
@@ -67,7 +75,7 @@ void Server::acceptNewConnection() {
 
 	if (listenSo_.accept(clientSock) == false) {
 		if (errno == EMFILE || errno == ENFILE || errno == ENOMEM || errno == ENOBUFS) {
-			g_state &= ~IRC_ACCEPTING; //stop accepting
+			state &= ~IRC_ACCEPTING; //stop accepting
 		} else if (errno != EAGAIN && errno != EWOULDBLOCK) {
 			std::cerr << "accept4() error: " << strerror(errno) << std::endl;
 		}
@@ -130,8 +138,8 @@ void Server::rmClient(int rmFd) {
 			std::cerr << "could not rmClient from map at fd:" << rmFd << std::endl;
 		}
 
-		if (IRC_ACCEPTING ^ g_state) {
-			g_state |= IRC_ACCEPTING; //raise back accepting flag if it was down
+		if (IRC_ACCEPTING ^ state) {
+			state |= IRC_ACCEPTING; //raise back accepting flag if it was down
 		}
 	} catch (std::exception& e) {
 		std::cerr << "rmClient (fd: " << rmFd << ") failed: " << e.what() << std::endl;
@@ -152,6 +160,10 @@ void	Server::splitAndProcess(int fromFd) {
 	} catch (std::bad_alloc& e) {
 		std::cerr << "Error during splitAndProcess(): " << e.what() << "Client fd:" << fromFd << std::endl;
 	}
+}
+
+void	Server::gracefulShutdown() {
+	state &= ~(IRC_ACCEPTING | IRC_RUNNING);
 }
 
 void Server::checkRegistration(int fd) {

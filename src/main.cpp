@@ -1,20 +1,42 @@
 #include "../inc/Server.hpp"
 
-int main(int argc, char* argv[]) {
-	if (argc != 3) {
-		std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
+namespace {
+
+	void	sigShutdown(int signal) {
+		std::cerr << "\nSignal caught - signum: " << signal << std::endl;
+		if (g_servPtr) {
+			g_servPtr->gracefulShutdown();
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	if (signal(SIGTERM, sigShutdown) == SIG_ERR
+	|| signal(SIGINT, sigShutdown) == SIG_ERR
+	|| signal(SIGHUP, sigShutdown) == SIG_ERR
+	|| signal(SIGPIPE, SIG_IGN) == SIG_ERR)
+	{
+		std::cerr << "signal() setup failed" << std::endl;
 		return 1;
 	}
+	
+	if (argc != 3) {
+		std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
+		return 2;
+	}
+	
 	try {
 		Config  config(argv[1], argv[2]);
 		Server	server(std::move(config));
-
+		
+		g_servPtr = &server;
+		
 		server.run();
-
-		std::cout << "Closing server.." << std::endl;
-
+		
 	} catch (const std::exception& e) {
-		std::cerr << "Error: " << e.what() << std::endl;
+		std::cerr << "Exception caught in main: " << e.what() << std::endl;
+		return 3;
 	}
-	return 1;
+	return 0;
 }

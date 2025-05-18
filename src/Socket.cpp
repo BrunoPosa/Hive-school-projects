@@ -52,16 +52,14 @@ Socket::~Socket() noexcept {
 	}
 }
 
-void	Socket::make() {
+void	Socket::initListener(uint16_t port) {
+	if (port < 1024) {
+		throw std::logic_error("Listener port must be valid and not between 1-1023");
+	}
+
 	fd_ = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
 	if (fd_ < 0) {
 		throw std::system_error(errno, std::generic_category(), "socket() failed");
-	}
-}
-
-void	Socket::listen(uint16_t port) {
-	if (port < 1024) {
-		throw std::logic_error("Listener port must be valid and not between 1-1023");
 	}
 
 	int opt = 1;

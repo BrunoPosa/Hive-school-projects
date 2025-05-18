@@ -1,6 +1,6 @@
 #pragma once
 
-class Server; // forward declare
+// class Server; // forward declare
 
 // Common error
 #define ERR_NOT_IN_CHANNEL(chan) (":localhost 442 " + chan + " :You're not on that channel\r\n")
@@ -44,6 +44,7 @@ class Server; // forward declare
 // KICK
 #define ERR_USERNOTINCHANNEL(nick, chan) (":localhost 441 " + nick + " " + chan + " :They aren't on that channel\r\n")
 
+//Idk if macros or inline functions are better
 namespace IrcMessages {
 
 	inline std::string	welcome(const std::string& nick, const std::string& servName) {
@@ -57,4 +58,13 @@ namespace IrcMessages {
 		return (":localhost 375 * :- Message of the Day -\r\n"
 				":localhost 376 * :Another day another slay\r\n");
 	}
+
+	inline std::string	quit() {
+		return ("QUIT :You have been disconnected by the server.\r\n");
+	}
+
+	inline std::string	errorQuit(const std::string& nick) {
+		return ("ERROR :Closing link: " + nick + " (Server shutting down)\r\n");
+	}
+
 }

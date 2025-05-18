@@ -56,12 +56,12 @@ re: fclean all
 fs: fclean
 	echo ########################################################
 	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o $(FSANITNAME) $(SRCS)
-	./$(FSANITNAME)
+	./$(FSANITNAME) 6667 4242
 
 val: fclean
 	echo ########################################################
 	$(CXX) $(FLAGS) $(VALGRFLAGS) -o $(VALGRNAME) $(SRCS)
-	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME) 6667 4242
+	valgrind --leak-check=full --track-fds=yes --show-leak-kinds=all ./$(VALGRNAME) 6667 4242
 
 git: fclean
 	clear

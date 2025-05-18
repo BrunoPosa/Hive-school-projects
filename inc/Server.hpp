@@ -9,6 +9,7 @@
 #include <poll.h>
 #include <cerrno>
 #include <cstring>
+#include <csignal>
 
 // Standard Template Library
 // System
@@ -40,10 +41,11 @@
 #include "Socket.hpp"
 #include "Config.hpp"
 
-extern short g_state;
+class Server;
+extern Server	*g_servPtr;
 
 enum IRCState : short {
-    IRC_RUNNING   = 0x1,
+	IRC_RUNNING   = 0x1,
     IRC_ACCEPTING = 0x2
 };
 
@@ -53,24 +55,25 @@ enum IRCState : short {
 #define RESETIRC "\033[0m"
 
 class Server {
-private:
+	private:
 	Config	cfg_;
 	Socket	listenSo_;
+	char	state;
 	std::vector<struct pollfd>	pollFds_;
 	std::map<int, Client>	clients_;
 	std::map<std::string, Channel>	channels_;
 	int defaultUserCount_ = 0;
-
+	
 	void	handleEvents();
 	void	acceptNewConnection();
 	void	addClient(Socket& sock);
 	void	rmClient(int rmFd);
 	void	splitAndProcess(int fromFd);
 	void	processCommand(int fd, const std::string& message);
-
+	
 	void	checkRegistration(int fd);
 	void	ft_send(int fd, const std::string& message);
-
+	
 	void	cmdNick(int fd, const std::string& message);
 	void	cmdUser(int fd, const std::string& message);
 	void	cmdJoin(int fd, const std::string& message);
@@ -81,12 +84,13 @@ private:
 	void	cmdKick(int sender_fd, const std::vector<std::string>& params);
 	void	kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
 	
-public:
+	public:
 	Server()	= default;
 	explicit	Server(Config&& cfg);
 	~Server()	= default;
-
+	
 	void	run();
+	void	gracefulShutdown();
 	int	getPort() const noexcept {return cfg_.getPort();}
 	int	getServerFd() const { return listenSo_.getFd(); }
 	int	getClientFdByNick(const std::string& nick) const;
