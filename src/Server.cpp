@@ -31,14 +31,6 @@ void Server::run() {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 		}
 	}
-
-	handleEvents();
-	for (auto& cliFd : clients_) {
-		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
-	}
-	if (poll(pollFds_.data(), pollFds_.size(), 1000) > 0) {
-		handleEvents();
-	}
 }
 
 void Server::handleEvents() {
@@ -91,11 +83,7 @@ void Server::acceptNewConnection() {
 			<< ntohs(clientSock.getAddr().sin_port) 
 			<< " (FD: " << fd << ")" << RESETIRC << std::endl;
 
-	try {
-		clients_.at(fd).toSend(IrcMessages::welcome(clients_.at(fd).getNick(), cfg_.getServName()));
-	} catch (std::exception& e) {
-		std::cerr << "acceptNewConnection() with fd: " << fd << " : " << e.what() << std::endl;
-	}
+	clients_.at(fd).toSend(IrcMessages::passRequest());
 }
 
 //constructs Client with the given socket and adds its fd to pollFds_ and the object itself to clients_ map
@@ -156,17 +144,53 @@ void	Server::splitAndProcess(int fromFd) {
 		std::string line;
 		std::string	msgs = clients_.at(fromFd).getMsgs();
 
-		while ((pos = msgs.find("\r\n")) != std::string::npos) {
-			line = msgs.substr(0, pos);
-			processCommand(fromFd, line);
-			msgs.erase(0, pos + 2);
+		if (clients_.at(fromFd).isAuthenticated() == false) {
+			authenticate(clients_.at(fromFd), msgs);
+		} else {
+			while ((pos = msgs.find("\r\n")) != std::string::npos) {
+				line = msgs.substr(0, pos);
+				processCommand(fromFd, line);
+				msgs.erase(0, pos + 2);
+			}
 		}
-	} catch (std::bad_alloc& e) {
+	} catch (std::exception& e) {
 		std::cerr << "Exception caught in splitAndProcess(): " << e.what() << "Client fd:" << fromFd << std::endl;
 	}
 }
 
+void	Server::authenticate(Client& newClient, std::string& msg) {
+	
+	cout << msg << endl;
+	size_t pos = msg.find("\r\n");
+	if (pos != std::string::npos) {
+		if (msg.length() >= 6 && msg.find("CAP LS") == 0) {
+			return;
+		} else if (msg.length() >= 4 && msg.find("NICK") == 0) {
+			return;
+		} else if (msg.length() >= 4 && msg.find("USER") == 0) {
+			return;
+		} else if (msg.length() >= 4 && msg.find("PING") == 0) {
+			return;
+		}
+		if (msg.length() > 5 && msg.find("PASS ") == 0) {
+
+			std::string password = msg.substr(5, pos - 5);
+
+			if (cfg_.CheckPassword(password) == true) {
+				newClient.setAuthenticated();
+				newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
+				return;
+			}
+			newClient.toSend(IrcMessages::wrongPass());
+			rmClient(newClient.getFd());
+		}
+	}
+}
+
 void	Server::gracefulShutdown() {
+	for (auto& cliFd : clients_) {
+		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
+	}
 	state &= ~(IRC_ACCEPTING | IRC_RUNNING);
 }
 

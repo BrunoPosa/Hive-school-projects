@@ -47,6 +47,14 @@
 //Idk if macros or inline functions are better
 namespace IrcMessages {
 
+	inline std::string	passRequest() {
+		return ("Please type the password (try '/quote PASS <yourpassword>')...\r\n");
+	}
+
+	inline std::string	wrongPass() {
+		return ("ERROR :Incorrect password. Connection closed.\r\n");
+	}
+
 	inline std::string	welcome(const std::string& nick, const std::string& servName) {
 		return (":localhost 001 " + nick + " :Welcome to the " + servName + " Internet Relay Network\r\n"
 			":localhost 002 " + nick + " :Your host is localhost\r\n"

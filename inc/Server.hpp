@@ -44,7 +44,7 @@
 class Server;
 extern Server	*g_servPtr;
 
-enum IRCState : short {
+enum IRCState : char {
 	IRC_RUNNING   = 0x1,
     IRC_ACCEPTING = 0x2
 };
@@ -59,13 +59,14 @@ private:
 	Config	cfg_;
 	Socket	listenSo_;
 	char	state;//atomic?
-	std::vector<struct pollfd>	pollFds_;
 	std::map<int, Client>	clients_;
+	std::vector<struct pollfd>	pollFds_;
 	std::map<std::string, Channel>	channels_;
 	int defaultUserCount_ = 0;
 	
 	void	handleEvents();
 	void	acceptNewConnection();
+	void	authenticate(Client& newClient, std::string& msg);
 	void	addClient(Socket& sock);
 	void	rmClient(int rmFd);
 	void	splitAndProcess(int fromFd);
@@ -91,8 +92,8 @@ public:
 	
 	void	run();
 	void	gracefulShutdown();
-	int	getPort() const noexcept {return cfg_.getPort();}
-	int	getServerFd() const { return listenSo_.getFd(); }
-	int	getClientFdByNick(const std::string& nick) const;
+	int		getPort() const noexcept {return cfg_.getPort();}
+	int		getServerFd() const { return listenSo_.getFd(); }
+	int		getClientFdByNick(const std::string& nick) const;
 	std::string	getNickByFd(int fd) const;
 };
