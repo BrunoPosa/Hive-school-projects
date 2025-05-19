@@ -26,6 +26,7 @@ void Server::run() {
 				std::cerr << "poll() returned -1 with errno: " << strerror(errno) << std::endl;
 				continue;
 			}
+			std::cout << "We poll" << std::endl;
 			handleEvents();
 		} catch (const std::exception& e) {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
@@ -47,6 +48,7 @@ void Server::handleEvents() {
 		pollfd&	pfd = pollFds_[i];
 
 		if (POLLIN & pfd.revents) {
+			std::cout << "POLLIN" << std::endl;
 			if (pfd.fd == listenSo_.getFd()) {
 				if (IRC_ACCEPTING & state) {
 					acceptNewConnection();
@@ -58,11 +60,16 @@ void Server::handleEvents() {
 					continue;
 				}
 			}
-		}
-		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
+		} else if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
+			std::cout << "POLL SOME" << std::endl;
 			std::cerr << "revents error: " << pfd.revents << " on fd " << pfd.fd << std::endl;
+			// if (POLLIN ^ pfd.revents) {
+			// 	rmClient(pfd.fd);
+			// }
 			rmClient(pfd.fd);
+
 		} else if (POLLOUT & pfd.revents) {
+			std::cout << "POLLOUT" << std::endl;
 			if (clients_.at(pfd.fd).send() == false) {
 				rmClient(pfd.fd);
 			}
@@ -98,13 +105,13 @@ void Server::acceptNewConnection() {
 void Server::addClient(Socket& sock) {
 	int fd = sock.getFd();
 	try {
-		pollFds_.push_back({sock.getFd(), POLLIN | POLLOUT, 0});
+		pollFds_.push_back({sock.getFd(), POLLIN, 0});
 	} catch (std::exception& e) {
 		std::cerr << "addClient to pollFds_ (fd: " << fd << ") failed: " << e.what() << std::endl;
 		return;
 	}
 	try {
-		clients_.emplace(fd, Client(std::move(sock)));	
+		clients_.emplace(fd, Client(std::move(sock), pollFds_.back()));	
 	} catch (std::exception& e) {
 		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
 		rmClient(fd);
@@ -157,7 +164,8 @@ bool	Server::handleMsgs(int fromFd) {
 		// 		return false;
 		// 	}
 		// } else {
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	clients_.at(fromFd).toSend(IrcMessages::welcome(clients_.at(fromFd).getNick(), cfg_.getServName()));
 			while ((pos = msgs.find("\r\n")) != std::string::npos) {
 				line = msgs.substr(0, pos);
 				processCommand(fromFd, line);//consider having processCommand return bool false when QUIT is typed, so we know in poll loop to rmClient

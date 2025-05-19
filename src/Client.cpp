@@ -1,7 +1,12 @@
 #include "../inc/Server.hpp"
 
+using std::cout;
+using std::endl;
+using std::string;
+
 Client::Client()
 :	so_{},
+	pfd_{},
 	sendBuf_{},
 	recvBuf_{},
 	nick_{"guest"},
@@ -18,8 +23,9 @@ Client::Client()
 	recvBuf_.reserve(IRC_BUFFER_SIZE);
 }
 
-Client::Client(Socket&& so)  // Parameterized constructor
+Client::Client(Socket&& so, pollfd& pfd)  // Parameterized constructor
 :	so_{std::move(so)},
+	pfd_{pfd},
 	sendBuf_{},
 	recvBuf_{},
 	nick_{"guest"},
@@ -38,6 +44,7 @@ Client::Client(Socket&& so)  // Parameterized constructor
 
 Client::Client(Client&& other) noexcept
 	:	so_{std::move(other.so_)},
+		pfd_{std::move(other.pfd_)},
 		sendBuf_{std::move(other.sendBuf_)},
 		recvBuf_{std::move(other.recvBuf_)},
 		nick_{std::move(other.nick_)},
@@ -54,6 +61,7 @@ Client::Client(Client&& other) noexcept
 Client&	Client::operator=(Client&& other) noexcept {
 	if (this != &other) {
 		so_ = std::move(other.so_);
+		pfd_ = std::move(other.pfd_);
 		sendBuf_ = std::move(other.sendBuf_);
 		recvBuf_ = std::move(other.recvBuf_);
 		nick_ = std::move(other.nick_);
@@ -70,7 +78,7 @@ Client&	Client::operator=(Client&& other) noexcept {
 }
 
 void	Client::toSend(const std::string& data) {
-	if (data.empty()){
+	if (data.empty()) {
 		return;
 	}
 
@@ -80,6 +88,7 @@ void	Client::toSend(const std::string& data) {
 
 	try {
 		sendBuf_.append(data);
+		pfd_.events |= POLLOUT;
 	} catch (std::bad_alloc& e) {
 		std::cerr << "toSend() append failed: " << e.what() << std::endl;
 	}
@@ -91,7 +100,7 @@ bool	Client::send() {
 		return true;
 	}
 
-	ssize_t sent = ::send(so_.getFd(), sendBuf_.data(), sendBuf_.size(), MSG_NOSIGNAL);
+	ssize_t sent = ::send(so_.getFd(), sendBuf_.c_str(), sendBuf_.size(), MSG_NOSIGNAL);
 	if (sent < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
 			return true;
@@ -103,8 +112,12 @@ bool	Client::send() {
 		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; // should we print this?
 		return false;
 	}
-
+std::cout << REDIRC << sendBuf_ << "  " << sent << RESETIRC << std::endl;
 	sendBuf_.erase(0, sent);
+
+	if (sendBuf_.empty()) {
+		pfd_.events &= ~POLLOUT;
+	}
 
 	return true;
 }
@@ -133,7 +146,7 @@ bool	Client::receive() {
 	// 	std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
 	// 	return false;
 	// }
-
+std::cout << " we recieve " << std::string(buffer) << std::endl;
 	try {
 		recvBuf_.append(buffer, bytesRead);
 	} catch (std::exception& e) {

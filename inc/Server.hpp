@@ -44,6 +44,7 @@
 //testing
 #include <chrono>
 #include <thread>
+       #include <fcntl.h>
 
 class Server;
 extern Server	*g_servPtr;
