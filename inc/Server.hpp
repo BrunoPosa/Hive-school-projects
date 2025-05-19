@@ -41,6 +41,10 @@
 #include "Socket.hpp"
 #include "Config.hpp"
 
+//testing
+#include <chrono>
+#include <thread>
+
 class Server;
 extern Server	*g_servPtr;
 

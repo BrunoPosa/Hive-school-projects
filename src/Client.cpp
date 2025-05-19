@@ -74,9 +74,9 @@ void	Client::toSend(const std::string& data) {
 		return;
 	}
 
-	if (sendBuf_.size() + data.size() > IRC_BUFFER_SIZE) {
-		std::cerr << "sendBuf_ at client fd " << so_.getFd() << " is filling up" << std::endl;
-	}
+	// if (sendBuf_.size() + data.size() > IRC_BUFFER_SIZE) {
+	// 	std::cerr << "sendBuf_ at client fd " << so_.getFd() << " is filling up" << std::endl;
+	// }
 
 	try {
 		sendBuf_.append(data);
@@ -129,10 +129,10 @@ bool	Client::receive() {
 		return false;
 	}
 
-	if (recvBuf_.size() + bytesRead > IRC_BUFFER_SIZE) {
-		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
-		return false;
-	}
+	// if (recvBuf_.size() + bytesRead > IRC_BUFFER_SIZE) {
+	// 	std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
+	// 	return false;
+	// }
 
 	try {
 		recvBuf_.append(buffer, bytesRead);

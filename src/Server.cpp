@@ -38,6 +38,9 @@ void Server::run() {
 	(bc when adding/removing a client during first if block, index and map needs updating)
 	not a huge deal, but ugly and cumbersome. 
 	Assumption is for 1st if being separate is that POLLIN and POLLERR/HUP/NVAL are NOT mutually exclusive, so we should still process input on error
+	-Test: make server recv buffer 1byte and then wait 1s, in the meantime disconnect from the client, and see if the serv receives the full message
+	then i'll know for sure if kernel buf keeps its huge buffer after a client disconnects
+	-ToDo: timeout if no activity from client bc monopolyizing the resourses
 */
 void Server::handleEvents() {
 	for (int i = pollFds_.size() - 1; i >= 0; --i) {
@@ -149,17 +152,18 @@ bool	Server::handleMsgs(int fromFd) {
 		std::string line;
 		std::string	msgs = clients_.at(fromFd).getMsgs();
 
-		if (clients_.at(fromFd).isAuthenticated() == false) {
-			if (authenticate(clients_.at(fromFd), msgs) == false) {
-				return false;
-			}
-		} else {
+		// if (clients_.at(fromFd).isAuthenticated() == false) {
+		// 	if (authenticate(clients_.at(fromFd), msgs) == false) {
+		// 		return false;
+		// 	}
+		// } else {
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			while ((pos = msgs.find("\r\n")) != std::string::npos) {
 				line = msgs.substr(0, pos);
 				processCommand(fromFd, line);//consider having processCommand return bool false when QUIT is typed, so we know in poll loop to rmClient
 				msgs.erase(0, pos + 2);
 			}
-		}
+		// }
 	} catch (std::exception& e) {
 		std::cerr << "Exception caught in splitAndProcess(): " << e.what() << "Client fd:" << fromFd << std::endl;
 	}
@@ -169,12 +173,10 @@ bool	Server::handleMsgs(int fromFd) {
 //if authenticate returns false, client should be removed
 bool	Server::authenticate(Client& newClient, std::string& msg) {
 	size_t pos = msg.find("\r\n");
+	cout << YELLOWIRC << msg << RESETIRC << endl;
 	if (pos != std::string::npos) {
+		cout << msg << endl;
 		if (msg.length() >= 6 && msg.find("CAP LS") == 0) {
-			return true;
-		} else if (msg.length() >= 4 && msg.find("NICK") == 0) {
-			return true;
-		} else if (msg.length() >= 4 && msg.find("USER") == 0) {
 			return true;
 		} else if (msg.length() >= 4 && msg.find("PING") == 0) {
 			return true;

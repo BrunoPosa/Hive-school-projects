@@ -1,0 +1,4 @@
+<< CAP LS
+<< NICK poopsie
+<< USER bposa bposa localhost :Bruno Posa
+>> Please type the password (try '/quote PASS <yourpassword>')...
