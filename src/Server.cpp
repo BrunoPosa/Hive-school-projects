@@ -23,7 +23,7 @@ void Server::run() {
 				if (errno == EINVAL || errno == ENOMEM) {
 					state &= ~IRC_ACCEPTING;
 				}
-				std::cerr << "poll() -1 with: " << strerror(errno) << std::endl;
+				std::cerr << "poll() returned -1 with errno: " << strerror(errno) << std::endl;
 				continue;
 			}
 			handleEvents();
@@ -33,6 +33,12 @@ void Server::run() {
 	}
 }
 
+/*
+	question the requirement of all 3 ifs not being in an if-else block
+	(bc when adding/removing a client during first if block, index and map needs updating)
+	not a huge deal, but ugly and cumbersome. 
+	Assumption is for 1st if being separate is that POLLIN and POLLERR/HUP/NVAL are NOT mutually exclusive, so we should still process input on error
+*/
 void Server::handleEvents() {
 	for (int i = pollFds_.size() - 1; i >= 0; --i) {
 		pollfd&	pfd = pollFds_[i];
@@ -44,11 +50,10 @@ void Server::handleEvents() {
 					continue;
 				}
 			} else {
-				if (clients_.at(pfd.fd).receive() == false) {
+				if (clients_.at(pfd.fd).receive() == false || handleMsgs(pfd.fd) == false) {
 					rmClient(pfd.fd);
 					continue;
 				}
-				splitAndProcess(pfd.fd);
 			}
 		}
 		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
@@ -138,53 +143,58 @@ void Server::rmClient(int rmFd) {
 	}
 }
 
-void	Server::splitAndProcess(int fromFd) {
+bool	Server::handleMsgs(int fromFd) {
 	try {
 		size_t pos = 0;
 		std::string line;
 		std::string	msgs = clients_.at(fromFd).getMsgs();
 
 		if (clients_.at(fromFd).isAuthenticated() == false) {
-			authenticate(clients_.at(fromFd), msgs);
+			if (authenticate(clients_.at(fromFd), msgs) == false) {
+				return false;
+			}
 		} else {
 			while ((pos = msgs.find("\r\n")) != std::string::npos) {
 				line = msgs.substr(0, pos);
-				processCommand(fromFd, line);
+				processCommand(fromFd, line);//consider having processCommand return bool false when QUIT is typed, so we know in poll loop to rmClient
 				msgs.erase(0, pos + 2);
 			}
 		}
 	} catch (std::exception& e) {
 		std::cerr << "Exception caught in splitAndProcess(): " << e.what() << "Client fd:" << fromFd << std::endl;
 	}
+	return true;
 }
 
-void	Server::authenticate(Client& newClient, std::string& msg) {
-	
-	cout << msg << endl;
+//if authenticate returns false, client should be removed
+bool	Server::authenticate(Client& newClient, std::string& msg) {
 	size_t pos = msg.find("\r\n");
 	if (pos != std::string::npos) {
 		if (msg.length() >= 6 && msg.find("CAP LS") == 0) {
-			return;
+			return true;
 		} else if (msg.length() >= 4 && msg.find("NICK") == 0) {
-			return;
+			return true;
 		} else if (msg.length() >= 4 && msg.find("USER") == 0) {
-			return;
+			return true;
 		} else if (msg.length() >= 4 && msg.find("PING") == 0) {
-			return;
+			return true;
 		}
 		if (msg.length() > 5 && msg.find("PASS ") == 0) {
-
+			//skip spaces, as per rfc
 			std::string password = msg.substr(5, pos - 5);
 
 			if (cfg_.CheckPassword(password) == true) {
 				newClient.setAuthenticated();
 				newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
-				return;
+				return true;
+			} else {
+				newClient.toSend(IrcMessages::wrongPass());
 			}
-			newClient.toSend(IrcMessages::wrongPass());
-			rmClient(newClient.getFd());
 		}
+		newClient.toSend(IrcMessages::wrongPass());
+		return false;
 	}
+	return true;
 }
 
 void	Server::gracefulShutdown() {

@@ -5,7 +5,7 @@
 #include <map>
 #include "Socket.hpp"
 
-#define IRC_BUFFER_SIZE 512
+#define IRC_BUFFER_SIZE 4096
 
 class Client {
 	private:

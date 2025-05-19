@@ -66,10 +66,10 @@ private:
 	
 	void	handleEvents();
 	void	acceptNewConnection();
-	void	authenticate(Client& newClient, std::string& msg);
 	void	addClient(Socket& sock);
 	void	rmClient(int rmFd);
-	void	splitAndProcess(int fromFd);
+	bool	handleMsgs(int fromFd);
+	bool	authenticate(Client& newClient, std::string& msg);
 	void	processCommand(int fd, const std::string& message);
 	
 	void	checkRegistration(int fd);
