@@ -23,6 +23,7 @@ class Client {
 		bool passReceived;
 		bool modeReceived;
 		bool whois; // Whois status
+		int	authAttempts_;
 		
 	public:
 		Client();	//def. constructor on creation makes a new socket
@@ -42,12 +43,14 @@ class Client {
 		int		getFd() const	{ return this->so_.getFd(); }
 		std::string getIP() const {return so_.getIpStr();}
 		std::string	getMsgs();
+		int	getAuthAttempts() const { return authAttempts_; }
+		void addAuthAttempt() { ++authAttempts_; }
 
+		bool isAuthenticated() const { return authenticated; }
 		bool hasReceivedNick() const { return nickReceived; }
 		bool hasReceivedUser() const { return userReceived; }
 		bool hasReceivedPass() const { return passReceived; }
 		bool hasReceivedMode() const { return modeReceived; }
-		bool isAuthenticated() const { return authenticated; }
 
 		const std::string& getNick() const { return nick_; }
 		const std::string& getUser() const { return usrnm_; }

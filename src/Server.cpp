@@ -35,6 +35,7 @@ void Server::run() {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 		}
 	}
+	cout << "Server shutting down.." << endl;
 }
 
 /*
@@ -42,8 +43,6 @@ void Server::run() {
 	(bc when adding/removing a client during first if block, index and map needs updating)
 	not a huge deal, but ugly and cumbersome. 
 	Assumption is for 1st if being separate is that POLLIN and POLLERR/HUP/NVAL are NOT mutually exclusive, so we should still process input on error
-	-Test: make server recv buffer 1byte and then wait 1s, in the meantime disconnect from the client, and see if the serv receives the full message
-	then i'll know for sure if kernel buf keeps its huge buffer after a client disconnects
 	-ToDo: timeout if no activity from client bc monopolyizing the resourses
 */
 void Server::handleEvents() {
@@ -175,8 +174,9 @@ bool	Server::handleMsgs(int fromFd) {
 			}
 		} else {
 			#ifdef IRC_DEBUG_PRINTS
-				cout << "waiting" << endl;
-				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+				int ms = 50;
+				cout << "waiting " << ms << "ms" << endl;
+				std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 			#endif
 			while ((pos = msgs.find("\r\n")) != std::string::npos) {
 				line = msgs.substr(0, pos);
@@ -193,38 +193,42 @@ bool	Server::handleMsgs(int fromFd) {
 //if authenticate returns false, client should be removed
 bool	Server::authenticate(Client& newClient, std::string& msg) {
 	size_t pos = msg.find("\r\n");
+	if (pos == std::string::npos) {
+		return true;
+	}
 	#ifdef IRC_DEBUG_PRINTS
 		cout << "authenticate() msg: " << YELLOWIRC << msg << RESETIRC << endl;
 	#endif
-	if (pos != std::string::npos) {
-		if (msg.length() >= 6 && msg.find("CAP LS") == 0) {
-			return true;
-		} else if (msg.length() >= 4 && msg.find("PING") == 0) {
-			return true;
-		} else if (msg.length() >= 4 && msg.find("NICK") == 0) {
-			return true;
-		} else if (msg.length() >= 4 && msg.find("USER") == 0) {
-			return true;
-		}
-		cout << "checking PASS prefix:" << endl;
-		if (msg.length() > 5 && msg.find("PASS ") == 0) {
-			//skip spaces, as per rfc
-			std::string password = msg.substr(5, pos - 5);
-			#ifdef IRC_DEBUG_PRINTS
-				cout << "checking password:" << endl;
-			#endif
-			if (cfg_.CheckPassword(password) == true) {
-				newClient.setAuthenticated();
-				newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
-				return true;
-			} else {
-				newClient.toSend(IrcMessages::wrongPass());
-			}
-		}
-		newClient.toSend(IrcMessages::wrongPass());
-		return false;
+	if (msg.length() >= 6 && msg.find("CAP LS") == 0) {
+		return true;
+	} else if (msg.length() >= 4 && msg.find("PING") == 0) {
+		return true;
+	} else if (msg.length() >= 4 && msg.find("NICK") == 0) {
+		return true;
+	} else if (msg.length() >= 4 && msg.find("USER") == 0) {
+		return true;
 	}
-	return true;
+	if (msg.length() > 5 && msg.find("PASS ") == 0) {
+		//skip spaces, as per rfc
+		std::string password = msg.substr(5, pos - 5);
+		#ifdef IRC_DEBUG_PRINTS
+			cout << "checking password:" << endl;
+		#endif
+		if (cfg_.CheckPassword(password) == true) {
+			newClient.setAuthenticated();
+			newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
+			return true;
+		}
+	}
+	#ifdef IRC_DEBUG_PRINTS
+		cout << "pass attempt: " << newClient.getAuthAttempts() << endl;
+	#endif
+	newClient.addAuthAttempt();
+	newClient.toSend(IrcMessages::wrongPass());
+	if (newClient.getAuthAttempts() < cfg_.getMaxAuthAttempts()) {
+		return true;
+	}
+	return false;
 }
 
 void	Server::gracefulShutdown() {
@@ -232,7 +236,6 @@ void	Server::gracefulShutdown() {
 		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
 	}
 	state &= ~(IRC_ACCEPTING | IRC_RUNNING);
-	cout << "Server shutting down.." << endl;
 }
 
 void Server::checkRegistration(int fd) {

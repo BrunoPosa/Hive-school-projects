@@ -52,7 +52,11 @@ namespace IrcMessages {
 	}
 
 	inline std::string	wrongPass() {
-		return ("ERROR :Incorrect password. Connection closed.\r\n");
+		return ("ERROR :Incorrect password.\r\n");
+	}
+
+	inline std::string	disconnect() {
+		return ("ERROR :Too many attempts. Connection closed.\r\n");
 	}
 
 	inline std::string	welcome(const std::string& nick, const std::string& servName) {

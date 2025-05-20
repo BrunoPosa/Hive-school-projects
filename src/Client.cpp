@@ -18,7 +18,8 @@ Client::Client()
 	userReceived{false},
 	passReceived{false},
 	modeReceived{false},
-	whois{false}
+	whois{false},
+	authAttempts_{0}
 {
 	sendBuf_.reserve(IRC_BUFFER_SIZE);
 	recvBuf_.reserve(IRC_BUFFER_SIZE);
@@ -37,7 +38,8 @@ Client::Client(Socket&& so, pollfd *pfd)  // Parameterized constructor
 	userReceived{false},
 	passReceived{false},
 	modeReceived{false},
-	whois{false}
+	whois{false},
+	authAttempts_{0}
 {
 	sendBuf_.reserve(IRC_BUFFER_SIZE);
 	recvBuf_.reserve(IRC_BUFFER_SIZE);
@@ -56,7 +58,8 @@ Client::Client(Client&& other) noexcept
 		userReceived{std::exchange(other.userReceived, false)},
 		passReceived{std::exchange(other.passReceived, false)},
 		modeReceived{std::exchange(other.modeReceived, false)},
-		whois{std::exchange(other.modeReceived, false)}
+		whois{std::exchange(other.modeReceived, false)},
+		authAttempts_{std::exchange(other.authAttempts_, 0)}
 {}
 
 Client&	Client::operator=(Client&& other) noexcept {
@@ -74,6 +77,7 @@ Client&	Client::operator=(Client&& other) noexcept {
 		passReceived = std::exchange(other.passReceived, false);
 		modeReceived = std::exchange(other.modeReceived, false);
 		whois = std::exchange(other.modeReceived, false);
+		authAttempts_ = std::exchange(other.authAttempts_, 0);
 	}
 	return *this;
 }
@@ -130,7 +134,7 @@ bool	Client::send() {
 	in case of partial data, Client stores it in recvBuf_ and we add new data to it to get a full message
 */
 bool	Client::receive() {
-	char buffer[IRC_BUFFER_SIZE];
+	char buffer[IRC_BUFFER_SIZE + 1];
 
 	ssize_t bytesRead = recv(so_.getFd(), buffer, sizeof(buffer) - 1, MSG_NOSIGNAL);
 	if (bytesRead < 0) {
@@ -144,6 +148,7 @@ bool	Client::receive() {
 		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; /// should we print this?
 		return false;
 	}
+
 	buffer[bytesRead] = '\0';
 
 	if (recvBuf_.size() + bytesRead > IRC_MAX_BUF) {//????
