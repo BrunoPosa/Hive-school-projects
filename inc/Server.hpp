@@ -44,7 +44,7 @@
 //testing
 #include <chrono>
 #include <thread>
-       #include <fcntl.h>
+#include <fcntl.h>
 
 class Server;
 extern Server	*g_servPtr;
@@ -59,11 +59,13 @@ enum IRCState : char {
 #define GREENIRC "\033[1;32m"
 #define RESETIRC "\033[0m"
 
+#define IRC_DEBUG_PRINTS
+
 class Server {
 private:
 	Config	cfg_;
 	Socket	listenSo_;
-	char	state;//atomic?
+	volatile sig_atomic_t	state;
 	std::map<int, Client>	clients_;
 	std::vector<struct pollfd>	pollFds_;
 	std::map<std::string, Channel>	channels_;

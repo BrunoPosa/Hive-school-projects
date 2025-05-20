@@ -1,12 +1,13 @@
 #include "../inc/Server.hpp"
 
 using std::cout;
+using std::cerr;
 using std::endl;
 using std::string;
 
 Client::Client()
 :	so_{},
-	pfd_{},
+	pfd_{nullptr},
 	sendBuf_{},
 	recvBuf_{},
 	nick_{"guest"},
@@ -23,7 +24,7 @@ Client::Client()
 	recvBuf_.reserve(IRC_BUFFER_SIZE);
 }
 
-Client::Client(Socket&& so, pollfd& pfd)  // Parameterized constructor
+Client::Client(Socket&& so, pollfd *pfd)  // Parameterized constructor
 :	so_{std::move(so)},
 	pfd_{pfd},
 	sendBuf_{},
@@ -44,7 +45,7 @@ Client::Client(Socket&& so, pollfd& pfd)  // Parameterized constructor
 
 Client::Client(Client&& other) noexcept
 	:	so_{std::move(other.so_)},
-		pfd_{std::move(other.pfd_)},
+		pfd_{std::exchange(other.pfd_, nullptr)},
 		sendBuf_{std::move(other.sendBuf_)},
 		recvBuf_{std::move(other.recvBuf_)},
 		nick_{std::move(other.nick_)},
@@ -82,13 +83,13 @@ void	Client::toSend(const std::string& data) {
 		return;
 	}
 
-	// if (sendBuf_.size() + data.size() > IRC_BUFFER_SIZE) {
-	// 	std::cerr << "sendBuf_ at client fd " << so_.getFd() << " is filling up" << std::endl;
-	// }
+	if (sendBuf_.size() + data.size() > IRC_MAX_BUF) {
+		cerr << "sendBuf_ at fd " << so_.getFd() << " almost reached max " << IRC_MAX_BUF << "bytes and last message has been ignored." << endl;
+	}
 
 	try {
 		sendBuf_.append(data);
-		pfd_.events |= POLLOUT;
+		pfd_->events |= POLLOUT;
 	} catch (std::bad_alloc& e) {
 		std::cerr << "toSend() append failed: " << e.what() << std::endl;
 	}
@@ -99,7 +100,9 @@ bool	Client::send() {
 	if (sendBuf_.empty() == true) {
 		return true;
 	}
-
+	#ifdef IRC_DEBUG_PRINTS
+		cout << YELLOWIRC << "send()" << RESETIRC << endl;
+	#endif
 	ssize_t sent = ::send(so_.getFd(), sendBuf_.c_str(), sendBuf_.size(), MSG_NOSIGNAL);
 	if (sent < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
@@ -112,11 +115,11 @@ bool	Client::send() {
 		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; // should we print this?
 		return false;
 	}
-std::cout << REDIRC << sendBuf_ << "  " << sent << RESETIRC << std::endl;
+// std::cout << REDIRC << sendBuf_ << "  " << sent << RESETIRC << std::endl;
 	sendBuf_.erase(0, sent);
 
 	if (sendBuf_.empty()) {
-		pfd_.events &= ~POLLOUT;
+		pfd_->events &= ~POLLOUT;
 	}
 
 	return true;
@@ -129,7 +132,7 @@ std::cout << REDIRC << sendBuf_ << "  " << sent << RESETIRC << std::endl;
 bool	Client::receive() {
 	char buffer[IRC_BUFFER_SIZE];
 
-	ssize_t bytesRead = recv(so_.getFd(), buffer, sizeof(buffer), MSG_NOSIGNAL);
+	ssize_t bytesRead = recv(so_.getFd(), buffer, sizeof(buffer) - 1, MSG_NOSIGNAL);
 	if (bytesRead < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
 			return true;
@@ -141,12 +144,16 @@ bool	Client::receive() {
 		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; /// should we print this?
 		return false;
 	}
+	buffer[bytesRead] = '\0';
 
-	// if (recvBuf_.size() + bytesRead > IRC_BUFFER_SIZE) {
-	// 	std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
-	// 	return false;
-	// }
-std::cout << " we recieve " << std::string(buffer) << std::endl;
+	if (recvBuf_.size() + bytesRead > IRC_MAX_BUF) {//????
+		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
+		return false;
+	}
+
+	#ifdef IRC_DEBUG_PRINTS
+		std::cout << " we recieve " << buffer << std::endl;
+	#endif
 	try {
 		recvBuf_.append(buffer, bytesRead);
 	} catch (std::exception& e) {

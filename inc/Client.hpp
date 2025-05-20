@@ -5,12 +5,13 @@
 #include <map>
 #include "Socket.hpp"
 
-#define IRC_BUFFER_SIZE 1
+#define IRC_BUFFER_SIZE 100
+#define IRC_MAX_BUF 256001
 
 class Client {
 	private:
 		Socket		so_;
-		pollfd		pfd_;
+		pollfd		*pfd_;
 		std::string sendBuf_;
 		std::string	recvBuf_;
 		std::string nick_;
@@ -25,7 +26,7 @@ class Client {
 		
 	public:
 		Client();	//def. constructor on creation makes a new socket
-		Client(Socket&& so, pollfd& pfd); //constructor ties the new client instance to an existing socket
+		Client(Socket&& so, pollfd *pfd); //constructor ties the new client instance to an existing socket
 		Client(const Client& other)				= delete; //because sockets are unique and close on destruction (each client owns one) - we disallow copies
 		Client& operator=(const Client& other)	= delete;
 		Client(Client&& other) noexcept;				//Move constructor
