@@ -1,6 +1,7 @@
 #include "../../inc/irc.hpp"
 
-void Server::cmdJoin(int fd, const std::string& message) {
+void Server::cmdJoin(int fd, const std::string& message)
+{
     std::istringstream iss(message);
     std::string command, channel, key;
     iss >> command >> channel >> key;
@@ -11,15 +12,14 @@ void Server::cmdJoin(int fd, const std::string& message) {
     }
 
     Channel* chanPtr = nullptr;
-
     // Create the channel if it doesn't exist
     if (channels_.find(channel) == channels_.end()) {
         channels_[channel] = Channel(channel);
         channels_[channel].addOperator(fd);
+        std::cerr << "added operator " << fd << " to channel " << channel << std::endl;
     }
 
     chanPtr = &channels_[channel];
-
     // Already in the channel?
     if (clients_[fd].isInChannel(channel)) {
         ft_send(fd, ERR_USERONCHANNEL(channel));
@@ -50,9 +50,14 @@ void Server::cmdJoin(int fd, const std::string& message) {
     clients_[fd].joinChannel(channel, false);
     chanPtr->addClient(fd);
 
-    std::cerr << "Client " << clients_[fd].getNick() << " joined channel: " << channel << std::endl;
+    // Send topic info after successful join
+    if (!chanPtr->getTopic().empty()) {
+        ft_send(fd, RPL_TOPIC(clients_[fd].getNick(), channel, chanPtr->getTopic()));
+    } else {
+        ft_send(fd, RPL_NOTOPIC(clients_[fd].getNick(), channel));
+    }
 
+    std::cerr << "Client " << clients_[fd].getNick() << " joined channel: " << channel << std::endl;
     std::string joinMessage = ":" + clients_[fd].getNick() + " JOIN :" + channel + "\r\n";
     chanPtr->broadcast(fd, joinMessage, clients_[fd].getNick(), -1);
 }
-

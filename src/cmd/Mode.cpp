@@ -5,7 +5,6 @@ void Server::cmdMode(int fd, const std::string& message) {
     std::istringstream iss(message);
     std::string command, target, modeStr, param;
     iss >> command >> target >> modeStr >> param;
-
     std::clog << "Debug: Channel: " << target << ", Mode: " << modeStr << ", Param: " << param << std::endl;
 
     if (target.empty() || modeStr.empty()) {
@@ -24,7 +23,6 @@ void Server::cmdMode(int fd, const std::string& message) {
         ft_send(fd, ERR_NO_SUCH_CHANNEL(target));
         return;
     }
-
     Channel& channel = channels_[target];
 
     // Check if the client is an operator in the channel
@@ -33,8 +31,7 @@ void Server::cmdMode(int fd, const std::string& message) {
         return;
     }
 
-    // Example: +
-    if (modeStr[0] == '+') {
+    if (modeStr[0] == '+') {    // Example: +
         if (modeStr == "+i") {
             channel.setInviteOnly(true);
             std::clog << "Debug: Invite-only mode set" << std::endl;
@@ -66,8 +63,7 @@ void Server::cmdMode(int fd, const std::string& message) {
             ft_send(fd, ERR_UNKNOWNMODE(modeStr));
         }
     }
-    // Example: -
-    else if (modeStr[0] == '-') {
+    else if (modeStr[0] == '-') {    // Example: -
         if (modeStr == "-i") {
             channel.setInviteOnly(false);
             ft_send(fd, RPL_MODESET(target, "-i"));

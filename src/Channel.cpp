@@ -148,6 +148,13 @@ void Channel::broadcast(int sender_fd, const std::string& message, const std::st
     }
 }
 
+void Channel::broadcastToAll(const std::string& message) {
+    for (std::vector<int>::iterator it = this->clients.begin(); it != this->clients.end(); ++it) {
+        send(*it, message.c_str(), message.length(), 0);
+    }
+}
+
+
 bool Channel::isOperator(int fd) const {
     return std::find(this->operators.begin(), this->operators.end(), fd) != this->operators.end();
 }
