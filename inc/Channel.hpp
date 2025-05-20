@@ -33,7 +33,7 @@ class Channel
         const std::string& getName() const;
         const std::string& getTopic() const;
         const std::string& getPwd() const;
-
+std::vector<int> getChClients() const {return chClients_;}
         int  getUserLimit() const;
         int getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const;
 
