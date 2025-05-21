@@ -13,5 +13,5 @@ void Server::cmdPing(int fd, const std::string& message) {
 
     // Send PONG response back to the client
     std::string pongResponse = ":localhost PONG localhost :" + serverName + "\r\n";
-    send(fd, pongResponse.c_str(), pongResponse.size(), 0);
+    ft_send(fd, pongResponse.c_str());
 }

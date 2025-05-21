@@ -28,14 +28,5 @@ void Server::cmdJoin(int fd, const std::string& message) {
     // Notify all users in the channel (except the one joining)
     std::string joinMessage = ":" + clients_[fd].getNick() + " JOIN :" + channel + "\r\n";
     channels_[channel].broadcast(joinMessage, clients_[fd].getNick(), -1); // Send to all
-   #ifdef IRC_DEBUG_PRINTS
-    for (const auto& pair : channels_) {
-        std::cout << GREENIRC << "Channel: " << pair.first << std::endl;
-        for (auto& it : pair.second.getChClients()) {
-            std::cout << "  fd: " << it << std::endl;
-        }
-    }
-    std::cout << RESETIRC << std::endl;
-    #endif
 }
 

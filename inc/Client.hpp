@@ -5,6 +5,8 @@
 #include <map>
 #include "Socket.hpp"
 
+#define IRC_CLI_PRINT
+
 #define IRC_BUFFER_SIZE 100
 #define IRC_MAX_BUF 256001
 
@@ -16,7 +18,7 @@ class Client {
 		std::string	recvBuf_;
 		std::string nick_;
 		std::string usrnm_;
-		std::map<std::string, bool> joinedChannels; // Set of channels the client has joined
+		std::map<std::string, bool> joinedChannels; // Set of channels the client has joined and bool if the client is operator
 		bool authenticated;
 		bool nickReceived;
 		bool userReceived;
@@ -72,4 +74,8 @@ class Client {
 		bool isOperator(const std::string& channel);
 		bool getOperator(const std::string& channel);
 		void setOperator(const std::string& channel, bool is_operator);
+		#ifdef IRC_CLI_PRINT
+			std::string	getSendBuf() const { return sendBuf_; }
+			std::string	getRecvBuf() const { return recvBuf_; }
+		#endif
 	};

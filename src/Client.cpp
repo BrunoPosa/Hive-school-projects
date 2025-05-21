@@ -83,9 +83,9 @@ Client&	Client::operator=(Client&& other) noexcept {
 }
 
 void	Client::toSend(const std::string& data) {
-	if (data.empty()) {
-		return;
-	}
+	// if (data.empty()) {
+	// 	return;
+	// }
 
 	if (sendBuf_.size() + data.size() > IRC_MAX_BUF) {
 		cerr << "sendBuf_ at fd " << so_.getFd() << " almost reached max " << IRC_MAX_BUF << "bytes and last message has been ignored." << endl;
@@ -93,6 +93,7 @@ void	Client::toSend(const std::string& data) {
 
 	try {
 		sendBuf_.append(data);
+	assert(pfd_);
 		pfd_->events |= POLLOUT;
 	} catch (std::bad_alloc& e) {
 		std::cerr << "toSend() append failed: " << e.what() << std::endl;
@@ -123,6 +124,7 @@ bool	Client::send() {
 	sendBuf_.erase(0, sent);
 
 	if (sendBuf_.empty()) {
+	assert(pfd_);
 		pfd_->events &= ~POLLOUT;
 	}
 

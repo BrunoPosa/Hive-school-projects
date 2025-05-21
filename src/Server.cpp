@@ -47,24 +47,32 @@ void Server::run() {
 */
 void Server::handleEvents() {
 	for (int i = pollFds_.size() - 1; i >= 0; --i) {
-		pollfd&	pfd = pollFds_[i];
+		#ifdef IRC_POLL_PRINTS
+			std::cout << "POll-- i=" << i << " size of pollFds_=" << pollFds_.size() << std::endl;
+		#endif
+		pollfd&	pfd = pollFds_.at(i);
 
 		if (POLLIN & pfd.revents) {
-			#ifdef IRC_DEBUG_PRINTS
+			#ifdef IRC_POLL_PRINTS
 				std::cout << "POLLIN--" << std::endl;
 			#endif
 			if (pfd.fd == listenSo_.getFd()) {
 				if (IRC_ACCEPTING & state) {
 					acceptNewConnection();
+				}
+				continue;
+			} else {
+				if (clients_.at(pfd.fd).receive() == false) {
+					rmClient(pfd.fd);
 					continue;
 				}
-			} else if (clients_.at(pfd.fd).receive() == false || handleMsgs(pfd.fd) == false) {
-				rmClient(pfd.fd);
-				continue;
+				if (handleMsgs(pfd.fd) == false) {
+					rmClient(pfd.fd);
+					continue;
+				}
 			}
-		}
-		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
-			#ifdef IRC_DEBUG_PRINTS
+		} else if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
+			#ifdef IRC_POLL_PRINTS
 				std::cout << REDIRC << "POLL ERRS--" << RESETIRC << std::endl;
 			#endif
 			std::cerr << "revents error: " << pfd.revents << " on fd " << pfd.fd << std::endl;
@@ -73,7 +81,7 @@ void Server::handleEvents() {
 			}
 			// rmClient(pfd.fd);
 		} else if (POLLOUT & pfd.revents) {
-			#ifdef IRC_DEBUG_PRINTS
+			#ifdef IRC_POLL_PRINTS
 				std::cout << "POLLOUT--" << std::endl;
 			#endif
 			if (clients_.at(pfd.fd).send() == false) {
@@ -197,7 +205,7 @@ bool	Server::authenticate(Client& newClient, std::string& msg) {
 		return true;
 	}
 	#ifdef IRC_DEBUG_PRINTS
-		cout << "authenticate() msg: " << YELLOWIRC << msg << RESETIRC << endl;
+		cout << GREENIRC << "authenticate() msg: " << msg << RESETIRC << endl;
 	#endif
 	if (msg.length() >= 6 && msg.find("CAP LS") == 0) {
 		return true;
@@ -232,6 +240,27 @@ bool	Server::authenticate(Client& newClient, std::string& msg) {
 }
 
 void	Server::gracefulShutdown() {
+	#ifdef IRC_CLI_PRINT
+		cout << "====printout on sigint====" << endl;
+		for (auto& cliFd : clients_) {
+			cout << GREENIRC << "\nclient fd:" << cliFd.first << "getFd():" << cliFd.second.getFd() << "  hasDataToSend-->" << cliFd.second.hasDataToSend() << endl
+				<< "             recvBuf-->" << cliFd.second.getRecvBuf() << "size:" << cliFd.second.getRecvBuf().size() << endl
+				<< "             isAuthenticated-->" << cliFd.second.isAuthenticated() << endl;
+			cout << "             joinedChannels:" << endl;
+			for (const auto& pair : cliFd.second.getJoinedChannels()) {
+				cout << "                '" << pair.first << "' bool pair -->" << pair.second << " and client isInChannel-->" << cliFd.second.isInChannel(pair.first) << RESETIRC << endl;
+			}
+		}
+
+		cout << YELLOWIRC << "\n\n==channel_ members==" << endl;
+		for (const auto& pair : channels_) {
+			cout << "'" << pair.first << "' members:" << endl;
+			for (auto& it : pair.second.getChClients()) {
+				cout << "  fd: " << it << endl;
+			}
+		}
+		cout << RESETIRC << endl;
+	#endif
 	for (auto& cliFd : clients_) {
 		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
 	}

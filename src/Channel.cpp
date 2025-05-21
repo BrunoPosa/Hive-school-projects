@@ -150,14 +150,14 @@ void Channel::broadcast(const std::string& message, const std::string& sender_ni
 {
 	std::string fullMessage = ":" + sender_nick + " PRIVMSG " + this->name_ + " :" + message + "\r\n";
 	int cliFd = 0;
-	for (unsigned long i = chClients_.size(); --i > 0;)
+	for (unsigned long i = chClients_.size(); i-- > 0;)
 	{
 		cliFd = chClients_.at(i);
 		if (cliFd != except_fd && allClientsPtr_ != nullptr)
 		{
 			try {
-				#ifdef IRC_DEBUG_PRINTS
-        			std::cout << "broadcasting to clifd: " << cliFd << std::endl;
+				#ifdef IRC_CLI_PRINT
+        			std::cout << "broadcasting " << message << " to clifd: " << cliFd << "at chClients[i=]:" << i << std::endl;
 				#endif
 				allClientsPtr_->at(cliFd).toSend(fullMessage.c_str());
 			} catch (std::exception& e) {

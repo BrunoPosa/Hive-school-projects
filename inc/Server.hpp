@@ -59,8 +59,8 @@ enum IRCState : char {
 #define GREENIRC "\033[1;32m"
 #define RESETIRC "\033[0m"
 
-// #define IRC_DEBUG_PRINTS
-
+#define IRC_DEBUG_PRINTS
+// #define IRC_POLL_PRINTS
 class Server {
 private:
 	Config	cfg_;
