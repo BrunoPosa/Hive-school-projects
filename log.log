@@ -3,3 +3,40 @@
 << USER bposa bposa localhost :Bruno Posa
 >> Please type the password (try '/quote PASS <yourpassword>')...
 << PASS 4242
+>> :localhost 001 guest :Welcome to the ft_irc, WB edition ® Internet Relay Network
+<< MODE guest +i
+<< WHOIS poopsie
+>> :localhost 002 guest :Your host is localhost
+>> :localhost 003 guest :This server was created today
+>> :localhost 004 guest :localhost 1.0
+<< JOIN #me
+>> :guest PRIVMSG #me ::guest JOIN :#me
+>> 
+>> :guest PRIVMSG #me ::guest JOIN :#me
+>> 
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+>> :guest PRIVMSG #me :hi
+>> 
+<< PRIVMSG #me :f
+<< PRIVMSG #me :what
+>> :guest PRIVMSG #me ::guest JOIN :#me
+>> 
+>> :guest PRIVMSG #me :hiiiii
+>> 
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> FAILED whois
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+>> :guest PRIVMSG #me :hohho
+>> 
+>> :guest PRIVMSG #me :bro
+>> 
+>> :guest PRIVMSG #me :what up
+>> 
+>> :guest PRIVMSG #me :not much
+>> 

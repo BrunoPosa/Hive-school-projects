@@ -5,9 +5,9 @@
 #include <map>
 #include "Socket.hpp"
 
-#define IRC_CLI_PRINT
+// #define IRC_CLI_PRINT
 
-#define IRC_BUFFER_SIZE 100
+#define IRC_BUFFER_SIZE 1
 #define IRC_MAX_BUF 256001
 
 class Client {
@@ -57,6 +57,7 @@ class Client {
 		const std::string& getNick() const { return nick_; }
 		const std::string& getUser() const { return usrnm_; }
 
+		void	setPfdPtr(pollfd *pfd) { pfd_ = pfd; }
 		void setNick(const std::string& nick) { nick_ = nick; }
 		void setUser(const std::string& user) { usrnm_ = user; }
 

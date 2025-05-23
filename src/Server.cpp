@@ -22,6 +22,7 @@ void Server::run() {
 		try {
 			if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
 				if (errno == EINVAL || errno == ENOMEM) {
+					rmClient(pollFds_.back().fd);
 					state &= ~IRC_ACCEPTING;
 				}
 				std::cerr << "poll() returned -1 with errno: " << strerror(errno) << std::endl;
@@ -31,6 +32,7 @@ void Server::run() {
 				std::cout << "We poll" << std::endl;
 			#endif
 			handleEvents();
+			updatePollfds();
 		} catch (const std::exception& e) {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 		}
@@ -71,17 +73,19 @@ void Server::handleEvents() {
 					continue;
 				}
 			}
-		} else if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
+		}
+		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
 			#ifdef IRC_POLL_PRINTS
 				std::cout << REDIRC << "POLL ERRS--" << RESETIRC << std::endl;
 			#endif
+			std::cerr << REDIRC << "POLLERR | POLLHUP | POLLNVAL" << RESETIRC << strerror(errno) << std::endl;
 			std::cerr << "revents error: " << pfd.revents << " on fd " << pfd.fd << std::endl;
-			if (POLLIN ^ pfd.revents) {
+			if (POLLIN ^ pfd.revents) {//on error, POLLIN may still be up, so drain remaining data before removing client
 				rmClient(pfd.fd);
 			}
 			// rmClient(pfd.fd);
 		} else if (POLLOUT & pfd.revents) {
-			#ifdef IRC_POLL_PRINTS
+			#ifdef IRC_POLL_PRINTS 
 				std::cout << "POLLOUT--" << std::endl;
 			#endif
 			if (clients_.at(pfd.fd).send() == false) {
@@ -183,7 +187,7 @@ bool	Server::handleMsgs(int fromFd) {
 		} else {
 			#ifdef IRC_DEBUG_PRINTS
 				int ms = 50;
-				cout << "waiting " << ms << "ms" << endl;
+				// cout << YELLOWIRC << "waiting " << ms << "ms, msg: " << msgs << RESETIRC << endl;
 				std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 			#endif
 			while ((pos = msgs.find("\r\n")) != std::string::npos) {
@@ -265,6 +269,16 @@ void	Server::gracefulShutdown() {
 		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
 	}
 	state &= ~(IRC_ACCEPTING | IRC_RUNNING);
+}
+
+void	Server::updatePollfds() {
+	for (auto& pair : clients_) {
+		for (int i = pollFds_.size() - 1; i >= 0; i--) {
+			if (pair.first == pollFds_.at(i).fd) {
+				pair.second.setPfdPtr(&pollFds_.at(i));
+			}
+		}
+	}
 }
 
 void Server::checkRegistration(int fd) {
