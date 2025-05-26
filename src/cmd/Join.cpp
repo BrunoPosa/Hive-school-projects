@@ -26,6 +26,9 @@ void Server::cmdJoin(int fd, const std::string& message)
         return;
     }
 
+    std::cerr << "Channel invite-only: " << chanPtr->getInviteOnly() << std::endl;
+    std::cerr << "Is user invited? " << chanPtr->getIsUserInvited(fd) << std::endl;
+
     // Invite-only (+i)?
     if (chanPtr->getInviteOnly() && !chanPtr->getIsUserInvited(fd)) {
         ft_send(fd, ERR_INVITEONLYCHAN(channel));
@@ -57,7 +60,7 @@ void Server::cmdJoin(int fd, const std::string& message)
         ft_send(fd, RPL_NOTOPIC(clients_[fd].getNick(), channel));
     }
 
-    std::cerr << "Client " << clients_[fd].getNick() << " joined channel: " << channel << std::endl;
-    std::string joinMessage = ":" + clients_[fd].getNick() + " JOIN :" + channel + "\r\n";
+    std::string prefix = ":" + clients_[fd].getNick() + "!" + clients_[fd].getUser() + "@localhost";
+    std::string joinMessage = prefix + " JOIN :" + channel + "\r\n";
     chanPtr->broadcast(fd, joinMessage, clients_[fd].getNick(), -1);
 }

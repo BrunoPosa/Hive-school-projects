@@ -74,6 +74,8 @@ private:
 	void cmdTopic(int fd, const std::string& message);     // Handle TOPIC command
 	void cmdMode(int fd, const std::string& message);
 	void cmdKick(int sender_fd, const std::vector<std::string>& params);      // Handle KICK command
+	void cmdInvite(int sender_fd, const std::vector<std::string>& params);    // Handle INVITE command
+	void cmdPart(int fd, const std::string& message);	 // Handle PART command
 	
 	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
 

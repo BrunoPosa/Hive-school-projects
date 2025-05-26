@@ -135,18 +135,19 @@ void Channel::removeClient(int fd)
         this->clients.erase(it);
 }
 
-void Channel::broadcast(int sender_fd, const std::string& message, const std::string& sender_nick, int except_fd) // send to all clients except the sender
+void Channel::broadcast(int sender_fd, const std::string& message, const std::string& sender_nick, int except_fd)
 {
-    (void) sender_fd; // Unused parameter, can be removed if not needed
-    std::string fullMessage = ":" + sender_nick + " PRIVMSG " + this->name + " :" + message + "\r\n";
+    (void)sender_fd;
+    (void)sender_nick; // Not used anymore
     for (std::vector<int>::iterator it = this->clients.begin(); it != this->clients.end(); ++it)
     {
         if (*it != except_fd)
         {
-            send(*it, fullMessage.c_str(), fullMessage.length(), 0);
+            send(*it, message.c_str(), message.length(), 0); // ✅ Send as-is
         }
     }
 }
+
 
 void Channel::broadcastToAll(const std::string& message) {
     for (std::vector<int>::iterator it = this->clients.begin(); it != this->clients.end(); ++it) {

@@ -48,8 +48,8 @@ void Server::cmdTopic(int fd, const std::string& message) {
     } else {
         // Setting topic
         std::cerr << "gettopicrestricted: " << ch.getTopicRestricted() << std::endl;
-        std::cerr << "isoperator: " << client.isOperator(channel) << std::endl;
-        if (ch.getTopicRestricted() && !client.isOperator(channel)) {
+        std::cerr << "isoperator: " << ch.isOperator(fd) << std::endl;
+        if (ch.getTopicRestricted() && !ch.isOperator(fd)) {
             ft_send(fd, ERR_CHANOPRIVSNEEDED(channel));
             return;
         }

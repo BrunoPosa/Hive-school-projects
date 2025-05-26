@@ -23,6 +23,8 @@ void ft_send(int fd, const std::string& message);
 
 // PRIVMSG
 #define ERR_NO_RECIPIENT ":localhost 411 :No recipient given\r\n"
+#define ERR_NO_TEXT_TO_SEND ":localhost 412 :No text to send\r\n"
+
 
 // USER
 #define ERR_NOT_ENOUGH_PARAMS ":localhost 461 USER :Not enough parameters\r\n"
@@ -45,3 +47,5 @@ void ft_send(int fd, const std::string& message);
 // KICK
 #define ERR_USERNOTINCHANNEL(nick, chan) (":localhost 441 " + nick + " " + chan + " :They aren't on that channel\r\n")
 #define RPL_MODESET(chan, mode) (":localhost 324 " + chan + " " + mode + "\r\n")
+
+#define RPL_INVITING(senderNick, targetNick, channel) (":localhost 341 " + senderNick + " " + targetNick + " " + channel + "\r\n")

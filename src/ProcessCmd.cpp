@@ -29,7 +29,8 @@ void Server::processCommand(int fd, const std::string& message)
         {"TOPIC", 7},
         {"PRIVMSG", 8},
         {"INVITE",9},
-        {"QUIT", 10}
+        {"PART", 10},
+        {"QUIT", 11}
     };
     
     auto it = cmdMap.find(command);
@@ -69,10 +70,17 @@ void Server::processCommand(int fd, const std::string& message)
                 cmdPrivMsg(fd, message);
                 break;
             case 9:
-                // Handle INVITE command
+                std::cerr << "INVITE command received from FD: " << fd << std::endl;
+                cmdInvite(fd, tokens);
                 break;
             case 10:
-                // Handle QUIT command
+                std::cerr << "PART command received from FD: " << fd << std::endl;
+                cmdPart(fd, message);
+                break;
+            case 11:
+                std::cerr << "QUIT command received from FD: " << fd << std::endl;
+                // cmdQuit(fd, message); // Uncomment when cmdQuit is implemented
+                // Handle QUIT command here
                 break;
             default:
                 std::cerr << "Unknown command: " << command << std::endl;
