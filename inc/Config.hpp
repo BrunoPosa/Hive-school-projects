@@ -15,6 +15,7 @@ class Config {
 	const std::string	serverName_ = "ft_irc, WB edition ®";
 	const std::string	allowedPassChars_ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?#";
 	const unsigned int	minPassLen_ = 4;
+    const unsigned int	maxPassLen_ = 400;
 
 	void	validate_();
 	bool	isValidPort_();

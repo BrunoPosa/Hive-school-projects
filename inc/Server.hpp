@@ -51,7 +51,7 @@ extern Server	*g_servPtr;
 
 enum IRCState : char {
 	IRC_RUNNING   = 0x1,
-    IRC_ACCEPTING = 0x2
+	IRC_ACCEPTING = 0x2
 };
 
 #define REDIRC "\033[1;31m"
@@ -65,7 +65,7 @@ class Server {
 private:
 	Config	cfg_;
 	Socket	listenSo_;
-	volatile sig_atomic_t	state;
+	volatile sig_atomic_t	state_;
 	std::map<int, Client>	clients_;
 	std::vector<struct pollfd>	pollFds_;
 	std::map<std::string, Channel>	channels_;
@@ -94,8 +94,10 @@ private:
 	void	kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
 	
 public:
-	Server()	= default;
+	Server();
 	explicit	Server(Config&& cfg);
+	Server(Server& other) = delete;
+	Server(Server&& other);
 	~Server()	= default;
 	
 	void	run();

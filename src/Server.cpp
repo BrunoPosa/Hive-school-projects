@@ -7,23 +7,41 @@ using std::string;
 
 Server	*g_servPtr = nullptr;
 
-Server::Server(Config&& cfg) : cfg_{std::move(cfg)}, listenSo_{} {}
+Server::Server()
+:	cfg_{},
+	listenSo_{},
+	state_{0}
+{}
+
+Server::Server(Config&& cfg)
+:	cfg_{std::move(cfg)},
+	listenSo_{},
+	state_{0}
+{}
+
+Server::Server(Server&& other)
+:	cfg_(std::move(other.cfg_)),
+	listenSo_(std::move(other.listenSo_)),
+	state_(other.state_),
+	clients_(std::move(other.clients_)),
+	pollFds_(std::move(other.pollFds_)),
+	channels_(std::move(other.channels_)) {}
 
 void Server::run() {
 	listenSo_.initListener(cfg_.getPort());
 	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
 
-	state = IRC_RUNNING | IRC_ACCEPTING;
+	state_ = IRC_RUNNING | IRC_ACCEPTING;
 
-	std::cout << "Server starting on port " << cfg_.getPort()
-		<< " with " << pollFds_.size() << " fds" << std::endl;//add IP address
+	std::cout << "Server starting on port " << cfg_.getPort() << " with " << pollFds_.size() << " fds" << std::endl;
 
-	while (IRC_RUNNING & state) {
+	while (IRC_RUNNING & state_) {
 		try {
-			if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
+			unsigned long	pollSize = pollFds_.size();
+			if (poll(pollFds_.data(), pollSize, -1) < 0) {
 				if (errno == EINVAL || errno == ENOMEM) {
 					rmClient(pollFds_.back().fd);
-					state &= ~IRC_ACCEPTING;
+					state_ &= ~IRC_ACCEPTING;
 				}
 				std::cerr << "poll() returned -1 with errno: " << strerror(errno) << std::endl;
 				continue;
@@ -32,7 +50,9 @@ void Server::run() {
 				std::cout << "We poll" << std::endl;
 			#endif
 			handleEvents();
-			updatePollfds();
+			if (pollFds_.size() != pollSize) {
+				updatePollfds();
+			}
 		} catch (const std::exception& e) {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 		}
@@ -59,31 +79,21 @@ void Server::handleEvents() {
 				std::cout << "POLLIN--" << std::endl;
 			#endif
 			if (pfd.fd == listenSo_.getFd()) {
-				if (IRC_ACCEPTING & state) {
+				if (IRC_ACCEPTING & state_) {
 					acceptNewConnection();
 				}
 				continue;
-			} else {
-				if (clients_.at(pfd.fd).receive() == false) {
-					rmClient(pfd.fd);
-					continue;
-				}
-				if (handleMsgs(pfd.fd) == false) {
-					rmClient(pfd.fd);
-					continue;
-				}
+			} else if (clients_.at(pfd.fd).receive() == false || handleMsgs(pfd.fd) == false) {
+				rmClient(pfd.fd);
+				continue;
 			}
 		}
 		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
 			#ifdef IRC_POLL_PRINTS
 				std::cout << REDIRC << "POLL ERRS--" << RESETIRC << std::endl;
 			#endif
-			std::cerr << REDIRC << "POLLERR | POLLHUP | POLLNVAL" << RESETIRC << strerror(errno) << std::endl;
-			std::cerr << "revents error: " << pfd.revents << " on fd " << pfd.fd << std::endl;
-			if (POLLIN ^ pfd.revents) {//on error, POLLIN may still be up, so drain remaining data before removing client
-				rmClient(pfd.fd);
-			}
-			// rmClient(pfd.fd);
+			std::cerr << REDIRC << "POLL ERRS" << RESETIRC << strerror(errno) << " revents: " << pfd.revents << " on fd " << pfd.fd << std::endl;
+			rmClient(pfd.fd);
 		} else if (POLLOUT & pfd.revents) {
 			#ifdef IRC_POLL_PRINTS 
 				std::cout << "POLLOUT--" << std::endl;
@@ -100,7 +110,7 @@ void Server::acceptNewConnection() {
 
 	if (listenSo_.accept(clientSock) == false) {
 		if (errno == EMFILE || errno == ENFILE || errno == ENOMEM || errno == ENOBUFS) {
-			state &= ~IRC_ACCEPTING; //stop accepting
+			state_ &= ~IRC_ACCEPTING; //stop accepting
 		} else if (errno != EAGAIN && errno != EWOULDBLOCK) {
 			std::cerr << "accept4() error: " << strerror(errno) << std::endl;
 		}
@@ -163,8 +173,8 @@ void Server::rmClient(int rmFd) {
 			clients_.erase(clientIt);
 		}
 
-		if (IRC_ACCEPTING ^ state) {
-			state |= IRC_ACCEPTING; //start accepting again if the server was not accepting (due to maxing out)
+		if (IRC_ACCEPTING ^ state_) {
+			state_ |= IRC_ACCEPTING; //start accepting again if the server was not accepting (due to maxing out)
 		}
 	} catch (std::exception& e) {
 		std::cerr << "Exception caught in rmClient(): " << e.what() << " fd: " << rmFd << std::endl;
@@ -219,6 +229,8 @@ bool	Server::authenticate(Client& newClient, std::string& msg) {
 		return true;
 	} else if (msg.length() >= 4 && msg.find("USER") == 0) {
 		return true;
+	} else if (msg.length() >= 4 && msg.find("JOIN") == 0) {
+		return true;
 	}
 	if (msg.length() > 5 && msg.find("PASS ") == 0) {
 		//skip spaces, as per rfc
@@ -268,7 +280,7 @@ void	Server::gracefulShutdown() {
 	for (auto& cliFd : clients_) {
 		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
 	}
-	state &= ~(IRC_ACCEPTING | IRC_RUNNING);
+	state_ &= ~(IRC_ACCEPTING | IRC_RUNNING);
 }
 
 void	Server::updatePollfds() {
