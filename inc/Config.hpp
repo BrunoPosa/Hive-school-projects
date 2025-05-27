@@ -13,7 +13,7 @@ class Config {
 	std::string			password_;
 	const int			maxAuthAttempts_ = 3;
 	const std::string	serverName_ = "ft_irc, WB edition ®";
-	const std::string	allowedPassChars_ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?#";
+	const std::string	allowedPassChars_ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?#";//validate_() specifies minimum 62 chars
 	const unsigned int	minPassLen_ = 4;
     const unsigned int	maxPassLen_ = 400;
 

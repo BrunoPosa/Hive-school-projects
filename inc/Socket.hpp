@@ -35,6 +35,7 @@ public:
 	~Socket() noexcept;
 
 	void	initListener(uint16_t port);
+	bool	setNonBlocking(int fd) const;
 	bool	accept(Socket& toSocket) const;
 
 	int			getFd() const noexcept {return fd_;}
