@@ -60,13 +60,6 @@ void Server::run() {
 	cout << "Server shutting down.." << endl;
 }
 
-/*
-	question the requirement of all 3 ifs not being in an if-else block
-	(bc when adding/removing a client during first if block, index and map needs updating)
-	not a huge deal, but ugly and cumbersome. 
-	Assumption is for 1st if being separate is that POLLIN and POLLERR/HUP/NVAL are NOT mutually exclusive, so we should still process input on error
-	-ToDo: timeout if no activity from client bc monopolyizing the resourses
-*/
 void Server::handleEvents() {
 	for (int i = pollFds_.size() - 1; i >= 0; --i) {
 		#ifdef IRC_POLL_PRINTS
@@ -176,6 +169,8 @@ void Server::rmClient(int rmFd) {
 		if (IRC_ACCEPTING ^ state_) {
 			state_ |= IRC_ACCEPTING; //start accepting again if the server was not accepting (due to maxing out)
 		}
+
+		std::cout << "client fd:" << rmFd << " removed." << std::endl;
 	} catch (std::exception& e) {
 		std::cerr << "Exception caught in rmClient(): " << e.what() << " fd: " << rmFd << std::endl;
 	}
@@ -191,8 +186,12 @@ bool	Server::handleMsgs(int fromFd) {
 			#ifdef IRC_DEBUG_PRINTS
 				cout << "isAuthenticated = false" << endl;
 			#endif
-			if (authenticate(clients_.at(fromFd), msgs) == false) {
-				return false;
+			while ((pos = msgs.find("\r\n")) != std::string::npos) {
+				line = msgs.substr(0, pos);
+				if (processAuth(clients_.at(fromFd), msgs.substr(0, pos)) == false) {
+					return false;
+				}
+				msgs.erase(0, pos + 2);
 			}
 		} else {
 			#ifdef IRC_DEBUG_PRINTS
@@ -207,44 +206,65 @@ bool	Server::handleMsgs(int fromFd) {
 			}
 		}
 	} catch (std::exception& e) {
-		std::cerr << "Exception caught in splitAndProcess(): " << e.what() << "Client fd:" << fromFd << std::endl;
+		std::cerr << "Exception caught in handleMsgs(): " << e.what() << "Client fd:" << fromFd << std::endl;
 	}
 	return true;
 }
 
 //if authenticate returns false, client should be removed
-bool	Server::authenticate(Client& newClient, std::string& msg) {
-	size_t pos = msg.find("\r\n");
-	if (pos == std::string::npos) {
-		return true;
-	}
-	#ifdef IRC_DEBUG_PRINTS
-		cout << GREENIRC << "authenticate() msg: " << msg << RESETIRC << endl;
+bool	Server::processAuth(Client& newClient, std::string msg) {
+	#ifdef IRC_AUTH_PRINTS
+		cout << GREENIRC << "authenticate() msg:" << msg << RESETIRC << endl;
 	#endif
-	if (msg.length() >= 6 && msg.find("CAP LS") == 0) {
-		return true;
-	} else if (msg.length() >= 4 && msg.find("PING") == 0) {
-		return true;
-	} else if (msg.length() >= 4 && msg.find("NICK") == 0) {
-		return true;
-	} else if (msg.length() >= 4 && msg.find("USER") == 0) {
-		return true;
-	} else if (msg.length() >= 4 && msg.find("JOIN") == 0) {
-		return true;
-	}
-	if (msg.length() > 5 && msg.find("PASS ") == 0) {
-		//skip spaces, as per rfc
-		std::string password = msg.substr(5, pos - 5);
-		#ifdef IRC_DEBUG_PRINTS
-			cout << "checking password:" << endl;
+	if (newClient.hasReceivedNick() == false) {
+		size_t nickpos = msg.find("NICK ");
+		if (nickpos != std::string::npos) {
+			newClient.setNick(msg.substr(nickpos + 5));//do i need to skip spaces?
+			newClient.setNickReceived();
+		#ifdef IRC_AUTH_PRINTS
+			std::cout << GREENIRC << "--nick:" << newClient.getNick() << RESETIRC << std::endl;
 		#endif
+			return true;
+		}
+	}
+
+	if (newClient.hasReceivedUser() == false) {
+		size_t userpos = msg.find("USER ");
+		if (userpos != std::string::npos) {
+			userpos += 5;
+			newClient.setUser(msg.substr(userpos, msg.substr(userpos).find(' ')));//can user contain spaces?
+			newClient.setUserReceived();
+			#ifdef IRC_AUTH_PRINTS
+				std::cout << GREENIRC << "--user:" << newClient.getUser() << RESETIRC << std::endl;
+			#endif
+			return true;
+		}
+	}
+
+	size_t passpos = msg.find("PASS ");
+	if (passpos != std::string::npos) {
+		passpos += 5;
+		passpos += (msg.substr(passpos).find_first_not_of(' ') != std::string::npos) ? msg.substr(passpos).find_first_not_of(' ') : 0;
+		cout << passpos << endl;
+		std::string password = msg.substr(passpos);
+	#ifdef IRC_AUTH_PRINTS
+		cout << "~~checking password~~" << endl;
+	#endif
 		if (cfg_.CheckPassword(password) == true) {
 			newClient.setAuthenticated();
 			newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
 			return true;
 		}
 	}
-	#ifdef IRC_DEBUG_PRINTS
+
+	if (msg.find("PING") != std::string::npos) {
+		newClient.toSend("PONG rrr");
+		return true;
+	}
+	if (msg.find("CAP LS") != std::string::npos) {
+		return true;
+	}
+	#ifdef IRC_AUTH_PRINTS
 		cout << "pass attempt: " << newClient.getAuthAttempts() << endl;
 	#endif
 	newClient.addAuthAttempt();
@@ -254,6 +274,7 @@ bool	Server::authenticate(Client& newClient, std::string& msg) {
 	}
 	return false;
 }
+
 
 void	Server::gracefulShutdown() {
 	#ifdef IRC_CLI_PRINT

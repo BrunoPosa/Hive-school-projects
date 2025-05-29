@@ -61,6 +61,8 @@ enum IRCState : char {
 
 // #define IRC_DEBUG_PRINTS
 // #define IRC_POLL_PRINTS
+#define IRC_AUTH_PRINTS
+
 class Server {
 private:
 	Config	cfg_;
@@ -77,7 +79,7 @@ private:
 	void	addClient(Socket& sock);
 	void	rmClient(int rmFd);
 	bool	handleMsgs(int fromFd);
-	bool	authenticate(Client& newClient, std::string& msg);
+	bool	processAuth(Client& newClient, std::string msg);
 	void	processCommand(int fd, const std::string& message);
 	
 	void	checkRegistration(int fd);
