@@ -152,7 +152,8 @@ void Channel::removeClient(int fd)
 
 void Channel::broadcast(const std::string& message, const std::string& sender_nick, int except_fd) // send to all clients except the sender
 {
-	std::string fullMessage = ":" + sender_nick + " PRIVMSG " + this->name_ + " :" + message + "\r\n";
+	// std::string fullMessage = ":" + sender_nick + " PRIVMSG " + this->name_ + " :" + message + "\r\n";
+(void)sender_nick;
 	int cliFd = 0;
 	for (unsigned long i = chClients_.size(); i-- > 0;)
 	{
@@ -163,7 +164,7 @@ void Channel::broadcast(const std::string& message, const std::string& sender_ni
 				#ifdef IRC_CLI_PRINT
         			std::cout << "broadcasting " << message << " to clifd: " << cliFd << "at chClients[i=]:" << i << std::endl;
 				#endif
-				allClientsPtr_->at(cliFd).toSend(fullMessage.c_str());
+				allClientsPtr_->at(cliFd).toSend(message.c_str());
 			} catch (std::exception& e) {
 				std::cerr << "channel broadcast - accessing Client map at key: " << cliFd << " failed." << e.what() << std::endl;
 			}
