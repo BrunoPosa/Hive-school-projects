@@ -173,7 +173,7 @@ void Channel::broadcast(const std::string& message, const std::string& sender_ni
 
 void Channel::broadcastToAll(const std::string& message) {
     for (std::vector<int>::iterator it = this->chClients_.begin(); it != this->chClients_.end(); ++it) {
-        send(*it, message.c_str(), message.length(), 0);
+        allClientsPtr_->at(*it).toSend(message.c_str());
     }
 }
 
