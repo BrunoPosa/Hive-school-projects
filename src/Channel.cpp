@@ -82,10 +82,6 @@ bool Channel::hasClient(int fd) const {
     return std::find(chClients_.begin(), chClients_.end(), fd) != chClients_.end();
 }
 
-bool Channel::hasClient(int fd) const {
-    return std::find(chClients_.begin(), chClients_.end(), fd) != chClients_.end();
-}
-
 // In Channel.cpp
 int Channel::getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const {
 std::cout << "getCLientFDbyNick" << std::endl;
