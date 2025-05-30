@@ -50,6 +50,7 @@ void Server::run() {
 				std::cout << "We poll" << std::endl;
 			#endif
 			handleEvents();
+			checkInactivity();
 			if (pollFds_.size() != pollSize) {
 				updatePollfds();
 			}
@@ -211,7 +212,7 @@ bool	Server::handleMsgs(int fromFd) {
 	return true;
 }
 
-//if authenticate returns false, client should be removed
+//if this returns false, client should be removed
 bool	Server::processAuth(Client& newClient, std::string msg) {
 	#ifdef IRC_AUTH_PRINTS
 		cout << GREENIRC << "authenticate() msg:" << msg << RESETIRC << endl;
@@ -311,6 +312,20 @@ void	Server::updatePollfds() {
 				pair.second.setPfdPtr(&pollFds_.at(i));
 			}
 		}
+	}
+}
+
+void	Server::checkInactivity() {
+	std::vector<int>	inactiveFds;
+
+	for (auto& pair : clients_) {
+		if (pair.second.isInactive(cfg_.getAllowedInactivity())) {
+			inactiveFds.push_back(pair.first);
+		}
+	}
+
+	for (int i = inactiveFds.size() - 1; i >= 0; i--) {
+		rmClient(inactiveFds[i]);
 	}
 }
 

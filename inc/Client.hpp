@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <chrono>
 #include "Socket.hpp"
 
 // #define IRC_CLI_PRINT
@@ -26,6 +27,7 @@ class Client {
 		bool modeReceived;
 		bool whois; // Whois status
 		int	authAttempts_;
+		std::chrono::steady_clock::time_point	lastActive_;
 		
 	public:
 		Client();	//def. constructor on creation makes a new socket
@@ -35,7 +37,7 @@ class Client {
 		Client(Client&& other) noexcept;				//Move constructor
 		Client&	operator=(Client&& other) noexcept; 	//Move assignment
 		~Client()								= default;
-		
+	
 		//I/O
 		bool	hasDataToSend() const { return !sendBuf_.empty();}
 		void	toSend(const std::string& data);
@@ -48,6 +50,7 @@ class Client {
 		int	getAuthAttempts() const { return authAttempts_; }
 		void addAuthAttempt() { ++authAttempts_; }
 
+		bool	isInactive(std::chrono::seconds limit) { return (std::chrono::steady_clock::now() - lastActive_) >= limit; }
 		bool isAuthenticated() const { return authenticated; }
 		bool hasReceivedNick() const { return nickReceived; }
 		bool hasReceivedUser() const { return userReceived; }

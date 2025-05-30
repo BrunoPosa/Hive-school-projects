@@ -19,7 +19,8 @@ Client::Client()
 	passReceived{false},
 	modeReceived{false},
 	whois{false},
-	authAttempts_{0}
+	authAttempts_{0},
+	lastActive_{std::chrono::steady_clock::now()}
 {
 	sendBuf_.reserve(IRC_BUFFER_SIZE);
 	recvBuf_.reserve(IRC_BUFFER_SIZE);
@@ -39,7 +40,8 @@ Client::Client(Socket&& so, pollfd *pfd)  // Parameterized constructor
 	passReceived{false},
 	modeReceived{false},
 	whois{false},
-	authAttempts_{0}
+	authAttempts_{0},
+	lastActive_{std::chrono::steady_clock::now()}
 {
 	sendBuf_.reserve(IRC_BUFFER_SIZE);
 	recvBuf_.reserve(IRC_BUFFER_SIZE);
@@ -59,8 +61,11 @@ Client::Client(Client&& other) noexcept
 		passReceived{std::exchange(other.passReceived, false)},
 		modeReceived{std::exchange(other.modeReceived, false)},
 		whois{std::exchange(other.modeReceived, false)},
-		authAttempts_{std::exchange(other.authAttempts_, 0)}
-{}
+		authAttempts_{std::exchange(other.authAttempts_, 0)},
+		lastActive_{std::chrono::steady_clock::now()}//or other.lastActive_
+{
+	std::cout << "MOVE CTOR" << std::endl;
+}
 
 Client&	Client::operator=(Client&& other) noexcept {
 	if (this != &other) {
@@ -78,6 +83,7 @@ Client&	Client::operator=(Client&& other) noexcept {
 		modeReceived = std::exchange(other.modeReceived, false);
 		whois = std::exchange(other.modeReceived, false);
 		authAttempts_ = std::exchange(other.authAttempts_, 0);
+		lastActive_ = other.lastActive_;
 	}
 	return *this;
 }
@@ -128,6 +134,8 @@ bool	Client::send() {
 		pfd_->events &= ~POLLOUT;
 	}
 
+	lastActive_ = std::chrono::steady_clock::now();
+
 	return true;
 }
 
@@ -166,6 +174,9 @@ bool	Client::receive() {
 	} catch (std::exception& e) {
 		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
 	}
+
+	lastActive_ = std::chrono::steady_clock::now();
+
 	return true;
 }
 
