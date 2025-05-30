@@ -2,8 +2,17 @@
 
 void Server::cmdTopic(int fd, const std::string& message) {
     std::istringstream iss(message);
-    std::string command, channel, topic;
+    std::string command, channel;
     iss >> command >> channel;
+
+    std::string topic;
+    std::getline(iss, topic); // gets the rest of the line
+
+    // Debugging output
+    std::cerr << "Debug message: " << message << std::endl;
+    std::cerr << "Debug command: " << command << std::endl;
+    std::cerr << "Debug channel: " << channel << std::endl;
+    std::cerr << "Raw topic string: " << topic << std::endl;
 
     if (channel.empty()) {
         ft_send(fd, ERR_NEEDMOREPARAMS);
@@ -24,25 +33,30 @@ void Server::cmdTopic(int fd, const std::string& message) {
         return;
     }
 
-    std::getline(iss, topic); // Get the rest if setting a topic
-    if (!topic.empty() && topic[0] == ' ') topic = topic.substr(1);
-    if (!topic.empty() && topic[0] == ':') topic = topic.substr(1);
+    // Clean topic string
+    if (!topic.empty()) {
+        if (topic[0] == ' ') topic = topic.substr(1);      // strip leading space
+        if (!topic.empty() && topic[0] == ':') topic = topic.substr(1); // strip leading colon
+    }
 
     if (topic.empty()) {
-        // just viewing
+        // Viewing topic
         if (ch.getTopic().empty())
             ft_send(fd, RPL_NOTOPIC(client.getNick(), channel));
         else
             ft_send(fd, RPL_TOPIC(client.getNick(), channel, ch.getTopic()));
     } else {
-        // setting topic
-        if (!client.isOperator(channel)) {
+        // Setting topic
+        std::cerr << "gettopicrestricted: " << ch.getTopicRestricted() << std::endl;
+        std::cerr << "isoperator: " << ch.isOperator(fd) << std::endl;
+        if (ch.getTopicRestricted() && !ch.isOperator(fd)) {
             ft_send(fd, ERR_CHANOPRIVSNEEDED(channel));
             return;
         }
 
         ch.setTopic(topic);
         std::string broadcast = ":" + client.getNick() + " TOPIC " + channel + " :" + topic + "\r\n";
-        ch.broadcast(broadcast, client.getNick(), fd);
+        ch.broadcastToAll(broadcast);
+        std::cerr << "Set topic to: " << topic << std::endl;
     }
 }

@@ -35,14 +35,19 @@ class Channel
         const std::string& getPwd() const;
 std::vector<int> getChClients() const {return chClients_;}
         int  getUserLimit() const;
-        int getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const;
-
+        int  getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const;
 
         bool getInviteOnly() const;
         bool getIsUserInvited(const int& fd) const;
         bool getTopicRestricted() const;
         bool isOperator(int fd) const; // Check if a client is an operator in the channel
-        
+        bool hasClient(int fd) const; // Check if a client is in the channel
+
+        // Channel.hpp
+
+        bool hasPassword() const; // returns true if password is set
+        bool hasUserLimit() const;     // returns true if +l is set
+        int  getUserCount() const;      // current number of clients
 
         void addOperator(int fd); // Add a client as an operator in the channel
         void removeOperator(int fd); // Remove a client as an operator in the channel
@@ -57,4 +62,5 @@ std::vector<int> getChClients() const {return chClients_;}
         void removeClient(int fd); // Remove a client from the channel
         void broadcast(const std::string& message, const std::string& sender_nick, int except_fd = -1); // Send a message to all clients in the channel except the sender
         bool    isEmpty() const { return (chClients_.empty()); };
+        void broadcastToAll(const std::string& message); // Send a message to all clients in the channel including the sender
 };

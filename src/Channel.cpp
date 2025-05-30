@@ -78,6 +78,14 @@ bool Channel::getTopicRestricted() const
 	return this->topicRestrictedToOperators_;
 }
 
+bool Channel::hasClient(int fd) const {
+    return std::find(chClients_.begin(), chClients_.end(), fd) != chClients_.end();
+}
+
+bool Channel::hasClient(int fd) const {
+    return std::find(chClients_.begin(), chClients_.end(), fd) != chClients_.end();
+}
+
 // In Channel.cpp
 int Channel::getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const {
 std::cout << "getCLientFDbyNick" << std::endl;
@@ -167,6 +175,11 @@ void Channel::broadcast(const std::string& message, const std::string& sender_ni
 	}
 }
 
+void Channel::broadcastToAll(const std::string& message) {
+    for (std::vector<int>::iterator it = this->chClients_.begin(); it != this->chClients_.end(); ++it) {
+        send(*it, message.c_str(), message.length(), 0);
+    }
+}
 
 bool Channel::isOperator(int fd) const {
 	return std::find(this->operators_.begin(), this->operators_.end(), fd) != this->operators_.end();
@@ -181,4 +194,16 @@ void Channel::removeOperator(int fd) {
 	std::vector<int>::iterator it = std::find(this->operators_.begin(), this->operators_.end(), fd);
 	if (it != this->operators_.end())
 		this->operators_.erase(it);
+}
+
+bool Channel::hasPassword() const {
+    return !this->pwd_.empty();
+}
+
+bool Channel::hasUserLimit() const {
+    return this->userLimit_ > 0;
+}
+
+int Channel::getUserCount() const {
+    return this->chClients_.size();
 }

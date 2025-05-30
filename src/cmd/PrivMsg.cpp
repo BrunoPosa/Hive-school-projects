@@ -10,32 +10,31 @@ void Server::cmdPrivMsg(int fd, const std::string& message) {
         return;
     }
 
-    std::getline(iss, msgPart); // everything after the target
+    std::getline(iss, msgPart); // Get message after the target
 
     if (msgPart.empty() || msgPart == " :" || msgPart == ":") {
-        ft_send(fd, ERR_NO_RECIPIENT);
+        ft_send(fd, ERR_NO_TEXT_TO_SEND);
         return;
     }
 
-    // Clean up the message part
+    // Clean up leading space and colon
     if (msgPart[0] == ' ')
-	{
         msgPart = msgPart.substr(1);
-	}
     if (msgPart[0] == ':')
-	{
         msgPart = msgPart.substr(1);
-	}
 
-	std::string fullMsg = msgPart + "\r\n";
+    // ✅ Always get sender from FD, not from any string in message
+    Client &sender = clients_[fd];
+    std::string prefix = ":" + sender.getNick() + "!" + sender.getUser() + "@localhost";
+    std::string fullMsg = prefix + " PRIVMSG " + target + " :" + msgPart + "\r\n";
 
+    // Send to channel
     if (target[0] == '#') {
-        // It's a channel message
         if (channels_.find(target) == channels_.end()) {
             ft_send(fd, ERR_NO_SUCH_CHANNEL(target));
             return;
         }
-        if (!clients_[fd].isInChannel(target)) {
+        if (!sender.isInChannel(target)) {
             ft_send(fd, ERR_NOT_IN_CHANNEL(target));
             return;
         }
@@ -45,7 +44,7 @@ void Server::cmdPrivMsg(int fd, const std::string& message) {
         // It's a private message to a user
         int targetFd = getClientFdByNick(target);
         if (targetFd == -1) {
-            ft_send(fd, ERR_NO_SUCH_CHANNEL(target)); // You may want to define ERR_NOSUCHNICK
+            ft_send(fd, ERR_NOSUCHNICK(target));
             return;
         }
         ft_send(targetFd, fullMsg);

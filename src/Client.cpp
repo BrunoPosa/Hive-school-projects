@@ -213,7 +213,16 @@ bool Client::getOperator(const std::string &channel)
 
 void Client::joinChannel(const std::string &channel, bool is_operator)
 {
-	joinedChannels[channel] = is_operator;
+	if (is_operator)
+	{
+		joinedChannels[channel] = true;
+		std::cerr << "added operator" << std::endl;
+	}
+	else
+	{
+		joinedChannels[channel] = false;
+		std::cerr << "not operator" << std::endl;
+	}
 }
 
 void Client::leaveChannel(const std::string &channel)

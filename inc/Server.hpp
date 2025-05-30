@@ -86,15 +86,18 @@ private:
 	void	checkInactivity();
 	void	ft_send(int fd, const std::string& message);
 	
-	void	cmdNick(int fd, const std::string& message);
-	void	cmdUser(int fd, const std::string& message);
-	void	cmdJoin(int fd, const std::string& message);
-	void	cmdPrivMsg(int fd, const std::string& message);
-	void	cmdPing(int fd, const std::string& message);
-	void	cmdTopic(int fd, const std::string& message);
-	void	cmdMode(int fd, const std::string& message);
-	void	cmdKick(int sender_fd, const std::vector<std::string>& params);
-	void	kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
+	void cmdNick(int fd, const std::string& message);       // Handle NICK command
+	void cmdUser(int fd, const std::string& message);       // Handle USER command
+	void cmdJoin(int fd, const std::string& message);       // Handle JOIN command
+	void cmdPrivMsg(int fd, const std::string& message);    // Handle PRIVMSG command
+	void cmdPing(int fd, const std::string& message);       // Handle PING command
+	void cmdTopic(int fd, const std::string& message);     // Handle TOPIC command
+	void cmdMode(int fd, const std::string& message);
+	void cmdKick(int sender_fd, const std::vector<std::string>& params);      // Handle KICK command
+	void cmdInvite(int sender_fd, const std::vector<std::string>& params);    // Handle INVITE command
+	void cmdPart(int fd, const std::string& message);	 // Handle PART command
+	
+	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
 	
 public:
 	Server();

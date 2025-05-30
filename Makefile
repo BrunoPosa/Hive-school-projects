@@ -33,7 +33,9 @@ SRCS    =    $(SRCDIR)main.cpp \
 			 $(SRCDIR)cmd/Ping.cpp \
 			 $(SRCDIR)cmd/PrivMsg.cpp \
 			 $(SRCDIR)cmd/Topic.cpp \
-			 $(SRCDIR)cmd/User.cpp 
+			 $(SRCDIR)cmd/User.cpp \
+			 $(SRCDIR)cmd/Invite.cpp \
+			 $(SRCDIR)cmd/Part.cpp \
 
 
 
