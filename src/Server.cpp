@@ -46,7 +46,7 @@ void Server::run() {
 				std::cerr << "poll() returned -1 with errno: " << strerror(errno) << std::endl;
 				continue;
 			}
-			#ifdef IRC_DEBUG_PRINTS
+			#ifdef IRC_POLL_PRINTS
 				std::cout << "We poll" << std::endl;
 			#endif
 			handleEvents();
