@@ -29,7 +29,7 @@ void	Config::validate_() {
 									"(but check /etc/services for unavailable ones)");
 	}
 	if (!isValidPassword_()) {
-		std::string	errmsg("Invalid password. Special chars allowed:" + allowedPassChars_.substr(61) + " and min length= " + std::to_string(minPassLen_));
+		std::string	errmsg("Invalid password. Special chars allowed:" + allowedPassChars_.substr(62) + " and min pass length is " + std::to_string(minPassLen_));
 		throw std::invalid_argument(errmsg);
 	}
 }

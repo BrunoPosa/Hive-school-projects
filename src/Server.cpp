@@ -35,11 +35,13 @@ void Server::run() {
 
 	std::cout << "Server starting on port " << cfg_.getPort() << " with " << pollFds_.size() << " fds" << std::endl;
 
-	while (IRC_RUNNING & state_) {
+	while (IRC_RUNNING & state_) {//check for FLUSH state_ such as server error messages to clients?
 		try {
-			unsigned long	pollSize = pollFds_.size();
-			if (poll(pollFds_.data(), pollSize, -1) < 0) {
+			if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
 				if (errno == EINVAL || errno == ENOMEM) {
+					if (clients_.empty()) {
+						state_ &= ~(IRC_ACCEPTING | IRC_RUNNING);//exit immediately
+					}
 					rmClient(pollFds_.back().fd);
 					state_ &= ~IRC_ACCEPTING;
 				}
@@ -50,10 +52,13 @@ void Server::run() {
 				std::cout << "We poll" << std::endl;
 			#endif
 			handleEvents();
-			checkInactivity();
-			if (pollFds_.size() != pollSize) {
-				updatePollfds();
+		} catch (const std::bad_alloc& e) {
+			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
+			if (clients_.empty()) {
+				state_ &= ~(IRC_ACCEPTING | IRC_RUNNING);//exit immediately
 			}
+			rmClient(pollFds_.back().fd);
+			state_ &= ~IRC_ACCEPTING;
 		} catch (const std::exception& e) {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 		}
@@ -89,11 +94,20 @@ void Server::handleEvents() {
 			std::cerr << REDIRC << "POLL ERRS" << RESETIRC << strerror(errno) << " revents: " << pfd.revents << " on fd " << pfd.fd << std::endl;
 			rmClient(pfd.fd);
 		} else if (POLLOUT & pfd.revents) {
-			#ifdef IRC_POLL_PRINTS 
+			#ifdef IRC_POLL_PRINTS
 				std::cout << "POLLOUT--" << std::endl;
 			#endif
 			if (clients_.at(pfd.fd).send() == false) {
 				rmClient(pfd.fd);
+				continue;
+			}
+		}
+
+		if (pfd.fd != listenSo_.getFd()) {
+			if (clients_.at(pfd.fd).isInactive(cfg_.getAllowedInactivity())) {
+				rmClient(pfd.fd);
+			} else if (&pfd != clients_.at(pfd.fd).getPfdPtr()) {
+				clients_.at(pfd.fd).setPfdPtr(&pfd);
 			}
 		}
 	}
@@ -142,8 +156,10 @@ void Server::addClient(Socket& sock) {
 }
 
 /*
-	removes Client from all of its own joinedChannels (and destroys all channels where that client was the last remaining),
-	server's pollFds_ vector, and server's clients_ map
+	removes Client from server's pollFds_ vector, all of client's own joinedChannels (destroying all channels which remain empty or
+	broadcasting ClientQuit msg to all remaining members),
+	and lastly - from the server's clients_ map
+	If the IRC_ACCEPTING flag was down, this function raises it (as now there is more resources available)
 */
 void Server::rmClient(int rmFd) {
 	try {
@@ -151,13 +167,16 @@ void Server::rmClient(int rmFd) {
 			if (pollFds_.at(i).fd == rmFd) { pollFds_.erase(pollFds_.begin() + i); }
 		}
 
-		for (const auto& [channelName, _] : clients_.at(rmFd).getJoinedChannels()) {
+		const auto&	joinedChannels = clients_.at(rmFd).getJoinedChannels();
+		for (const auto& [channelName, _] : joinedChannels) {
 			auto channelIt = channels_.find(channelName);
 
 			if (channelIt != channels_.end()) {
 				channelIt->second.removeClient(rmFd);
 				if (channelIt->second.isEmpty()) {
 					channels_.erase(channelName);
+				} else {
+					channels_.at(channelName).broadcast(IrcMessages::clientQuit(clients_.at(rmFd)), clients_.at(rmFd).getNick(), -1);
 				}
 			}
 		}
@@ -202,7 +221,13 @@ bool	Server::handleMsgs(int fromFd) {
 			#endif
 			while ((pos = msgs.find("\r\n")) != std::string::npos) {
 				line = msgs.substr(0, pos);
-				processCommand(fromFd, line);//consider having processCommand return bool false when QUIT is typed, so we know in poll loop to rmClient
+				if (line.find("QUIT") == 0) {
+				#ifdef IRC_DEBUG_PRINTS
+					std::cout << "QUIT from fd:" << fromFd << std::endl;
+				#endif
+					return false;
+				}
+				processCommand(fromFd, line);
 				msgs.erase(0, pos + 2);
 			}
 		}
@@ -302,31 +327,8 @@ void	Server::gracefulShutdown() {
 	for (auto& cliFd : clients_) {
 		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
 	}
+	// state_ |= IRC_FLUSH;
 	state_ &= ~(IRC_ACCEPTING | IRC_RUNNING);
-}
-
-void	Server::updatePollfds() {
-	for (auto& pair : clients_) {
-		for (int i = pollFds_.size() - 1; i >= 0; i--) {
-			if (pair.first == pollFds_.at(i).fd) {
-				pair.second.setPfdPtr(&pollFds_.at(i));
-			}
-		}
-	}
-}
-
-void	Server::checkInactivity() {
-	std::vector<int>	inactiveFds;
-
-	for (auto& pair : clients_) {
-		if (pair.second.isInactive(cfg_.getAllowedInactivity())) {
-			inactiveFds.push_back(pair.first);
-		}
-	}
-
-	for (int i = inactiveFds.size() - 1; i >= 0; i--) {
-		rmClient(inactiveFds[i]);
-	}
 }
 
 void Server::checkRegistration(int fd) {

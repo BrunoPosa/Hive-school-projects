@@ -1,6 +1,8 @@
 #pragma once
 
 // class Server; // forward declare
+#include "Client.hpp"
+#include "Channel.hpp"
 
 // Common error
 #define ERR_NOT_IN_CHANNEL(chan) (":localhost 442 " + chan + " :You're not on that channel\r\n")
@@ -84,4 +86,22 @@ namespace IrcMessages {
 		return ("ERROR :Closing link: " + nick + " (Server shutting down)\r\n");
 	}
 
+	inline std::string	clientQuit(const Client& client) {
+		return (":" + client.getNick() + "!~" + client.getUser() + "@" + client.getIP() + " QUIT :Client Quit\r\n");
+	}
+
+	inline std::string	RPL_NAMREPLY(const std::string& nick, Channel *ch, std::map<int, Client> *allClientsPtr) {
+		std::string	msg = ":localhost 353 " + nick + " @ " + ch->getName() + " :";//should these messages be :localhost or name of the server?
+ 
+		std::vector	chClients = ch->getChClients();
+		for (int i = chClients.size() - 1; i >= 0; i--) {
+			msg += allClientsPtr->at(chClients[i]).getNick() + " ";
+		}
+		msg += "\r\n";
+		return (msg);
+	}
+
+	inline std::string RPL_ENDOFNAMES(const std::string& nick, Channel *ch) {
+		return (":localhost 366 " + nick + " " + ch->getName() + " :End of /NAMES list.\r\n");
+	}
 }

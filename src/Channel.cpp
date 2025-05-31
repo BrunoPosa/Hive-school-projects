@@ -150,9 +150,8 @@ void Channel::removeClient(int fd)
 		this->chClients_.erase(it);
 }
 
-void Channel::broadcast(const std::string& message, const std::string& sender_nick, int except_fd) // send to all clients except the sender
+void Channel::broadcast(const std::string& message, const std::string& sender_nick, int except_fd) // send to all clients except the except_fd
 {
-	// std::string fullMessage = ":" + sender_nick + " PRIVMSG " + this->name_ + " :" + message + "\r\n";
 (void)sender_nick;
 	int cliFd = 0;
 	for (unsigned long i = chClients_.size(); i-- > 0;)

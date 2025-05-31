@@ -61,6 +61,7 @@ class Client {
 		const std::string& getUser() const { return usrnm_; }
 
 		void	setPfdPtr(pollfd *pfd) { pfd_ = pfd; }
+		pollfd*	getPfdPtr() { return pfd_; }
 		void setNick(const std::string& nick) { nick_ = nick; }
 		void setUser(const std::string& user) { usrnm_ = user; }
 

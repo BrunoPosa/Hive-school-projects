@@ -63,4 +63,6 @@ void Server::cmdJoin(int fd, const std::string& message)
     std::string prefix = ":" + clients_[fd].getNick() + "!" + clients_[fd].getUser() + "@localhost";
     std::string joinMessage = prefix + " JOIN :" + channel + "\r\n";
     chanPtr->broadcast(joinMessage, clients_[fd].getNick(), -1);
+
+    clients_[fd].toSend(IrcMessages::RPL_NAMREPLY(clients_[fd].getNick(), chanPtr, &clients_) + IrcMessages::RPL_ENDOFNAMES(clients_[fd].getNick(), chanPtr));
 }

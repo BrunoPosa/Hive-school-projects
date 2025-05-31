@@ -63,9 +63,7 @@ Client::Client(Client&& other) noexcept
 		whois{std::exchange(other.modeReceived, false)},
 		authAttempts_{std::exchange(other.authAttempts_, 0)},
 		lastActive_{std::chrono::steady_clock::now()}//or other.lastActive_
-{
-	std::cout << "MOVE CTOR" << std::endl;
-}
+{}
 
 Client&	Client::operator=(Client&& other) noexcept {
 	if (this != &other) {

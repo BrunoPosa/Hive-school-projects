@@ -73,7 +73,6 @@ private:
 	std::map<std::string, Channel>	channels_;
 	int defaultUserCount_ = 0;
 
-	void	updatePollfds();
 	void	handleEvents();
 	void	acceptNewConnection();
 	void	addClient(Socket& sock);
@@ -83,7 +82,6 @@ private:
 	void	processCommand(int fd, const std::string& message);
 	
 	void	checkRegistration(int fd);
-	void	checkInactivity();
 	void	ft_send(int fd, const std::string& message);
 	
 	void cmdNick(int fd, const std::string& message);       // Handle NICK command
