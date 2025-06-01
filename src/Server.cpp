@@ -282,7 +282,7 @@ bool	Server::processAuth(Client& newClient, std::string msg) {
 	#endif
 		if (cfg_.CheckPassword(password) == true) {
 			newClient.setAuthenticated();
-			newClient.toSend(IrcMessages::welcome(host_, newClient.getNick(), cfg_.getServName()));
+			newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
 			return true;
 		}
 	}
