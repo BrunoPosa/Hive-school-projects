@@ -12,6 +12,7 @@
 #include <sys/socket.h> //SOMAXCONN, listen()
 #include <cassert>
 #include <utility>//std::exchange
+#include <netdb.h> //resolving host
 
 /**
  * @brief RAII wrapper for a non‑blocking TCP/IPv4 socket.
@@ -24,6 +25,7 @@
 	int			fd_;
 	sockaddr_in	addr_;
 	bool		isListening_;
+	bool		setNonBlocking(int fd) const;
 
 public:
 	Socket();
@@ -35,7 +37,6 @@ public:
 	~Socket() noexcept;
 
 	void	initListener(uint16_t port);
-	bool	setNonBlocking(int fd) const;
 	bool	accept(Socket& toSocket) const;
 
 	int			getFd() const noexcept {return fd_;}

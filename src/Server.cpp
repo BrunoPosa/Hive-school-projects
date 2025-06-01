@@ -22,13 +22,17 @@ Server::Server(Config&& cfg)
 Server::Server(Server&& other)
 :	cfg_(std::move(other.cfg_)),
 	listenSo_(std::move(other.listenSo_)),
+	ip_(std::move(other.ip_)),
+	host_(std::move(other.host_)),
 	state_(other.state_),
 	clients_(std::move(other.clients_)),
 	pollFds_(std::move(other.pollFds_)),
-	channels_(std::move(other.channels_)) {}
+	channels_(std::move(other.channels_))
+{}
 
 void Server::run() {
 	listenSo_.initListener(cfg_.getPort());
+	host_ = resolveHost(ip_ = fetchPublicFacingIP());
 	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
 
 	state_ = IRC_RUNNING | IRC_ACCEPTING;
@@ -278,7 +282,7 @@ bool	Server::processAuth(Client& newClient, std::string msg) {
 	#endif
 		if (cfg_.CheckPassword(password) == true) {
 			newClient.setAuthenticated();
-			newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
+			newClient.toSend(IrcMessages::welcome(host_, newClient.getNick(), cfg_.getServName()));
 			return true;
 		}
 	}
@@ -336,6 +340,52 @@ void Server::checkRegistration(int fd) {
 		clients_[fd].setAuthenticated();  // Assuming you want to set them as authenticated
 		clients_.at(fd).toSend(IrcMessages::motd());
 	}
+}
+
+std::string	Server::fetchPublicFacingIP() {
+	int sock = ::socket(AF_INET, SOCK_DGRAM, 0);
+	if (sock < 0) {
+		std::cerr << "Could not create socket in fetchPublicFacingIP()" << std::endl;
+		return "127.0.0.1";
+	}
+
+	sockaddr_in remoteAddr{};
+	remoteAddr.sin_family = AF_INET;
+	remoteAddr.sin_port = htons(80);
+	inet_pton(AF_INET, "8.8.8.8", &remoteAddr.sin_addr);
+
+	if (::connect(sock, (sockaddr*)&remoteAddr, sizeof(remoteAddr)) == -1) {
+		::close(sock);
+		std::cerr << "connect() failed  in fetchPublicFacingIP()" << std::endl;
+		return "127.0.0.1";
+	}
+
+	sockaddr_in localAddr{};
+	socklen_t len = sizeof(localAddr);
+	if (getsockname(sock, (sockaddr*)&localAddr, &len) == -1) {
+		::close(sock);
+		std::cerr << "getsockname() failed in fetchPublicFacingIP()" << std::endl;
+		return "127.0.0.1";
+	}
+
+	char ip[INET_ADDRSTRLEN];
+	inet_ntop(AF_INET, &localAddr.sin_addr, ip, sizeof(ip));
+	::close(sock);
+	return std::string(ip);
+}
+
+std::string	Server::resolveHost(std::string ip) {
+	sockaddr_in sa{};
+	sa.sin_family = AF_INET;
+	inet_pton(AF_INET, ip.c_str(), &sa.sin_addr);
+
+	char host[NI_MAXHOST];
+	int err = getnameinfo((sockaddr*)&sa, sizeof(sa), host, sizeof(host), nullptr, 0, NI_NAMEREQD);
+	if (err != 0) {
+		std::cerr << "Reverse DNS failed: " + std::string(gai_strerror(err)) << " in resolveHost()" << std::endl;
+		return "localhost";
+	}
+	return std::string(host);
 }
 
 int Server::getClientFdByNick(const std::string& nick) const {

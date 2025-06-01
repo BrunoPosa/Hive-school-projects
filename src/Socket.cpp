@@ -1,6 +1,8 @@
 
 #include "../inc/Socket.hpp"
 #include "../inc/Server.hpp"
+#include <netdb.h>
+
 using std::string;
 using std::cerr;
 using std::cout;
@@ -20,7 +22,7 @@ Socket::Socket(int fd, sockaddr_in addr)
 }
 
 Socket::Socket(Socket&& other) noexcept
-: fd_{other.fd_}, addr_{other.addr_}, isListening_{other.isListening_}
+:	fd_{other.fd_}, addr_{other.addr_}, isListening_{other.isListening_}
 {
 	other.fd_ = -1;
 	other.addr_ = {};
@@ -71,7 +73,7 @@ void	Socket::initListener(uint16_t port) {
 	addr_.sin_family      = AF_INET;
 	addr_.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr_.sin_port        = htons(port);
-
+	
 	if (::bind(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) < 0) {
 		throw std::system_error(errno, std::generic_category(), "bind() failed");
 	}
@@ -126,6 +128,7 @@ std::string	Socket::getIpStr() const {
 
 	if (inet_ntop(AF_INET, &addr_.sin_addr, ipStr, INET_ADDRSTRLEN) == nullptr) {
 		std::cerr << "inet_ntop error: " << strerror(errno) << std::endl;
+		return "";
 	}
 	return ipStr;
 }

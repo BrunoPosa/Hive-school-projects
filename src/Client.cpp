@@ -173,7 +173,14 @@ bool	Client::receive() {
 		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
 	}
 
-	lastActive_ = std::chrono::steady_clock::now();
+	std::string	buf(buffer);
+	if (buf.find("PING") == std::string::npos) {// || buf.length() == (5 + )
+		lastActive_ = std::chrono::steady_clock::now();
+		
+		auto duration = lastActive_.time_since_epoch();
+		auto sec = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
+		std::cout << "secs:" << sec << std::endl;
+	}
 
 	return true;
 }

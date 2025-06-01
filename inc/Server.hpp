@@ -20,7 +20,6 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <cerrno>
-#include <cstring>
 
 // Standard Template Library
 #include <iostream>
@@ -67,6 +66,8 @@ class Server {
 private:
 	Config	cfg_;
 	Socket	listenSo_;
+	std::string	ip_;
+	std::string	host_;
 	volatile sig_atomic_t	state_;
 	std::map<int, Client>	clients_;
 	std::vector<struct pollfd>	pollFds_;
@@ -80,10 +81,12 @@ private:
 	bool	handleMsgs(int fromFd);
 	bool	processAuth(Client& newClient, std::string msg);
 	void	processCommand(int fd, const std::string& message);
-	
-	void	checkRegistration(int fd);
-	void	ft_send(int fd, const std::string& message);
-	
+
+	std::string	fetchPublicFacingIP();
+	std::string	resolveHost(std::string ip);
+	void		checkRegistration(int fd);
+	void		ft_send(int fd, const std::string& message);
+
 	void cmdNick(int fd, const std::string& message);       // Handle NICK command
 	void cmdUser(int fd, const std::string& message);       // Handle USER command
 	void cmdJoin(int fd, const std::string& message);       // Handle JOIN command
@@ -94,16 +97,16 @@ private:
 	void cmdKick(int sender_fd, const std::vector<std::string>& params);      // Handle KICK command
 	void cmdInvite(int sender_fd, const std::vector<std::string>& params);    // Handle INVITE command
 	void cmdPart(int fd, const std::string& message);	 // Handle PART command
-	
+
 	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
-	
+
 public:
 	Server();
 	explicit	Server(Config&& cfg);
 	Server(Server& other) = delete;
 	Server(Server&& other);
 	~Server()	= default;
-	
+
 	void	run();
 	void	gracefulShutdown();
 	int		getPort() const noexcept {return cfg_.getPort();}
