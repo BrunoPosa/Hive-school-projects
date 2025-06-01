@@ -241,7 +241,7 @@ bool	Server::handleMsgs(int fromFd) {
 	return true;
 }
 
-//if this returns false, client should be removed
+//if this returns false, client should be removed. (should this be merged with processCmd?)
 bool	Server::processAuth(Client& newClient, std::string msg) {
 	#ifdef IRC_AUTH_PRINTS
 		cout << GREENIRC << "authenticate() msg:" << msg << RESETIRC << endl;
@@ -291,7 +291,7 @@ bool	Server::processAuth(Client& newClient, std::string msg) {
 		newClient.toSend("PONG rrr");
 		return true;
 	}
-	if (msg.find("CAP LS") != std::string::npos) {
+	if (msg.find("CAP LS") != std::string::npos || msg.find("JOIN") != std::string::npos ) {
 		return true;
 	}
 	#ifdef IRC_AUTH_PRINTS
