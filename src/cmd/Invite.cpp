@@ -1,6 +1,7 @@
 #include "../../inc/Server.hpp"
 
-void Server::cmdInvite(int sender_fd, const std::vector<std::string>& params) {
+void Server::cmdInvite(int sender_fd, const t_data data) {
+    std::vector<std::string> params{data.cmdParams};
     if (params.size() < 2) {
         ft_send(sender_fd, ERR_NEEDMOREPARAMS);
         return;

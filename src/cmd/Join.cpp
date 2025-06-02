@@ -1,8 +1,8 @@
 #include "../../inc/Server.hpp"
 
-void Server::cmdJoin(int fd, const std::string& message)
+void Server::cmdJoin(int fd, const t_data data)
 {
-    std::istringstream iss(message);
+    std::istringstream iss(data.fullMsg);
     std::string command, channel, key;
     iss >> command >> channel >> key;
 

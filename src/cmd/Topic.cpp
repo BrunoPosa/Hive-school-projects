@@ -1,7 +1,7 @@
 #include "../../inc/Server.hpp"
 
-void Server::cmdTopic(int fd, const std::string& message) {
-    std::istringstream iss(message);
+void Server::cmdTopic(int fd, const t_data data) {
+    std::istringstream iss(data.fullMsg);
     std::string command, channel;
     iss >> command >> channel;
 
@@ -9,7 +9,7 @@ void Server::cmdTopic(int fd, const std::string& message) {
     std::getline(iss, topic); // gets the rest of the line
 
     // Debugging output
-    std::cerr << "Debug message: " << message << std::endl;
+    std::cerr << "Debug message: " << data.fullMsg << std::endl;
     std::cerr << "Debug command: " << command << std::endl;
     std::cerr << "Debug channel: " << channel << std::endl;
     std::cerr << "Raw topic string: " << topic << std::endl;

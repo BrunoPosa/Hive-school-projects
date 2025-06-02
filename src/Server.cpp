@@ -10,13 +10,37 @@ Server	*g_servPtr = nullptr;
 Server::Server()
 :	cfg_{},
 	listenSo_{},
-	state_{0}
+	state_{0},
+	cmds_{
+		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
+		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
+		{"JOIN", [this](int fd, const t_data d) { cmdJoin(fd, d); }},
+		{"MODE", [this](int fd, const t_data d) { cmdMode(fd, d); }},
+		{"PING", [this](int fd, const t_data d) { cmdPing(fd, d); }},
+		{"KICK", [this](int fd, const t_data d) { cmdKick(fd, d); }},
+		{"TOPIC", [this](int fd, const t_data d) { cmdTopic(fd, d); }},
+		{"PRIVMSG", [this](int fd, const t_data d) { cmdPrivMsg(fd, d); }},
+		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
+		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
+	}
 {}
 
 Server::Server(Config&& cfg)
 :	cfg_{std::move(cfg)},
 	listenSo_{},
-	state_{0}
+	state_{0},
+	cmds_{
+		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
+		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
+		{"JOIN", [this](int fd, const t_data d) { cmdJoin(fd, d); }},
+		{"MODE", [this](int fd, const t_data d) { cmdMode(fd, d); }},
+		{"PING", [this](int fd, const t_data d) { cmdPing(fd, d); }},
+		{"KICK", [this](int fd, const t_data d) { cmdKick(fd, d); }},
+		{"TOPIC", [this](int fd, const t_data d) { cmdTopic(fd, d); }},
+		{"PRIVMSG", [this](int fd, const t_data d) { cmdPrivMsg(fd, d); }},
+		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
+		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
+	}
 {}
 
 Server::Server(Server&& other)
@@ -27,7 +51,8 @@ Server::Server(Server&& other)
 	state_(other.state_),
 	clients_(std::move(other.clients_)),
 	pollFds_(std::move(other.pollFds_)),
-	channels_(std::move(other.channels_))
+	channels_(std::move(other.channels_)),
+	cmds_{std::move(other.cmds_)}
 {}
 
 void Server::run() {
@@ -231,7 +256,7 @@ bool	Server::handleMsgs(int fromFd) {
 				#endif
 					return false;
 				}
-				processCommand(fromFd, line);
+				dispatchCommand(fromFd, line);
 				msgs.erase(0, pos + 2);
 			}
 		}
@@ -340,6 +365,15 @@ void Server::checkRegistration(int fd) {
 		clients_[fd].setAuthenticated();  // Assuming you want to set them as authenticated
 		clients_.at(fd).toSend(IrcMessages::motd());
 	}
+}
+
+std::vector<std::string>	Server::tokenize(std::istringstream& cmdParams){
+	std::vector<std::string> tokens;
+    std::string token;
+    while (cmdParams >> token) {
+        tokens.push_back(token);
+    }
+	return tokens;
 }
 
 std::string	Server::fetchPublicFacingIP() {

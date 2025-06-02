@@ -1,7 +1,7 @@
 #include "../../inc/Server.hpp"
 
-void Server::cmdUser(int fd, const std::string& message) {
-    std::istringstream iss(message);
+void Server::cmdUser(int fd, const t_data data) {
+    std::istringstream iss(data.fullMsg);
     std::string command, user, mode, unused, realname;
     iss >> command >> user >> mode >> unused >> realname;
 

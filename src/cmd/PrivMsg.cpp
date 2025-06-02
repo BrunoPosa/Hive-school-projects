@@ -1,7 +1,7 @@
 #include "../../inc/Server.hpp"
 
-void Server::cmdPrivMsg(int fd, const std::string& message) {
-    std::istringstream iss(message);
+void Server::cmdPrivMsg(int fd, const t_data data) {
+    std::istringstream iss(data.fullMsg);
     std::string command, target, msgPart;
     iss >> command >> target;
 

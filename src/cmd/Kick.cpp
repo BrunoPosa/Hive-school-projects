@@ -17,7 +17,8 @@ void Server::kickUser(int sender_fd, const std::string& channelName, const std::
 }
 
 // KICK command implementation
-void Server::cmdKick(int sender_fd, const std::vector<std::string>& params) {
+void Server::cmdKick(int sender_fd, const t_data data) {
+    std::vector<std::string> params{data.cmdParams};
     if (params.size() < 2) {
         ft_send(sender_fd, ERR_NEEDMOREPARAMS);
         return;

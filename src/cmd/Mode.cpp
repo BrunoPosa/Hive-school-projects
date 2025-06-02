@@ -1,8 +1,8 @@
 #include "../../inc/Server.hpp"
 
 // Mode.cpp
-void Server::cmdMode(int fd, const std::string& message) {
-    std::istringstream iss(message);
+void Server::cmdMode(int fd, const t_data data) {
+    std::istringstream iss(data.fullMsg);
     std::string command, target, modeStr, param;
     iss >> command >> target >> modeStr >> param;
     std::clog << "Debug: Channel: " << target << ", Mode: " << modeStr << ", Param: " << param << std::endl;

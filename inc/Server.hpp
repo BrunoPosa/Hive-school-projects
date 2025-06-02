@@ -28,6 +28,7 @@
 #include <map>
 #include <set>
 #include <unordered_map>
+#include <functional>
 #include <sstream>
 #include <stdexcept>
 
@@ -53,6 +54,11 @@ enum IRCState : char {
 	IRC_ACCEPTING = 0x2
 };
 
+typedef struct cmdFunctionParameters {
+	std::string					fullMsg;
+	std::vector<std::string>	cmdParams;
+} t_data;
+
 #define REDIRC "\033[1;31m"
 #define YELLOWIRC "\033[33m"
 #define GREENIRC "\033[1;32m"
@@ -72,6 +78,7 @@ private:
 	std::map<int, Client>	clients_;
 	std::vector<struct pollfd>	pollFds_;
 	std::map<std::string, Channel>	channels_;
+	std::unordered_map<std::string, std::function<void(int, const t_data&)>> cmds_;
 	int defaultUserCount_ = 0;
 
 	void	handleEvents();
@@ -80,23 +87,24 @@ private:
 	void	rmClient(int rmFd);
 	bool	handleMsgs(int fromFd);
 	bool	processAuth(Client& newClient, std::string msg);
-	void	processCommand(int fd, const std::string& message);
+	void	dispatchCommand(int fd, const std::string& message);
 
+	std::vector<std::string>	tokenize(std::istringstream& cmdParams);
 	std::string	fetchPublicFacingIP();
 	std::string	resolveHost(std::string ip);
 	void		checkRegistration(int fd);
 	void		ft_send(int fd, const std::string& message);
 
-	void cmdNick(int fd, const std::string& message);       // Handle NICK command
-	void cmdUser(int fd, const std::string& message);       // Handle USER command
-	void cmdJoin(int fd, const std::string& message);       // Handle JOIN command
-	void cmdPrivMsg(int fd, const std::string& message);    // Handle PRIVMSG command
-	void cmdPing(int fd, const std::string& message);       // Handle PING command
-	void cmdTopic(int fd, const std::string& message);     // Handle TOPIC command
-	void cmdMode(int fd, const std::string& message);
-	void cmdKick(int sender_fd, const std::vector<std::string>& params);      // Handle KICK command
-	void cmdInvite(int sender_fd, const std::vector<std::string>& params);    // Handle INVITE command
-	void cmdPart(int fd, const std::string& message);	 // Handle PART command
+	void cmdNick(int fd, const t_data data);
+	void cmdUser(int fd, const t_data data);
+	void cmdJoin(int fd, const t_data data);
+	void cmdPrivMsg(int fd, const t_data data);
+	void cmdPing(int fd, const t_data data);
+	void cmdTopic(int fd, const t_data data);
+	void cmdMode(int fd, const t_data data);
+	void cmdKick(int sender_fd, t_data data);
+	void cmdInvite(int sender_fd, t_data data);
+	void cmdPart(int fd, const t_data data);
 
 	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
 
