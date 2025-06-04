@@ -49,11 +49,6 @@
 class Server;
 extern Server	*g_servPtr;
 
-enum IRCState : char {
-	IRC_RUNNING   = 0x1,
-	IRC_ACCEPTING = 0x2
-};
-
 typedef struct cmdFunctionParameters {
 	std::string					fullMsg;
 	std::vector<std::string>	cmdParams;
@@ -64,6 +59,7 @@ typedef struct cmdFunctionParameters {
 #define GREENIRC "\033[1;32m"
 #define RESETIRC "\033[0m"
 
+// #define IRC_ON_SHUTDOWN_PRINT
 // #define IRC_DEBUG_PRINTS
 // #define IRC_POLL_PRINTS
 #define IRC_AUTH_PRINTS
@@ -75,7 +71,8 @@ private:
 	Socket	listenSo_;
 	std::string	ip_;
 	std::string	host_;
-	volatile sig_atomic_t	state_;
+	bool	accepting_;
+	volatile sig_atomic_t	running_;
 	std::map<int, Client>	clients_;
 	std::vector<struct pollfd>	pollFds_;
 	std::map<std::string, Channel>	channels_;

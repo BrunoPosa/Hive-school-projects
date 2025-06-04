@@ -10,7 +10,8 @@ Server	*g_servPtr = nullptr;
 Server::Server()
 :	cfg_{},
 	listenSo_{},
-	state_{0},
+	accepting_{false},
+	running_{false},
 	cmds_{
 		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
 		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
@@ -28,7 +29,8 @@ Server::Server()
 Server::Server(Config&& cfg)
 :	cfg_{std::move(cfg)},
 	listenSo_{},
-	state_{0},
+	accepting_{false},
+	running_{false},
 	cmds_{
 		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
 		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
@@ -48,31 +50,36 @@ Server::Server(Server&& other)
 	listenSo_(std::move(other.listenSo_)),
 	ip_(std::move(other.ip_)),
 	host_(std::move(other.host_)),
-	state_(other.state_),
+	accepting_{other.accepting_},
+	running_{other.running_},
 	clients_(std::move(other.clients_)),
 	pollFds_(std::move(other.pollFds_)),
 	channels_(std::move(other.channels_)),
 	cmds_{std::move(other.cmds_)}
 {}
 
+/*
+	-We stop server only if we run out of resources (std::bad_alloc or poll() says EINVAL or ENOMEM and we have no clients)
+*/
 void Server::run() {
 	listenSo_.initListener(cfg_.getPort());
 	host_ = resolveHost(ip_ = fetchPublicFacingIP());
 	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
 
-	state_ = IRC_RUNNING | IRC_ACCEPTING;
+	accepting_ = true;
+	running_ = true;
 
-	std::cout << "Server starting on port " << cfg_.getPort() << " with " << pollFds_.size() << " fds" << std::endl;
+	std::cout << "Server started on host " << host_ << " and port " << cfg_.getPort() << " with " << pollFds_.size() << " fds" << std::endl;
 
-	while (IRC_RUNNING & state_) {//check for FLUSH state_ such as server error messages to clients?
+	while (running_) {
 		try {
 			if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
 				if (errno == EINVAL || errno == ENOMEM) {
 					if (clients_.empty()) {
-						state_ &= ~(IRC_ACCEPTING | IRC_RUNNING);//exit immediately
+						running_ = false;
 					}
 					rmClient(pollFds_.back().fd);
-					state_ &= ~IRC_ACCEPTING;
+					accepting_ = false;
 				}
 				std::cerr << "poll() returned -1 with errno: " << strerror(errno) << std::endl;
 				continue;
@@ -84,10 +91,10 @@ void Server::run() {
 		} catch (const std::bad_alloc& e) {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 			if (clients_.empty()) {
-				state_ &= ~(IRC_ACCEPTING | IRC_RUNNING);//exit immediately
+				running_ = false;
 			}
 			rmClient(pollFds_.back().fd);
-			state_ &= ~IRC_ACCEPTING;
+			accepting_ = false;
 		} catch (const std::exception& e) {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 		}
@@ -107,7 +114,7 @@ void Server::handleEvents() {
 				std::cout << "POLLIN--" << std::endl;
 			#endif
 			if (pfd.fd == listenSo_.getFd()) {
-				if (IRC_ACCEPTING & state_) {
+				if (accepting_) {
 					acceptNewConnection();
 				}
 				continue;
@@ -147,7 +154,7 @@ void Server::acceptNewConnection() {
 
 	if (listenSo_.accept(clientSock) == false) {
 		if (errno == EMFILE || errno == ENFILE || errno == ENOMEM || errno == ENOBUFS) {
-			state_ &= ~IRC_ACCEPTING; //stop accepting
+			accepting_ = false;
 		} else if (errno != EAGAIN && errno != EWOULDBLOCK) {
 			std::cerr << "accept4() error: " << strerror(errno) << std::endl;
 		}
@@ -216,9 +223,7 @@ void Server::rmClient(int rmFd) {
 			clients_.erase(clientIt);
 		}
 
-		if (IRC_ACCEPTING ^ state_) {
-			state_ |= IRC_ACCEPTING; //start accepting again if the server was not accepting (due to maxing out)
-		}
+		accepting_ = true;//start accepting again if the server was not accepting (due to maxing out)
 
 		std::cout << "client fd:" << rmFd << " removed." << std::endl;
 	} catch (std::exception& e) {
@@ -318,7 +323,7 @@ std::cout << "here" << std::endl;
 }
 
 void	Server::gracefulShutdown() {
-	#ifdef IRC_CLI_PRINT
+	#ifdef IRC_ON_SHUTDOWN_PRINT
 		cout << "====printout on sigint====" << endl;
 		for (auto& cliFd : clients_) {
 			cout << GREENIRC << "\nclient fd:" << cliFd.first << "getFd():" << cliFd.second.getFd() << "  hasDataToSend-->" << cliFd.second.hasDataToSend() << endl
@@ -339,11 +344,7 @@ void	Server::gracefulShutdown() {
 		}
 		cout << RESETIRC << endl;
 	#endif
-	for (auto& cliFd : clients_) {
-		cliFd.second.toSend(IrcMessages::errorQuit(cliFd.second.getNick()));
-	}
-	// state_ |= IRC_FLUSH;
-	state_ &= ~(IRC_ACCEPTING | IRC_RUNNING);
+	running_ = false;
 }
 
 void Server::checkRegistration(int fd) {

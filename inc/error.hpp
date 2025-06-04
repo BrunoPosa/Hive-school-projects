@@ -87,10 +87,6 @@ namespace IrcMessages {
 		return ("QUIT :You have been disconnected by the server.\r\n");
 	}
 
-	inline std::string	errorQuit(const std::string& nick) {
-		return ("ERROR :Closing link: " + nick + " (Server shutting down)\r\n");
-	}
-
 	inline std::string	clientQuit(const Client& client) {
 		return (":" + client.getNick() + "!~" + client.getUser() + "@" + client.getIP() + " QUIT :Client Quit\r\n");
 	}

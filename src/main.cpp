@@ -20,20 +20,20 @@ int main(int argc, char* argv[])
 		std::cerr << "signal() setup failed" << std::endl;
 		return 1;
 	}
-	
+
 	if (argc != 3) {
 		std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
 		return 2;
 	}
-	
+
 	try {
 		Config  config(argv[1], argv[2]);
 		Server	server(std::move(config));
-		
+
 		g_servPtr = &server;
-		
+
 		server.run();
-		
+
 	} catch (const std::exception& e) {
 		std::cerr << "Exception caught in main: " << e.what() << std::endl;
 		return 3;
