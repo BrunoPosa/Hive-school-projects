@@ -163,7 +163,7 @@ void Server::acceptNewConnection() {
 			<< ntohs(clientSock.getAddr().sin_port) 
 			<< " (FD: " << fd << ")" << RESETIRC << std::endl;
 
-	clients_.at(fd).toSend(IrcMessages::passRequest());
+	clients_.at(fd).toSend(IrcMessages::passRequest(clients_.at(fd).getNick()));
 }
 
 //constructs Client with the given socket and adds its fd to pollFds_ and the object itself to clients_ map
@@ -177,6 +177,7 @@ void Server::addClient(Socket& sock) {
 	}
 	try {
 		clients_.emplace(fd, Client(std::move(sock), &pollFds_.back()));
+		clients_.at(fd).setHostName(host_);
 	} catch (std::exception& e) {
 		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
 		rmClient(fd);
@@ -231,29 +232,23 @@ bool	Server::handleMsgs(int fromFd) {
 		std::string line;
 		std::string	msgs = clients_.at(fromFd).getMsgs();
 
-		if (clients_.at(fromFd).isAuthenticated() == false) {
-			#ifdef IRC_DEBUG_PRINTS
-				cout << "isAuthenticated = false" << endl;
-			#endif
-			while ((pos = msgs.find("\r\n")) != std::string::npos) {
-				line = msgs.substr(0, pos);
-				if (processAuth(clients_.at(fromFd), msgs.substr(0, pos)) == false) {
-					return false;
-				}
-				msgs.erase(0, pos + 2);
-			}
+		if (clients_.at(fromFd).isAuthenticated() == false && msgs.find("\r\n") != std::string::npos) {
+			return processAuth(fromFd, msgs);
 		} else {
 			#ifdef IRC_DEBUG_PRINTS
 				int ms = 50;
 				// cout << YELLOWIRC << "waiting " << ms << "ms, msg: " << msgs << RESETIRC << endl;
 				std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 			#endif
-			while ((pos = msgs.find("\r\n")) != std::string::npos) {
+			while ((pos = msgs.find(
+					#ifdef CMD_CONCAT_TEST_IRC
+						"\n"
+					#else
+						"\r\n"
+					#endif
+					)) != std::string::npos) {
 				line = msgs.substr(0, pos);
 				if (line.find("QUIT") == 0) {
-				#ifdef IRC_DEBUG_PRINTS
-					std::cout << "QUIT from fd:" << fromFd << std::endl;
-				#endif
 					return false;
 				}
 				dispatchCommand(fromFd, line);
@@ -266,70 +261,61 @@ bool	Server::handleMsgs(int fromFd) {
 	return true;
 }
 
-//if this returns false, client should be removed. (should this be merged with processCmd?)
-bool	Server::processAuth(Client& newClient, std::string msg) {
+//if this returns false, client should be removed
+bool	Server::processAuth(int fromFd, std::string messages) {
 	#ifdef IRC_AUTH_PRINTS
-		cout << GREENIRC << "authenticate() msg:" << msg << RESETIRC << endl;
+		cout << GREENIRC << "authenticate() msg:" << messages << RESETIRC << endl;
 	#endif
-	if (newClient.hasReceivedNick() == false) {
-		size_t nickpos = msg.find("NICK ");
-		if (nickpos != std::string::npos) {
-			newClient.setNick(msg.substr(nickpos + 5));//do i need to skip spaces?
-			newClient.setNickReceived();
-		#ifdef IRC_AUTH_PRINTS
-			std::cout << GREENIRC << "--nick:" << newClient.getNick() << RESETIRC << std::endl;
-		#endif
-			return true;
-		}
-	}
-
-	if (newClient.hasReceivedUser() == false) {
-		size_t userpos = msg.find("USER ");
-		if (userpos != std::string::npos) {
-			userpos += 5;
-			newClient.setUser(msg.substr(userpos, msg.substr(userpos).find(' ')));//can user contain spaces?
-			newClient.setUserReceived();
-			#ifdef IRC_AUTH_PRINTS
-				std::cout << GREENIRC << "--user:" << newClient.getUser() << RESETIRC << std::endl;
-			#endif
-			return true;
-		}
-	}
-
-	size_t passpos = msg.find("PASS ");
-	if (passpos != std::string::npos) {
-		passpos += 5;
-		passpos += (msg.substr(passpos).find_first_not_of(' ') != std::string::npos) ? msg.substr(passpos).find_first_not_of(' ') : 0;
-		cout << passpos << endl;
-		std::string password = msg.substr(passpos);
-	#ifdef IRC_AUTH_PRINTS
-		cout << "~~checking password~~" << endl;
-	#endif
-		if (cfg_.CheckPassword(password) == true) {
-			newClient.setAuthenticated();
-			newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
-			return true;
-		}
-	}
-
-	if (msg.find("PING") != std::string::npos) {
-		newClient.toSend("PONG rrr");
-		return true;
-	}
-	if (msg.find("CAP LS") != std::string::npos || msg.find("JOIN") != std::string::npos ) {
-		return true;
-	}
-	#ifdef IRC_AUTH_PRINTS
-		cout << "pass attempt: " << newClient.getAuthAttempts() << endl;
-	#endif
+	size_t pos = 0;
+	std::string msg;
+	Client& newClient = clients_.at(fromFd);
 	newClient.addAuthAttempt();
-	newClient.toSend(IrcMessages::wrongPass());
-	if (newClient.getAuthAttempts() < cfg_.getMaxAuthAttempts()) {
-		return true;
-	}
-	return false;
-}
+	int attemptsLeft = cfg_.getMaxAuthAttempts() - newClient.getAuthAttempts();
 
+	while ((pos = messages.find("\r\n")) != std::string::npos) {
+		msg = messages.substr(0, pos);
+std::cout << "here" << std::endl;
+		if (msg.find("QUIT") == 0) {
+			return false;
+		} else if (msg.find("NICK ") == 0 || msg.find("USER ") == 0) {
+			(msg.find("NICK ") == 0) ? cmdNick(fromFd, {msg, {}})
+									: cmdUser(fromFd, {msg, {}});
+		}
+
+		size_t passpos = msg.find("PASS ");
+		if (passpos == 0) {
+			passpos += 5;
+			passpos += (msg.substr(passpos).find_first_not_of(' ') != std::string::npos) ? msg.substr(passpos).find_first_not_of(' ') : 0;
+			std::string password = msg.substr(passpos);
+			#ifdef IRC_AUTH_PRINTS
+				cout << "~~checking password~~" << endl;
+			#endif
+			if (cfg_.CheckPassword(password) == true) {
+				newClient.setAuthenticated();
+				newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
+				return true;
+			}
+			newClient.toSend(IrcMessages::wrongPass());
+		}
+
+		#ifdef IRC_AUTH_PRINTS
+			cout << "pass attempt: " << newClient.getAuthAttempts() << endl;
+		#endif
+		messages.erase(0, pos + 2);
+	}
+	std::cout << "msg:" << msg << std::endl;
+	if (msg.find("CAP LS") == std::string::npos
+		&& msg.find("NICK") == std::string::npos
+		&& msg.find("USER") == std::string::npos
+		&& msg.find("WHOIS") == std::string::npos
+		&& msg.find("MODE") == std::string::npos) {
+		newClient.toSend(IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick()));
+	}
+	if (attemptsLeft <= 0) {
+		return false;
+	}
+	return true;
+}
 
 void	Server::gracefulShutdown() {
 	#ifdef IRC_CLI_PRINT
@@ -369,10 +355,10 @@ void Server::checkRegistration(int fd) {
 
 std::vector<std::string>	Server::tokenize(std::istringstream& cmdParams){
 	std::vector<std::string> tokens;
-    std::string token;
-    while (cmdParams >> token) {
-        tokens.push_back(token);
-    }
+	std::string token;
+	while (cmdParams >> token) {
+		tokens.push_back(token);
+	}
 	return tokens;
 }
 

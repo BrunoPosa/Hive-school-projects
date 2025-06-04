@@ -19,6 +19,7 @@ class Client {
 		std::string	recvBuf_;
 		std::string nick_;
 		std::string usrnm_;
+		std::string	hostnm_;
 		std::map<std::string, bool> joinedChannels; // Set of channels the client has joined and bool if the client is operator
 		bool authenticated;
 		bool nickReceived;
@@ -64,6 +65,7 @@ class Client {
 		pollfd*	getPfdPtr() { return pfd_; }
 		void setNick(const std::string& nick) { nick_ = nick; }
 		void setUser(const std::string& user) { usrnm_ = user; }
+		void	setHostName(std::string hostnm) { hostnm_ = hostnm; }
 
 		void setNickReceived() { nickReceived = true; }
 		void setUserReceived() { userReceived = true; }

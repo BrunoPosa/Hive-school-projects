@@ -67,6 +67,7 @@ typedef struct cmdFunctionParameters {
 // #define IRC_DEBUG_PRINTS
 // #define IRC_POLL_PRINTS
 #define IRC_AUTH_PRINTS
+// #define CMD_CONCAT_TEST_IRC //for evals
 
 class Server {
 private:
@@ -86,7 +87,7 @@ private:
 	void	addClient(Socket& sock);
 	void	rmClient(int rmFd);
 	bool	handleMsgs(int fromFd);
-	bool	processAuth(Client& newClient, std::string msg);
+	bool	processAuth(int fromFd, std::string msg);
 	void	dispatchCommand(int fd, const std::string& message);
 
 	std::vector<std::string>	tokenize(std::istringstream& cmdParams);

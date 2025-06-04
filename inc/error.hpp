@@ -3,6 +3,7 @@
 // class Server; // forward declare
 #include "Client.hpp"
 #include "Channel.hpp"
+#include "Server.hpp"
 
 // Common error
 #define ERR_NOT_IN_CHANNEL(chan) (":localhost 442 " + chan + " :You're not on that channel\r\n")
@@ -54,12 +55,16 @@
 //Idk if macros or inline functions are better
 namespace IrcMessages {
 
-	inline std::string	passRequest() {
-		return ("Please type the password (try '/quote PASS <yourpassword>')...\r\n");
+	inline std::string	passRequest(std::string nick) {
+		return (":localhost NOTICE " + nick + " :Thou shall pass with word '/quote PASS <The Word>'\r\n");
 	}
 
 	inline std::string	wrongPass() {
 		return ("ERROR :Incorrect password.\r\n");
+	}
+
+	inline std::string	attemptsLeft(int attempts, std::string nick) {
+		return (":localhost NOTICE " + nick + " :Attempts left: " + std::to_string(attempts) + "\r\n");
 	}
 
 	inline std::string	disconnect() {

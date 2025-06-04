@@ -153,7 +153,7 @@ bool	Client::receive() {
 			return false;
 		}
 	} else if (bytesRead == 0) {
-		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; /// should we print this?
+		std::cout << "receive() Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; /// should we print this?
 		return false;
 	}
 
@@ -164,7 +164,7 @@ bool	Client::receive() {
 		return false;
 	}
 
-	#ifdef IRC_DEBUG_PRINTS
+	#ifdef CMD_CONCAT_TEST_IRC
 		std::cout << " we recieve " << buffer << std::endl;
 	#endif
 	try {
@@ -173,13 +173,8 @@ bool	Client::receive() {
 		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
 	}
 
-	std::string	buf(buffer);
-	if (buf.find("PING") == std::string::npos) {// || buf.length() == (5 + )
+	if (std::string(buffer).find("PING") != 0) {
 		lastActive_ = std::chrono::steady_clock::now();
-		
-		auto duration = lastActive_.time_since_epoch();
-		auto sec = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-		std::cout << "secs:" << sec << std::endl;
 	}
 
 	return true;
@@ -187,14 +182,20 @@ bool	Client::receive() {
 
 std::string	Client::getMsgs() {
 	try {
-		size_t	pos = recvBuf_.rfind("\r\n");
-		std::string	completeLines;
+		size_t	pos = recvBuf_.rfind(
+			#ifdef CMD_CONCAT_TEST_IRC
+				"\n"
+			#else
+				"\r\n"
+			#endif
+		);
+		std::string	completeMsgs;
 
 		if (pos != std::string::npos) {
-			completeLines = recvBuf_.substr(0, pos + 2);
+			completeMsgs = recvBuf_.substr(0, pos + 2);
 			recvBuf_.erase(0, pos + 2);
 		}
-		return completeLines;
+		return completeMsgs;
 
 	} catch (std::exception& e) {
 		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
