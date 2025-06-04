@@ -15,6 +15,7 @@
 #define ERR_NO_NICKNAME(nick) (":localhost 431 " + nick + " :No nickname given\r\n")
 #define ERR_NICK_IN_USE(nick) (":localhost 433 " + nick + " :Nickname is already in use\r\n")
 #define RPL_WELCOME(nick)     (":localhost 001 " + nick + " :Welcome to the server\r\n")
+#define ERR_ERRONEOUS_NICKNAME(nick) (":localhost 432 " + nick + " :Erroneous nickname\r\n")
 
 // JOIN
 #define ERR_NEEDMOREPARAMS ":localhost 461 JOIN :Not enough parameters\r\n"
@@ -24,8 +25,11 @@
 #define ERR_INVITEONLYCHAN(chan) (":localhost 473 " + chan + " :Cannot join channel (+i)\r\n")
 
 // PRIVMSG
-#define ERR_NO_RECIPIENT ":localhost 411 :No recipient given\r\n"
-#define ERR_NO_TEXT_TO_SEND ":localhost 412 :No text to send\r\n"
+#define ERR_NORECIPIENT ":localhost 411 :No recipient given\r\n"
+#define ERR_NOTEXTTOSEND ":localhost 412 :No text to send\r\n"
+#define ERR_NOTINCHANNEL(target) (":localhost 442 " + target + " :You're not on that channel\r\n")
+#define ERR_CANNOTSENDTOCHAN(target) (":localhost 404 " + target + " :Cannot send to channel\r\n")
+#define ERR_NOSUCHCHANNEL(target) (":localhost 403 " + target + " :No such channel\r\n")
 
 
 // USER
@@ -39,6 +43,8 @@
 // TOPIC
 #define RPL_NOTOPIC(nick, chan) (":localhost 331 " + nick + " " + chan + " :No topic is set\r\n")
 #define RPL_TOPIC(nick, chan, topic) (":localhost 332 " + nick + " " + chan + " :" + topic + "\r\n")
+#define RPL_TOPICWHOTIME(nick, channel, setter, time) ":" + serverName + " 333 " + nick + " " + channel + " " + setter + " " + time + "\r\n"
+
 
 // MODE
 #define ERR_UNKNOWNMODE(mode) (":localhost 472 " + mode + " :is unknown mode char to me\r\n")

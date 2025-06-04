@@ -53,6 +53,16 @@ const std::string& Channel::getTopic() const
 	return this->topic_;
 }
 
+const std::string& Channel::getTopicSetter() const
+{
+	return this->topicSetter_;
+}
+
+std::chrono::system_clock::time_point Channel::getTopicSetTime() const
+{
+	return this->topicSetTime_;
+}
+
 const std::string& Channel::getPwd() const
 {
 	return this->pwd_;
@@ -135,6 +145,16 @@ void Channel::removeInvitedUser(const int& client_fd)
 void Channel::setTopic(const std::string& newTopic)
 {
 	this->topic_ = newTopic;
+}
+
+void Channel::setTopicSetter(const std::string& setter_nick)
+{
+	this->topicSetter_ = setter_nick;
+}
+
+void Channel::setTopicSetTime(const std::chrono::system_clock::time_point& time)
+{
+	this->topicSetTime_ = time;
 }
 
 void Channel::addClient(int fd)

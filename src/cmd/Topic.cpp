@@ -6,7 +6,7 @@ void Server::cmdTopic(int fd, const t_data data) {
     iss >> command >> channel;
 
     std::string topic;
-    std::getline(iss, topic); // gets the rest of the line
+    std::getline(iss, topic);
 
     // Debugging output
     std::cerr << "Debug message: " << data.fullMsg << std::endl;
@@ -35,8 +35,8 @@ void Server::cmdTopic(int fd, const t_data data) {
 
     // Clean topic string
     if (!topic.empty()) {
-        if (topic[0] == ' ') topic = topic.substr(1);      // strip leading space
-        if (!topic.empty() && topic[0] == ':') topic = topic.substr(1); // strip leading colon
+        if (topic[0] == ' ') topic = topic.substr(1);
+        if (!topic.empty() && topic[0] == ':') topic = topic.substr(1);
     }
 
     if (topic.empty()) {
@@ -44,7 +44,13 @@ void Server::cmdTopic(int fd, const t_data data) {
         if (ch.getTopic().empty())
             ft_send(fd, RPL_NOTOPIC(client.getNick(), channel));
         else
+        {
             ft_send(fd, RPL_TOPIC(client.getNick(), channel, ch.getTopic()));
+            ft_send(fd, RPL_TOPICWHOTIME(client.getNick(),channel,ch.getTopicSetter(),ch.getTopicSetTime())
+            );
+        }
+
+
     } else {
         // Setting topic
         std::cerr << "gettopicrestricted: " << ch.getTopicRestricted() << std::endl;

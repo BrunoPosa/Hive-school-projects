@@ -1,5 +1,25 @@
 #include "../../inc/Server.hpp"
 
+namespace {
+        bool Server::isValidNick(const std::string& nick) {
+        if (nick.empty())
+            return false;
+
+        // Disallowed first characters
+        if (nick[0] == '#' || nick[0] == ':' || std::isspace(nick[0]))
+            return false;
+
+        for (char c : nick) {
+            if (std::isspace(c) || c == ':' || c == ',')
+                return false;
+
+            if (!std::isalnum(c) && std::string("[]{}\\|^-_").find(c) == std::string::npos)
+                return false;
+        }
+        return true;
+    }
+}
+
 void Server::cmdNick(int fd, const t_data data) {
     std::istringstream iss(data.fullMsg);
     std::string command, nick;
@@ -11,12 +31,14 @@ void Server::cmdNick(int fd, const t_data data) {
         return;
     }
 
-    // Check if the nickname is already taken by another client
-    for (const auto& pair : clients_) {
-        int other_fd = pair.first;
-        const Client& other_client = pair.second;
+    if (!isValidNick(nick)) {
+        std::string errorMsg = ERR_ERRONEOUS_NICKNAME(nick);
+        ft_send(fd, errorMsg);
+        return;
+    }
 
-        if (other_fd != fd && other_client.getNick() == nick) {
+    for (const auto& pair : clients_) {
+        if (pair.first != fd && pair.second.getNick() == nick) {
             std::string errorMsg = ERR_NICK_IN_USE(nick);
             ft_send(fd, errorMsg);
             return;
@@ -29,3 +51,4 @@ void Server::cmdNick(int fd, const t_data data) {
     std::string welcomeMsg = RPL_WELCOME(nick);
     ft_send(fd, welcomeMsg);
 }
+

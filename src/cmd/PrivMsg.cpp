@@ -5,43 +5,60 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
     std::string command, target, msgPart;
     iss >> command >> target;
 
+    // Check missing target
     if (target.empty()) {
-        ft_send(fd, ERR_NO_RECIPIENT);
+        ft_send(fd, ERR_NORECIPIENT);
         return;
     }
 
-    std::getline(iss, msgPart); // Get message after the target
-
+    // Read remainder of message
+    std::getline(iss, msgPart);
     if (msgPart.empty() || msgPart == " :" || msgPart == ":") {
-        ft_send(fd, ERR_NO_TEXT_TO_SEND);
+        ft_send(fd, ERR_NOTEXTTOSEND);
         return;
     }
 
-    // Clean up leading space and colon
-    if (msgPart[0] == ' ')
+    // Clean leading space and colon
+    if (!msgPart.empty() && msgPart[0] == ' ')
         msgPart = msgPart.substr(1);
-    if (msgPart[0] == ':')
+    if (!msgPart.empty() && msgPart[0] == ':')
         msgPart = msgPart.substr(1);
 
-    // ✅ Always get sender from FD, not from any string in message
     Client &sender = clients_[fd];
     std::string prefix = ":" + sender.getNick() + "!" + sender.getUser() + "@localhost";
     std::string fullMsg = prefix + " PRIVMSG " + target + " :" + msgPart + "\r\n";
 
-    // Send to channel
+    // ---------------------------
+    // Channel message
+    // ---------------------------
     if (target[0] == '#') {
         if (channels_.find(target) == channels_.end()) {
-            ft_send(fd, ERR_NO_SUCH_CHANNEL(target));
-            return;
-        }
-        if (!sender.isInChannel(target)) {
-            ft_send(fd, ERR_NOT_IN_CHANNEL(target));
+            ft_send(fd, ERR_NOSUCHCHANNEL(target));
             return;
         }
 
-        channels_[target].broadcast(fullMsg, clients_[fd].getNick(), fd);
-    } else {
-        // It's a private message to a user
+        Channel &channel = channels_[target];
+
+        // Check invite-only mode
+        if (channel.hasMode('i') && !channel.isInvited(sender)) {
+            ft_send(fd, ERR_CANNOTSENDTOCHAN(target));
+            return;
+        }
+
+        // Check if sender is in channel
+        if (!sender.isInChannel(target)) {
+            ft_send(fd, ERR_NOTINCHANNEL(target));
+            return;
+        }
+
+        // Broadcast message to all members except the sender
+        channel.broadcast(fullMsg, sender.getNick(), fd);
+    }
+
+    // ---------------------------
+    // Private message
+    // ---------------------------
+    else {
         int targetFd = getClientFdByNick(target);
         if (targetFd == -1) {
             ft_send(fd, ERR_NOSUCHNICK(target));
@@ -50,3 +67,4 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
         ft_send(targetFd, fullMsg);
     }
 }
+

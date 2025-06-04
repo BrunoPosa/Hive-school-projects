@@ -15,7 +15,9 @@ class Channel
         std::vector<int> invitedUsers_;
         std::vector<int> chClients_; // List of client file descriptors in the channel
         std::vector<int> operators_; // List of operator file descriptors in the channel
-        
+        std::string topicSetter_; // Nickname of the user who set the topic
+        std::chrono::system_clock::time_point topicSetTime_; // Time when the topic was set
+
         int userLimit_;
         bool inviteOnly_; // i
         bool topicRestrictedToOperators_;  // t
@@ -33,13 +35,15 @@ class Channel
         const std::string& getName() const;
         const std::string& getTopic() const;
         const std::string& getPwd() const;
-std::vector<int> getChClients() const {return chClients_;}
+        std::vector<int> getChClients() const {return chClients_;}
         int  getUserLimit() const;
         int  getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const;
 
         bool getInviteOnly() const;
         bool getIsUserInvited(const int& fd) const;
         bool getTopicRestricted() const;
+        const std::string& getTopicSetter() const; // Get the nickname of the user who set the topic
+        std::chrono::system_clock::time_point getTopicSetTime() const; // Get the time when the topic was set
         bool isOperator(int fd) const; // Check if a client is an operator in the channel
         bool hasClient(int fd) const; // Check if a client is in the channel
 
@@ -58,6 +62,8 @@ std::vector<int> getChClients() const {return chClients_;}
         void addInvitedUser(const int& client_fd);
         void removeInvitedUser(const int& client_fd);
         void setTopic(const std::string& newTopic);
+        void setTopicSetter(const std::string& setter_nick); // Set the nickname of the user who set the topic
+        void setTopicSetTime(const std::chrono::system_clock::time_point& time); // Set the time when the topic was set
         void addClient(int fd); // Add a client to the channel
         void removeClient(int fd); // Remove a client from the channel
         void broadcast(const std::string& message, const std::string& sender_nick, int except_fd); // Send a message to all clients in the channel except the sender
