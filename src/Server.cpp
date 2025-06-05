@@ -7,28 +7,29 @@ using std::string;
 
 Server	*g_servPtr = nullptr;
 
-Server::Server()
-:	cfg_{},
-	listenSo_{},
-	accepting_{false},
-	running_{false},
-	cmds_{
-		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
-		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
-		{"JOIN", [this](int fd, const t_data d) { cmdJoin(fd, d); }},
-		{"MODE", [this](int fd, const t_data d) { cmdMode(fd, d); }},
-		{"PING", [this](int fd, const t_data d) { cmdPing(fd, d); }},
-		{"KICK", [this](int fd, const t_data d) { cmdKick(fd, d); }},
-		{"TOPIC", [this](int fd, const t_data d) { cmdTopic(fd, d); }},
-		{"PRIVMSG", [this](int fd, const t_data d) { cmdPrivMsg(fd, d); }},
-		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
-		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
-	}
-{}
+// Server::Server()
+// :	cfg_{},
+// 	listenSo_{},
+// 	accepting_{false},
+// 	running_{false},
+// 	cmds_{
+// 		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
+// 		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
+// 		{"JOIN", [this](int fd, const t_data d) { cmdJoin(fd, d); }},
+// 		{"MODE", [this](int fd, const t_data d) { cmdMode(fd, d); }},
+// 		{"PING", [this](int fd, const t_data d) { cmdPing(fd, d); }},
+// 		{"KICK", [this](int fd, const t_data d) { cmdKick(fd, d); }},
+// 		{"TOPIC", [this](int fd, const t_data d) { cmdTopic(fd, d); }},
+// 		{"PRIVMSG", [this](int fd, const t_data d) { cmdPrivMsg(fd, d); }},
+// 		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
+// 		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
+// 	}
+// {}
 
 Server::Server(Config&& cfg)
 :	cfg_{std::move(cfg)},
 	listenSo_{},
+	ircMsgDelimiter_{cfg.getMsgDelimiter()},
 	accepting_{false},
 	running_{false},
 	cmds_{
@@ -59,17 +60,18 @@ Server::Server(Server&& other)
 {}
 
 /*
-	-We stop server only if we run out of resources (std::bad_alloc or poll() says EINVAL or ENOMEM and we have no clients)
+	-We stop server only if we run out of resources (std::bad_alloc or poll() says EINVAL or ENOMEM AND we have no clients)
 */
 void Server::run() {
 	listenSo_.initListener(cfg_.getPort());
-	host_ = resolveHost(ip_ = fetchPublicFacingIP());
 	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
+	resolveHost();
 
 	accepting_ = true;
 	running_ = true;
 
-	std::cout << "Server started on host " << host_ << " and port " << cfg_.getPort() << " with " << pollFds_.size() << " fds" << std::endl;
+	std::cout << GREENIRC << "Server started on host " << host_ << " and port " << cfg_.getPort() << RESETIRC
+		<< "\nUse irssi and command '/connect <hostname> <port> <password>' to connect" << std::endl;
 
 	while (running_) {
 		try {
@@ -166,11 +168,9 @@ void Server::acceptNewConnection() {
 
 	std::cout << YELLOWIRC
 			<< "Accepted new connection from " 
-			<< clientSock.getIpStr() << ":"
+			<< clientSock.getIpStr() << ":"//fix
 			<< ntohs(clientSock.getAddr().sin_port) 
 			<< " (FD: " << fd << ")" << RESETIRC << std::endl;
-
-	clients_.at(fd).toSend(IrcMessages::passRequest(clients_.at(fd).getNick()));
 }
 
 //constructs Client with the given socket and adds its fd to pollFds_ and the object itself to clients_ map
@@ -183,7 +183,7 @@ void Server::addClient(Socket& sock) {
 		return;
 	}
 	try {
-		clients_.emplace(fd, Client(std::move(sock), &pollFds_.back()));
+		clients_.emplace(fd, Client(std::move(sock), &pollFds_.back(), ircMsgDelimiter_));
 		clients_.at(fd).setHostName(host_);
 	} catch (std::exception& e) {
 		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
@@ -237,7 +237,7 @@ bool	Server::handleMsgs(int fromFd) {
 		std::string line;
 		std::string	msgs = clients_.at(fromFd).getMsgs();
 
-		if (clients_.at(fromFd).isAuthenticated() == false && msgs.find("\r\n") != std::string::npos) {
+		if (clients_.at(fromFd).isAuthenticated() == false && msgs.find(ircMsgDelimiter_) != std::string::npos) {
 			return processAuth(fromFd, msgs);
 		} else {
 			#ifdef IRC_DEBUG_PRINTS
@@ -245,19 +245,13 @@ bool	Server::handleMsgs(int fromFd) {
 				// cout << YELLOWIRC << "waiting " << ms << "ms, msg: " << msgs << RESETIRC << endl;
 				std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 			#endif
-			while ((pos = msgs.find(
-					#ifdef CMD_CONCAT_TEST_IRC
-						"\n"
-					#else
-						"\r\n"
-					#endif
-					)) != std::string::npos) {
+			while ((pos = msgs.find(ircMsgDelimiter_)) != std::string::npos) {
 				line = msgs.substr(0, pos);
 				if (line.find("QUIT") == 0) {
 					return false;
 				}
 				dispatchCommand(fromFd, line);
-				msgs.erase(0, pos + 2);
+				msgs.erase(0, pos + ircMsgDelimiter_.length());
 			}
 		}
 	} catch (std::exception& e) {
@@ -277,44 +271,40 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 	newClient.addAuthAttempt();
 	int attemptsLeft = cfg_.getMaxAuthAttempts() - newClient.getAuthAttempts();
 
-	while ((pos = messages.find("\r\n")) != std::string::npos) {
+	while ((pos = messages.find(ircMsgDelimiter_)) != std::string::npos) {
 		msg = messages.substr(0, pos);
-std::cout << "here" << std::endl;
-		if (msg.find("QUIT") == 0) {
-			return false;
-		} else if (msg.find("NICK ") == 0 || msg.find("USER ") == 0) {
-			(msg.find("NICK ") == 0) ? cmdNick(fromFd, {msg, {}})
-									: cmdUser(fromFd, {msg, {}});
-		}
+		#ifdef IRC_AUTH_PRINTS
+			std::cout << "msg:" << msg << std::endl;
+		#endif
 
-		size_t passpos = msg.find("PASS ");
-		if (passpos == 0) {
-			passpos += 5;
-			passpos += (msg.substr(passpos).find_first_not_of(' ') != std::string::npos) ? msg.substr(passpos).find_first_not_of(' ') : 0;
-			std::string password = msg.substr(passpos);
+		if (msg.find("PASS ") == 0) {
+			msg.erase(0, 5);
 			#ifdef IRC_AUTH_PRINTS
-				cout << "~~checking password~~" << endl;
+				cout << "~~checking password:" << msg << " and msglen=" << msg.length() << endl;
 			#endif
-			if (cfg_.CheckPassword(password) == true) {
-				newClient.setAuthenticated();
-				newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
-				return true;
+			if (cfg_.CheckPassword(msg) == true) {
+				newClient.setPassReceived();
+			} else {
+				newClient.toSend(IrcMessages::wrongPass());
 			}
-			newClient.toSend(IrcMessages::wrongPass());
+		} else if (msg.find("NICK ") == 0) {
+			cmdNick(fromFd, {msg, {}});
+		} else if (msg.find("USER ") == 0) {
+			cmdUser(fromFd, {msg, {}});
+		} else if (msg.find("QUIT") == 0) {
+			return false;
 		}
-
 		#ifdef IRC_AUTH_PRINTS
 			cout << "pass attempt: " << newClient.getAuthAttempts() << endl;
 		#endif
-		messages.erase(0, pos + 2);
+		messages.erase(0, pos + ircMsgDelimiter_.length());
 	}
-	std::cout << "msg:" << msg << std::endl;
-	if (msg.find("CAP LS") == std::string::npos
-		&& msg.find("NICK") == std::string::npos
-		&& msg.find("USER") == std::string::npos
-		&& msg.find("WHOIS") == std::string::npos
-		&& msg.find("MODE") == std::string::npos) {
+	if (newClient.hasReceivedPass() && newClient.hasReceivedNick() && newClient.hasReceivedUser()) {
+		newClient.setAuthenticated();
+		newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
+	} else {
 		newClient.toSend(IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick()));
+		newClient.toSend(IrcMessages::askPass(newClient.getNick()));
 	}
 	if (attemptsLeft <= 0) {
 		return false;
@@ -363,7 +353,7 @@ std::vector<std::string>	Server::tokenize(std::istringstream& cmdParams){
 	return tokens;
 }
 
-std::string	Server::fetchPublicFacingIP() {
+std::string	Server::fetchIP() {
 	int sock = ::socket(AF_INET, SOCK_DGRAM, 0);
 	if (sock < 0) {
 		std::cerr << "Could not create socket in fetchPublicFacingIP()" << std::endl;
@@ -395,18 +385,13 @@ std::string	Server::fetchPublicFacingIP() {
 	return std::string(ip);
 }
 
-std::string	Server::resolveHost(std::string ip) {
-	sockaddr_in sa{};
-	sa.sin_family = AF_INET;
-	inet_pton(AF_INET, ip.c_str(), &sa.sin_addr);
-
-	char host[NI_MAXHOST];
-	int err = getnameinfo((sockaddr*)&sa, sizeof(sa), host, sizeof(host), nullptr, 0, NI_NAMEREQD);
-	if (err != 0) {
-		std::cerr << "Reverse DNS failed: " + std::string(gai_strerror(err)) << " in resolveHost()" << std::endl;
-		return "localhost";
+void	Server::resolveHost() {
+	char hostname[HOST_NAME_MAX];
+	if (gethostname(hostname, HOST_NAME_MAX) != 0) {
+		perror("gethostname");
+		return;
 	}
-	return std::string(host);
+	host_ = std::string(hostname);
 }
 
 int Server::getClientFdByNick(const std::string& nick) const {

@@ -1,4 +1,5 @@
 #include "../inc/Server.hpp"
+#include "../inc/Client.hpp"
 
 using std::cout;
 using std::cerr;
@@ -8,11 +9,6 @@ using std::string;
 Client::Client()
 :	so_{},
 	pfd_{nullptr},
-	sendBuf_{},
-	recvBuf_{},
-	nick_{"guest"},
-	usrnm_{"guest"},
-	joinedChannels{},
 	authenticated{false},
 	nickReceived{false},
 	userReceived{false},
@@ -26,14 +22,10 @@ Client::Client()
 	recvBuf_.reserve(IRC_BUFFER_SIZE);
 }
 
-Client::Client(Socket&& so, pollfd *pfd)  // Parameterized constructor
+Client::Client(Socket&& so, pollfd *pfd, std::string delimiter)  // Parameterized constructor
 :	so_{std::move(so)},
 	pfd_{pfd},
-	sendBuf_{},
-	recvBuf_{},
-	nick_{"guest"},
-	usrnm_{"guest"},
-	joinedChannels{},
+	msgDelimiter_{delimiter},
 	authenticated{false},
 	nickReceived{false},
 	userReceived{false},
@@ -54,6 +46,8 @@ Client::Client(Client&& other) noexcept
 		recvBuf_{std::move(other.recvBuf_)},
 		nick_{std::move(other.nick_)},
 		usrnm_{std::move(other.usrnm_)},
+		hostnm_{std::move(other.usrnm_)},
+		msgDelimiter_{std::move(other.usrnm_)},
 		joinedChannels{std::move(other.joinedChannels)},
 		authenticated{std::exchange(other.authenticated, false)},
 		nickReceived{std::exchange(other.nickReceived, false)},
@@ -73,6 +67,8 @@ Client&	Client::operator=(Client&& other) noexcept {
 		recvBuf_ = std::move(other.recvBuf_);
 		nick_ = std::move(other.nick_);
 		usrnm_ = std::move(other.usrnm_);
+		hostnm_ = std::move(other.hostnm_);
+		msgDelimiter_ = std::move(other.msgDelimiter_);
 		joinedChannels = std::move(other.joinedChannels);
 		authenticated = std::exchange(other.authenticated, false);
 		nickReceived = std::exchange(other.nickReceived, false);
@@ -159,7 +155,7 @@ bool	Client::receive() {
 
 	buffer[bytesRead] = '\0';
 
-	if (recvBuf_.size() + bytesRead > IRC_MAX_BUF) {//????
+	if (recvBuf_.size() + bytesRead > IRC_MAX_BUF) {
 		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
 		return false;
 	}
@@ -173,27 +169,18 @@ bool	Client::receive() {
 		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
 	}
 
-	if (std::string(buffer).find("PING") != 0) {
-		lastActive_ = std::chrono::steady_clock::now();
-	}
+	lastActive_ = std::chrono::steady_clock::now();
 
 	return true;
 }
 
 std::string	Client::getMsgs() {
 	try {
-		size_t	pos = recvBuf_.rfind(
-			#ifdef CMD_CONCAT_TEST_IRC
-				"\n"
-			#else
-				"\r\n"
-			#endif
-		);
+		size_t	pos = recvBuf_.rfind(msgDelimiter_);
 		std::string	completeMsgs;
-
 		if (pos != std::string::npos) {
-			completeMsgs = recvBuf_.substr(0, pos + 2);
-			recvBuf_.erase(0, pos + 2);
+			completeMsgs = recvBuf_.substr(0, pos + msgDelimiter_.length());
+			recvBuf_.erase(0, pos + msgDelimiter_.length());
 		}
 		return completeMsgs;
 

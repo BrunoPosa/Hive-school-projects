@@ -20,6 +20,7 @@ class Client {
 		std::string nick_;
 		std::string usrnm_;
 		std::string	hostnm_;
+		std::string	msgDelimiter_;
 		std::map<std::string, bool> joinedChannels; // Set of channels the client has joined and bool if the client is operator
 		bool authenticated;
 		bool nickReceived;
@@ -32,7 +33,7 @@ class Client {
 		
 	public:
 		Client();	//def. constructor on creation makes a new socket
-		Client(Socket&& so, pollfd *pfd); //constructor ties the new client instance to an existing socket
+		Client(Socket&& so, pollfd *pfd, std::string delimiter); //constructor ties the new client instance to an existing socket
 		Client(const Client& other)				= delete; //because sockets are unique and close on destruction (each client owns one) - we disallow copies
 		Client& operator=(const Client& other)	= delete;
 		Client(Client&& other) noexcept;				//Move constructor
@@ -50,6 +51,7 @@ class Client {
 		std::string	getMsgs();
 		int	getAuthAttempts() const { return authAttempts_; }
 		void addAuthAttempt() { ++authAttempts_; }
+		std::string	getDelimiter() const { return msgDelimiter_; }
 
 		bool	isInactive(std::chrono::seconds limit) { return (std::chrono::steady_clock::now() - lastActive_) >= limit; }
 		bool isAuthenticated() const { return authenticated; }

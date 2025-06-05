@@ -1,0 +1,19 @@
+<< CAP LS
+<< PASS 4242
+<< NICK poopsie
+<< USER bposa bposa localhost :Bruno Posa
+>> ERROR :Incorrect password.
+>> :localhost 001 poopsie :Welcome to the server
+<< MODE poopsie +i
+>> :localhost 001 bposa :Welcome to the server
+<< MODE bposa +i
+<< WHOIS poopsie
+>> :localhost NOTICE poopsie :Attempts left: 9
+>> :localhost NOTICE poopsie :Enter password in format '/quote PASS <password>'
+>> :localhost NOTICE poopsie :Attempts left: 8
+>> :localhost NOTICE poopsie :Enter password in format '/quote PASS <password>'
+>> :localhost NOTICE poopsie :Attempts left: 7
+>> :localhost NOTICE poopsie :Enter password in format '/quote PASS <password>'
+<< PING localhost
+>> :localhost NOTICE poopsie :Attempts left: 6
+>> :localhost NOTICE poopsie :Enter password in format '/quote PASS <password>'

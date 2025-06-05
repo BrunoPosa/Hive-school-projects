@@ -11,18 +11,19 @@ using std::endl;
 Socket::Socket()
 :	fd_{-1},
 	addr_{},
+	host_{"hellokitty"},
 	isListening_{false}
 {}
 
 Socket::Socket(int fd, sockaddr_in addr)
-:	fd_{fd}, addr_{addr}, isListening_{false} {
+:	fd_{fd}, addr_{addr}, host_{"hellokitty"}, isListening_{false} {
 	if (fd_ < 0) {
 		throw std::system_error(errno, std::generic_category(), "socket(fd, addr) must have positive fd");
 	}
 }
 
 Socket::Socket(Socket&& other) noexcept
-:	fd_{other.fd_}, addr_{other.addr_}, isListening_{other.isListening_}
+:	fd_{other.fd_}, addr_{other.addr_}, host_{other.host_}, isListening_{other.isListening_}
 {
 	other.fd_ = -1;
 	other.addr_ = {};
@@ -39,7 +40,7 @@ Socket&	Socket::operator=(Socket&& other) noexcept {
 		fd_ = std::exchange(other.fd_, -1);
 		addr_ = std::move(other.addr_);
 		isListening_ = std::exchange(other.isListening_, false);
-	
+
 		other.addr_ = {};
 	}
 	return *this;
@@ -101,6 +102,36 @@ bool	Socket::accept(Socket& toSocket) const {
 	
 	toSocket = Socket(clientFd, clientAddr);
 	return true;
+}
+
+//Is this function necessary? even if it is more proper
+void Socket::resolveHostAddress() {
+	char hostname[HOST_NAME_MAX];
+	if (gethostname(hostname, HOST_NAME_MAX) != 0) {
+		perror("gethostname");
+		return;
+	}
+	host_ = std::string(hostname);
+
+	std::cout << "Hostname: " << hostname << std::endl;
+
+	addrinfo hints = {}, *res;
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+
+	if (getaddrinfo(hostname, nullptr, &hints, &res) != 0) {
+		perror("getaddrinfo");
+		return;
+	}
+
+	for (addrinfo* p = res; p != nullptr; p = p->ai_next) {
+		char ipStr[INET_ADDRSTRLEN];
+		sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(p->ai_addr);
+		inet_ntop(AF_INET, &(addr->sin_addr), ipStr, INET_ADDRSTRLEN);
+		std::cout << "Resolved IP: " << ipStr << std::endl;
+	}
+
+	freeaddrinfo(res);
 }
 
 bool	Socket::setNonBlocking(int fd) const {
