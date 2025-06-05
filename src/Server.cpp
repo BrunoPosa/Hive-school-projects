@@ -279,6 +279,9 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 
 		if (msg.find("PASS ") == 0) {
 			msg.erase(0, 5);
+			#ifdef CMD_CONCAT_TEST_IRC
+				if (msg.data()[msg.length() - 1] == '\r') { msg.pop_back(); }
+			#endif
 			#ifdef IRC_AUTH_PRINTS
 				cout << "~~checking password:" << msg << " and msglen=" << msg.length() << endl;
 			#endif
