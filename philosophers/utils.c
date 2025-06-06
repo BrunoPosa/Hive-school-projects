@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 12:29:27 by bposa             #+#    #+#             */
-/*   Updated: 2024/08/15 15:30:35 by bposa            ###   ########.fr       */
+/*   Updated: 2025/05/31 20:17:27 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	ft_usleep(long long int mseconds, t_philo *p)
 		if (elapsed >= mseconds)
 			break ;
 		if (mseconds - elapsed > 1000)
-			usleep(1000);
+			usleep(3000);
 		else
 			usleep((mseconds - elapsed) * 1000);
 	}

@@ -1,3 +1,10 @@
+===========================
+		VOCAB
+===========================
+
+-A callback is simply a function that you pass as an argument to another function or a system API. When you hand off this function, you're essentially saying, “when this particular event happens or task finishes, please call my function so I can take further action
+
+
 
 ===========================
 		COMMANDS
@@ -6,6 +13,8 @@ to connect, run:
 `nc <ip address> <port>`
 //Netcat (nc) is a raw TCP/UDP tool that allows direct communication with network services without modifying data. It is often used for port scanning, debugging, and data transfer. Unlike e.g. Telnet, Netcat does not interpret control sequences, making it better for binary data transmission
 
+
+lsof -p $(pgrep ircserv)  - see open sockets
 
 ===========================
 		FUNCTIONS
@@ -29,6 +38,15 @@ to connect, run:
 - recv - recv, recvfrom, recvmsg - receive a message from a socket (basically read() with flags)
 - close() and shutdown()
 - getpeername() and gethostname()
+
+
+
+===========================
+	LIMITS
+===========================
+-rlimit by kernel with api set/getrlimit()
+
+
 
 
 ===========================
@@ -434,6 +452,19 @@ The key to a robust implementation in your ft_irc server is managing state effec
 
 By following this pattern, you’ll find your server both efficient and resilient, capable of handling simultaneous clients and commands gracefully.
 
+int ready = poll(&pollFds_[0], pollFds_.size(), -1);
+		if (ready < 0) {
+			std::cerr << "poll() error: " << strerror(errno) << std::endl;
+			if (errno == EINTR) continue;
+			throw std::runtime_error("poll() failed");
+		}
+		else if (ready == 0) {
+			std::cout << "poll() timeout (shouldn't happen with infinite timeout)" << std::endl;
+			continue;
+		}
+		
+		// Check all file descript
+
 ---
 
 ### Further Considerations
@@ -597,3 +628,80 @@ int main() {
     return 0;
 }
 
+
+d has nothing to do with Linux Shell. As part of login procedure, PAM invokes system-auth submodule, which in turn involves 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//in regards to using vector for pollFds:
+Considerations
+
+    Valid Index: Ensure that index is less than pollFds_.size(). If index is out-of-range, the behavior is undefined and may lead to a crash or other unpredictable behavior.
+
+    Iterator Invalidation: Erasing an element from a vector invalidates iterators, pointers, and references to the erased element and any elements following it. Be cautious if you’re iterating over the vector or holding onto iterators for later use.
+
+    Performance Implications: Removing an element from somewhere in the middle of a vector will shift subsequent elements to fill the gap, which can be an O(n) operation. If the vector is large and order does not matter, you might consider techniques such as swapping the element to the end and then calling pop_back().
+    
+    
+    
+what is the best storage way for pollFds for poll()? at any point in the for loop through the storage, one or more of the fds may be erased from the loop
+
+The most common—and generally best—container to use for storing pollfd structures is a std::vector<pollfd>. This is because:
+
+    Contiguity: poll() requires a pointer to a contiguous block of pollfd structures, and std::vector guarantees that its storage is contiguous.
+
+    Flexibility for Erasure: You mentioned that one or more file descriptors might be erased during the loop. Although erasing elements from a vector can be an O(n) operation (and it invalidates iterators or indices for the elements that follow), this is usually acceptable given that the typical number of sockets isn't enormous.
+
+    To safely remove elements while iterating over a vector:
+
+        Iterate Backwards: Loop in reverse order so that removing an element doesn’t shift later elements that you have yet to process.
+
+        Index Management: If iterating forwards, when you erase an element, do not increment the index afterward since the next element shifts into the current index.
+
+Example: Iterating Forward with Index Adjustment
+for (size_t i = 0; i < pollFds_.size(); /* no increment here */) {
+    if (/* condition to remove pollFds_[i] */) {
+        pollFds_.erase(pollFds_.begin() + i);
+        // Don't increment i here, because the next element
+        // now occupies index i.
+    } else {
+        ++i;
+    }
+}
+Example: Iterating Backwards
+for (size_t i = pollFds_.size(); i-- > 0; ) {  // Using reverse index iteration
+    if (/* condition to remove pollFds_[i] */) {
+        pollFds_.erase(pollFds_.begin() + i);
+    }
+}
+
+    Alternative Approaches: For scenarios where many erasures occur and performance is a concern, you could consider:
+
+        Deferred Erasure: Mark file descriptors for removal during the event loop and erase them in one go after processing the poll events.
+
+        Using std::remove_if: This algorithm can help remove multiple elements in one pass, although you'll need to adjust accordingly since you'll then have to call .erase() on the returned iterator.
+
+    However, because poll() requires a contiguous block, you’ll likely need to convert the container’s state back to a contiguous array. std::vector is still ideal for this purpose.
+
+Summary
+
+    std::vector<pollfd> is usually the best choice because of its contiguous storage, which is required by poll().
+
+    When erasing elements from the vector, consider iterating in reverse or carefully managing your index to avoid skipping elements.
+
+    If performance is an issue due to frequent erasures, you can apply deferred deletion strategies.
+
+This design is widely used in event-driven server implementations, ensuring both efficiency and correctness when monitoring file descriptors with poll().
+
+Would you like to look into further refinements, such as managing deferred deletions or other container alternatives?
