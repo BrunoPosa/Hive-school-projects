@@ -57,6 +57,8 @@ typedef struct cmdFunctionParameters {
 #define GREENIRC "\033[1;32m"
 #define RESETIRC "\033[0m"
 
+#define POLLFD_VEC_DEFAULT_INIT_SIZE 1021
+
 // #define IRC_ON_SHUTDOWN_PRINT
 // #define IRC_DEBUG_PRINTS
 // #define IRC_POLL_PRINTS

@@ -64,6 +64,7 @@ Server::Server(Server&& other)
 */
 void Server::run() {
 	listenSo_.initListener(cfg_.getPort());
+	pollFds_.reserve(POLLFD_VEC_DEFAULT_INIT_SIZE);
 	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
 	resolveHost();
 
