@@ -1,7 +1,6 @@
 
 #include "../inc/Socket.hpp"
 #include "../inc/Server.hpp"
-#include <netdb.h>
 
 using std::string;
 using std::cerr;
@@ -104,35 +103,35 @@ bool	Socket::accept(Socket& toSocket) const {
 	return true;
 }
 
-//Is this function necessary? even if it is more proper
-void Socket::resolveHostAddress() {
-	char hostname[HOST_NAME_MAX];
-	if (gethostname(hostname, HOST_NAME_MAX) != 0) {
-		perror("gethostname");
-		return;
-	}
-	host_ = std::string(hostname);
+// //Is this function necessary? even if it is more proper
+// void Socket::resolveHostAddress() {
+// 	char hostname[HOST_NAME_MAX];
+// 	if (gethostname(hostname, HOST_NAME_MAX) != 0) {
+// 		perror("gethostname");
+// 		return;
+// 	}
+// 	host_ = std::string(hostname);
 
-	std::cout << "Hostname: " << hostname << std::endl;
+// 	std::cout << "Hostname: " << hostname << std::endl;
 
-	addrinfo hints = {}, *res;
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
+// 	addrinfo hints = {}, *res;
+// 	hints.ai_family = AF_INET;
+// 	hints.ai_socktype = SOCK_STREAM;
 
-	if (getaddrinfo(hostname, nullptr, &hints, &res) != 0) {
-		perror("getaddrinfo");
-		return;
-	}
+// 	if (getaddrinfo(hostname, nullptr, &hints, &res) != 0) {
+// 		perror("getaddrinfo");
+// 		return;
+// 	}
 
-	for (addrinfo* p = res; p != nullptr; p = p->ai_next) {
-		char ipStr[INET_ADDRSTRLEN];
-		sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(p->ai_addr);
-		inet_ntop(AF_INET, &(addr->sin_addr), ipStr, INET_ADDRSTRLEN);
-		std::cout << "Resolved IP: " << ipStr << std::endl;
-	}
+// 	for (addrinfo* p = res; p != nullptr; p = p->ai_next) {
+// 		char ipStr[INET_ADDRSTRLEN];
+// 		sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(p->ai_addr);
+// 		inet_ntop(AF_INET, &(addr->sin_addr), ipStr, INET_ADDRSTRLEN);
+// 		std::cout << "Resolved IP: " << ipStr << std::endl;
+// 	}
 
-	freeaddrinfo(res);
-}
+// 	freeaddrinfo(res);
+// }
 
 bool	Socket::setNonBlocking(int fd) const {
 	int flags = 0;

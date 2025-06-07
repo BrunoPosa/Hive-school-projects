@@ -4,7 +4,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <poll.h>
 #include <cerrno>
@@ -19,6 +18,7 @@
 #include <poll.h>
 #include <cerrno>
 #include <limits.h>//hostnamemax
+#include <netdb.h>//gethostname
 
 // Standard Template Library
 #include <iostream>

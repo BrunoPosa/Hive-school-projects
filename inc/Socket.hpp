@@ -39,7 +39,7 @@ public:
 
 	void	initListener(uint16_t port);
 	bool	accept(Socket& toSocket) const;
-	void	resolveHostAddress();
+	// void	resolveHostAddress();
 
 	int			getFd() const noexcept {return fd_;}
 	sockaddr_in getAddr() const noexcept {return addr_;}
