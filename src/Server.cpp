@@ -67,7 +67,7 @@ Server::Server(Server&& other)
 {}
 
 /*
-	-We stop server only on std::bad_alloc without clients and poll() errors EINVAL or ENOMEM
+	Server stops only on std::bad_alloc without clients, and poll() errors EINVAL / ENOMEM
 */
 void Server::run() {
 	listenSo_.initListener(cfg_.getPort());
@@ -272,8 +272,8 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 
 		if (msg.find("PASS ") == 0) {
 			msg.erase(0, 5);
-			if (ircMsgDelimiter_ == "\n") {//for allowing concat cmd testing via netcat
-				if (msg.at(msg.length() - 1) == '\r') { msg.pop_back(); }
+			if (ircMsgDelimiter_ == "\n") {
+				if (msg.at(msg.length() - 1) == '\r') { msg.pop_back(); }//for testing cmd concatination via netcat while allowing irssi "\r\n"
 			}
 			if (cfg_.CheckPassword(msg) == true) {
 				newClient.setPassReceived();
@@ -346,14 +346,6 @@ int Server::getClientFdByNick(const std::string& nick) const {
 		}
 	}
 	return -1; // Not found
-}
-
-std::string Server::getNickByFd(int fd) const {
-	std::map<int, Client>::const_iterator it = clients_.find(fd);
-	if (it != clients_.end()) {
-		return it->second.getNick();
-	}
-	return ""; // Not found
 }
 
 void Server::ft_send(int fd, const std::string& message) {

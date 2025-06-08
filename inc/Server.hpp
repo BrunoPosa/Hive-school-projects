@@ -115,5 +115,4 @@ public:
 	int		getPort() const noexcept {return cfg_.getPort();}
 	int		getServerFd() const { return listenSo_.getFd(); }
 	int		getClientFdByNick(const std::string& nick) const;
-	std::string	getNickByFd(int fd) const;
 };

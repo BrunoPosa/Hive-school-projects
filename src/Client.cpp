@@ -94,6 +94,7 @@ void	Client::toSend(const std::string& data) {
 
 	if (sendBuf_.size() + data.size() > IRC_MAX_BUF) {
 		cerr << "sendBuf_ at fd " << so_.getFd() << " almost reached max " << IRC_MAX_BUF << "bytes and last message has been ignored." << endl;
+		return;
 	}
 
 	try {
@@ -105,7 +106,7 @@ void	Client::toSend(const std::string& data) {
 	}
 }
 
-//calls send() and returns true if all went well, false on fail (client connection should be deleted) 
+//if returns false client connection should be deleted
 bool	Client::send() {
 	if (sendBuf_.empty() == true) {
 		return true;
@@ -126,7 +127,7 @@ bool	Client::send() {
 	sendBuf_.erase(0, sent);
 
 	if (sendBuf_.empty()) {
-	assert(pfd_);
+		assert(pfd_);
 		pfd_->events &= ~POLLOUT;
 	}
 
@@ -162,7 +163,7 @@ bool	Client::receive() {
 		return true;
 	}
 	if (msgDelimiter_ == "\n") {
-		std::cout << " we recieve " << buffer << std::endl;//for demonstrating command concatenation using netcat
+		std::cout << " we recieve into RecvBuf_" << buffer << std::endl;//for demonstrating command concatenation using netcat
 	}
 	try {
 		recvBuf_.append(buffer, bytesRead);
