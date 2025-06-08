@@ -19,6 +19,9 @@
 #define RPL_INVITING(senderNick, targetNick, channel) (":localhost 341 " + senderNick + " " + targetNick + " " + channel + "\r\n")
 // 324 - RPL_MODESET
 #define RPL_MODESET(chan, mode) (":localhost 324 " + chan + " " + mode + "\r\n")
+#define RPL_CHANNELMODEIS(nick, chan, modes, params) \
+    (":localhost 324 " + nick + " " + chan + " " + modes + params + "\r\n")
+
 // 401 - ERR_NOSUCHNICK
 #define ERR_NOSUCHNICK(nick) (":localhost 401 " + nick + " :No such nick/channel\r\n")
 // 402 - ERR_CANNOTSENDTOCHAN

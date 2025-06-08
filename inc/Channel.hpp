@@ -14,13 +14,18 @@ class Channel
         std::string pwd_;
         std::vector<int> invitedUsers_;
         std::vector<int> chClients_; // List of client file descriptors in the channel
-        std::vector<int> operators_; // List of operator file descriptors in the channel
+        
         std::string topicSetter_; // Nickname of the user who set the topic
         std::chrono::system_clock::time_point topicSetTime_; // Time when the topic was set
-
+        std::vector<int> operators_; // List of operator file descriptors in the channel
         int userLimit_;
         bool inviteOnly_; // i
         bool topicRestrictedToOperators_;  // t
+        bool hasPassword_; // k
+        
+        bool hasUserLimit_; // l
+        
+
         std::map<int, Client>* allClientsPtr_;
 
     public:
@@ -39,18 +44,21 @@ class Channel
         int  getUserLimit() const;
         int  getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const;
 
-        bool getInviteOnly() const;
+        
         bool getIsUserInvited(const int& fd) const;
-        bool getTopicRestricted() const;
         const std::string& getTopicSetter() const; // Get the nickname of the user who set the topic
         std::chrono::system_clock::time_point getTopicSetTime() const; // Get the time when the topic was set
         bool isOperator(int fd) const; // Check if a client is an operator in the channel
         bool hasClient(int fd) const; // Check if a client is in the channel
 
+        std::string getModeString() const;
         // Channel.hpp
 
+        bool getTopicRestricted() const;
+        bool getInviteOnly() const;
         bool hasPassword() const; // returns true if password is set
         bool hasUserLimit() const;     // returns true if +l is set
+        
         int  getUserCount() const;      // current number of clients
 
         void addOperator(int fd); // Add a client as an operator in the channel
