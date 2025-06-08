@@ -60,7 +60,7 @@ Server::Server(Server&& other)
 {}
 
 /*
-	-We stop server only on std::bad_alloc without clients or poll() errors EINVAL or ENOMEM
+	-We stop server only on std::bad_alloc without clients and poll() errors EINVAL or ENOMEM
 */
 void Server::run() {
 	listenSo_.initListener(cfg_.getPort());
@@ -78,11 +78,7 @@ void Server::run() {
 		try {
 			if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
 				if (errno == EINVAL || errno == ENOMEM) {
-					if (clients_.empty()) {
-						running_ = false;
-					}
-					rmClient(pollFds_.back().fd);
-					accepting_ = false;
+					running_ = false;
 				}
 				std::cerr << "poll() returned -1 with errno: " << strerror(errno) << std::endl;
 				continue;
@@ -209,6 +205,10 @@ void Server::rmClient(int rmFd) {
 	try {
 		for (int i = pollFds_.size() - 1; i >= 0; --i) {
 			if (pollFds_.at(i).fd == rmFd) { pollFds_.erase(pollFds_.begin() + i); }
+		}
+
+		if (clients_.find(rmFd) == clients_.end()) {
+			return;
 		}
 
 		const auto&	joinedChannels = clients_.at(rmFd).getJoinedChannels();
