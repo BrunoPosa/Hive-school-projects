@@ -4,22 +4,21 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <poll.h>
 #include <cerrno>
 #include <cstring>
 #include <csignal>
 
-// Standard Template Library
 // System
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <poll.h>
 #include <cerrno>
+#include <limits.h>//hostnamemax
+#include <netdb.h>//gethostname
 
 // Standard Template Library
 #include <iostream>
@@ -31,7 +30,7 @@
 #include <functional>
 #include <sstream>
 #include <stdexcept>
-
+#include <chrono>
 #include <cctype>
 
 // Project Headers
@@ -42,7 +41,6 @@
 #include "Config.hpp"
 
 //testing
-#include <chrono>
 #include <thread>
 #include <fcntl.h>
 
@@ -59,11 +57,13 @@ typedef struct cmdFunctionParameters {
 #define GREENIRC "\033[1;32m"
 #define RESETIRC "\033[0m"
 
+#define MAX_CLIENTS 999
+
 // #define IRC_ON_SHUTDOWN_PRINT
 // #define IRC_DEBUG_PRINTS
 // #define IRC_POLL_PRINTS
 #define IRC_AUTH_PRINTS
-// #define CMD_CONCAT_TEST_IRC //for evals
+#define CMD_CONCAT_TEST_IRC //for evals
 
 class Server {
 private:
@@ -71,6 +71,7 @@ private:
 	Socket	listenSo_;
 	std::string	ip_;
 	std::string	host_;
+	std::string	ircMsgDelimiter_;
 	bool	accepting_;
 	volatile sig_atomic_t	running_;
 	std::map<int, Client>	clients_;
@@ -88,8 +89,6 @@ private:
 	void	dispatchCommand(int fd, const std::string& message);
 
 	std::vector<std::string>	tokenize(std::istringstream& cmdParams);
-	std::string	fetchPublicFacingIP();
-	std::string	resolveHost(std::string ip);
 	void		checkRegistration(int fd);
 	void		ft_send(int fd, const std::string& message);
 

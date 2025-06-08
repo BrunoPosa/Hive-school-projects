@@ -1,7 +1,6 @@
 
 #include "../inc/Socket.hpp"
 #include "../inc/Server.hpp"
-#include <netdb.h>
 
 using std::string;
 using std::cerr;
@@ -11,18 +10,19 @@ using std::endl;
 Socket::Socket()
 :	fd_{-1},
 	addr_{},
+	host_{"hellokitty"},
 	isListening_{false}
 {}
 
 Socket::Socket(int fd, sockaddr_in addr)
-:	fd_{fd}, addr_{addr}, isListening_{false} {
+:	fd_{fd}, addr_{addr}, host_{"hellokitty"}, isListening_{false} {
 	if (fd_ < 0) {
 		throw std::system_error(errno, std::generic_category(), "socket(fd, addr) must have positive fd");
 	}
 }
 
 Socket::Socket(Socket&& other) noexcept
-:	fd_{other.fd_}, addr_{other.addr_}, isListening_{other.isListening_}
+:	fd_{other.fd_}, addr_{other.addr_}, host_{other.host_}, isListening_{other.isListening_}
 {
 	other.fd_ = -1;
 	other.addr_ = {};
@@ -39,7 +39,7 @@ Socket&	Socket::operator=(Socket&& other) noexcept {
 		fd_ = std::exchange(other.fd_, -1);
 		addr_ = std::move(other.addr_);
 		isListening_ = std::exchange(other.isListening_, false);
-	
+
 		other.addr_ = {};
 	}
 	return *this;
@@ -70,9 +70,9 @@ void	Socket::initListener(uint16_t port) {
 	}
 
 	addr_ = {};
-	addr_.sin_family      = AF_INET;
+	addr_.sin_family = AF_INET;
 	addr_.sin_addr.s_addr = htonl(INADDR_ANY);
-	addr_.sin_port        = htons(port);
+	addr_.sin_port = htons(port);
 	
 	if (::bind(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) < 0) {
 		throw std::system_error(errno, std::generic_category(), "bind() failed");
@@ -101,6 +101,15 @@ bool	Socket::accept(Socket& toSocket) const {
 	
 	toSocket = Socket(clientFd, clientAddr);
 	return true;
+}
+
+std::string Socket::resolveHost() {
+	char hostname[HOST_NAME_MAX];
+	if (gethostname(hostname, HOST_NAME_MAX) != 0) {
+		perror("gethostname");
+		return "none";
+	}
+	return std::string(hostname);
 }
 
 bool	Socket::setNonBlocking(int fd) const {

@@ -67,8 +67,8 @@
 //Idk if macros or inline functions are better
 namespace IrcMessages {
 
-	inline std::string	passRequest(std::string nick) {
-		return (":localhost NOTICE " + nick + " :Thou shall pass with word '/quote PASS <The Word>'\r\n");
+	inline std::string	askPass(std::string nick) {
+		return (":localhost NOTICE " + nick + " :Enter password in format '/quote PASS <password>'\r\n");
 	}
 
 	inline std::string	wrongPass() {

@@ -1,4 +1,5 @@
 #include "../inc/Server.hpp"
+#include "../inc/Client.hpp"
 
 using std::cout;
 using std::cerr;
@@ -8,11 +9,8 @@ using std::string;
 Client::Client()
 :	so_{},
 	pfd_{nullptr},
-	sendBuf_{},
-	recvBuf_{},
-	nick_{"guest"},
-	usrnm_{"guest"},
-	joinedChannels{},
+	hostnm_{"hellokitty"},
+	msgDelimiter_{"\r\n"},
 	authenticated{false},
 	nickReceived{false},
 	userReceived{false},
@@ -22,18 +20,15 @@ Client::Client()
 	authAttempts_{0},
 	lastActive_{std::chrono::steady_clock::now()}
 {
-	sendBuf_.reserve(IRC_BUFFER_SIZE);
-	recvBuf_.reserve(IRC_BUFFER_SIZE);
+	sendBuf_.reserve(IRC_MAX_BUF);
+	recvBuf_.reserve(IRC_MAX_BUF);
 }
 
-Client::Client(Socket&& so, pollfd *pfd)  // Parameterized constructor
+Client::Client(Socket&& so, pollfd *pfd, std::string delimiter, std::string hostname)  // Parameterized constructor
 :	so_{std::move(so)},
 	pfd_{pfd},
-	sendBuf_{},
-	recvBuf_{},
-	nick_{"guest"},
-	usrnm_{"guest"},
-	joinedChannels{},
+	hostnm_{hostname},
+	msgDelimiter_{delimiter},
 	authenticated{false},
 	nickReceived{false},
 	userReceived{false},
@@ -43,8 +38,8 @@ Client::Client(Socket&& so, pollfd *pfd)  // Parameterized constructor
 	authAttempts_{0},
 	lastActive_{std::chrono::steady_clock::now()}
 {
-	sendBuf_.reserve(IRC_BUFFER_SIZE);
-	recvBuf_.reserve(IRC_BUFFER_SIZE);
+	sendBuf_.reserve(IRC_MAX_BUF);
+	recvBuf_.reserve(IRC_MAX_BUF);
 }
 
 Client::Client(Client&& other) noexcept
@@ -54,6 +49,8 @@ Client::Client(Client&& other) noexcept
 		recvBuf_{std::move(other.recvBuf_)},
 		nick_{std::move(other.nick_)},
 		usrnm_{std::move(other.usrnm_)},
+		hostnm_{std::move(other.usrnm_)},
+		msgDelimiter_{std::move(other.usrnm_)},
 		joinedChannels{std::move(other.joinedChannels)},
 		authenticated{std::exchange(other.authenticated, false)},
 		nickReceived{std::exchange(other.nickReceived, false)},
@@ -62,7 +59,7 @@ Client::Client(Client&& other) noexcept
 		modeReceived{std::exchange(other.modeReceived, false)},
 		whois{std::exchange(other.modeReceived, false)},
 		authAttempts_{std::exchange(other.authAttempts_, 0)},
-		lastActive_{std::chrono::steady_clock::now()}//or other.lastActive_
+		lastActive_{std::chrono::steady_clock::now()}
 {}
 
 Client&	Client::operator=(Client&& other) noexcept {
@@ -73,6 +70,8 @@ Client&	Client::operator=(Client&& other) noexcept {
 		recvBuf_ = std::move(other.recvBuf_);
 		nick_ = std::move(other.nick_);
 		usrnm_ = std::move(other.usrnm_);
+		hostnm_ = std::move(other.hostnm_);
+		msgDelimiter_ = std::move(other.msgDelimiter_);
 		joinedChannels = std::move(other.joinedChannels);
 		authenticated = std::exchange(other.authenticated, false);
 		nickReceived = std::exchange(other.nickReceived, false);
@@ -87,9 +86,9 @@ Client&	Client::operator=(Client&& other) noexcept {
 }
 
 void	Client::toSend(const std::string& data) {
-	// if (data.empty()) {
-	// 	return;
-	// }
+	if (data.empty()) {
+		return;
+	}
 
 	if (sendBuf_.size() + data.size() > IRC_MAX_BUF) {
 		cerr << "sendBuf_ at fd " << so_.getFd() << " almost reached max " << IRC_MAX_BUF << "bytes and last message has been ignored." << endl;
@@ -159,9 +158,9 @@ bool	Client::receive() {
 
 	buffer[bytesRead] = '\0';
 
-	if (recvBuf_.size() + bytesRead > IRC_MAX_BUF) {//????
+	if (recvBuf_.size() + bytesRead > IRC_MAX_BUF) {
 		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
-		return false;
+		return true;
 	}
 
 	#ifdef CMD_CONCAT_TEST_IRC
@@ -173,27 +172,18 @@ bool	Client::receive() {
 		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
 	}
 
-	if (std::string(buffer).find("PING") != 0) {
-		lastActive_ = std::chrono::steady_clock::now();
-	}
+	lastActive_ = std::chrono::steady_clock::now();
 
 	return true;
 }
 
 std::string	Client::getMsgs() {
 	try {
-		size_t	pos = recvBuf_.rfind(
-			#ifdef CMD_CONCAT_TEST_IRC
-				"\n"
-			#else
-				"\r\n"
-			#endif
-		);
+		size_t	pos = recvBuf_.rfind(msgDelimiter_);
 		std::string	completeMsgs;
-
 		if (pos != std::string::npos) {
-			completeMsgs = recvBuf_.substr(0, pos + 2);
-			recvBuf_.erase(0, pos + 2);
+			completeMsgs = recvBuf_.substr(0, pos + msgDelimiter_.length());
+			recvBuf_.erase(0, pos + msgDelimiter_.length());
 		}
 		return completeMsgs;
 

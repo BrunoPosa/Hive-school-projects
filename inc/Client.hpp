@@ -9,7 +9,7 @@
 // #define IRC_CLI_PRINT
 
 #define IRC_BUFFER_SIZE 512
-#define IRC_MAX_BUF 256000
+#define IRC_MAX_BUF 64000
 
 class Client {
 	private:
@@ -21,6 +21,7 @@ class Client {
 		std::string usrnm_;
 		std::string realnm_;
 		std::string	hostnm_;
+		std::string	msgDelimiter_;
 		std::map<std::string, bool> joinedChannels; // Set of channels the client has joined and bool if the client is operator
 		bool authenticated;
 		bool nickReceived;
@@ -33,7 +34,7 @@ class Client {
 		
 	public:
 		Client();	//def. constructor on creation makes a new socket
-		Client(Socket&& so, pollfd *pfd); //constructor ties the new client instance to an existing socket
+		Client(Socket&& so, pollfd *pfd, std::string delimiter, std::string hostname); //constructor ties the new client instance to an existing socket
 		Client(const Client& other)				= delete; //because sockets are unique and close on destruction (each client owns one) - we disallow copies
 		Client& operator=(const Client& other)	= delete;
 		Client(Client&& other) noexcept;				
@@ -48,9 +49,11 @@ class Client {
 
 		int		getFd() const	{ return this->so_.getFd(); }
 		std::string getIP() const {return so_.getIpStr();}
+		uint16_t	getPort() const { return so_.getPortNum(); }
 		std::string	getMsgs();
-		int		getAuthAttempts() const { return authAttempts_; }
-		void 	addAuthAttempt() { ++authAttempts_; }
+		int	getAuthAttempts() const { return authAttempts_; }
+		void addAuthAttempt() { ++authAttempts_; }
+		std::string	getDelimiter() const { return msgDelimiter_; }
 
 		bool	isInactive(std::chrono::seconds limit) { return (std::chrono::steady_clock::now() - lastActive_) >= limit; }
 		bool 	isAuthenticated() const { return authenticated; }

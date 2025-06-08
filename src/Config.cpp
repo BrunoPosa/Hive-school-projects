@@ -56,8 +56,8 @@ bool Config::isValidPassword_() {
 	if (password_.find_first_not_of(allowedPassChars_) != std::string::npos) {
 		return false;
 	}
-    if (password_.length() < minPassLen_ || password_.length() > maxPassLen_) {
-        return false;
-    }
+	if (password_.length() < minPassLen_ || password_.length() > maxPassLen_) {
+		return false;
+	}
 	return true;
 }

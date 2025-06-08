@@ -24,6 +24,7 @@
  class Socket {
 	int			fd_;
 	sockaddr_in	addr_;
+	std::string	host_;
 	bool		isListening_;
 	bool		setNonBlocking(int fd) const;
 
@@ -38,10 +39,12 @@ public:
 
 	void	initListener(uint16_t port);
 	bool	accept(Socket& toSocket) const;
+	std::string	resolveHost();
 
 	int			getFd() const noexcept {return fd_;}
 	sockaddr_in getAddr() const noexcept {return addr_;}
 	std::string	getIpStr() const;
+	uint16_t	getPortNum() const { return ntohs(addr_.sin_port); }
 	bool		isListener() const noexcept {return isListening_;}
 };
 

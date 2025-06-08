@@ -12,11 +12,12 @@ class Config {
 	int					port_;
 	std::string					portStr_;
 	std::string					password_;
-	const std::string			serverName_ = "ft_irc, WB edition ®";
-	const std::string			allowedPassChars_ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?#";//validate_() specifies minimum 62 chars
-	static constexpr unsigned int	maxAuthAttempts_ = 10;
-	static constexpr unsigned int	minPassLen_ = 4;
-	static constexpr unsigned int	maxPassLen_ = 400;
+	const std::string			msgDelimiter_{"\n"};//for netcat partial command sending
+	const std::string			serverName_{"ft_irc, WB edition ®"};
+	const std::string			allowedPassChars_{"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?#"};//validate_() specifies minimum 62 chars
+	static constexpr unsigned int	maxAuthAttempts_{10};
+	static constexpr unsigned int	minPassLen_{4};
+	static constexpr unsigned int	maxPassLen_{400};
 	static constexpr std::chrono::seconds	allowedInactivity_{300};
 
 	void	validate_();
@@ -39,6 +40,7 @@ public:
 	const std::string&	getAllowPassChars()	const noexcept {return allowedPassChars_;}
 	bool				CheckPassword(const std::string& input) const noexcept {return input == password_;}
 	std::chrono::seconds	getAllowedInactivity() { return allowedInactivity_; }
+	std::string			getMsgDelimiter() const noexcept { return msgDelimiter_; }
 };
 
 #endif

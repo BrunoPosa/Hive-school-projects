@@ -3,7 +3,7 @@
 //processCommand function to handle incoming commands from clients
 void Server::dispatchCommand(int fd, const std::string& message)
 {
-	std::cerr << "message: " << message << std::endl;
+	std::cerr << "dispatchCmd() message: " << message << std::endl;
 	std::istringstream iss(message);
 
 	std::string command;
