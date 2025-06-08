@@ -103,15 +103,34 @@ namespace IrcMessages {
 		return (":" + client.getNick() + "!~" + client.getUser() + "@" + client.getIP() + " QUIT :Client Quit\r\n");
 	}
 
-	inline std::string	RPL_NAMREPLY(const std::string& nick, Channel *ch, std::map<int, Client> *allClientsPtr) {
-		std::string	msg = ":localhost 353 " + nick + " @ " + ch->getName() + " :";//should these messages be :localhost or name of the server?
+	// inline std::string	RPL_NAMREPLY(const std::string& nick, Channel *ch, std::map<int, Client> *allClientsPtr) {
+	// 	std::string	msg = ":localhost 353 " + nick + " @ " + ch->getName() + " :";//should these messages be :localhost or name of the server?
  
-		std::vector	chClients = ch->getChClients();
-		for (int i = chClients.size() - 1; i >= 0; i--) {
-			msg += allClientsPtr->at(chClients[i]).getNick() + " ";
+	// 	std::vector	chClients = ch->getChClients();
+	// 	for (int i = chClients.size() - 1; i >= 0; i--) {
+	// 		msg += allClientsPtr->at(chClients[i]).getNick() + " ";
+	// 	}
+	// 	msg += "\r\n";
+	// 	return (msg);
+	// }
+
+	inline std::string RPL_NAMREPLY(const std::string& nick, Channel *ch, std::map<int, Client> *allClientsPtr) {
+		std::string msg = ":localhost 353 " + nick + " = " + ch->getName() + " :";
+
+		std::vector<int> chClients = ch->getChClients();
+		for (int i = 0; i < (int)chClients.size(); i++) {
+			int clientFd = chClients[i];
+			std::string clientNick = allClientsPtr->at(clientFd).getNick();
+
+			// Check if the client is an operator in this channel
+			if (ch->isOperator(clientFd)) {
+				msg += "@";
+				std::cerr << "found op" << std::endl;
+			}
+			msg += clientNick + " ";
 		}
 		msg += "\r\n";
-		return (msg);
+		return msg;
 	}
 
 	inline std::string RPL_ENDOFNAMES(const std::string& nick, Channel *ch) {
