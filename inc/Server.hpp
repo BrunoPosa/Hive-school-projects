@@ -59,11 +59,9 @@ typedef struct cmdFunctionParameters {
 
 #define MAX_CLIENTS 999
 
-#define IRC_ON_SHUTDOWN_PRINT
-// #define IRC_DEBUG_PRINTS
-// #define IRC_POLL_PRINTS
+// #define IRC_ON_SHUTDOWN_PRINT
 #define IRC_AUTH_PRINTS
-#define CMD_CONCAT_TEST_IRC //for evals
+// #define CMD_CONCAT_TEST_IRC //for evals
 
 class Server {
 private:

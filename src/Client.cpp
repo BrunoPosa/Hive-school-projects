@@ -9,6 +9,7 @@ using std::string;
 Client::Client()
 :	so_{},
 	pfd_{nullptr},
+	nick_{"unknown"},
 	hostnm_{"hellokitty"},
 	msgDelimiter_{"\r\n"},
 	authenticated{false},
@@ -27,6 +28,7 @@ Client::Client()
 Client::Client(Socket&& so, pollfd *pfd, std::string delimiter, std::string hostname)  // Parameterized constructor
 :	so_{std::move(so)},
 	pfd_{pfd},
+	nick_{"unknown"},
 	hostnm_{hostname},
 	msgDelimiter_{delimiter},
 	authenticated{false},
@@ -108,9 +110,7 @@ bool	Client::send() {
 	if (sendBuf_.empty() == true) {
 		return true;
 	}
-	#ifdef IRC_DEBUG_PRINTS
-		cout << YELLOWIRC << "send()" << RESETIRC << endl;
-	#endif
+
 	ssize_t sent = ::send(so_.getFd(), sendBuf_.c_str(), sendBuf_.size(), MSG_NOSIGNAL);
 	if (sent < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
@@ -123,7 +123,6 @@ bool	Client::send() {
 		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; // should we print this?
 		return false;
 	}
-// std::cout << REDIRC << sendBuf_ << "  " << sent << RESETIRC << std::endl;
 	sendBuf_.erase(0, sent);
 
 	if (sendBuf_.empty()) {

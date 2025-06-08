@@ -104,8 +104,15 @@ void Server::handleEvents() {
 
 		pollfd&	pfd = pollFds_.at(i);
 
-		if (POLLIN & pfd.revents) {
+		if (pfd.fd != listenSo_.getFd()) {
+			if (clients_.at(pfd.fd).isInactive(cfg_.getAllowedInactivity())) {
+				rmClient(pfd.fd);
+			} else if (&pfd != clients_.at(pfd.fd).getPfdPtr()) {
+				clients_.at(pfd.fd).setPfdPtr(&pfd);
+			}
+		}
 
+		if (POLLIN & pfd.revents) {
 			if (pfd.fd == listenSo_.getFd()) {
 				if (accepting_) {
 					acceptNewConnection();
@@ -117,7 +124,6 @@ void Server::handleEvents() {
 			}
 		}
 		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
-
 			std::cerr << REDIRC << "POLL ERRS" << RESETIRC << strerror(errno) << " revents: " << pfd.revents << " on fd " << pfd.fd << std::endl;
 			rmClient(pfd.fd);
 
@@ -126,14 +132,6 @@ void Server::handleEvents() {
 			if (clients_.at(pfd.fd).send() == false) {
 				rmClient(pfd.fd);
 				continue;
-			}
-		}
-
-		if (pfd.fd != listenSo_.getFd()) {
-			if (clients_.at(pfd.fd).isInactive(cfg_.getAllowedInactivity())) {
-				rmClient(pfd.fd);
-			} else if (&pfd != clients_.at(pfd.fd).getPfdPtr()) {
-				clients_.at(pfd.fd).setPfdPtr(&pfd);
 			}
 		}
 	}
@@ -236,9 +234,7 @@ bool	Server::handleMsgs(int fromFd) {
 		std::string	msgs = clients_.at(fromFd).getMsgs();
 
 		if (clients_.at(fromFd).isAuthenticated() == false && msgs.find(ircMsgDelimiter_) != std::string::npos) {
-
 			return processAuth(fromFd, msgs);
-
 		} else {
 			while ((pos = msgs.find(ircMsgDelimiter_)) != std::string::npos) {
 				line = msgs.substr(0, pos);
@@ -284,6 +280,8 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 				newClient.setPassReceived();
 			} else {
 				newClient.toSend(IrcMessages::wrongPass());
+				newClient.toSend(IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick()));
+				newClient.toSend(IrcMessages::askPass(newClient.getNick()));
 			}
 		} else if (msg.find("NICK ") == 0) {
 			cmdNick(fromFd, {msg, {}});
@@ -300,7 +298,7 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 	if (newClient.hasReceivedPass() && newClient.hasReceivedNick() && newClient.hasReceivedUser()) {
 		newClient.setAuthenticated();
 		newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
-	} else {
+	} else if (newClient.hasReceivedPass() + newClient.hasReceivedNick() + newClient.hasReceivedUser() + newClient.getAuthAttempts() > 5) {
 		newClient.toSend(IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick()));
 		newClient.toSend(IrcMessages::askPass(newClient.getNick()));
 	}
@@ -334,12 +332,12 @@ void	Server::gracefulShutdown() {
 	running_ = false;
 }
 
-void Server::checkRegistration(int fd) {
-	if (!clients_[fd].getNick().empty() && !clients_[fd].getUser().empty() && !clients_[fd].isAuthenticated()) {
-		clients_[fd].setAuthenticated();  // Assuming you want to set them as authenticated
-		clients_.at(fd).toSend(IrcMessages::motd());
-	}
-}
+// void Server::checkRegistration(int fd) {
+// 	if (!clients_[fd].getNick().empty() && !clients_[fd].getUser().empty() && !clients_[fd].isAuthenticated()) {
+// 		clients_[fd].setAuthenticated();  // Assuming you want to set them as authenticated
+// 		clients_.at(fd).toSend(IrcMessages::motd());
+// 	}
+// }
 
 std::vector<std::string>	Server::tokenize(std::istringstream& cmdParams){
 	std::vector<std::string> tokens;
