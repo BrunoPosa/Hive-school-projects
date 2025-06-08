@@ -9,7 +9,7 @@
 // #define IRC_CLI_PRINT
 
 #define IRC_BUFFER_SIZE 512
-#define IRC_MAX_BUF 128000
+#define IRC_MAX_BUF 64000
 
 class Client {
 	private:

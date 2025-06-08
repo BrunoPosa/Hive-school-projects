@@ -184,7 +184,6 @@ void Server::addClient(Socket& sock) {
 	}
 	try {
 		clients_.emplace(fd, Client(std::move(sock), &pollFds_.back(), ircMsgDelimiter_, host_));
-		std::cout << "New client at ip:" << clients_.at(fd).getIP() << std::endl;
 	} catch (std::exception& e) {
 		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
 		rmClient(fd);
