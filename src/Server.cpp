@@ -233,8 +233,10 @@ bool	Server::handleMsgs(int fromFd) {
 		std::string line;
 		std::string	msgs = clients_.at(fromFd).getMsgs();
 
-		if (clients_.at(fromFd).isAuthenticated() == false && msgs.find(ircMsgDelimiter_) != std::string::npos) {
-			return processAuth(fromFd, msgs);
+		if (clients_.at(fromFd).isAuthenticated() == false) {
+			if (msgs.find(ircMsgDelimiter_) != std::string::npos) {
+				return processAuth(fromFd, msgs);
+			}
 		} else {
 			while ((pos = msgs.find(ircMsgDelimiter_)) != std::string::npos) {
 				line = msgs.substr(0, pos);
@@ -253,9 +255,6 @@ bool	Server::handleMsgs(int fromFd) {
 
 //if this returns false, client should be removed
 bool	Server::processAuth(int fromFd, std::string messages) {
-	#ifdef IRC_AUTH_PRINTS
-		cout << GREENIRC << "authenticate() msg:" << messages << RESETIRC << endl;
-	#endif
 	size_t pos = 0;
 	std::string msg;
 	Client& newClient = clients_.at(fromFd);
@@ -264,17 +263,11 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 
 	while ((pos = messages.find(ircMsgDelimiter_)) != std::string::npos) {
 		msg = messages.substr(0, pos);
-		#ifdef IRC_AUTH_PRINTS
-			std::cout << "msg:" << msg << std::endl;
-		#endif
 
 		if (msg.find("PASS ") == 0) {
 			msg.erase(0, 5);
 			#ifdef CMD_CONCAT_TEST_IRC
 				if (msg.data()[msg.length() - 1] == '\r') { msg.pop_back(); }
-			#endif
-			#ifdef IRC_AUTH_PRINTS
-				cout << "~~checking password:" << msg << " and msglen=" << msg.length() << endl;
 			#endif
 			if (cfg_.CheckPassword(msg) == true) {
 				newClient.setPassReceived();
@@ -290,11 +283,9 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 		} else if (msg.find("QUIT") == 0) {
 			return false;
 		}
-		#ifdef IRC_AUTH_PRINTS
-			cout << "pass attempt: " << newClient.getAuthAttempts() << endl;
-		#endif
 		messages.erase(0, pos + ircMsgDelimiter_.length());
 	}
+
 	if (newClient.hasReceivedPass() && newClient.hasReceivedNick() && newClient.hasReceivedUser()) {
 		newClient.setAuthenticated();
 		newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
@@ -331,13 +322,6 @@ void	Server::gracefulShutdown() {
 	#endif
 	running_ = false;
 }
-
-// void Server::checkRegistration(int fd) {
-// 	if (!clients_[fd].getNick().empty() && !clients_[fd].getUser().empty() && !clients_[fd].isAuthenticated()) {
-// 		clients_[fd].setAuthenticated();  // Assuming you want to set them as authenticated
-// 		clients_.at(fd).toSend(IrcMessages::motd());
-// 	}
-// }
 
 std::vector<std::string>	Server::tokenize(std::istringstream& cmdParams){
 	std::vector<std::string> tokens;

@@ -60,7 +60,6 @@ typedef struct cmdFunctionParameters {
 #define MAX_CLIENTS 999
 
 // #define IRC_ON_SHUTDOWN_PRINT
-#define IRC_AUTH_PRINTS
 // #define CMD_CONCAT_TEST_IRC //for evals
 
 class Server {
@@ -87,7 +86,6 @@ private:
 	void	dispatchCommand(int fd, const std::string& message);
 
 	std::vector<std::string>	tokenize(std::istringstream& cmdParams);
-	void		checkRegistration(int fd);
 	void		ft_send(int fd, const std::string& message);
 
 	void cmdNick(int fd, const t_data data);
