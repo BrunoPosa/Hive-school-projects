@@ -10,8 +10,8 @@ Client::Client()
 :	so_{},
 	pfd_{nullptr},
 	nick_{"unknown"},
-	hostnm_{"hellokitty"},
-	msgDelimiter_{"\r\n"},
+	hostnm_{},
+	msgDelimiter_{},
 	authenticated{false},
 	nickReceived{false},
 	userReceived{false},
@@ -52,7 +52,7 @@ Client::Client(Client&& other) noexcept
 		nick_{std::move(other.nick_)},
 		usrnm_{std::move(other.usrnm_)},
 		hostnm_{std::move(other.usrnm_)},
-		msgDelimiter_{std::move(other.usrnm_)},
+		msgDelimiter_{std::move(other.msgDelimiter_)},
 		joinedChannels{std::move(other.joinedChannels)},
 		authenticated{std::exchange(other.authenticated, false)},
 		nickReceived{std::exchange(other.nickReceived, false)},
@@ -161,10 +161,9 @@ bool	Client::receive() {
 		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
 		return true;
 	}
-
-	#ifdef CMD_CONCAT_TEST_IRC
-		std::cout << " we recieve " << buffer << std::endl;
-	#endif
+	if (msgDelimiter_ == "\n") {
+		std::cout << " we recieve " << buffer << std::endl;//for demonstrating command concatenation using netcat
+	}
 	try {
 		recvBuf_.append(buffer, bytesRead);
 	} catch (std::exception& e) {

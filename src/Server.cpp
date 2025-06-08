@@ -24,12 +24,15 @@ Server::Server()
 		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
 		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
 	}
-{}
+{
+	ircMsgDelimiter_ = cfg_.getMsgDelimiter();
+	pollFds_.reserve(MAX_CLIENTS);
+}
 
 Server::Server(Config&& cfg)
 :	cfg_{std::move(cfg)},
 	listenSo_{},
-	ircMsgDelimiter_{cfg.getMsgDelimiter()},
+	ircMsgDelimiter_{cfg_.getMsgDelimiter()},
 	accepting_{false},
 	running_{false},
 	cmds_{
@@ -44,13 +47,17 @@ Server::Server(Config&& cfg)
 		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
 		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
 	}
-{}
+{
+	ircMsgDelimiter_ = cfg_.getMsgDelimiter();
+	pollFds_.reserve(MAX_CLIENTS);
+}
 
 Server::Server(Server&& other)
 :	cfg_(std::move(other.cfg_)),
 	listenSo_(std::move(other.listenSo_)),
 	ip_(std::move(other.ip_)),
 	host_(std::move(other.host_)),
+	ircMsgDelimiter_{std::move(other.ircMsgDelimiter_)},
 	accepting_{other.accepting_},
 	running_{other.running_},
 	clients_(std::move(other.clients_)),
@@ -64,9 +71,8 @@ Server::Server(Server&& other)
 */
 void Server::run() {
 	listenSo_.initListener(cfg_.getPort());
-	pollFds_.reserve(MAX_CLIENTS);
-	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
 	host_ = listenSo_.resolveHost();
+	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
 
 	accepting_ = true;
 	running_ = true;
@@ -266,9 +272,9 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 
 		if (msg.find("PASS ") == 0) {
 			msg.erase(0, 5);
-			#ifdef CMD_CONCAT_TEST_IRC
-				if (msg.data()[msg.length() - 1] == '\r') { msg.pop_back(); }
-			#endif
+			if (ircMsgDelimiter_ == "\n") {//for allowing concat cmd testing via netcat
+				if (msg.at(msg.length() - 1) == '\r') { msg.pop_back(); }
+			}
 			if (cfg_.CheckPassword(msg) == true) {
 				newClient.setPassReceived();
 			} else {
@@ -320,6 +326,7 @@ void	Server::gracefulShutdown() {
 		}
 		cout << RESETIRC << endl;
 	#endif
+
 	running_ = false;
 }
 
