@@ -6,8 +6,6 @@
 #include <chrono>
 #include "Socket.hpp"
 
-// #define IRC_CLI_PRINT
-
 #define IRC_BUFFER_SIZE 512
 #define IRC_MAX_BUF 64000
 
@@ -86,8 +84,4 @@ class Client {
 		bool 	isOperator(const std::string& channel);
 		bool 	getOperator(const std::string& channel);
 		void 	setOperator(const std::string& channel, bool is_operator);
-		#ifdef IRC_CLI_PRINT
-			std::string	getSendBuf() const { return sendBuf_; }
-			std::string	getRecvBuf() const { return recvBuf_; }
-		#endif
 	};

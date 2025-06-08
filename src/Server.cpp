@@ -83,10 +83,8 @@ void Server::run() {
 				std::cerr << "poll() returned -1 with errno: " << strerror(errno) << std::endl;
 				continue;
 			}
-			#ifdef IRC_POLL_PRINTS
-				std::cout << "We poll" << std::endl;
-			#endif
 			handleEvents();
+
 		} catch (const std::bad_alloc& e) {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 			if (clients_.empty()) {
@@ -103,15 +101,11 @@ void Server::run() {
 
 void Server::handleEvents() {
 	for (int i = pollFds_.size() - 1; i >= 0; --i) {
-		#ifdef IRC_POLL_PRINTS
-			std::cout << "POll-- i=" << i << " size of pollFds_=" << pollFds_.size() << std::endl;
-		#endif
+
 		pollfd&	pfd = pollFds_.at(i);
 
 		if (POLLIN & pfd.revents) {
-			#ifdef IRC_POLL_PRINTS
-				std::cout << "POLLIN--" << std::endl;
-			#endif
+
 			if (pfd.fd == listenSo_.getFd()) {
 				if (accepting_) {
 					acceptNewConnection();
@@ -123,15 +117,12 @@ void Server::handleEvents() {
 			}
 		}
 		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
-			#ifdef IRC_POLL_PRINTS
-				std::cout << REDIRC << "POLL ERRS--" << RESETIRC << std::endl;
-			#endif
+
 			std::cerr << REDIRC << "POLL ERRS" << RESETIRC << strerror(errno) << " revents: " << pfd.revents << " on fd " << pfd.fd << std::endl;
 			rmClient(pfd.fd);
+
 		} else if (POLLOUT & pfd.revents) {
-			#ifdef IRC_POLL_PRINTS
-				std::cout << "POLLOUT--" << std::endl;
-			#endif
+
 			if (clients_.at(pfd.fd).send() == false) {
 				rmClient(pfd.fd);
 				continue;
@@ -149,6 +140,7 @@ void Server::handleEvents() {
 }
 
 void Server::acceptNewConnection() {
+
 	Socket	clientSock;
 
 	if (clients_.size() >= MAX_CLIENTS) {
@@ -244,13 +236,10 @@ bool	Server::handleMsgs(int fromFd) {
 		std::string	msgs = clients_.at(fromFd).getMsgs();
 
 		if (clients_.at(fromFd).isAuthenticated() == false && msgs.find(ircMsgDelimiter_) != std::string::npos) {
+
 			return processAuth(fromFd, msgs);
+
 		} else {
-			#ifdef IRC_DEBUG_PRINTS
-				int ms = 50;
-				// cout << YELLOWIRC << "waiting " << ms << "ms, msg: " << msgs << RESETIRC << endl;
-				std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-			#endif
 			while ((pos = msgs.find(ircMsgDelimiter_)) != std::string::npos) {
 				line = msgs.substr(0, pos);
 				if (line.find("QUIT") == 0) {
@@ -326,7 +315,6 @@ void	Server::gracefulShutdown() {
 		cout << "====printout on sigint====" << endl;
 		for (auto& cliFd : clients_) {
 			cout << GREENIRC << "\nclient fd:" << cliFd.first << "getFd():" << cliFd.second.getFd() << "  hasDataToSend-->" << cliFd.second.hasDataToSend() << endl
-				<< "             recvBuf-->" << cliFd.second.getRecvBuf() << "size:" << cliFd.second.getRecvBuf().size() << endl
 				<< "             isAuthenticated-->" << cliFd.second.isAuthenticated() << endl;
 			cout << "             joinedChannels:" << endl;
 			for (const auto& pair : cliFd.second.getJoinedChannels()) {

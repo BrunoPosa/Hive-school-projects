@@ -59,7 +59,7 @@ typedef struct cmdFunctionParameters {
 
 #define MAX_CLIENTS 999
 
-// #define IRC_ON_SHUTDOWN_PRINT
+#define IRC_ON_SHUTDOWN_PRINT
 // #define IRC_DEBUG_PRINTS
 // #define IRC_POLL_PRINTS
 #define IRC_AUTH_PRINTS
