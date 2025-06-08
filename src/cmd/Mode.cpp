@@ -8,7 +8,7 @@ void Server::cmdMode(int fd, const t_data data) {
     std::clog << "Debug: Channel: " << target << ", Mode: " << modeStr << ", Param: " << param << std::endl;
 
     if (target.empty() || modeStr.empty()) {
-        ft_send(fd, ERR_NEEDMOREPARAMS);
+        ft_send(fd, ERR_NEEDMOREPARAMS(command));
         return;
     }
 
@@ -20,7 +20,7 @@ void Server::cmdMode(int fd, const t_data data) {
 
     // Check if channel exists
     if (channels_.find(target) == channels_.end()) {
-        ft_send(fd, ERR_NO_SUCH_CHANNEL(target));
+        ft_send(fd, ERR_NOSUCHCHANNEL(target));
         return;
     }
     Channel& channel = channels_[target];
@@ -42,7 +42,7 @@ void Server::cmdMode(int fd, const t_data data) {
             ft_send(fd, RPL_MODESET(target, "+t"));
         } else if (modeStr == "+k") {
             if (param.empty()) {
-                ft_send(fd, ERR_NEEDMOREPARAMS);
+                ft_send(fd, ERR_NEEDMOREPARAMS(command));
                 return;
             }
             channel.setPassword(param);
@@ -83,7 +83,7 @@ void Server::cmdMode(int fd, const t_data data) {
             ft_send(fd, RPL_MODESET(target, "-o " + param));
         } else if (modeStr == "-l") {
             if (param.empty()) {
-                ft_send(fd, ERR_NEEDMOREPARAMS);
+                ft_send(fd, ERR_NEEDMOREPARAMS(command));
                 return;
         }
         } else if (modeStr == "-l") {

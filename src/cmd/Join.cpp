@@ -1,68 +1,68 @@
 #include "../../inc/Server.hpp"
 
-void Server::cmdJoin(int fd, const t_data data)
-{
-    std::istringstream iss(data.fullMsg);
-    std::string command, channel, key;
-    iss >> command >> channel >> key;
+void Server::cmdJoin(int fd, const t_data data) {
+	std::istringstream iss(data.fullMsg);
+	std::string command, channelList, keyList;
+	iss >> command >> channelList >> keyList;
 
-    if (channel.empty()) {
-        ft_send(fd, ERR_NEEDMOREPARAMS);
-        return;
-    }
+	if (channelList.empty()) {
+		ft_send(fd, ERR_NEEDMOREPARAMS(command));
+		return;
+	}
 
-    Channel* chanPtr = nullptr;
-    // Create the channel if it doesn't exist
-    if (channels_.find(channel) == channels_.end()) {
-        channels_[channel] = Channel(channel, &clients_);
-        channels_[channel].addOperator(fd);
-        std::cerr << "added operator " << fd << " to channel " << channel << std::endl;
-    }
+	std::istringstream chStream(channelList);
+	std::istringstream keyStream(keyList);
+	std::string channel, key;
 
-    chanPtr = &channels_[channel];
-    // Already in the channel?
-    if (clients_[fd].isInChannel(channel)) {
-        ft_send(fd, ERR_USERONCHANNEL(channel));
-        return;
-    }
+	while (std::getline(chStream, channel, ',')) {
+		std::getline(keyStream, key, ','); // will be empty if not enough keys
 
-    std::cerr << "Channel invite-only: " << chanPtr->getInviteOnly() << std::endl;
-    std::cerr << "Is user invited? " << chanPtr->getIsUserInvited(fd) << std::endl;
+		if (clients_[fd].isInChannel(channel)) {
+			ft_send(fd, ERR_USERONCHANNEL(channel));
+			continue;
+		}
 
-    // Invite-only (+i)?
-    if (chanPtr->getInviteOnly() && !chanPtr->getIsUserInvited(fd)) {
-        ft_send(fd, ERR_INVITEONLYCHAN(channel));
-        return;
-    }
+		Channel* chanPtr = nullptr;
 
-    // Password-protected (+k)?
-    if (chanPtr->hasPassword()) {
-        if (key.empty() || key != chanPtr->getPwd()) {
-            ft_send(fd, ERR_BADCHANNELKEY(channel));
-            return;
-        }
-    }
+		if (channels_.find(channel) == channels_.end()) {
+			channels_[channel] = Channel(channel, &clients_);
+			channels_[channel].addOperator(fd);
+			std::cerr << "Created channel and added operator: " << channel << std::endl;
+		}
 
-    // User limit (+l)?
-    if (chanPtr->hasUserLimit() && chanPtr->getUserCount() >= chanPtr->getUserLimit()) {
-        ft_send(fd, ERR_CHANNELISFULL(channel));
-        return;
-    }
+		chanPtr = &channels_[channel];
 
-    // All checks passed, allow the user to join
-    clients_[fd].joinChannel(channel, false);
-    chanPtr->addClient(fd);
+		if (chanPtr->getInviteOnly() && !chanPtr->getIsUserInvited(fd)) {
+			ft_send(fd, ERR_INVITEONLYCHAN(channel));
+			continue;
+		}
 
-    // Send topic info after successful join
-    if (!chanPtr->getTopic().empty()) {
-        ft_send(fd, RPL_TOPIC(clients_[fd].getNick(), channel, chanPtr->getTopic()));
-    } else {
-        ft_send(fd, RPL_NOTOPIC(clients_[fd].getNick(), channel));
-    }
+		if (chanPtr->hasPassword()) {
+			if (key.empty() || key != chanPtr->getPwd()) {
+				ft_send(fd, ERR_BADCHANNELKEY(channel));
+				continue;
+			}
+		}
 
-    std::string prefix = ":" + clients_[fd].getNick() + "!" + clients_[fd].getUser() + "@localhost";
-    std::string joinMessage = prefix + " JOIN :" + channel + "\r\n";
-    chanPtr->broadcast(joinMessage, clients_[fd].getNick(), -1);
+		if (chanPtr->hasUserLimit() && chanPtr->getUserCount() >= chanPtr->getUserLimit()) {
+			ft_send(fd, ERR_CHANNELISFULL(channel));
+			continue;
+		}
 
-    clients_[fd].toSend(IrcMessages::RPL_NAMREPLY(clients_[fd].getNick(), chanPtr, &clients_) + IrcMessages::RPL_ENDOFNAMES(clients_[fd].getNick(), chanPtr));
+		// All checks passed
+		clients_[fd].joinChannel(channel, false);
+		chanPtr->addClient(fd);
+
+		if (!chanPtr->getTopic().empty())
+			ft_send(fd, RPL_TOPIC(clients_[fd].getNick(), channel, chanPtr->getTopic()));
+		else
+			ft_send(fd, RPL_NOTOPIC(clients_[fd].getNick(), channel));
+
+		std::string prefix = ":" + clients_[fd].getNick() + "!" + clients_[fd].getUser() + "@localhost";
+		std::string joinMsg = prefix + " JOIN :" + channel + "\r\n";
+		chanPtr->broadcast(joinMsg, clients_[fd].getNick(), -1);
+
+		clients_[fd].toSend(IrcMessages::RPL_NAMREPLY(clients_[fd].getNick(), chanPtr, &clients_) +
+		                    IrcMessages::RPL_ENDOFNAMES(clients_[fd].getNick(), chanPtr));
+	}
 }

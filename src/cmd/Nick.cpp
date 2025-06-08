@@ -1,7 +1,7 @@
 #include "../../inc/Server.hpp"
 
 namespace {
-        bool Server::isValidNick(const std::string& nick) {
+        bool isValidNick(const std::string& nick) {
         if (nick.empty())
             return false;
 
@@ -47,8 +47,8 @@ void Server::cmdNick(int fd, const t_data data) {
 
     clients_[fd].setNick(nick);
     clients_[fd].setNickReceived();
-
-    std::string welcomeMsg = RPL_WELCOME(nick);
-    ft_send(fd, welcomeMsg);
+    if (clients_[fd].hasReceivedUser() && clients_[fd].isAuthenticated()) {
+        std::string welcomeMsg = RPL_WELCOME(nick);
+        ft_send(fd, welcomeMsg);
+    }
 }
-

@@ -15,21 +15,21 @@ void Server::cmdTopic(int fd, const t_data data) {
     std::cerr << "Raw topic string: " << topic << std::endl;
 
     if (channel.empty()) {
-        ft_send(fd, ERR_NEEDMOREPARAMS);
+        ft_send(fd, ERR_NEEDMOREPARAMS(command));
         return;
     }
 
     Client &client = clients_[fd];
 
     if (channels_.find(channel) == channels_.end()) {
-        ft_send(fd, ERR_NO_SUCH_CHANNEL(channel));
+        ft_send(fd, ERR_NOSUCHCHANNEL(channel));
         return;
     }
 
     Channel &ch = channels_[channel];
 
     if (!client.isInChannel(channel)) {
-        ft_send(fd, ERR_NOT_IN_CHANNEL(channel));
+        ft_send(fd, ERR_NOTONCHANNEL(channel));
         return;
     }
 
@@ -46,8 +46,9 @@ void Server::cmdTopic(int fd, const t_data data) {
         else
         {
             ft_send(fd, RPL_TOPIC(client.getNick(), channel, ch.getTopic()));
-            ft_send(fd, RPL_TOPICWHOTIME(client.getNick(),channel,ch.getTopicSetter(),ch.getTopicSetTime())
-            );
+
+            std::time_t topicSetTime = std::chrono::system_clock::to_time_t(ch.getTopicSetTime());
+            ft_send(fd, RPL_TOPICWHOTIME(client.getNick(), channel, ch.getTopicSetter(), std::to_string(topicSetTime)));
         }
 
 

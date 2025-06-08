@@ -5,58 +5,64 @@
 #include "Channel.hpp"
 #include "Server.hpp"
 
-// Common error
-#define ERR_NOT_IN_CHANNEL(chan) (":localhost 442 " + chan + " :You're not on that channel\r\n")
-#define ERR_NO_SUCH_CHANNEL(chan) (":localhost 403 " + chan + " :No such channel\r\n")
-#define ERR_CHANOPRIVSNEEDED(chan) (":localhost 482 " + chan + " :You're not channel operator\r\n")
-#define ERR_NOT_IN_CHANNEL(chan) (":localhost 442 " + chan + " :You're not on that channel\r\n")
-
-// NICK
-#define ERR_NO_NICKNAME(nick) (":localhost 431 " + nick + " :No nickname given\r\n")
-#define ERR_NICK_IN_USE(nick) (":localhost 433 " + nick + " :Nickname is already in use\r\n")
-#define RPL_WELCOME(nick)     (":localhost 001 " + nick + " :Welcome to the server\r\n")
-#define ERR_ERRONEOUS_NICKNAME(nick) (":localhost 432 " + nick + " :Erroneous nickname\r\n")
-
-// JOIN
-#define ERR_NEEDMOREPARAMS ":localhost 461 JOIN :Not enough parameters\r\n"
-#define ERR_USERONCHANNEL(chan) (":localhost 443 " + chan + " :You are already on that channel\r\n")
-#define ERR_BADCHANNELKEY(chan) (":localhost 475 " + chan + " :Cannot join channel (+k)\r\n")
-#define ERR_CHANNELISFULL(chan) (":localhost 471 " + chan + " :Cannot join channel (+l)\r\n")
-#define ERR_INVITEONLYCHAN(chan) (":localhost 473 " + chan + " :Cannot join channel (+i)\r\n")
-
-// PRIVMSG
-#define ERR_NORECIPIENT ":localhost 411 :No recipient given\r\n"
-#define ERR_NOTEXTTOSEND ":localhost 412 :No text to send\r\n"
-#define ERR_NOTINCHANNEL(target) (":localhost 442 " + target + " :You're not on that channel\r\n")
-#define ERR_CANNOTSENDTOCHAN(target) (":localhost 404 " + target + " :Cannot send to channel\r\n")
-#define ERR_NOSUCHCHANNEL(target) (":localhost 403 " + target + " :No such channel\r\n")
-
-
-// USER
-#define ERR_NOT_ENOUGH_PARAMS ":localhost 461 USER :Not enough parameters\r\n"
-#define ERR_ALREADY_REGISTERED ":localhost 462 USER :You may not reregister\r\n"
+// 001 - RPL_WELCOME
+#define RPL_WELCOME(nick) (":localhost 001 " + nick + " :Welcome to the server\r\n")
 #define WELCOME_MSG(user) (":localhost 001 " + user + " :Welcome to the server\r\n")
-
-// PING
-#define ERR_NO_PING_TARGET ":localhost 409 :No target for PING\r\n"
-
-// TOPIC
+// 331 - RPL_NOTOPIC
 #define RPL_NOTOPIC(nick, chan) (":localhost 331 " + nick + " " + chan + " :No topic is set\r\n")
+// 332 - RPL_TOPIC
 #define RPL_TOPIC(nick, chan, topic) (":localhost 332 " + nick + " " + chan + " :" + topic + "\r\n")
-#define RPL_TOPICWHOTIME(nick, channel, setter, time) ":" + serverName + " 333 " + nick + " " + channel + " " + setter + " " + time + "\r\n"
-
-
-// MODE
-#define ERR_UNKNOWNMODE(mode) (":localhost 472 " + mode + " :is unknown mode char to me\r\n")
-#define ERR_NO_PRIVILEGES ":localhost 481 :Permission Denied- You're not an IRC operator\r\n"
-#define ERR_NOTREGISTERED ":localhost 451 :You have not registered\r\n"
-#define ERR_NOSUCHNICK(nick) (":localhost 401 " + nick + " :No such nick/channel\r\n")
-
-// KICK
-#define ERR_USERNOTINCHANNEL(nick, chan) (":localhost 441 " + nick + " " + chan + " :They aren't on that channel\r\n")
-#define RPL_MODESET(chan, mode) (":localhost 324 " + chan + " " + mode + "\r\n")
-
+// 333 - RPL_ROPICWHOTIME
+#define RPL_TOPICWHOTIME(nick, chan, setter, timestamp) \
+    (":localhost 333 " + nick + " " + chan + " " + setter + " " + timestamp + "\r\n")
+// 341 - RPL_INVITING
 #define RPL_INVITING(senderNick, targetNick, channel) (":localhost 341 " + senderNick + " " + targetNick + " " + channel + "\r\n")
+// 324 - RPL_MODESET
+#define RPL_MODESET(chan, mode) (":localhost 324 " + chan + " " + mode + "\r\n")
+// 401 - ERR_NOSUCHNICK
+#define ERR_NOSUCHNICK(nick) (":localhost 401 " + nick + " :No such nick/channel\r\n")
+// 402 - ERR_CANNOTSENDTOCHAN
+#define ERR_CANNOTSENDTOCHAN(chan) (":localhost 404 " + chan + " :Cannot send to channel\r\n")
+// 403 - ERR_NOSUCHCHANNEL
+#define ERR_NOSUCHCHANNEL(chan) (":localhost 403 " + chan + " :No such channel\r\n")
+// 409 - ERR_NO_PING_TARGET
+#define ERR_NOORIGIN ":localhost 409 * :No origin specified\r\n"
+// 411 - ERR_NORECIPIENT
+#define ERR_NORECIPIENT ":localhost 411 :No recipient given\r\n"
+// 412 - ERR_NOTEXTTOSEND
+#define ERR_NOTEXTTOSEND ":localhost 412 :No text to send\r\n"
+// 431 - ERR_NO_NICKNAME
+#define ERR_NO_NICKNAME(nick) (":localhost 431 " + nick + " :No nickname given\r\n")
+// 432 - ERR_ERRONONEOUS_NICKNAME
+#define ERR_ERRONEOUS_NICKNAME(nick) (":localhost 432 " + nick + " :Erroneous nickname\r\n")
+// 433 - ERR_NICK_IN_USE
+#define ERR_NICK_IN_USE(nick) (":localhost 433 " + nick + " :Nickname is already in use\r\n")
+// 441 - ERR_USERNOTINCHANNEL
+#define ERR_USERNOTINCHANNEL(nick, chan) (":localhost 441 " + nick + " " + chan + " :They aren't on that channel\r\n")
+// 442 - ERR_NOTONCHANNEL
+#define ERR_NOTONCHANNEL(chan) (":localhost 442 " + chan + " :You're not on that channel\r\n")
+// 443 - ERR_USERONCHANNEL
+#define ERR_USERONCHANNEL(chan) (":localhost 443 " + chan + " :You are already on that channel\r\n")
+// 461 - ERR_NEEDMOREPARAMS / ERR_NOT_ENOUGH_PARAMS
+#define ERR_NEEDMOREPARAMS(cmd) ":localhost 461 " + cmd + " :Not enough parameters\r\n"
+#define ERR_NOT_ENOUGH_PARAMS ":localhost 461 USER :Not enough parameters\r\n"
+// 462 - ERR_ALREADY_REGISTERED
+#define ERR_ALREADYREGISTERED ":localhost 462 USER :You may not reregister\r\n"
+// 471 - ERR_CHANNELISFULL
+#define ERR_CHANNELISFULL(chan) (":localhost 471 " + chan + " :Cannot join channel (+l)\r\n")
+// 472 - ERR_UNKNOWNMODE
+#define ERR_UNKNOWNMODE(mode) (":localhost 472 " + mode + " :is unknown mode char to me\r\n")
+// 473 - ERR_INVITEONLYCHAN
+#define ERR_INVITEONLYCHAN(chan) (":localhost 473 " + chan + " :Cannot join channel (+i)\r\n")
+// 475 - ERR_BADCHANNELKEY
+#define ERR_BADCHANNELKEY(chan) (":localhost 475 " + chan + " :Cannot join channel (+k)\r\n")
+// 481 - ERR_NO_PRIVILEGES
+#define ERR_NO_PRIVILEGES ":localhost 481 :Permission Denied- You're not an IRC operator\r\n"
+// 482 - ERR_CHANOPRIVSNEEDED
+#define ERR_CHANOPRIVSNEEDED(chan) (":localhost 482 " + chan + " :You're not channel operator\r\n")
+// 451 - ERR_NOTREGISTERED
+#define ERR_NOTREGISTERED ":localhost 451 :You have not registered\r\n"
+
 
 //Idk if macros or inline functions are better
 namespace IrcMessages {

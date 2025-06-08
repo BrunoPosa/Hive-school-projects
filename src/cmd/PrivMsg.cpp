@@ -40,14 +40,14 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
         Channel &channel = channels_[target];
 
         // Check invite-only mode
-        if (channel.hasMode('i') && !channel.isInvited(sender)) {
+        if (channel.getInviteOnly() && !channel.getIsUserInvited(fd)) {
             ft_send(fd, ERR_CANNOTSENDTOCHAN(target));
             return;
         }
 
         // Check if sender is in channel
         if (!sender.isInChannel(target)) {
-            ft_send(fd, ERR_NOTINCHANNEL(target));
+            ft_send(fd, ERR_NOTONCHANNEL(target));
             return;
         }
 

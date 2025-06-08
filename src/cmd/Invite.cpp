@@ -1,49 +1,57 @@
 #include "../../inc/Server.hpp"
 
 void Server::cmdInvite(int sender_fd, const t_data data) {
-    std::vector<std::string> params{data.cmdParams};
-    if (params.size() < 2) {
-        ft_send(sender_fd, ERR_NEEDMOREPARAMS);
-        return;
-    }
+	std::vector<std::string> params = data.cmdParams;
+	if (params.size() < 2) {
+		ft_send(sender_fd, ERR_NEEDMOREPARAMS(params[0]));
+		return;
+	}
 
-    const std::string& channelName = params[0];
-    const std::string& targetNick = params[1];
+	const std::string& targetNick = params[0];
+	const std::string& channelName = params[1];
 
-    if (channels_.find(channelName) == channels_.end()) {
-        ft_send(sender_fd, ERR_NO_SUCH_CHANNEL(channelName));
-        return;
-    }
+	// Check if target client exists
+	int target_fd = getClientFdByNick(targetNick);
+	if (target_fd == -1) {
+		ft_send(sender_fd, ERR_NOSUCHNICK(targetNick));
+		return;
+	}
 
-    Channel& channel = channels_[channelName];
-    Client& sender = clients_[sender_fd];
+	// Check if channel exists
+	if (channels_.find(channelName) == channels_.end()) {
+		ft_send(sender_fd, ERR_NOSUCHCHANNEL(channelName));
+		return;
+	}
 
-    if (!sender.isInChannel(channelName)) {
-        ft_send(sender_fd, ERR_NOT_IN_CHANNEL(channelName));
-        return;
-    }
+	Channel& channel = channels_[channelName];
+	Client& sender = clients_[sender_fd];
 
-    if (!channel.isOperator(sender_fd)) {
-        ft_send(sender_fd, ERR_CHANOPRIVSNEEDED(channelName));
-        return;
-    }
+	// Check if sender is in the channel
+	if (!sender.isInChannel(channelName)) {
+		ft_send(sender_fd, ERR_NOTONCHANNEL(channelName));
+		return;
+	}
 
-    // Find target client's fd by nickname
-    int target_fd = channel.getClientFdByNick(targetNick, clients_);
-    if (target_fd == -1) {
-        ft_send(sender_fd, ERR_NOSUCHNICK(targetNick));
-        return;
-    }
+	// Check if sender is a channel operator (for invite-only channels)
+	if (channel.getInviteOnly() && !channel.isOperator(sender_fd)) {
+		ft_send(sender_fd, ERR_CHANOPRIVSNEEDED(channelName));
+		return;
+	}
 
-    // Add the target client to the invited list
-    if (!channel.getIsUserInvited(target_fd)) {
-        channel.addInvitedUser(target_fd);
-    }
+	// Check if target is already on the channel
+	if (clients_[target_fd].isInChannel(channelName)) {
+		ft_send(sender_fd, ERR_USERONCHANNEL(targetNick));
+		return;
+	}
 
-    // Notify the sender that the invite was sent
-    ft_send(sender_fd, RPL_INVITING(sender.getNick(), targetNick, channelName));
+	// Add to invite list
+	channel.addInvitedUser(target_fd);
 
-    // Optionally send invitation message to the invited client
-    std::string inviteMsg = ":" + sender.getNick() + " INVITE " + targetNick + " :" + channelName + "\r\n";
-    ft_send(target_fd, inviteMsg);
+	// Notify sender that the invite was sent
+	ft_send(sender_fd, RPL_INVITING(sender.getNick(), targetNick, channelName));
+
+	// Send invite to the target client
+	std::string inviteMsg = ":" + sender.getNick() + " INVITE " + targetNick + " :" + channelName + "\r\n";
+	ft_send(target_fd, inviteMsg);
 }
+

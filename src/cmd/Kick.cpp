@@ -20,7 +20,7 @@ void Server::kickUser(int sender_fd, const std::string& channelName, const std::
 void Server::cmdKick(int sender_fd, const t_data data) {
     std::vector<std::string> params{data.cmdParams};
     if (params.size() < 2) {
-        ft_send(sender_fd, ERR_NEEDMOREPARAMS);
+        ft_send(sender_fd, ERR_NEEDMOREPARAMS(params[0]));
         return;
     }
 
@@ -28,7 +28,7 @@ void Server::cmdKick(int sender_fd, const t_data data) {
     const std::string& targetNick = params[1];
 
     if (channels_.find(channelName) == channels_.end()) {
-        ft_send(sender_fd, ERR_NO_SUCH_CHANNEL(channelName));
+        ft_send(sender_fd, ERR_NOSUCHCHANNEL(channelName));
         return;
     }
 

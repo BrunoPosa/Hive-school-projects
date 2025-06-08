@@ -34,7 +34,7 @@ void Server::cmdUser(int fd, const t_data data) {
     clients_[fd].setUserReceived();
 
     // Registration completion usually happens only after both NICK and USER received
-    if (clients_[fd].hasReceivedNick()) {
+    if (clients_[fd].hasReceivedNick() && clients_[fd].isAuthenticated()) {
         std::string welcomeMsg = RPL_WELCOME(clients_[fd].getNick());
         ft_send(fd, welcomeMsg);
     }

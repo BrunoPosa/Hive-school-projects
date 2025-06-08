@@ -97,7 +97,7 @@ private:
 	void cmdUser(int fd, const t_data data);
 	void cmdJoin(int fd, const t_data data);
 	void cmdPrivMsg(int fd, const t_data data);
-	void cmdPing(int fd, const t_data data);
+	void cmdPing(int fd, const t_data& data);
 	void cmdTopic(int fd, const t_data data);
 	void cmdMode(int fd, const t_data data);
 	void cmdKick(int sender_fd, t_data data);
