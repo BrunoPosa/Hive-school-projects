@@ -57,7 +57,7 @@ typedef struct cmdFunctionParameters {
 #define GREENIRC "\033[1;32m"
 #define RESETIRC "\033[0m"
 
-#define POLLFD_VEC_DEFAULT_INIT_SIZE 1021
+#define MAX_CLIENTS 999
 
 // #define IRC_ON_SHUTDOWN_PRINT
 // #define IRC_DEBUG_PRINTS
@@ -89,8 +89,6 @@ private:
 	void	dispatchCommand(int fd, const std::string& message);
 
 	std::vector<std::string>	tokenize(std::istringstream& cmdParams);
-	std::string	fetchIP();
-	void		resolveHost();
 	void		checkRegistration(int fd);
 	void		ft_send(int fd, const std::string& message);
 
@@ -108,7 +106,7 @@ private:
 	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
 
 public:
-	Server() = delete;
+	Server();
 	explicit	Server(Config&& cfg);
 	Server(Server& other) = delete;
 	Server(Server&& other);

@@ -7,24 +7,24 @@ using std::string;
 
 Server	*g_servPtr = nullptr;
 
-// Server::Server()
-// :	cfg_{},
-// 	listenSo_{},
-// 	accepting_{false},
-// 	running_{false},
-// 	cmds_{
-// 		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
-// 		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
-// 		{"JOIN", [this](int fd, const t_data d) { cmdJoin(fd, d); }},
-// 		{"MODE", [this](int fd, const t_data d) { cmdMode(fd, d); }},
-// 		{"PING", [this](int fd, const t_data d) { cmdPing(fd, d); }},
-// 		{"KICK", [this](int fd, const t_data d) { cmdKick(fd, d); }},
-// 		{"TOPIC", [this](int fd, const t_data d) { cmdTopic(fd, d); }},
-// 		{"PRIVMSG", [this](int fd, const t_data d) { cmdPrivMsg(fd, d); }},
-// 		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
-// 		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
-// 	}
-// {}
+Server::Server()
+:	cfg_{},
+	listenSo_{},
+	accepting_{false},
+	running_{false},
+	cmds_{
+		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
+		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
+		{"JOIN", [this](int fd, const t_data d) { cmdJoin(fd, d); }},
+		{"MODE", [this](int fd, const t_data d) { cmdMode(fd, d); }},
+		{"PING", [this](int fd, const t_data d) { cmdPing(fd, d); }},
+		{"KICK", [this](int fd, const t_data d) { cmdKick(fd, d); }},
+		{"TOPIC", [this](int fd, const t_data d) { cmdTopic(fd, d); }},
+		{"PRIVMSG", [this](int fd, const t_data d) { cmdPrivMsg(fd, d); }},
+		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
+		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
+	}
+{}
 
 Server::Server(Config&& cfg)
 :	cfg_{std::move(cfg)},
@@ -60,13 +60,13 @@ Server::Server(Server&& other)
 {}
 
 /*
-	-We stop server only if we run out of resources (std::bad_alloc or poll() says EINVAL or ENOMEM AND we have no clients)
+	-We stop server only on std::bad_alloc without clients or poll() errors EINVAL or ENOMEM
 */
 void Server::run() {
 	listenSo_.initListener(cfg_.getPort());
-	pollFds_.reserve(POLLFD_VEC_DEFAULT_INIT_SIZE);
+	pollFds_.reserve(MAX_CLIENTS);
 	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
-	resolveHost();
+	host_ = listenSo_.resolveHost();
 
 	accepting_ = true;
 	running_ = true;
@@ -184,8 +184,8 @@ void Server::addClient(Socket& sock) {
 		return;
 	}
 	try {
-		clients_.emplace(fd, Client(std::move(sock), &pollFds_.back(), ircMsgDelimiter_));
-		clients_.at(fd).setHostName(host_);
+		clients_.emplace(fd, Client(std::move(sock), &pollFds_.back(), ircMsgDelimiter_, host_));
+		std::cout << "New client at ip:" << clients_.at(fd).getIP() << std::endl;
 	} catch (std::exception& e) {
 		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
 		rmClient(fd);
@@ -355,47 +355,6 @@ std::vector<std::string>	Server::tokenize(std::istringstream& cmdParams){
 		tokens.push_back(token);
 	}
 	return tokens;
-}
-
-std::string	Server::fetchIP() {
-	int sock = ::socket(AF_INET, SOCK_DGRAM, 0);
-	if (sock < 0) {
-		std::cerr << "Could not create socket in fetchPublicFacingIP()" << std::endl;
-		return "127.0.0.1";
-	}
-
-	sockaddr_in remoteAddr{};
-	remoteAddr.sin_family = AF_INET;
-	remoteAddr.sin_port = htons(80);
-	inet_pton(AF_INET, "8.8.8.8", &remoteAddr.sin_addr);
-
-	if (::connect(sock, (sockaddr*)&remoteAddr, sizeof(remoteAddr)) == -1) {
-		::close(sock);
-		std::cerr << "connect() failed  in fetchPublicFacingIP()" << std::endl;
-		return "127.0.0.1";
-	}
-
-	sockaddr_in localAddr{};
-	socklen_t len = sizeof(localAddr);
-	if (getsockname(sock, (sockaddr*)&localAddr, &len) == -1) {
-		::close(sock);
-		std::cerr << "getsockname() failed in fetchPublicFacingIP()" << std::endl;
-		return "127.0.0.1";
-	}
-
-	char ip[INET_ADDRSTRLEN];
-	inet_ntop(AF_INET, &localAddr.sin_addr, ip, sizeof(ip));
-	::close(sock);
-	return std::string(ip);
-}
-
-void	Server::resolveHost() {
-	char hostname[HOST_NAME_MAX];
-	if (gethostname(hostname, HOST_NAME_MAX) != 0) {
-		perror("gethostname");
-		return;
-	}
-	host_ = std::string(hostname);
 }
 
 int Server::getClientFdByNick(const std::string& nick) const {

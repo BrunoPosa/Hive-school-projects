@@ -9,6 +9,8 @@ using std::string;
 Client::Client()
 :	so_{},
 	pfd_{nullptr},
+	hostnm_{"hellokitty"},
+	msgDelimiter_{"\r\n"},
 	authenticated{false},
 	nickReceived{false},
 	userReceived{false},
@@ -22,9 +24,10 @@ Client::Client()
 	recvBuf_.reserve(IRC_BUFFER_SIZE);
 }
 
-Client::Client(Socket&& so, pollfd *pfd, std::string delimiter)  // Parameterized constructor
+Client::Client(Socket&& so, pollfd *pfd, std::string delimiter, std::string hostname)  // Parameterized constructor
 :	so_{std::move(so)},
 	pfd_{pfd},
+	hostnm_{hostname},
 	msgDelimiter_{delimiter},
 	authenticated{false},
 	nickReceived{false},
@@ -56,7 +59,7 @@ Client::Client(Client&& other) noexcept
 		modeReceived{std::exchange(other.modeReceived, false)},
 		whois{std::exchange(other.modeReceived, false)},
 		authAttempts_{std::exchange(other.authAttempts_, 0)},
-		lastActive_{std::chrono::steady_clock::now()}//or other.lastActive_
+		lastActive_{std::chrono::steady_clock::now()}
 {}
 
 Client&	Client::operator=(Client&& other) noexcept {
@@ -83,9 +86,9 @@ Client&	Client::operator=(Client&& other) noexcept {
 }
 
 void	Client::toSend(const std::string& data) {
-	// if (data.empty()) {
-	// 	return;
-	// }
+	if (data.empty()) {
+		return;
+	}
 
 	if (sendBuf_.size() + data.size() > IRC_MAX_BUF) {
 		cerr << "sendBuf_ at fd " << so_.getFd() << " almost reached max " << IRC_MAX_BUF << "bytes and last message has been ignored." << endl;

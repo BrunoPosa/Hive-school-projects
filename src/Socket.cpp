@@ -70,9 +70,9 @@ void	Socket::initListener(uint16_t port) {
 	}
 
 	addr_ = {};
-	addr_.sin_family      = AF_INET;
+	addr_.sin_family = AF_INET;
 	addr_.sin_addr.s_addr = htonl(INADDR_ANY);
-	addr_.sin_port        = htons(port);
+	addr_.sin_port = htons(port);
 	
 	if (::bind(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) < 0) {
 		throw std::system_error(errno, std::generic_category(), "bind() failed");
@@ -103,35 +103,14 @@ bool	Socket::accept(Socket& toSocket) const {
 	return true;
 }
 
-// //Is this function necessary? even if it is more proper
-// void Socket::resolveHostAddress() {
-// 	char hostname[HOST_NAME_MAX];
-// 	if (gethostname(hostname, HOST_NAME_MAX) != 0) {
-// 		perror("gethostname");
-// 		return;
-// 	}
-// 	host_ = std::string(hostname);
-
-// 	std::cout << "Hostname: " << hostname << std::endl;
-
-// 	addrinfo hints = {}, *res;
-// 	hints.ai_family = AF_INET;
-// 	hints.ai_socktype = SOCK_STREAM;
-
-// 	if (getaddrinfo(hostname, nullptr, &hints, &res) != 0) {
-// 		perror("getaddrinfo");
-// 		return;
-// 	}
-
-// 	for (addrinfo* p = res; p != nullptr; p = p->ai_next) {
-// 		char ipStr[INET_ADDRSTRLEN];
-// 		sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(p->ai_addr);
-// 		inet_ntop(AF_INET, &(addr->sin_addr), ipStr, INET_ADDRSTRLEN);
-// 		std::cout << "Resolved IP: " << ipStr << std::endl;
-// 	}
-
-// 	freeaddrinfo(res);
-// }
+std::string Socket::resolveHost() {
+	char hostname[HOST_NAME_MAX];
+	if (gethostname(hostname, HOST_NAME_MAX) != 0) {
+		perror("gethostname");
+		return "none";
+	}
+	return std::string(hostname);
+}
 
 bool	Socket::setNonBlocking(int fd) const {
 	int flags = 0;

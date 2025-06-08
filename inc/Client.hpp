@@ -33,7 +33,7 @@ class Client {
 		
 	public:
 		Client();	//def. constructor on creation makes a new socket
-		Client(Socket&& so, pollfd *pfd, std::string delimiter); //constructor ties the new client instance to an existing socket
+		Client(Socket&& so, pollfd *pfd, std::string delimiter, std::string hostname); //constructor ties the new client instance to an existing socket
 		Client(const Client& other)				= delete; //because sockets are unique and close on destruction (each client owns one) - we disallow copies
 		Client& operator=(const Client& other)	= delete;
 		Client(Client&& other) noexcept;				//Move constructor
