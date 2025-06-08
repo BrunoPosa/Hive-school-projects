@@ -12,7 +12,7 @@ class Config {
 	int					port_;
 	std::string					portStr_;
 	std::string					password_;
-	const std::string			msgDelimiter_{"\n"};//for netcat partial command sending
+	const std::string			msgDelimiter_{"\r\n"};//for netcat partial command sending
 	const std::string			serverName_{"ft_irc, WB edition ®"};
 	const std::string			allowedPassChars_{"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?#"};//validate_() specifies minimum 62 chars
 	static constexpr unsigned int	maxAuthAttempts_{10};
