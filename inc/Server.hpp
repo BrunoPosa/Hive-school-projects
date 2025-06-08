@@ -105,7 +105,10 @@ private:
 	void cmdPart(int fd, const t_data data);
 
 	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
-
+	void handlePositiveMode(int fd, const std::string& command, const std::string& target,
+                                const std::string& modeStr, const std::string& param, Channel& channel);
+	void handleNegativeMode(int fd, const std::string& target,
+                                const std::string& modeStr, const std::string& param, Channel& channel); 
 public:
 	Server();
 	explicit	Server(Config&& cfg);
