@@ -20,8 +20,8 @@ Client::Client()
 	authAttempts_{0},
 	lastActive_{std::chrono::steady_clock::now()}
 {
-	sendBuf_.reserve(IRC_BUFFER_SIZE);
-	recvBuf_.reserve(IRC_BUFFER_SIZE);
+	sendBuf_.reserve(IRC_MAX_BUF);
+	recvBuf_.reserve(IRC_MAX_BUF);
 }
 
 Client::Client(Socket&& so, pollfd *pfd, std::string delimiter, std::string hostname)  // Parameterized constructor
@@ -38,8 +38,8 @@ Client::Client(Socket&& so, pollfd *pfd, std::string delimiter, std::string host
 	authAttempts_{0},
 	lastActive_{std::chrono::steady_clock::now()}
 {
-	sendBuf_.reserve(IRC_BUFFER_SIZE);
-	recvBuf_.reserve(IRC_BUFFER_SIZE);
+	sendBuf_.reserve(IRC_MAX_BUF);
+	recvBuf_.reserve(IRC_MAX_BUF);
 }
 
 Client::Client(Client&& other) noexcept
@@ -160,7 +160,7 @@ bool	Client::receive() {
 
 	if (recvBuf_.size() + bytesRead > IRC_MAX_BUF) {
 		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
-		return false;
+		return true;
 	}
 
 	#ifdef CMD_CONCAT_TEST_IRC

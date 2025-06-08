@@ -155,11 +155,14 @@ void Server::handleEvents() {
 void Server::acceptNewConnection() {
 	Socket	clientSock;
 
+	if (clients_.size() >= MAX_CLIENTS) {
+		return;
+	}
+
 	if (listenSo_.accept(clientSock) == false) {
+		std::cerr << "accept() or fcntl() error: " << strerror(errno) << std::endl;
 		if (errno == EMFILE || errno == ENFILE || errno == ENOMEM || errno == ENOBUFS) {
 			accepting_ = false;
-		} else if (errno != EAGAIN && errno != EWOULDBLOCK) {
-			std::cerr << "accept4() error: " << strerror(errno) << std::endl;
 		}
 		return;
 	}
@@ -168,9 +171,9 @@ void Server::acceptNewConnection() {
 	addClient(clientSock);
 
 	std::cout << YELLOWIRC
-			<< "Accepted new connection from " 
-			<< clientSock.getIpStr() << ":"//fix
-			<< ntohs(clientSock.getAddr().sin_port) 
+			<< "Accepted new connection from "
+			<< clients_.at(fd).getIP() << ":"
+			<< clients_.at(fd).getPort()
 			<< " (FD: " << fd << ")" << RESETIRC << std::endl;
 }
 
@@ -190,6 +193,9 @@ void Server::addClient(Socket& sock) {
 		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
 		rmClient(fd);
 		return;
+	}
+	if (clients_.size() == MAX_CLIENTS) {
+		accepting_ = false;
 	}
 }
 

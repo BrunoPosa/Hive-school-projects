@@ -9,7 +9,7 @@
 // #define IRC_CLI_PRINT
 
 #define IRC_BUFFER_SIZE 512
-#define IRC_MAX_BUF 256000
+#define IRC_MAX_BUF 128000
 
 class Client {
 	private:
@@ -48,6 +48,7 @@ class Client {
 
 		int		getFd() const	{ return this->so_.getFd(); }
 		std::string getIP() const {return so_.getIpStr();}
+		uint16_t	getPort() const { return so_.getPortNum(); }
 		std::string	getMsgs();
 		int	getAuthAttempts() const { return authAttempts_; }
 		void addAuthAttempt() { ++authAttempts_; }
