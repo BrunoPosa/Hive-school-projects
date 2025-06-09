@@ -65,23 +65,32 @@ void Server::cmdNick(int fd, const t_data data) {
         }
     }
 
-    std::string oldNick = clients_[fd].getNick();  
-    clients_[fd].setNick(nick);                    
-    clients_[fd].setNickReceived();                
+    std::string oldNick = clients_[fd].getNick();
+    clients_[fd].setNick(nick);
+    clients_[fd].setNickReceived();
 
     if (clients_[fd].hasReceivedUser() && clients_[fd].isAuthenticated()) {
         std::string welcomeMsg = RPL_WELCOME(nick);
         ft_send(fd, welcomeMsg);
     }
 
-    // Broadcast nick change to all channels the user is in
+    // Broadcast nick change to all unique clients INCLUDING the sender
+    std::set<int> notifiedClients;
+    std::string msg = ":" + oldNick + " NICK :" + nick + "\r\n";
+
+    // Always notify the sender too
+    clients_[fd].toSend(msg.c_str());
+    notifiedClients.insert(fd);
+
     for (std::map<std::string, Channel>::iterator it = channels_.begin(); it != channels_.end(); ++it) {
         if (it->second.hasClient(fd)) {
-            std::string msg = ":" + oldNick + " NICK :" + nick + "\r\n";
-            it->second.broadcastToAll(msg);
+            for (int otherFd : it->second.getChClients()) {
+                if (notifiedClients.insert(otherFd).second) {
+                    clients_[otherFd].toSend(msg.c_str());
+                }
+            }
         }
     }
-
 
     if (clients_[fd].hasReceivedUser() && clients_[fd].isAuthenticated()) {
         std::string welcomeMsg = RPL_WELCOME(nick);
