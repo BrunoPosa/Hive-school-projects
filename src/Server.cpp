@@ -370,6 +370,6 @@ void	Server::extraCmdWho(int fd, const t_data data) {
 	if (data.fullMsg.length() < 5) {
 		return;
 	}
-cout << "extraCmdWho(): " << data.fullMsg << endl;
+
 	clients_.at(fd).toSend(RPL_ENDOFWHO(clients_.at(fd).getNick(), data.fullMsg.substr(4)));
 }
