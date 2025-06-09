@@ -69,7 +69,7 @@ Server::Server(Server&& other)
 /*
 	Server stops only on std::bad_alloc without clients, and poll() errors EINVAL / ENOMEM
 */
-void Server::run() {
+void	Server::run() {
 	listenSo_.initListener(cfg_.getPort());
 	host_ = listenSo_.resolveHost();
 	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
@@ -80,6 +80,13 @@ void Server::run() {
 	std::cout << GREENIRC << "Server started on host " << host_ << " and port " << cfg_.getPort() << RESETIRC
 		<< "\nUse irssi and command '/connect <hostname> <port> <password>' to connect" << std::endl;
 
+	eventLoop();
+
+	cout << "Server shutting down.." << endl;
+}
+
+void	Server::eventLoop() {
+	
 	while (running_) {
 		try {
 			if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
@@ -102,10 +109,9 @@ void Server::run() {
 			std::cerr << "Exception caught inside poll loop: " << e.what() << std::endl;
 		}
 	}
-	cout << "Server shutting down.." << endl;
 }
 
-void Server::handleEvents() {
+void	Server::handleEvents() {
 	for (int i = pollFds_.size() - 1; i >= 0; --i) {
 
 		pollfd&	pfd = pollFds_.at(i);
@@ -191,13 +197,10 @@ void Server::addClient(Socket& sock) {
 }
 
 /*
-	removes Client from server's pollFds_ vector, all of client's own joinedChannels (destroying all channels which remain empty or
-	broadcasting ClientQuit msg to all remaining members),
-	and lastly - from the server's clients_ map
-	If the IRC_ACCEPTING flag was down, this function raises it (as now there is more resources available)
+	rmClient from pollFds_ vector, clients_ map, and all of client's own joinedChannels (destroying the channels which remain empty,
+	or broadcasting ClientQuit msg to all remaining members),
 */
 void Server::rmClient(int rmFd) {
-	try {
 		for (int i = pollFds_.size() - 1; i >= 0; --i) {
 			if (pollFds_.at(i).fd == rmFd) { pollFds_.erase(pollFds_.begin() + i); }
 		}
@@ -206,31 +209,29 @@ void Server::rmClient(int rmFd) {
 			return;
 		}
 
-		const auto&	joinedChannels = clients_.at(rmFd).getJoinedChannels();
-		for (const auto& [channelName, _] : joinedChannels) {
-			auto channelIt = channels_.find(channelName);
+		Client& client = clients_.at(rmFd);
+
+		auto&	joinedChannels = client.getJoinedChannels();
+		for (const auto& [joinedChName, _] : joinedChannels) {
+			auto channelIt = channels_.find(joinedChName);
 
 			if (channelIt != channels_.end()) {
 				channelIt->second.removeClient(rmFd);
 				if (channelIt->second.isEmpty()) {
-					channels_.erase(channelName);
+					channels_.erase(joinedChName);
 				} else {
-					channels_.at(channelName).broadcast(IrcMessages::clientQuit(clients_.at(rmFd)), clients_.at(rmFd).getNick(), -1);
+					channels_.at(joinedChName).broadcast(IrcMessages::clientQuit(client), client.getNick(), -1);
 				}
 			}
 		}
 
-		auto clientIt = clients_.find(rmFd);
-		if (clientIt != clients_.end()) {
-			clients_.erase(clientIt);
+		clients_.erase(rmFd);
+
+		if (accepting_ == false) {
+			accepting_ = true;//start accepting again if the server was not accepting (due to maxing out)
 		}
 
-		accepting_ = true;//start accepting again if the server was not accepting (due to maxing out)
-
 		std::cout << "client fd:" << rmFd << " removed." << std::endl;
-	} catch (std::exception& e) {
-		std::cerr << "Exception caught in rmClient(): " << e.what() << " fd: " << rmFd << std::endl;
-	}
 }
 
 bool	Server::handleMsgs(int fromFd) {

@@ -73,9 +73,9 @@ private:
 	std::map<int, Client>	clients_;
 	std::vector<struct pollfd>	pollFds_;
 	std::map<std::string, Channel>	channels_;
-	std::unordered_map<std::string, std::function<void(int, const t_data&)>> cmds_;
-	int defaultUserCount_ = 0;
+	std::unordered_map<std::string, std::function<void(int, const t_data&)>>	cmds_;
 
+	void	eventLoop();
 	void	handleEvents();
 	void	acceptNewConnection();
 	void	addClient(Socket& sock);
