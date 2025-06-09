@@ -63,13 +63,16 @@ typedef struct cmdFunctionParameters {
 
 class Server {
 private:
-	Config	cfg_;
-	Socket	listenSo_;
+	Config		cfg_;
+	Socket		listenSo_;
+	int			listenSoFd_;
 	std::string	ip_;
 	std::string	host_;
 	std::string	ircMsgDelimiter_;
-	bool	accepting_;
+	bool		accepting_;
 	volatile sig_atomic_t	running_;
+	std::chrono::seconds	allowedInactivity_;
+
 	std::map<int, Client>	clients_;
 	std::vector<struct pollfd>	pollFds_;
 	std::map<std::string, Channel>	channels_;
@@ -105,10 +108,10 @@ private:
                                 const std::string& modeStr, const std::string& param, Channel& channel); 
 public:
 	Server();
-	explicit	Server(Config&& cfg);
-	Server(Server& other) = delete;
+	explicit Server(Config&& cfg);
 	Server(Server&& other);
-	~Server()	= default;
+	Server(Server&)				= delete;
+	Server& operator=(Server&)	= delete;
 
 	void	run();
 	void	gracefulShutdown();

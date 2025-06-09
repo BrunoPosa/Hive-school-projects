@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
 	}
 
 	try {
-		Config  config(argv[1], argv[2]);
-		Server	server(std::move(config));
+		Config	config(argv[1], argv[2]);
+		Server	server(std::move(config));//config unreachable after this
 
 		g_servPtr = &server;
 

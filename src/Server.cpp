@@ -10,8 +10,10 @@ Server	*g_servPtr = nullptr;
 Server::Server()
 :	cfg_{},
 	listenSo_{},
+	listenSoFd_{-1},
 	accepting_{false},
 	running_{false},
+	allowedInactivity_{300},
 	cmds_{
 		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
 		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
@@ -32,7 +34,7 @@ Server::Server()
 Server::Server(Config&& cfg)
 :	cfg_{std::move(cfg)},
 	listenSo_{},
-	ircMsgDelimiter_{cfg_.getMsgDelimiter()},
+	listenSoFd_{-1},
 	accepting_{false},
 	running_{false},
 	cmds_{
@@ -48,6 +50,7 @@ Server::Server(Config&& cfg)
 		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
 	}
 {
+	allowedInactivity_ = cfg_.getAllowedInactivity();
 	ircMsgDelimiter_ = cfg_.getMsgDelimiter();
 	pollFds_.reserve(MAX_CLIENTS);
 }
@@ -55,11 +58,13 @@ Server::Server(Config&& cfg)
 Server::Server(Server&& other)
 :	cfg_(std::move(other.cfg_)),
 	listenSo_(std::move(other.listenSo_)),
+	listenSoFd_{std::exchange(other.listenSoFd_, -1)},
 	ip_(std::move(other.ip_)),
 	host_(std::move(other.host_)),
 	ircMsgDelimiter_{std::move(other.ircMsgDelimiter_)},
-	accepting_{other.accepting_},
-	running_{other.running_},
+	accepting_{false},
+	running_{false},
+	allowedInactivity_{other.allowedInactivity_},
 	clients_(std::move(other.clients_)),
 	pollFds_(std::move(other.pollFds_)),
 	channels_(std::move(other.channels_)),
@@ -71,13 +76,14 @@ Server::Server(Server&& other)
 */
 void	Server::run() {
 	listenSo_.initListener(cfg_.getPort());
+	listenSoFd_ = listenSo_.getFd();
 	host_ = listenSo_.resolveHost();
-	pollFds_.push_back({listenSo_.getFd(), POLLIN, 0});
+	pollFds_.push_back({listenSoFd_, POLLIN, 0});
 
 	accepting_ = true;
 	running_ = true;
 
-	std::cout << GREENIRC << "Server started on host " << host_ << " and port " << cfg_.getPort() << RESETIRC
+	std::cout << GREENIRC << "Server started on host " << host_ << " and port " << listenSo_.getPortNum() << RESETIRC
 		<< "\nUse irssi and command '/connect <hostname> <port> <password>' to connect" << std::endl;
 
 	eventLoop();
@@ -114,35 +120,36 @@ void	Server::eventLoop() {
 void	Server::handleEvents() {
 	for (int i = pollFds_.size() - 1; i >= 0; --i) {
 
-		pollfd&	pfd = pollFds_.at(i);
+		pollfd&	pfd		= pollFds_.at(i);
+		int		fd		= pfd.fd;
 
-		if (pfd.fd != listenSo_.getFd()) {
-			if (clients_.at(pfd.fd).isInactive(cfg_.getAllowedInactivity())) {
-				rmClient(pfd.fd);
-			} else if (&pfd != clients_.at(pfd.fd).getPfdPtr()) {
-				clients_.at(pfd.fd).setPfdPtr(&pfd);
+		if (fd != listenSoFd_) {
+			if (clients_.at(fd).isInactive(allowedInactivity_)) {
+				rmClient(fd);
+			} else if (&pfd != clients_.at(fd).getPfdPtr()) {
+				clients_.at(fd).setPfdPtr(&pfd);
 			}
 		}
 
 		if (POLLIN & pfd.revents) {
-			if (pfd.fd == listenSo_.getFd()) {
+			if (fd == listenSoFd_) {
 				if (accepting_) {
 					acceptNewConnection();
 				}
 				continue;
-			} else if (clients_.at(pfd.fd).receive() == false || handleMsgs(pfd.fd) == false) {
-				rmClient(pfd.fd);
+			} else if (clients_.at(fd).receive() == false || handleMsgs(fd) == false) {
+				rmClient(fd);
 				continue;
 			}
 		}
 		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
-			std::cerr << REDIRC << "POLL ERRS" << RESETIRC << strerror(errno) << " revents: " << pfd.revents << " on fd " << pfd.fd << std::endl;
-			rmClient(pfd.fd);
+			std::cerr << REDIRC << "POLL ERRS" << RESETIRC << strerror(errno) << " revents: " << pfd.revents << " on fd " << fd << std::endl;
+			rmClient(fd);
 
 		} else if (POLLOUT & pfd.revents) {
 
-			if (clients_.at(pfd.fd).send() == false) {
-				rmClient(pfd.fd);
+			if (clients_.at(fd).send() == false) {
+				rmClient(fd);
 				continue;
 			}
 		}
