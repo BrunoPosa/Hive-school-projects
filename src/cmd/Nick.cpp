@@ -4,16 +4,28 @@ namespace {
     bool isValidNick(const std::string& nick) {
         if (nick.empty())
             return false;
-        if (nick[0] == '#' || nick[0] == ':' || std::isspace(nick[0]))
+
+        // Valid characters per RFC 2812
+        const std::string special = "[]\\`_^{|}";
+
+        // First character: must be a letter (A–Z or a–z) or special
+        char first = nick[0];
+        if (!std::isalpha(first) && special.find(first) == std::string::npos)
             return false;
-        for (char c : nick) {
-            if (std::isspace(c) || c == ':' || c == ',')
+
+        // Rest of the nickname: can include letter, digit, special, or '-'
+        for (size_t i = 1; i < nick.size(); ++i) {
+            char c = nick[i];
+            if (!std::isalnum(c) &&
+                special.find(c) == std::string::npos &&
+                c != '-') {
                 return false;
-            if (!std::isalnum(c) && std::string("[]{}\\|^-_").find(c) == std::string::npos)
-                return false;
+            }
         }
+
         return true;
     }
+
 
     bool isNickInUse(const std::map<int, Client>& clients, const std::string& nick, int excludeFd) {
         for (const auto& pair : clients) {
@@ -53,8 +65,23 @@ void Server::cmdNick(int fd, const t_data data) {
         }
     }
 
-    clients_[fd].setNick(nick);
-    clients_[fd].setNickReceived();
+    std::string oldNick = clients_[fd].getNick();  
+    clients_[fd].setNick(nick);                    
+    clients_[fd].setNickReceived();                
+
+    if (clients_[fd].hasReceivedUser() && clients_[fd].isAuthenticated()) {
+        std::string welcomeMsg = RPL_WELCOME(nick);
+        ft_send(fd, welcomeMsg);
+    }
+
+    // Broadcast nick change to all channels the user is in
+    for (std::map<std::string, Channel>::iterator it = channels_.begin(); it != channels_.end(); ++it) {
+        if (it->second.hasClient(fd)) {
+            std::string msg = ":" + oldNick + " NICK :" + nick + "\r\n";
+            it->second.broadcastToAll(msg);
+        }
+    }
+
 
     if (clients_[fd].hasReceivedUser() && clients_[fd].isAuthenticated()) {
         std::string welcomeMsg = RPL_WELCOME(nick);

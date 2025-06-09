@@ -38,7 +38,7 @@ void Server::handlePositiveMode(int fd, const std::string& command, const std::s
         std::string msg = ":" + fullId + " MODE " + target + param + " +l\r\n";
         channel.broadcastToAll(msg);
     } else {
-        ft_send(fd, ERR_UNKNOWNMODE(modeStr));
+        ft_send(fd, ERR_UNKNOWNMODE(clients_[fd].getNick() ,modeStr));
     }
 }
 
@@ -75,7 +75,7 @@ void Server::handleNegativeMode(int fd, const std::string& target,
         std::string msg = ":" + fullId + " MODE " + target + param + " -l\r\n";
         channel.broadcastToAll(msg);
     } else {
-        ft_send(fd, ERR_UNKNOWNMODE(modeStr));
+        ft_send(fd, ERR_UNKNOWNMODE(clients_[fd].getNick(), modeStr));
     }
 }
 
@@ -105,12 +105,17 @@ void Server::cmdMode(int fd, const t_data data) {
         return;
     }
 
-    if (modeStr.empty()) {
-        Channel& channel = channels_[target];
-        std::string currentModes = channel.getModeString(); // e.g., "+it"
-        ft_send(fd, ":localhost MODE " + target + " " + currentModes + "\r\n");
-        return;
-    }
+if (modeStr.empty()) {
+    Channel& channel = channels_[target];
+    std::string currentModes = channel.getModeString(); // e.g., "+nt"
+    std::string nick = clients_[fd].getNick();          // The user's nick
+
+    // Send RPL_CHANNELMODEIS (324)
+    ft_send(fd, RPL_CHANNELMODEIS(clients_[fd].getNick(), target, currentModes, param));
+
+    return;
+}
+
     
     if (target[0] != '#') {
         std::clog << "Debug: Ignoring user mode command for now" << std::endl;
@@ -146,6 +151,6 @@ void Server::cmdMode(int fd, const t_data data) {
     } else if (modeStr[0] == '-') {
         handleNegativeMode(fd, target, modeStr, param, channel);
     } else {
-        ft_send(fd, ERR_UNKNOWNMODE(modeStr));
+        ft_send(fd, ERR_UNKNOWNMODE(clients_[fd].getNick(), modeStr));
     }
 }

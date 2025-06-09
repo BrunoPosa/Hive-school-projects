@@ -23,7 +23,8 @@
 #define RPL_MODESET(nick, chan, mode) (":localhost 324 " + nick + " " + chan + " " + mode + "\r\n")
 #define RPL_CHANNELMODEIS(nick, chan, modes, params) \
 	(":localhost 324 " + nick + " " + chan + " " + modes + params + "\r\n")
-
+// 329 - RPL_CREATIONTIME
+// #define RPL_CREATIONTIME(nick, chan, timestamp) (":localhost 329 " + nick + " " + chan + " " + timestamp + "\r\n")
 // 401 - ERR_NOSUCHNICK
 #define ERR_NOSUCHNICK(nick) (":localhost 401 " + nick + " :No such nick/channel\r\n")
 // 404 - ERR_CANNOTSENDTOCHAN
@@ -56,7 +57,7 @@
 // 471 - ERR_CHANNELISFULL
 #define ERR_CHANNELISFULL(nick, chan) (":localhost 471 " + nick + " " + chan + " :Cannot join channel (+l)\r\n")
 // 472 - ERR_UNKNOWNMODE
-#define ERR_UNKNOWNMODE(mode) (":localhost 472 " + mode + " :is unknown mode char to me\r\n")
+#define ERR_UNKNOWNMODE(nick, mode) (":localhost 472 " + nick + " " + mode + " :is unknown mode char to me\r\n")
 // 473 - ERR_INVITEONLYCHAN
 #define ERR_INVITEONLYCHAN(nick, chan) (":localhost 473 " + nick + " " + chan + " :Cannot join channel (+i)\r\n")
 // 475 - ERR_BADCHANNELKEY
