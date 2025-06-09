@@ -27,7 +27,7 @@ Server::Server()
 		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
 	}
 {
-	ircMsgDelimiter_ = cfg_.getMsgDelimiter();
+	ircMsgDelimiter_ = "\r\n";
 	pollFds_.reserve(MAX_CLIENTS);
 }
 
@@ -76,8 +76,8 @@ Server::Server(Server&& other)
 */
 void	Server::run() {
 	listenSo_.initListener(cfg_.getPort());
-	listenSoFd_ = listenSo_.getFd();
-	host_ = listenSo_.resolveHost();
+	listenSoFd_	= listenSo_.getFd();
+	host_		= listenSo_.resolveHost();
 	pollFds_.push_back({listenSoFd_, POLLIN, 0});
 
 	accepting_ = true;
@@ -92,7 +92,7 @@ void	Server::run() {
 }
 
 void	Server::eventLoop() {
-	
+
 	while (running_) {
 		try {
 			if (poll(pollFds_.data(), pollFds_.size(), -1) < 0) {
@@ -120,8 +120,8 @@ void	Server::eventLoop() {
 void	Server::handleEvents() {
 	for (int i = pollFds_.size() - 1; i >= 0; --i) {
 
-		pollfd&	pfd		= pollFds_.at(i);
-		int		fd		= pfd.fd;
+		pollfd&	pfd	= pollFds_.at(i);
+		int		fd	= pfd.fd;
 
 		if (fd != listenSoFd_) {
 			if (clients_.at(fd).isInactive(allowedInactivity_)) {
@@ -341,7 +341,7 @@ void	Server::gracefulShutdown() {
 std::vector<std::string>	Server::tokenize(std::istringstream& cmdParams){
 	std::vector<std::string> tokens;
 	std::string token;
-	while (cmdParams >> token) {
+	while (cmdParams.fail() == false && (cmdParams >> token)) {
 		tokens.push_back(token);
 	}
 	return tokens;
