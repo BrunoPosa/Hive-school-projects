@@ -56,7 +56,7 @@
 // 472 - ERR_UNKNOWNMODE
 #define ERR_UNKNOWNMODE(mode) (":localhost 472 " + mode + " :is unknown mode char to me\r\n")
 // 473 - ERR_INVITEONLYCHAN
-#define ERR_INVITEONLYCHAN(chan) (":localhost 473 " + chan + " :Cannot join channel (+i)\r\n")
+#define ERR_INVITEONLYCHAN(nick, chan) (":localhost 473 " + nick + " " + chan + " :Cannot join channel (+i)\r\n")
 // 475 - ERR_BADCHANNELKEY
 #define ERR_BADCHANNELKEY(chan) (":localhost 475 " + chan + " :Cannot join channel (+k)\r\n")
 // 481 - ERR_NO_PRIVILEGES

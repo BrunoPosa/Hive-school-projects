@@ -24,29 +24,34 @@ void Server::cmdJoin(int fd, const t_data data) {
 
 		Channel* chanPtr = nullptr;
 
-		if (channels_.find(channel) == channels_.end()) {
-			channels_[channel] = Channel(channel, &clients_);
-			channels_[channel].addOperator(fd);
-			std::cerr << "Created channel and added operator: " << channel << std::endl;
-		}
-
-		chanPtr = &channels_[channel];
-
-		if (chanPtr->getInviteOnly() && !chanPtr->getIsUserInvited(fd)) {
-			ft_send(fd, ERR_INVITEONLYCHAN(channel));
-			continue;
-		}
-
-		if (chanPtr->hasPassword()) {
-			if (key.empty() || key != chanPtr->getPwd()) {
-				ft_send(fd, ERR_BADCHANNELKEY(channel));
+		// Check invite-only and other conditions *before* creating channel
+		if (channels_.find(channel) != channels_.end()) {
+			chanPtr = &channels_[channel];
+			
+			if (chanPtr->getInviteOnly() && !chanPtr->getIsUserInvited(fd)) {
+				ft_send(fd, ERR_INVITEONLYCHAN(clients_[fd].getNick(), channel));
 				continue;
+			}
+
+			if (chanPtr->hasPassword()) {
+				if (key.empty() || key != chanPtr->getPwd()) {
+					ft_send(fd, ERR_BADCHANNELKEY(channel));
+					return;
+				}
+			}
+
+			if (chanPtr->hasUserLimit() && chanPtr->getUserCount() >= chanPtr->getUserLimit()) {
+				ft_send(fd, ERR_CHANNELISFULL(channel));
+				return;
 			}
 		}
 
-		if (chanPtr->hasUserLimit() && chanPtr->getUserCount() >= chanPtr->getUserLimit()) {
-			ft_send(fd, ERR_CHANNELISFULL(channel));
-			continue;
+		// All checks passed, now create the channel if it doesn't exist
+		if (chanPtr == nullptr) {
+			channels_[channel] = Channel(channel, &clients_);
+			chanPtr = &channels_[channel];
+			chanPtr->addOperator(fd);
+			std::cerr << "Created channel and added operator: " << channel << std::endl;
 		}
 
 		// All checks passed

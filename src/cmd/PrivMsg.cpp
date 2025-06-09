@@ -40,7 +40,7 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
         Channel &channel = channels_[target];
 
         // Check invite-only mode
-        if (channel.getInviteOnly() && !channel.getIsUserInvited(fd)) {
+        if (channel.getInviteOnly() && !channel.getIsUserInvited(fd) && !sender.isInChannel(target)) {
             ft_send(fd, ERR_CANNOTSENDTOCHAN(target));
             return;
         }

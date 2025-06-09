@@ -117,6 +117,11 @@ void Server::cmdMode(int fd, const t_data data) {
         return;
     }
     
+    if (target.empty() || target[0] != '#') {
+    ft_send(fd, ERR_NOSUCHCHANNEL(target));
+    return;
+    }
+
     if (channels_.find(target) == channels_.end()) {
         ft_send(fd, ERR_NOSUCHCHANNEL(target));
         return;
