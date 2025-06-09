@@ -53,10 +53,6 @@ void Server::cmdJoin(int fd, const t_data data) {
 		clients_[fd].joinChannel(channel, false);
 		chanPtr->addClient(fd);
 
-		if (!chanPtr->getTopic().empty())
-			ft_send(fd, RPL_TOPIC(clients_[fd].getNick(), channel, chanPtr->getTopic()));
-		else
-			ft_send(fd, RPL_NOTOPIC(clients_[fd].getNick(), channel));
 
 		std::string prefix = ":" + clients_[fd].getNick() + "!" + clients_[fd].getUser() + "@localhost";
 		std::string joinMsg = prefix + " JOIN :" + channel + "\r\n";
@@ -64,5 +60,15 @@ void Server::cmdJoin(int fd, const t_data data) {
 
 		clients_[fd].toSend(IrcMessages::RPL_NAMREPLY(clients_[fd].getNick(), chanPtr, &clients_) +
 		                    IrcMessages::RPL_ENDOFNAMES(clients_[fd].getNick(), chanPtr));
+		if (!chanPtr->getTopic().empty()) {
+			// Send the numeric (optional, mostly for logging or completeness)
+			ft_send(fd, RPL_TOPIC(clients_[fd].getNick(), channel, chanPtr->getTopic()));
+			
+			// Also send a standard message to trigger display in the channel window
+			// std::string topicMsg = ":" + clients_[fd].getFullId() + " TOPIC " + channel + " :" + chanPtr->getTopic() + "\r\n";
+			// ft_send(fd, topicMsg);
+		} else {
+			ft_send(fd, RPL_NOTOPIC(clients_[fd].getNick(), channel));
+		}
 	}
 }

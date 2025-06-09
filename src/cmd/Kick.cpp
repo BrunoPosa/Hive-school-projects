@@ -1,20 +1,39 @@
 #include "../../inc/Server.hpp"
 
+// void Server::kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick) {
+//     Channel& channel = channels_[channelName];
+//     int target_fd = channel.getClientFdByNick(targetNick, clients_);
+
+//     if (target_fd == -1)
+//         return; // Shouldn't happen if validated earlier
+
+//     std::string message = ":" + clients_[sender_fd].getNick() + " KICK " + channelName + " " + targetNick + " :" + reason + "\r\n";
+
+//     channel.broadcast(message, clients_[sender_fd].getNick(), -1);
+
+//     // Remove user from channel
+//     channel.removeClient(target_fd);
+//     clients_[target_fd].leaveChannel(channelName);
+// }
 void Server::kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick) {
     Channel& channel = channels_[channelName];
     int target_fd = channel.getClientFdByNick(targetNick, clients_);
 
     if (target_fd == -1)
-        return; // Shouldn't happen if validated earlier
+        return;
 
-    std::string message = ":" + clients_[sender_fd].getNick() + " KICK " + channelName + " " + targetNick + " :" + reason + "\r\n";
+    std::string message = ":" + clients_[sender_fd].getFullId() +
+                          " KICK " + channelName + " " + targetNick +
+                          " :" + reason + "\r\n";
 
-    channel.broadcast(message, clients_[sender_fd].getNick(), -1);
+    // Send to everyone in the channel, including the one being kicked
+    channel.broadcastToAll(message);
 
     // Remove user from channel
     channel.removeClient(target_fd);
     clients_[target_fd].leaveChannel(channelName);
 }
+
 
 // KICK command implementation
 void Server::cmdKick(int sender_fd, const t_data data) {

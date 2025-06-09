@@ -235,3 +235,7 @@ void Client::setOperator(const std::string &channel, bool is_operator)
 	if (isInChannel(channel))
 		joinedChannels[channel] = is_operator;
 }
+
+std::string Client::getFullId() const {
+    return this->getNick() + "!" + this->getUser() + "@localhost";
+}

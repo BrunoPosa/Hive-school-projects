@@ -9,7 +9,7 @@
 #define RPL_WELCOME(nick) (":localhost 001 " + nick + " :Welcome to the server\r\n")
 #define WELCOME_MSG(user) (":localhost 001 " + user + " :Welcome to the server\r\n")
 // 331 - RPL_NOTOPIC
-#define RPL_NOTOPIC(nick, chan) (":localhost 331 " + nick + " " + chan + " :No topic is set\r\n")
+#define RPL_NOTOPIC(nick, chan) (":localhost 332 " + nick + " " + chan + " :No topic is set\r\n")
 // 332 - RPL_TOPIC
 #define RPL_TOPIC(nick, chan, topic) (":localhost 332 " + nick + " " + chan + " :" + topic + "\r\n")
 // 333 - RPL_ROPICWHOTIME

@@ -28,6 +28,7 @@ void Server::cmdInvite(int sender_fd, const t_data data) {
 
 	// Check if sender is in the channel
 	if (!sender.isInChannel(channelName)) {
+		std::cerr << "user is in channel\n";
 		ft_send(sender_fd, ERR_NOTONCHANNEL(channelName));
 		return;
 	}

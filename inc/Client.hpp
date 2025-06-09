@@ -49,6 +49,7 @@ class Client {
 		std::string getIP() const {return so_.getIpStr();}
 		uint16_t	getPort() const { return so_.getPortNum(); }
 		std::string	getMsgs();
+		std::string getFullId() const; 
 		int	getAuthAttempts() const { return authAttempts_; }
 		void addAuthAttempt() { ++authAttempts_; }
 		std::string	getDelimiter() const { return msgDelimiter_; }
