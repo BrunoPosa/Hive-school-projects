@@ -25,6 +25,7 @@ Server::Server()
 		{"PRIVMSG", [this](int fd, const t_data d) { cmdPrivMsg(fd, d); }},
 		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
 		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
+		{"WHO", [this](int fd, const t_data d) { extraCmdWho(fd, d); }}
 	}
 {
 	ircMsgDelimiter_ = "\r\n";
@@ -48,6 +49,7 @@ Server::Server(Config&& cfg)
 		{"PRIVMSG", [this](int fd, const t_data d) { cmdPrivMsg(fd, d); }},
 		{"INVITE", [this](int fd, const t_data d) { cmdInvite(fd, d); }},
 		{"PART", [this](int fd, const t_data d) { cmdPart(fd, d); }},
+		{"WHO", [this](int fd, const t_data d) { extraCmdWho(fd, d); }}
 	}
 {
 	allowedInactivity_ = cfg_.getAllowedInactivity();
@@ -362,4 +364,12 @@ void Server::ft_send(int fd, const std::string& message) {
 	} catch (std::out_of_range& e) {
 		std::cerr << "clients_ map access at nonexisting key:" << fd << " - " << e.what() << std::endl;
 	}
+}
+
+void	Server::extraCmdWho(int fd, const t_data data) {
+	if (data.fullMsg.length() < 5) {
+		return;
+	}
+cout << "extraCmdWho(): " << data.fullMsg << endl;
+	clients_.at(fd).toSend(RPL_ENDOFWHO(clients_.at(fd).getNick(), data.fullMsg.substr(4)));
 }
