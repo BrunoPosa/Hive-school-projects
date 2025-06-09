@@ -15,21 +15,21 @@ void Server::cmdTopic(int fd, const t_data data) {
     std::cerr << "Raw topic string: " << topic << std::endl;
 
     if (channel.empty()) {
-        ft_send(fd, ERR_NEEDMOREPARAMS(command));
+        ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
         return;
     }
 
     Client &client = clients_[fd];
 
     if (channels_.find(channel) == channels_.end()) {
-        ft_send(fd, ERR_NOSUCHCHANNEL(channel));
+        ft_send(fd, ERR_NOSUCHCHANNEL(client.getNick(), channel));
         return;
     }
 
     Channel &ch = channels_[channel];
 
     if (!client.isInChannel(channel)) {
-        ft_send(fd, ERR_NOTONCHANNEL(channel));
+        ft_send(fd, ERR_NOTONCHANNEL(client.getNick(), channel));
         return;
     }
 
@@ -57,7 +57,7 @@ void Server::cmdTopic(int fd, const t_data data) {
         std::cerr << "gettopicrestricted: " << ch.getTopicRestricted() << std::endl;
         std::cerr << "isoperator: " << ch.isOperator(fd) << std::endl;
         if (ch.getTopicRestricted() && !ch.isOperator(fd)) {
-            ft_send(fd, ERR_CHANOPRIVSNEEDED(channel));
+            ft_send(fd, ERR_CHANOPRIVSNEEDED(client.getNick() ,channel));
             return;
         }
 

@@ -6,7 +6,7 @@ void Server::cmdJoin(int fd, const t_data data) {
 	iss >> command >> channelList >> keyList;
 
 	if (channelList.empty()) {
-		ft_send(fd, ERR_NEEDMOREPARAMS(command));
+		ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
 		return;
 	}
 
@@ -18,7 +18,7 @@ void Server::cmdJoin(int fd, const t_data data) {
 		std::getline(keyStream, key, ','); // will be empty if not enough keys
 
 		if (clients_[fd].isInChannel(channel)) {
-			ft_send(fd, ERR_USERONCHANNEL(channel));
+			ft_send(fd, ERR_USERONCHANNEL(clients_[fd].getNick(),channel));
 			continue;
 		}
 
@@ -35,13 +35,13 @@ void Server::cmdJoin(int fd, const t_data data) {
 
 			if (chanPtr->hasPassword()) {
 				if (key.empty() || key != chanPtr->getPwd()) {
-					ft_send(fd, ERR_BADCHANNELKEY(channel));
+					ft_send(fd, ERR_BADCHANNELKEY(clients_[fd].getNick(), channel));
 					return;
 				}
 			}
 
 			if (chanPtr->hasUserLimit() && chanPtr->getUserCount() >= chanPtr->getUserLimit()) {
-				ft_send(fd, ERR_CHANNELISFULL(channel));
+				ft_send(fd, ERR_CHANNELISFULL(clients_[fd].getNick(),channel));
 				return;
 			}
 		}

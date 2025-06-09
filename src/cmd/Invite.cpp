@@ -3,7 +3,7 @@
 void Server::cmdInvite(int sender_fd, const t_data data) {
 	std::vector<std::string> params = data.cmdParams;
 	if (params.size() < 2) {
-		ft_send(sender_fd, ERR_NEEDMOREPARAMS(params[0]));
+		ft_send(sender_fd, ERR_NEEDMOREPARAMS(clients_[sender_fd].getNick(), params[0]));
 		return;
 	}
 
@@ -16,32 +16,33 @@ void Server::cmdInvite(int sender_fd, const t_data data) {
 		ft_send(sender_fd, ERR_NOSUCHNICK(targetNick));
 		return;
 	}
-
+	
+	Client& sender = clients_[sender_fd];
 	// Check if channel exists
 	if (channels_.find(channelName) == channels_.end()) {
-		ft_send(sender_fd, ERR_NOSUCHCHANNEL(channelName));
+		ft_send(sender_fd, ERR_NOSUCHCHANNEL(sender.getNick(), channelName));
 		return;
 	}
 
 	Channel& channel = channels_[channelName];
-	Client& sender = clients_[sender_fd];
+
 
 	// Check if sender is in the channel
 	if (!sender.isInChannel(channelName)) {
 		std::cerr << "user is in channel\n";
-		ft_send(sender_fd, ERR_NOTONCHANNEL(channelName));
+		ft_send(sender_fd, (channelName));
 		return;
 	}
 
 	// Check if sender is a channel operator (for invite-only channels)
 	if (channel.getInviteOnly() && !channel.isOperator(sender_fd)) {
-		ft_send(sender_fd, ERR_CHANOPRIVSNEEDED(channelName));
+		ft_send(sender_fd, ERR_CHANOPRIVSNEEDED(clients_[sender_fd].getNick(), channelName));
 		return;
 	}
 
 	// Check if target is already on the channel
 	if (clients_[target_fd].isInChannel(channelName)) {
-		ft_send(sender_fd, ERR_USERONCHANNEL(targetNick));
+		ft_send(sender_fd, ERR_USERONCHANNEL(targetNick, channelName));
 		return;
 	}
 

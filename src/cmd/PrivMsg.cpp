@@ -33,7 +33,7 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
     // ---------------------------
     if (target[0] == '#') {
         if (channels_.find(target) == channels_.end()) {
-            ft_send(fd, ERR_NOSUCHCHANNEL(target));
+            ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
             return;
         }
 
@@ -41,13 +41,13 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
 
         // Check invite-only mode
         if (channel.getInviteOnly() && !channel.getIsUserInvited(fd) && !sender.isInChannel(target)) {
-            ft_send(fd, ERR_CANNOTSENDTOCHAN(target));
+            ft_send(fd, ERR_CANNOTSENDTOCHAN(sender.getNick(),target));
             return;
         }
 
         // Check if sender is in channel
         if (!sender.isInChannel(target)) {
-            ft_send(fd, ERR_NOTONCHANNEL(target));
+            ft_send(fd, ERR_NOTONCHANNEL(sender.getNick(),target));
             return;
         }
 

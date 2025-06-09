@@ -17,7 +17,7 @@ void Server::cmdUser(int fd, const t_data data) {
         realname = realname.substr(1);
 
     if (username.empty() || mode.empty() || unused.empty() || realname.empty()) {
-        std::string errMsg = ERR_NEEDMOREPARAMS(command);
+        std::string errMsg = ERR_NEEDMOREPARAMS(clients_[fd].getNick(),command);
         ft_send(fd, errMsg);
         return;
     }

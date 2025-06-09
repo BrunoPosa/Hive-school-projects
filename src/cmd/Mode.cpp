@@ -14,7 +14,7 @@ void Server::handlePositiveMode(int fd, const std::string& command, const std::s
         channel.broadcastToAll(msg);
     } else if (modeStr == "+k") {
         if (param.empty()) {
-            ft_send(fd, ERR_NEEDMOREPARAMS(command));
+            ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(),command));
             return;
         }
         channel.setPassword(param);
@@ -101,7 +101,7 @@ void Server::cmdMode(int fd, const t_data data) {
     std::clog << "Debug: Channel: " << target << ", Mode: " << modeStr << ", Param: " << param << std::endl;
 
     if (target.empty()) {
-        ft_send(fd, ERR_NEEDMOREPARAMS(command));
+        ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
         return;
     }
 
@@ -116,27 +116,28 @@ void Server::cmdMode(int fd, const t_data data) {
         std::clog << "Debug: Ignoring user mode command for now" << std::endl;
         return;
     }
-    
+    Client& sender = clients_[fd];
+
     if (target.empty() || target[0] != '#') {
-    ft_send(fd, ERR_NOSUCHCHANNEL(target));
+    ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
     return;
     }
 
     if (channels_.find(target) == channels_.end()) {
-        ft_send(fd, ERR_NOSUCHCHANNEL(target));
+        ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
         return;
     }
 
     // Check if channel exists
     if (channels_.find(target) == channels_.end()) {
-        ft_send(fd, ERR_NOSUCHCHANNEL(target));
+        ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
         return;
     }
     Channel& channel = channels_[target];
 
     // Check if the client is an operator in the channel
     if (!channel.isOperator(fd)) {
-        ft_send(fd, ERR_CHANOPRIVSNEEDED(target));
+        ft_send(fd, ERR_CHANOPRIVSNEEDED(sender.getNick(),target));
         return;
     }
 

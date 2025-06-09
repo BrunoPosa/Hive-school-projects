@@ -7,7 +7,7 @@ void Server::cmdPart(int fd, const t_data data) {
     std::getline(iss, reason);
 
     if (channelName.empty()) {
-        ft_send(fd, ERR_NEEDMOREPARAMS(command));
+        ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
         return;
     }
 
@@ -23,13 +23,13 @@ void Server::cmdPart(int fd, const t_data data) {
     std::string user = client.getUser();
 
     if (channels_.find(channelName) == channels_.end()) {
-        ft_send(fd, ERR_NOSUCHCHANNEL(channelName));
+        ft_send(fd, ERR_NOSUCHCHANNEL(client.getNick(), channelName));
         return;
     }
 
     Channel& channel = channels_[channelName];
     if (!channel.hasClient(fd)) {
-        ft_send(fd, ERR_NOTONCHANNEL(channelName));
+        ft_send(fd, ERR_NOTONCHANNEL(client.getNick(),channelName));
         return;
     }
 

@@ -39,7 +39,7 @@ void Server::kickUser(int sender_fd, const std::string& channelName, const std::
 void Server::cmdKick(int sender_fd, const t_data data) {
     std::vector<std::string> params{data.cmdParams};
     if (params.size() < 2) {
-        ft_send(sender_fd, ERR_NEEDMOREPARAMS(params[0]));
+        ft_send(sender_fd, ERR_NEEDMOREPARAMS(clients_[sender_fd].getNick() ,params[0]));
         return;
     }
 
@@ -47,14 +47,14 @@ void Server::cmdKick(int sender_fd, const t_data data) {
     const std::string& targetNick = params[1];
 
     if (channels_.find(channelName) == channels_.end()) {
-        ft_send(sender_fd, ERR_NOSUCHCHANNEL(channelName));
+        ft_send(sender_fd, (channelName));
         return;
     }
 
     Channel& channel = channels_[channelName];
 
     if (!channel.isOperator(sender_fd)) {
-        ft_send(sender_fd, ERR_CHANOPRIVSNEEDED(channelName));
+        ft_send(sender_fd, ERR_CHANOPRIVSNEEDED(clients_[sender_fd].getNick(), channelName));
         return;
     }
 
