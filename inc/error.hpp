@@ -8,19 +8,21 @@
 // 001 - RPL_WELCOME
 #define RPL_WELCOME(nick) (":localhost 001 " + nick + " :Welcome to the server\r\n")
 #define WELCOME_MSG(user) (":localhost 001 " + user + " :Welcome to the server\r\n")
+// 315 - RPL_ENDOFWHO
+#define RPL_ENDOFWHO(nick, chan) (":localhost 315 " + nick + " " + chan + " :End of /WHO list\r\n")
 // 331 - RPL_NOTOPIC
 #define RPL_NOTOPIC(nick, chan) (":localhost 332 " + nick + " " + chan + " :No topic is set\r\n")
 // 332 - RPL_TOPIC
 #define RPL_TOPIC(nick, chan, topic) (":localhost 332 " + nick + " " + chan + " :" + topic + "\r\n")
 // 333 - RPL_ROPICWHOTIME
 #define RPL_TOPICWHOTIME(nick, chan, setter, timestamp) \
-    (":localhost 333 " + nick + " " + chan + " " + setter + " " + timestamp + "\r\n")
+	(":localhost 333 " + nick + " " + chan + " " + setter + " " + timestamp + "\r\n")
 // 341 - RPL_INVITING
 #define RPL_INVITING(senderNick, targetNick, channel) (":localhost 341 " + senderNick + " " + targetNick + " " + channel + "\r\n")
 // 324 - RPL_MODESET
 #define RPL_MODESET(chan, mode) (":localhost 324 " + chan + " " + mode + "\r\n")
 #define RPL_CHANNELMODEIS(nick, chan, modes, params) \
-    (":localhost 324 " + nick + " " + chan + " " + modes + params + "\r\n")
+	(":localhost 324 " + nick + " " + chan + " " + modes + params + "\r\n")
 
 // 401 - ERR_NOSUCHNICK
 #define ERR_NOSUCHNICK(nick) (":localhost 401 " + nick + " :No such nick/channel\r\n")
