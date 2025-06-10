@@ -11,13 +11,9 @@ RM			= rm -rf
 
 
 
-HEADERS	=	Base.hpp \
-			A.hpp \
-			B.hpp \
-			C.hpp
+HEADERS	=	StartWithAFewFunctions.hpp
 
 SRCS	=	main.cpp \
-			Base.cpp
 
 
 
