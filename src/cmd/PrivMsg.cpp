@@ -59,12 +59,23 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
     // Private message
     // ---------------------------
     else {
-        int targetFd = getClientFdByNick(target);
-        if (targetFd == -1) {
-            ft_send(fd, ERR_NOSUCHNICK(target));
-            return;
+        std::istringstream targetStream(target);
+        std::set<int> sentFds;
+        std::string nick;
+
+        while (std::getline(targetStream, nick, ',')) {
+            if (nick.empty() || nick[0] == '#')
+                continue; // skip channels or empty entries
+
+            int targetFd = getClientFdByNick(nick);
+            if (targetFd == -1) {
+                ft_send(fd, ERR_NOSUCHNICK(sender.getNick(), nick));
+                continue;
+            }
+
+            if (sentFds.insert(targetFd).second) // true if newly inserted
+                ft_send(targetFd, fullMsg);
         }
-        ft_send(targetFd, fullMsg);
     }
 }
 

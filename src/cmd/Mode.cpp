@@ -24,7 +24,7 @@ void Server::handlePositiveMode(int fd, const std::string& command, const std::s
     } else if (modeStr == "+o") {
         int targetFd = channel.getClientFdByNick(param, clients_);
         if (targetFd == -1) {
-            ft_send(fd, ERR_NOSUCHNICK(param));
+            ft_send(fd, ERR_NOSUCHNICK(param, target));
             return;
         }
         channel.addOperator(targetFd);
@@ -62,7 +62,7 @@ void Server::handleNegativeMode(int fd, const std::string& target,
     } else if (modeStr == "-o") {
         int targetFd = channel.getClientFdByNick(param, clients_);
         if (targetFd == -1) {
-            ft_send(fd, ERR_NOSUCHNICK(param));
+            ft_send(fd, ERR_NOSUCHNICK(param, target));
             return;
         }
         channel.removeOperator(targetFd);

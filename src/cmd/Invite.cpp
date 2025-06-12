@@ -13,7 +13,7 @@ void Server::cmdInvite(int sender_fd, const t_data data) {
 	// Check if target client exists
 	int target_fd = getClientFdByNick(targetNick);
 	if (target_fd == -1) {
-		ft_send(sender_fd, ERR_NOSUCHNICK(targetNick));
+		ft_send(sender_fd, ERR_NOSUCHNICK(targetNick, channelName));
 		return;
 	}
 	
