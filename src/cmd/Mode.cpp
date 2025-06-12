@@ -116,11 +116,6 @@ if (modeStr.empty()) {
     return;
 }
 
-    
-    if (target[0] != '#') {
-        std::clog << "Debug: Ignoring user mode command for now" << std::endl;
-        return;
-    }
     Client& sender = clients_[fd];
 
     if (target.empty() || target[0] != '#') {

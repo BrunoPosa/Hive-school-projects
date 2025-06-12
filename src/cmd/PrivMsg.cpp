@@ -14,7 +14,7 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
     // Read remainder of message
     std::getline(iss, msgPart);
     if (msgPart.empty() || msgPart == " :" || msgPart == ":") {
-        ft_send(fd, ERR_NOTEXTTOSEND);
+        ft_send(fd, ERR_NOTEXTTOSEND(clients_[fd].getNick()));
         return;
     }
 

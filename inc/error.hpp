@@ -36,7 +36,7 @@
 // 411 - ERR_NORECIPIENT
 #define ERR_NORECIPIENT(nick) ":localhost 411 " + nick + " :No recipient given\r\n"
 // 412 - ERR_NOTEXTTOSEND
-#define ERR_NOTEXTTOSEND ":localhost 412 :No text to send\r\n"
+#define ERR_NOTEXTTOSEND(nick) ":localhost 412 " + nick + " :No text to send\r\n"
 // 431 - ERR_NO_NICKNAME
 #define ERR_NO_NICKNAME(nick) (":localhost 431 " + nick + " :No nickname given\r\n")
 // 432 - ERR_ERRONONEOUS_NICKNAME
@@ -68,7 +68,6 @@
 #define ERR_CHANOPRIVSNEEDED(nick, chan) (":localhost 482 " + nick + " " + chan + " :You're not channel operator\r\n")
 // 451 - ERR_NOTREGISTERED
 #define ERR_NOTREGISTERED ":localhost 451 :You have not registered\r\n"
-
 
 //Idk if macros or inline functions are better
 namespace IrcMessages {

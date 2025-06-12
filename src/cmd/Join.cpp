@@ -58,7 +58,6 @@ void Server::cmdJoin(int fd, const t_data data) {
 		clients_[fd].joinChannel(channel, false);
 		chanPtr->addClient(fd);
 
-
 		std::string prefix = ":" + clients_[fd].getNick() + "!" + clients_[fd].getUser() + "@localhost";
 		std::string joinMsg = prefix + " JOIN :" + channel + "\r\n";
 		chanPtr->broadcast(joinMsg, clients_[fd].getNick(), -1);
