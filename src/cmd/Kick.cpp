@@ -24,7 +24,7 @@ void Server::kickUser(int sender_fd, const std::string& channelName, const std::
 
     std::string message = ":" + clients_[sender_fd].getFullId() +
                           " KICK " + channelName + " " + targetNick +
-                          " :" + reason + "\r\n";
+                          " " + reason + "\r\n";
 
     // Send to everyone in the channel, including the one being kicked
     channel.broadcastToAll(message);
@@ -47,9 +47,9 @@ void Server::cmdKick(int sender_fd, const t_data data) {
     const std::string& targetNick = params[1];
 
     if (channels_.find(channelName) == channels_.end()) {
-        ft_send(sender_fd, (channelName));
-        return;
-    }
+		ft_send(sender_fd, ERR_NOSUCHCHANNEL(clients_[sender_fd].getNick(), channelName));
+		return;
+	}
 
     Channel& channel = channels_[channelName];
 
@@ -57,9 +57,8 @@ void Server::cmdKick(int sender_fd, const t_data data) {
         ft_send(sender_fd, ERR_CHANOPRIVSNEEDED(clients_[sender_fd].getNick(), channelName));
         return;
     }
-
     int target_fd = channel.getClientFdByNick(targetNick, clients_);
-    if (target_fd == -1) {
+    if (!clients_[target_fd].isInChannel(channelName)) {
         ft_send(sender_fd, ERR_USERNOTINCHANNEL(targetNick, channelName));
         return;
     }

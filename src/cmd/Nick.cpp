@@ -47,6 +47,12 @@ void Server::cmdNick(int fd, const t_data data) {
         return;
     }
 
+    if (nick.length() > 15) {
+    std::string errorMsg = ERR_ERRONEOUS_NICKNAME(nick);
+    ft_send(fd, errorMsg);
+    return;
+    }
+
     if (!isValidNick(nick)) {
         std::string errorMsg = ERR_ERRONEOUS_NICKNAME(nick);
         ft_send(fd, errorMsg);

@@ -5,6 +5,8 @@
 #include "Channel.hpp"
 #include "Server.hpp"
 
+#define MAX_JOINED_CHANNELS 15
+
 // 001 - RPL_WELCOME
 #define RPL_WELCOME(nick) (":localhost 001 " + nick + " :Welcome to the server\r\n")
 #define WELCOME_MSG(user) (":localhost 001 " + user + " :Welcome to the server\r\n")
@@ -31,6 +33,8 @@
 #define ERR_CANNOTSENDTOCHAN(nick, chan) (":localhost 404 " + nick + " " + chan + " :Cannot send to channel\r\n")
 // 403 - ERR_NOSUCHCHANNEL
 #define ERR_NOSUCHCHANNEL(nick, chan) (":localhost 403 " + nick + " " + chan + " :No such channel\r\n")
+#define ERR_TOOMANYCHANNELS(nick, channel) \
+	(":irc.server 405 " + (nick) + " " + (channel) + " :You have joined too many channels\r\n")
 // 409 - ERR_NO_PING_TARGET
 #define ERR_NOORIGIN ":localhost 409 * :No origin specified\r\n"
 // 411 - ERR_NORECIPIENT
@@ -48,7 +52,7 @@
 // 442 - ERR_NOTONCHANNEL
 #define ERR_NOTONCHANNEL(nick, chan) (":localhost 442 " + nick + " " + chan + " :You're not on that channel\r\n")
 // 443 - ERR_USERONCHANNEL
-#define ERR_USERONCHANNEL(nick, chan) (":localhost 443 " + nick + " " + chan + " :You are already on that channel\r\n")
+#define ERR_USERONCHANNEL(nick, chan) (":localhost 443 " + nick + " " + chan + " :" + nick + " is already on that channel\r\n")
 // 461 - ERR_NEEDMOREPARAMS / ERR_NOT_ENOUGH_PARAMS
 #define ERR_NEEDMOREPARAMS(nick, cmd) (":localhost 461 " + nick + " " + cmd + " :Not enough parameters\r\n")
 #define ERR_NOT_ENOUGH_PARAMS ":localhost 461 USER :Not enough parameters\r\n"

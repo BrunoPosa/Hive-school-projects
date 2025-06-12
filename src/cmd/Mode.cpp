@@ -3,6 +3,7 @@
 void Server::handlePositiveMode(int fd, const std::string& command, const std::string& target,
                                 const std::string& modeStr, const std::string& param, Channel& channel) {
     if (modeStr == "+i") {
+        std::cerr << "target: " << target << std::endl;
         channel.setInviteOnly(true);
         std::string fullId = clients_[fd].getFullId(); // nick!user@host
         std::string msg = ":" + fullId + " MODE " + target + " +i\r\n";
@@ -35,7 +36,7 @@ void Server::handlePositiveMode(int fd, const std::string& command, const std::s
         int limit = std::stoi(param);
         channel.setUserLimit(limit);
         std::string fullId = clients_[fd].getFullId(); // nick!user@host
-        std::string msg = ":" + fullId + " MODE " + target + param + " +l\r\n";
+        std::string msg = ":" + fullId + " MODE " + target + " +l\r\n";
         channel.broadcastToAll(msg);
     } else {
         ft_send(fd, ERR_UNKNOWNMODE(clients_[fd].getNick() ,modeStr));
@@ -105,20 +106,24 @@ void Server::cmdMode(int fd, const t_data data) {
         return;
     }
 
-if (modeStr.empty()) {
-    Channel& channel = channels_[target];
-    std::string currentModes = channel.getModeString(); // e.g., "+nt"
-    std::string nick = clients_[fd].getNick();          // The user's nick
+    if (modeStr.empty()) {
+        Channel& channel = channels_[target];
+        std::string currentModes = channel.getModeString(); // e.g., "+nt"
+        std::string nick = clients_[fd].getNick();          // The user's nick
 
-    // Send RPL_CHANNELMODEIS (324)
-    ft_send(fd, RPL_CHANNELMODEIS(clients_[fd].getNick(), target, currentModes, param));
+        // Send RPL_CHANNELMODEIS (324)
+        ft_send(fd, RPL_CHANNELMODEIS(clients_[fd].getNick(), target, currentModes, param));
 
-    return;
-}
+        return;
+    }
 
     Client& sender = clients_[fd];
 
     if (target.empty() || target[0] != '#') {
+    std::cerr << "nick: " << clients_[fd].getNick() << std::endl;
+    std::cerr << "targ: " << target << std::endl;
+        if (clients_[fd].getNick() == target)
+            return; 
     ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
     return;
     }

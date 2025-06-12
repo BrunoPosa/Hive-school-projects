@@ -218,11 +218,13 @@ void Client::joinChannel(const std::string &channel, bool is_operator)
 		joinedChannels[channel] = false;
 		std::cerr << "not operator" << std::endl;
 	}
+	channelCount_++;
 }
 
 void Client::leaveChannel(const std::string &channel)
 {
 	joinedChannels.erase(channel);
+	channelCount_--;
 }
 bool Client::isOperator(const std::string &channel)
 {

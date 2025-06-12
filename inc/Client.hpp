@@ -29,6 +29,7 @@ class Client {
 		bool modeReceived;
 		bool whois; // Whois status
 		int	authAttempts_;
+		int channelCount_ = 1;
 		std::chrono::steady_clock::time_point	lastActive_;
 		
 	public:
@@ -52,6 +53,7 @@ class Client {
 		std::string	getMsgs();
 		std::string getFullId() const; 
 		int	getAuthAttempts() const { return authAttempts_; }
+		int getChannelCount () const { return channelCount_; }
 		void addAuthAttempt() { ++authAttempts_; }
 		std::string	getDelimiter() const { return msgDelimiter_; }
 

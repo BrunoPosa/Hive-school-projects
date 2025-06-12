@@ -17,6 +17,11 @@ void Server::cmdJoin(int fd, const t_data data) {
 	while (std::getline(chStream, channel, ',')) {
 		std::getline(keyStream, key, ','); // will be empty if not enough keys
 
+		if (clients_[fd].getChannelCount() >= MAX_JOINED_CHANNELS) {
+			ft_send(fd, ERR_TOOMANYCHANNELS(clients_[fd].getNick(), channel));
+			continue;
+		}
+
 		if (clients_[fd].isInChannel(channel)) {
 			ft_send(fd, ERR_USERONCHANNEL(clients_[fd].getNick(),channel));
 			continue;
