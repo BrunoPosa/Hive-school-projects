@@ -121,13 +121,13 @@ bool	Client::send() {
 			return false;
 		}
 	} else if (sent == 0) {
-		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; // should we print this?
+		std::cout << "Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl;
 		return false;
 	}
 	sendBuf_.erase(0, sent);
 
 	if (sendBuf_.empty()) {
-		assert(pfd_);
+	assert(pfd_);
 		pfd_->events &= ~POLLOUT;
 	}
 
@@ -152,7 +152,7 @@ bool	Client::receive() {
 			return false;
 		}
 	} else if (bytesRead == 0) {
-		std::cout << "receive() Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl; /// should we print this?
+		std::cout << "receive() Client disconnected: " << so_.getIpStr() << " (FD: " << so_.getFd() << ")" << std::endl;
 		return false;
 	}
 
@@ -163,7 +163,7 @@ bool	Client::receive() {
 		return true;
 	}
 	if (msgDelimiter_ == "\n") {
-		std::cout << " we recieve into RecvBuf_" << buffer << std::endl;//for demonstrating command concatenation using netcat
+		std::cout << " we recieve into RecvBuf:" << buffer << std::endl;//for demonstrating command concatenation using netcat
 	}
 	try {
 		recvBuf_.append(buffer, bytesRead);

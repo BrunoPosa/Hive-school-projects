@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <chrono>
+#include <cassert>
 #include "Socket.hpp"
 
 #define IRC_BUFFER_SIZE 512

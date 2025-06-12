@@ -72,9 +72,9 @@ class Channel
         void setTopic(const std::string& newTopic);
         void setTopicSetter(const std::string& setter_nick); // Set the nickname of the user who set the topic
         void setTopicSetTime(const std::chrono::system_clock::time_point& time); // Set the time when the topic was set
-        void addClient(int fd); // Add a client to the channel
-        void removeClient(int fd); // Remove a client from the channel
-        void broadcast(const std::string& message, const std::string& sender_nick, int except_fd); // Send a message to all clients in the channel except the sender
-        bool    isEmpty() const { return (chClients_.empty()); };
+        void addClient(int fd);
+        void removeClient(int fd);
+        void broadcast(const std::string& message, const std::string& sender_nick, int except_fd);
+        bool isEmpty() const { return (chClients_.empty()); };
         void broadcastToAll(const std::string& message); // Send a message to all clients in the channel including the sender
 };

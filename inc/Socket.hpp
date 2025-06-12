@@ -4,15 +4,11 @@
 #include <unistd.h>
 #include <cstring>
 #include <string>
-#include <string_view>
 #include <iostream>
 #include <arpa/inet.h> //inet_ntop
 #include <netinet/in.h>
 #include <system_error>
 #include <sys/socket.h> //SOMAXCONN, listen()
-#include <cassert>
-#include <utility>//std::exchange
-#include <netdb.h> //resolving host
 
 /**
  * @brief RAII wrapper for a non‑blocking TCP/IPv4 socket.

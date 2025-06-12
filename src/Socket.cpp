@@ -36,11 +36,13 @@ Socket&	Socket::operator=(Socket&& other) noexcept {
 				cerr << "Failed to close fd " << fd_ << ": " << std::strerror(errno) << endl;
 			}
 		}
-		fd_ = std::exchange(other.fd_, -1);
-		addr_ = std::move(other.addr_);
-		isListening_ = std::exchange(other.isListening_, false);
+		fd_ = other.fd_;
+		addr_ = other.addr_;
+		isListening_ = other.isListening_;
 
+		other.fd_ = -1;
 		other.addr_ = {};
+		other.isListening_ = false;
 	}
 	return *this;
 }
