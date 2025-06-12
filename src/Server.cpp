@@ -256,7 +256,7 @@ bool	Server::handleMsgs(int fromFd) {
 		} else {
 			while ((pos = msgs.find(ircMsgDelimiter_)) != std::string::npos) {
 				line = msgs.substr(0, pos);
-				if (line.find("QUIT") == 0) {
+				if (line.find("QUIT") == 0 || line.find("quit") == 0 ) {
 					return false;
 				}
 				dispatchCommand(fromFd, line);

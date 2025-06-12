@@ -10,11 +10,15 @@ void Server::dispatchCommand(int fd, const std::string& message)
 	if (iss) {
 		iss >> command;
 	}
-	// if (iss.fail()) {
+	if (iss.bad()) {
+		iss.clear();
+		return;
+	}
+	for (size_t i = 0; i < command.length(); ++i) {
+		command[i] = std::toupper(command[i]);
+	}
 
-	// }
-
-	auto it = cmds_.find(command);//what does in case of QUIT iss reutrn if there is no vector words after 'quit'?
+	auto it = cmds_.find(command);
 	if (it != cmds_.end()) {
 		it->second(fd, t_data{message, tokenize(iss)});
 	} else {
