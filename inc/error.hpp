@@ -34,7 +34,7 @@
 // 409 - ERR_NO_PING_TARGET
 #define ERR_NOORIGIN ":localhost 409 * :No origin specified\r\n"
 // 411 - ERR_NORECIPIENT
-#define ERR_NORECIPIENT ":localhost 411 :No recipient given\r\n"
+#define ERR_NORECIPIENT(nick) ":localhost 411 " + nick + " :No recipient given\r\n"
 // 412 - ERR_NOTEXTTOSEND
 #define ERR_NOTEXTTOSEND ":localhost 412 :No text to send\r\n"
 // 431 - ERR_NO_NICKNAME

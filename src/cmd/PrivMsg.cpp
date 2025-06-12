@@ -7,7 +7,7 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
 
     // Check missing target
     if (target.empty()) {
-        ft_send(fd, ERR_NORECIPIENT);
+        ft_send(fd, ERR_NORECIPIENT(clients_[fd].getNick()));
         return;
     }
 

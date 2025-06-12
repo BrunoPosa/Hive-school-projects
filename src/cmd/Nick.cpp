@@ -93,7 +93,6 @@ void Server::cmdNick(int fd, const t_data data) {
     }
 
     if (clients_[fd].hasReceivedUser() && clients_[fd].isAuthenticated()) {
-        std::string welcomeMsg = RPL_WELCOME(nick);
-        ft_send(fd, welcomeMsg);
+        ft_send(fd, RPL_WELCOME(nick));
     }
 }
