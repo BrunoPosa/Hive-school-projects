@@ -280,7 +280,7 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 	while ((pos = messages.find(ircMsgDelimiter_)) != std::string::npos) {
 		msg = messages.substr(0, pos);
 
-		if (msg.find("PASS ") == 0) {
+		if (msg.find("PASS ") == 0 || msg.find("pass ") == 0) {
 			msg.erase(0, 5);
 			if (ircMsgDelimiter_ == "\n") {
 				if (msg.at(msg.length() - 1) == '\r') { msg.pop_back(); }//for testing cmd concatination via netcat while allowing irssi "\r\n"
@@ -292,11 +292,11 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 				newClient.toSend(IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick()));
 				newClient.toSend(IrcMessages::askPass(newClient.getNick()));
 			}
-		} else if (msg.find("NICK ") == 0) {
+		} else if (msg.find("NICK ") == 0 || msg.find("nick ") == 0) {
 			cmdNick(fromFd, {msg, {}});
-		} else if (msg.find("USER ") == 0) {
+		} else if (msg.find("USER ") == 0 || msg.find("user ") == 0) {
 			cmdUser(fromFd, {msg, {}});
-		} else if (msg.find("QUIT") == 0) {
+		} else if (msg.find("QUIT") == 0 || msg.find("quit") == 0) {
 			return false;
 		}
 		messages.erase(0, pos + ircMsgDelimiter_.length());

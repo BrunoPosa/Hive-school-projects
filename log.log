@@ -1,0 +1,39 @@
+<< CAP LS
+<< PASS 4242
+<< NICK bposa
+<< USER bposa bposa localhost :Bruno Posa
+>> :unknown NICK :bposa
+>> :localhost 001 bposa :Welcome to the ft_irc, WB edition ® Internet Relay Network
+<< MODE bposa +i
+>> :localhost 002 bposa :Your host is localhost
+>> :localhost 003 bposa :This server was created today
+>> :localhost 004 bposa :localhost 1.0
+>> :localhost 403 bposa bposa :No such channel
+<< JOIN #me
+>> :bposa!~bposa@localhost JOIN :#me
+>> :localhost 353 bposa = #me :@bposa 
+>> :localhost 366 bposa #me :End of /NAMES list.
+<< MODE #me
+>> :localhost 332 bposa #me :No topic is set
+>> :localhost 324 bposa #me +t
+--> chanquery mode
+<< WHO #me
+>> :localhost 315 bposa #me :End of /WHO list
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> FAILED who: chanquery abort
+<< WHO #me
+--> lag pong
+>> :localhost 315 bposa #me :End of /WHO list
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> FAILED who: chanquery abort
+<< MODE #me b
+--> lag pong
+>> :localhost 472 bposa b :is unknown mode char to me
