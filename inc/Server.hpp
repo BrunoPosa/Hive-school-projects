@@ -55,7 +55,6 @@ typedef struct cmdFunctionParameters {
 #define YELLOWIRC "\033[33m"
 #define GREENIRC "\033[1;32m"
 #define RESETIRC "\033[0m"
-
 #define MAX_CLIENTS 999
 
 // #define IRC_ON_SHUTDOWN_PRINT
@@ -85,7 +84,6 @@ private:
 	bool	handleMsgs(int fromFd);
 	bool	processAuth(int fromFd, std::string msg);
 	void	dispatchCommand(int fd, const std::string& message);
-
 	std::vector<std::string>	tokenize(std::istringstream& cmdParams);
 	void		ft_send(int fd, const std::string& message);
 
@@ -96,11 +94,11 @@ private:
 	void cmdPing(int fd, const t_data& data);
 	void cmdTopic(int fd, const t_data data);
 	void cmdMode(int fd, const t_data data);
-	void cmdKick(int sender_fd, t_data data);
-	void cmdInvite(int sender_fd, t_data data);
+	void cmdKick(int fd, t_data data);
+	void cmdInvite(int fd, t_data data);
 	void cmdPart(int fd, const t_data data);
-
 	void extraCmdWho(int fd, const t_data data);
+
 	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
 	void handlePositiveMode(int fd, const std::string& command, const std::string& target,
                                 const std::string& modeStr, const std::string& param, Channel& channel);

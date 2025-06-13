@@ -5,7 +5,6 @@ void Server::dispatchCommand(int fd, const std::string& message)
 {
 	std::cout << "dispatchCmd() message: " << message << std::endl;
 	std::istringstream iss(message);
-
 	std::string command;
 	if (iss) {
 		iss >> command;
@@ -17,7 +16,6 @@ void Server::dispatchCommand(int fd, const std::string& message)
 	for (size_t i = 0; i < command.length(); ++i) {
 		command[i] = std::toupper(command[i]);
 	}
-
 	auto it = cmds_.find(command);
 	if (it != cmds_.end()) {
 		it->second(fd, t_data{message, tokenize(iss)});

@@ -1,106 +1,43 @@
 #include "../../inc/Server.hpp"
 
-// void Server::cmdPart(int fd, const t_data data) {
-//     std::istringstream iss(data.fullMsg);
-//     std::string command, channelName, reason;
-//     iss >> command >> channelName;
-//     std::getline(iss, reason);
-
-//     if (channelName.empty()) {
-//         ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
-//         return;
-//     }
-
-//     if (reason.empty())
-//         reason = "leaving";
-//     else if (reason[0] == ' ')
-//         reason = reason.substr(1);
-//     if (reason[0] == ':')
-//         reason = reason.substr(1);
-
-//     Client& client = clients_[fd];
-//     std::string nick = client.getNick();
-//     std::string user = client.getUser();
-
-//     if (channels_.find(channelName) == channels_.end()) {
-//         ft_send(fd, ERR_NOSUCHCHANNEL(client.getNick(), channelName));
-//         return;
-//     }
-
-//     Channel& channel = channels_[channelName];
-//     if (!channel.hasClient(fd)) {
-//         ft_send(fd, ERR_NOTONCHANNEL(client.getNick(),channelName));
-//         return;
-//     }
-
-//     // Send PART message before removing
-//     std::string prefix = ":" + nick + "!" + user + "@localhost";
-//     std::string partMsg = prefix + " PART " + channelName + " :" + reason + "\r\n";
-//     std::cerr << "Sending PART message: " << partMsg << std::endl;
-//     channel.broadcastToAll(partMsg);
-
-//     // Clean up
-//     channel.removeClient(fd);
-//     client.leaveChannel(channelName);
-//     if (channel.getUserCount() == 0) {
-//         channels_.erase(channelName); // Remove the channel if no clients left
-//         std::cerr << "Channel " << channelName << " removed as it is empty." << std::endl;
-//     } else {
-//         // If the client was an operator, remove operator status
-//         if (channel.isOperator(fd)) {
-//             channel.removeOperator(fd);
-//             std::cerr << "Removed operator status for FD: " << fd << " in channel: " << channelName << std::endl;
-//         }
-//     }
-// }
-
 void Server::cmdPart(int fd, const t_data data) {
 	std::istringstream iss(data.fullMsg);
 	std::string command, channelList, reason;
 	iss >> command >> channelList;
 	std::getline(iss, reason);
-
 	if (channelList.empty()) {
 		ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
 		return;
 	}
-
     // Trim leading whitespace
     size_t start = reason.find_first_not_of(' ');
     if (start != std::string::npos)
         reason = reason.substr(start);
-    std::cerr << "reason:" << reason << std::endl;
     // Remove optional leading colon
     if (!reason.empty() && reason[0] == ':')
         reason = reason.substr(1);
-
     if (reason.empty()){
         reason = "leaving";
     }
 	Client& client = clients_[fd];
 	std::string nick = client.getNick();
 	std::string user = client.getUser();
-
 	std::istringstream chStream(channelList);
 	std::string channelName;
-
 	while (std::getline(chStream, channelName, ',')) {
 		if (channels_.find(channelName) == channels_.end()) {
 			ft_send(fd, ERR_NOSUCHCHANNEL(client.getNick(), channelName));
 			continue;
 		}
-
 		Channel& channel = channels_[channelName];
 		if (!channel.hasClient(fd)) {
 			ft_send(fd, ERR_NOTONCHANNEL(client.getNick(), channelName));
 			continue;
 		}
-
 		// Send PART message before removing
 		std::string prefix = ":" + nick + "!" + user + "@localhost";
 		std::string partMsg = prefix + " PART " + channelName + " :" + reason + "\r\n";
 		channel.broadcastToAll(partMsg);
-
 		// Clean up
 		channel.removeClient(fd);
 		client.leaveChannel(channelName);

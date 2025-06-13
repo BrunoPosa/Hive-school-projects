@@ -90,7 +90,6 @@ void Server::handleNegativeMode(int fd, const std::string& target,
 
 std::string Channel::getModeString() const {
     std::string mode = "+";
-
     if (getInviteOnly())
         mode += "i";
     if (getTopicRestricted())
@@ -99,7 +98,6 @@ std::string Channel::getModeString() const {
         mode += "k";
     if (hasUserLimit())
         mode += "l";
-
     return (mode == "+" ? "" : mode);
 }
 
@@ -107,26 +105,20 @@ void Server::cmdMode(int fd, const t_data data) {
     std::istringstream iss(data.fullMsg);
     std::string command, target, modeStr, param;
     iss >> command >> target >> modeStr >> param;
-    std::clog << "Debug: Channel: " << target << ", Mode: " << modeStr << ", Param: " << param << std::endl;
-
     if (target.empty()) {
         ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
         return;
     }
-
     if (modeStr.empty()) {
         Channel& channel = channels_[target];
         std::string currentModes = channel.getModeString(); // e.g., "+nt"
         std::string nick = clients_[fd].getNick();          // The user's nick
-
         // Send RPL_CHANNELMODEIS (324)
         ft_send(fd, RPL_CHANNELMODEIS(clients_[fd].getNick(), target, currentModes, param));
 
         return;
     }
-
     Client& sender = clients_[fd];
-
     if (target.empty() || target[0] != '#') {
     std::cerr << "nick: " << clients_[fd].getNick() << std::endl;
     std::cerr << "targ: " << target << std::endl;
@@ -135,25 +127,21 @@ void Server::cmdMode(int fd, const t_data data) {
     ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
     return;
     }
-
     if (channels_.find(target) == channels_.end()) {
         ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
         return;
     }
-
     // Check if channel exists
     if (channels_.find(target) == channels_.end()) {
         ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
         return;
     }
     Channel& channel = channels_[target];
-
     // Check if the client is an operator in the channel
     if (!channel.isOperator(fd)) {
         ft_send(fd, ERR_CHANOPRIVSNEEDED(sender.getNick(),target));
         return;
     }
-
     if (modeStr[0] == '+') {
         handlePositiveMode(fd, command, target, modeStr, param, channel);
     } else if (modeStr[0] == '-') {

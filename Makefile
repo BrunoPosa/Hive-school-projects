@@ -24,7 +24,6 @@ SRCS	=	$(SRCDIR)main.cpp \
 			$(SRCDIR)Socket.cpp \
 			$(SRCDIR)Channel.cpp \
 			$(SRCDIR)Client.cpp \
-			$(SRCDIR)Error.cpp \
 			$(SRCDIR)ProcessCmd.cpp \
 			$(SRCDIR)Server.cpp \
 			$(SRCDIR)cmd/Join.cpp \

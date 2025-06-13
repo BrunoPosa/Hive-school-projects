@@ -4,7 +4,6 @@
 #include "Client.hpp"
 #include "Channel.hpp"
 #include "Server.hpp"
-
 #define MAX_JOINED_CHANNELS 15
 
 // 001 - RPL_WELCOME

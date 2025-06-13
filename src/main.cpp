@@ -9,7 +9,6 @@ namespace {
 		}
 	}
 }
-
 int main(int argc, char* argv[])
 {
 	if (signal(SIGTERM, sigShutdown) == SIG_ERR
@@ -20,12 +19,10 @@ int main(int argc, char* argv[])
 		std::cerr << "signal() setup failed" << std::endl;
 		return 1;
 	}
-
 	if (argc != 3) {
 		std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
 		return 2;
 	}
-
 	try {
 		Config	config(argv[1], argv[2]);
 		Server	server(std::move(config));//config unreachable after this
