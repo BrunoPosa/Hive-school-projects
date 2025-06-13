@@ -3,9 +3,7 @@
 # define CONFIG_HPP
 
 #include <string>
-#include <system_error>
 #include <utility>//std::exchange
-#include <cctype>//std::isalnum
 #include <chrono>
 
 class Config {

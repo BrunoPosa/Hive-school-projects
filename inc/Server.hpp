@@ -18,7 +18,6 @@
 #include <poll.h>
 #include <cerrno>
 #include <limits.h>//hostnamemax
-#include <netdb.h>//gethostname
 
 // Standard Template Library
 #include <iostream>
