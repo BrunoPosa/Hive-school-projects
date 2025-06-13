@@ -2,13 +2,14 @@
 # define SOCKET_HPP
 
 #include <unistd.h>
-#include <cstring>
 #include <string>
+#include <cstring>//strerror
 #include <iostream>
+#include <limits.h>//hostnamemax
+#include <fcntl.h>
 #include <arpa/inet.h> //inet_ntop
-#include <netinet/in.h>
-#include <system_error>
-#include <sys/socket.h> //SOMAXCONN, listen()
+#include <netinet/in.h>//sockaddr_in
+#include <sys/socket.h> //SOMAXCONN, listen()...
 
 /**
  * @brief RAII wrapper for a non‑blocking TCP/IPv4 socket.

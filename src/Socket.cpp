@@ -1,6 +1,6 @@
 
 #include "../inc/Socket.hpp"
-#include "../inc/Server.hpp"
+// #include "../inc/Server.hpp"
 
 using std::string;
 using std::cerr;
@@ -17,7 +17,7 @@ Socket::Socket()
 Socket::Socket(int fd, sockaddr_in addr)
 :	fd_{fd}, addr_{addr}, host_{"hellokitty"}, isListening_{false} {
 	if (fd_ < 0) {
-		throw std::system_error(errno, std::generic_category(), "socket(fd, addr) must have positive fd");
+		throw std::runtime_error("Socket(fd, addr) must have positive fd");
 	}
 }
 
@@ -58,17 +58,17 @@ Socket::~Socket() noexcept {
 
 void	Socket::initListener(uint16_t port) {
 	if (port < 1024) {
-		throw std::logic_error("Listener port must be valid and not between 1-1023");
+		throw std::runtime_error("Listener port must be valid and not between 1-1023");
 	}
 
 	fd_ = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
 	if (fd_ < 0) {
-		throw std::system_error(errno, std::generic_category(), "socket() failed");
+		throw std::runtime_error("::socket() failed");
 	}
 
 	int opt = 1;
 	if (::setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-		throw std::system_error(errno, std::generic_category(), "setsockopt(SO_REUSEADDR) failed");
+		throw std::runtime_error("::setsockopt(SO_REUSEADDR) failed");
 	}
 
 	addr_ = {};
@@ -77,10 +77,10 @@ void	Socket::initListener(uint16_t port) {
 	addr_.sin_port = htons(port);
 	
 	if (::bind(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) < 0) {
-		throw std::system_error(errno, std::generic_category(), "bind() failed");
+		throw std::runtime_error("::bind() failed");
 	}
 	if (::listen(fd_, SOMAXCONN) < 0) {
-		throw std::system_error(errno, std::generic_category(), "listen() failed");
+		throw std::runtime_error("::listen() failed");
 	}
 	isListening_ = true;
 }
@@ -111,7 +111,7 @@ std::string Socket::resolveHost() {
 		perror("gethostname");
 		return "none";
 	}
-	return std::string(hostname);
+	return hostname;
 }
 
 bool	Socket::setNonBlocking(int fd) const {
