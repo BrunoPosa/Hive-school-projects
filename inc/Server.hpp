@@ -66,7 +66,6 @@ private:
 	int			listenSoFd_;
 	std::string	ip_;
 	std::string	host_;
-	std::string	ircMsgDelimiter_;
 	bool		accepting_;
 	volatile sig_atomic_t	running_;
 	std::chrono::seconds	allowedInactivity_;

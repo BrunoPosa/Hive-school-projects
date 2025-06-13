@@ -11,7 +11,7 @@ Client::Client()
 	pfd_{nullptr},
 	nick_{"unknown"},
 	hostnm_{},
-	msgDelimiter_{},
+	delimiter_{"\n"},
 	authenticated{false},
 	nickReceived{false},
 	userReceived{false},
@@ -25,12 +25,12 @@ Client::Client()
 	recvBuf_.reserve(IRC_MAX_BUF);
 }
 
-Client::Client(Socket&& so, pollfd *pfd, std::string delimiter, std::string hostname)  // Parameterized constructor
+Client::Client(Socket&& so, pollfd *pfd, std::string hostname)
 :	so_{std::move(so)},
 	pfd_{pfd},
 	nick_{"unknown"},
 	hostnm_{hostname},
-	msgDelimiter_{delimiter},
+	delimiter_{"\n"},
 	authenticated{false},
 	nickReceived{false},
 	userReceived{false},
@@ -52,7 +52,7 @@ Client::Client(Client&& other) noexcept
 		nick_{std::move(other.nick_)},
 		usrnm_{std::move(other.usrnm_)},
 		hostnm_{std::move(other.usrnm_)},
-		msgDelimiter_{std::move(other.msgDelimiter_)},
+		delimiter_{std::move(other.delimiter_)},
 		joinedChannels{std::move(other.joinedChannels)},
 		authenticated{std::exchange(other.authenticated, false)},
 		nickReceived{std::exchange(other.nickReceived, false)},
@@ -73,7 +73,7 @@ Client&	Client::operator=(Client&& other) noexcept {
 		nick_ = std::move(other.nick_);
 		usrnm_ = std::move(other.usrnm_);
 		hostnm_ = std::move(other.hostnm_);
-		msgDelimiter_ = std::move(other.msgDelimiter_);
+		delimiter_ = std::move(other.delimiter_);
 		joinedChannels = std::move(other.joinedChannels);
 		authenticated = std::exchange(other.authenticated, false);
 		nickReceived = std::exchange(other.nickReceived, false);
@@ -162,13 +162,10 @@ bool	Client::receive() {
 		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
 		return true;
 	}
-	if (msgDelimiter_ == "\n") {
-		std::cout << " we recieve into RecvBuf:" << buffer << std::endl;//for demonstrating command concatenation using netcat
-	}
-	try {
-		recvBuf_.append(buffer, bytesRead);
-	} catch (std::exception& e) {
-		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
+
+	recvBuf_.append(buffer, bytesRead);
+	if (authenticated == false && authAttempts_ <= (int)std::string("CAP LS\r\n").length()) {
+		resolveDelimiter();
 	}
 
 	lastActive_ = std::chrono::steady_clock::now();
@@ -178,11 +175,11 @@ bool	Client::receive() {
 
 std::string	Client::getMsgs() {
 	try {
-		size_t	pos = recvBuf_.rfind(msgDelimiter_);
+		size_t	pos = recvBuf_.rfind(delimiter_);
 		std::string	completeMsgs;
 		if (pos != std::string::npos) {
-			completeMsgs = recvBuf_.substr(0, pos + msgDelimiter_.length());
-			recvBuf_.erase(0, pos + msgDelimiter_.length());
+			completeMsgs = recvBuf_.substr(0, pos + delimiter_.length());
+			recvBuf_.erase(0, pos + delimiter_.length());
 		}
 		return completeMsgs;
 
@@ -190,6 +187,22 @@ std::string	Client::getMsgs() {
 		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
 	}
 	return "";
+}
+
+void	Client::resolveDelimiter() {
+	size_t	posCr = recvBuf_.find('\r');
+	size_t	posNl = recvBuf_.find('\n');
+cout << "setting delimiter... (strlen of mystring:" << std::string("CAP LS\r\n").length() << " and strlen of buf:" << recvBuf_.length() << endl;
+	if (posCr == std::string::npos && posNl == std::string::npos) {
+		return;
+	} else if (posCr != std::string::npos && posNl != std::string::npos
+				&& posNl > posCr && posNl - posCr == 1) {
+		delimiter_ = "\r\n";
+		cout << "delimiter set to: \\r\\n" << endl;
+	} else {
+		delimiter_ = "\n";
+		cout << "delimiter set to \\n" << endl;
+	}
 }
 
 bool Client::isInChannel(const std::string &channel)

@@ -28,7 +28,6 @@ Server::Server()
 		{"WHO", [this](int fd, const t_data d) { extraCmdWho(fd, d); }}
 	}
 {
-	ircMsgDelimiter_ = "\r\n";
 	pollFds_.reserve(MAX_CLIENTS);
 }
 
@@ -53,7 +52,6 @@ Server::Server(Config&& cfg)
 	}
 {
 	allowedInactivity_ = cfg_.getAllowedInactivity();
-	ircMsgDelimiter_ = cfg_.getMsgDelimiter();
 	pollFds_.reserve(MAX_CLIENTS);
 }
 
@@ -63,7 +61,6 @@ Server::Server(Server&& other)
 	listenSoFd_{std::exchange(other.listenSoFd_, -1)},
 	ip_(std::move(other.ip_)),
 	host_(std::move(other.host_)),
-	ircMsgDelimiter_{std::move(other.ircMsgDelimiter_)},
 	accepting_{false},
 	running_{false},
 	allowedInactivity_{other.allowedInactivity_},
@@ -194,7 +191,7 @@ void Server::addClient(Socket& sock) {
 		return;
 	}
 	try {
-		clients_.emplace(fd, Client(std::move(sock), &pollFds_.back(), ircMsgDelimiter_, host_));
+		clients_.emplace(fd, Client(std::move(sock), &pollFds_.back(), host_));
 	} catch (std::exception& e) {
 		std::cerr << "addClient to map (fd: " << fd << ") failed: " << e.what() << std::endl;
 		rmClient(fd);
@@ -247,20 +244,22 @@ bool	Server::handleMsgs(int fromFd) {
 	try {
 		size_t pos = 0;
 		std::string line;
-		std::string	msgs = clients_.at(fromFd).getMsgs();
+		Client&	client = clients_.at(fromFd);
+		std::string	delimiter(client.getDelimiter());
+		std::string	msgs = client.getMsgs();
 
-		if (clients_.at(fromFd).isAuthenticated() == false) {
-			if (msgs.find(ircMsgDelimiter_) != std::string::npos) {
+		if (client.isAuthenticated() == false) {
+			if (msgs.find('\n') != std::string::npos) {
 				return processAuth(fromFd, msgs);
 			}
 		} else {
-			while ((pos = msgs.find(ircMsgDelimiter_)) != std::string::npos) {
+			while ((pos = msgs.find(delimiter)) != std::string::npos) {
 				line = msgs.substr(0, pos);
 				if (line.find("QUIT") == 0 || line.find("quit") == 0 ) {
 					return false;
 				}
 				dispatchCommand(fromFd, line);
-				msgs.erase(0, pos + ircMsgDelimiter_.length());
+				msgs.erase(0, pos + delimiter.length());
 			}
 		}
 	} catch (std::exception& e) {
@@ -274,23 +273,20 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 	size_t pos = 0;
 	std::string msg;
 	Client& newClient = clients_.at(fromFd);
+	std::string	delimiter(newClient.getDelimiter());
+	std::string	response;
 	newClient.addAuthAttempt();
 	int attemptsLeft = cfg_.getMaxAuthAttempts() - newClient.getAuthAttempts();
 
-	while ((pos = messages.find(ircMsgDelimiter_)) != std::string::npos) {
+	while ((pos = messages.find(delimiter)) != std::string::npos) {
 		msg = messages.substr(0, pos);
 
 		if (msg.find("PASS ") == 0 || msg.find("pass ") == 0) {
 			msg.erase(0, 5);
-			if (ircMsgDelimiter_ == "\n") {
-				if (msg.at(msg.length() - 1) == '\r') { msg.pop_back(); }//for testing cmd concatination via netcat while allowing irssi "\r\n"
-			}
 			if (cfg_.CheckPassword(msg) == true) {
 				newClient.setPassReceived();
 			} else {
-				newClient.toSend(IrcMessages::wrongPass());
-				newClient.toSend(IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick()));
-				newClient.toSend(IrcMessages::askPass(newClient.getNick()));
+				response += IrcMessages::wrongPass();
 			}
 		} else if (msg.find("NICK ") == 0 || msg.find("nick ") == 0) {
 			cmdNick(fromFd, {msg, {}});
@@ -299,16 +295,18 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 		} else if (msg.find("QUIT") == 0 || msg.find("quit") == 0) {
 			return false;
 		}
-		messages.erase(0, pos + ircMsgDelimiter_.length());
+		messages.erase(0, pos + delimiter.length());
 	}
 
 	if (newClient.hasReceivedPass() && newClient.hasReceivedNick() && newClient.hasReceivedUser()) {
 		newClient.setAuthenticated();
-		newClient.toSend(IrcMessages::welcome(newClient.getNick(), cfg_.getServName()));
-	} else if (newClient.hasReceivedPass() + newClient.hasReceivedNick() + newClient.hasReceivedUser() + newClient.getAuthAttempts() > 5) {
-		newClient.toSend(IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick()));
-		newClient.toSend(IrcMessages::askPass(newClient.getNick()));
+		response = IrcMessages::welcome(newClient.getNick(), cfg_.getServName());
+	} else {
+		response += IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick()) + IrcMessages::askPass(newClient.getNick());
 	}
+
+	newClient.toSend(response);
+
 	if (attemptsLeft <= 0) {
 		return false;
 	}
