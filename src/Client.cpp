@@ -192,16 +192,14 @@ std::string	Client::getMsgs() {
 void	Client::resolveDelimiter() {
 	size_t	posCr = recvBuf_.find('\r');
 	size_t	posNl = recvBuf_.find('\n');
-cout << "setting delimiter... (strlen of mystring:" << std::string("CAP LS\r\n").length() << " and strlen of buf:" << recvBuf_.length() << endl;
+
 	if (posCr == std::string::npos && posNl == std::string::npos) {
 		return;
 	} else if (posCr != std::string::npos && posNl != std::string::npos
 				&& posNl > posCr && posNl - posCr == 1) {
 		delimiter_ = "\r\n";
-		cout << "delimiter set to: \\r\\n" << endl;
 	} else {
 		delimiter_ = "\n";
-		cout << "delimiter set to \\n" << endl;
 	}
 }
 
