@@ -33,11 +33,19 @@ void Server::handlePositiveMode(int fd, const std::string& command, const std::s
         std::string msg = ":" + fullId + " MODE " + target + " +o\r\n";
         channel.broadcastToAll(msg);
     } else if (modeStr == "+l") {
-        int limit = std::stoi(param);
-        channel.setUserLimit(limit);
-        std::string fullId = clients_[fd].getFullId(); // nick!user@host
-        std::string msg = ":" + fullId + " MODE " + target + " +l\r\n";
-        channel.broadcastToAll(msg);
+        try {
+            int limit = std::stoi(param);
+            if (limit < 0) {
+                throw std::invalid_argument("negative limit");
+            }
+            channel.setUserLimit(limit);
+            std::string fullId = clients_[fd].getFullId(); // nick!user@host
+            std::string msg = ":" + fullId + " MODE " + target + " +l\r\n";
+            channel.broadcastToAll(msg);
+        } catch (const std::exception& e) {
+            ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
+            return;
+        }
     } else {
         ft_send(fd, ERR_UNKNOWNMODE(clients_[fd].getNick() ,modeStr));
     }

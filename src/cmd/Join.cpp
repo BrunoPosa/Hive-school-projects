@@ -74,10 +74,12 @@ void Server::cmdJoin(int fd, const t_data data) {
 			ft_send(fd, RPL_TOPIC(clients_[fd].getNick(), channel, chanPtr->getTopic()));
 			
 			// Also send a standard message to trigger display in the channel window
-			// std::string topicMsg = ":" + clients_[fd].getFullId() + " TOPIC " + channel + " :" + chanPtr->getTopic() + "\r\n";
-			// ft_send(fd, topicMsg);
+			std::string topicMsg = ":" + clients_[fd].getFullId() + " TOPIC " + channel + " :" + chanPtr->getTopic() + "\r\n";
+			ft_send(fd, topicMsg);
 		} else {
 			ft_send(fd, RPL_NOTOPIC(clients_[fd].getNick(), channel));
 		}
+		std::string modeStr = chanPtr->getModeString(); // e.g., "+itk"
+		ft_send(fd, RPL_MODESET(clients_[fd].getNick(), channel, modeStr));
 	}
 }

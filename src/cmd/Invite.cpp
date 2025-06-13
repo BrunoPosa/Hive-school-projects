@@ -16,7 +16,7 @@ void Server::cmdInvite(int sender_fd, const t_data data) {
 		ft_send(sender_fd, ERR_NOSUCHNICK(targetNick, channelName));
 		return;
 	}
-	
+
 	Client& sender = clients_[sender_fd];
 	// Check if channel exists
 	if (channels_.find(channelName) == channels_.end()) {
@@ -25,7 +25,6 @@ void Server::cmdInvite(int sender_fd, const t_data data) {
 	}
 
 	Channel& channel = channels_[channelName];
-
 
 	// Check if sender is in the channel
 	if (!sender.isInChannel(channelName)) {

@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>//std::exchange
 #include <chrono>
+#include <stdexcept>
 
 class Config {
 	int					port_;
