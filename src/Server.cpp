@@ -248,6 +248,9 @@ bool	Server::handleMsgs(int fromFd) {
 		std::string	delimiter(client.getDelimiter());
 		std::string	msgs = client.getMsgs();
 
+		#ifdef IRC_BUF_PRINTS
+			cout << GREENIRC << "handleMsgs:" << msgs << RESETIRC << endl;
+		#endif
 		if (client.isAuthenticated() == false) {
 			if (msgs.find('\n') != std::string::npos) {
 				return processAuth(fromFd, msgs);

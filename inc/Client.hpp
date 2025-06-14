@@ -10,6 +10,8 @@
 #define IRC_BUFFER_SIZE 512
 #define IRC_MAX_BUF 64000
 
+// #define IRC_BUF_PRINTS //for netcat testing
+
 class Client {
 	private:
 		Socket		so_;

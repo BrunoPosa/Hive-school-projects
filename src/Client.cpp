@@ -168,6 +168,10 @@ bool	Client::receive() {
 		resolveDelimiter();
 	}
 
+	#ifdef IRC_BUF_PRINTS
+		cout << YELLOWIRC << "recvBuf:" << recvBuf_ << RESETIRC << endl;
+	#endif
+
 	lastActive_ = std::chrono::steady_clock::now();
 
 	return true;
