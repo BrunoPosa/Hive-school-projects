@@ -2,8 +2,8 @@
 
 namespace {
 
-	void	sigShutdown(int signal) {
-		std::cerr << "\nSignal caught - signum: " << signal << std::endl;
+	void	sigShutdown(int signum) {
+		std::cerr << YELLOWIRC << "\nSignal caught: " << strsignal(signum) << RESETIRC << std::endl;
 		if (g_servPtr) {
 			g_servPtr->gracefulShutdown();
 		}
@@ -14,9 +14,9 @@ int main(int argc, char* argv[])
 {
 	if (signal(SIGTERM, sigShutdown) == SIG_ERR
 	|| signal(SIGINT, sigShutdown) == SIG_ERR
+	|| signal(SIGQUIT, sigShutdown) == SIG_ERR
 	|| signal(SIGHUP, sigShutdown) == SIG_ERR
-	|| signal(SIGPIPE, SIG_IGN) == SIG_ERR)
-	{
+	|| signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
 		std::cerr << "signal() setup failed" << std::endl;
 		return 1;
 	}

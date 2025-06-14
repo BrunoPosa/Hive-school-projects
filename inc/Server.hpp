@@ -3,7 +3,7 @@
 // System
 #include <poll.h>
 #include <cerrno>
-#include <cstring>//strerror
+#include <cstring>//strerror, strsignal
 #include <csignal>
 #include <cctype>//toupper
 #include <limits.h>//hostnamemax
