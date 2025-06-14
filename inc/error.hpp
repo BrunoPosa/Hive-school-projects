@@ -111,17 +111,6 @@ namespace IrcMessages {
 		return (":" + client.getNick() + "!~" + client.getUser() + "@" + client.getIP() + " QUIT :Client Quit\r\n");
 	}
 
-	// inline std::string	RPL_NAMREPLY(const std::string& nick, Channel *ch, std::map<int, Client> *allClientsPtr) {
-	// 	std::string	msg = ":localhost 353 " + nick + " @ " + ch->getName() + " :";//should these messages be :localhost or name of the server?
- 
-	// 	std::vector	chClients = ch->getChClients();
-	// 	for (int i = chClients.size() - 1; i >= 0; i--) {
-	// 		msg += allClientsPtr->at(chClients[i]).getNick() + " ";
-	// 	}
-	// 	msg += "\r\n";
-	// 	return (msg);
-	// }
-
 	inline std::string RPL_NAMREPLY(const std::string& nick, Channel *ch, std::map<int, Client> *allClientsPtr) {
 		std::string msg = ":localhost 353 " + nick + " = " + ch->getName() + " :";
 
