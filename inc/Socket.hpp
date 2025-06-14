@@ -4,18 +4,21 @@
 #include <unistd.h>
 #include <string>
 #include <cstring>//strerror
+#include <cerrno>
 #include <iostream>
 #include <limits.h>//hostnamemax
 #include <fcntl.h>
 #include <arpa/inet.h> //inet_ntop
 #include <netinet/in.h>//sockaddr_in
-#include <sys/socket.h> //SOMAXCONN, listen()...
+#include <sys/socket.h> //SOMAXCONN, listen(), send()...
+#include <stdexcept>
 
 /**
  * @brief RAII wrapper for a non‑blocking TCP/IPv4 socket.
  *
  * On construction, creates a socket and sets it non‑blocking.
  * Closes on destruction.
+ * Accepts a connection via accept(sock&) to sock and makes it non-blocking.
  * Throws on failures.
  */
  class Socket {

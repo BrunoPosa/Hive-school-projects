@@ -1,22 +1,11 @@
 #pragma once
 
 // System
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <fcntl.h>
 #include <poll.h>
 #include <cerrno>
-#include <cstring>
+#include <cstring>//strerror
 #include <csignal>
-
-// System
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <poll.h>
-#include <cerrno>
+#include <cctype>//toupper
 #include <limits.h>//hostnamemax
 
 // Standard Template Library
@@ -30,7 +19,6 @@
 #include <sstream>
 #include <stdexcept>
 #include <chrono>
-#include <cctype>
 
 // Project Headers
 #include "error.hpp"
@@ -38,10 +26,6 @@
 #include "Channel.hpp"
 #include "Socket.hpp"
 #include "Config.hpp"
-
-//testing
-#include <thread>
-#include <fcntl.h>
 
 class Server;
 extern Server	*g_servPtr;
@@ -55,6 +39,7 @@ typedef struct cmdFunctionParameters {
 #define YELLOWIRC "\033[33m"
 #define GREENIRC "\033[1;32m"
 #define RESETIRC "\033[0m"
+
 #define MAX_CLIENTS_IRC 999
 
 class Server {
@@ -73,6 +58,7 @@ private:
 	std::map<std::string, Channel>	channels_;
 	std::unordered_map<std::string, std::function<void(int, const t_data&)>>	cmds_;
 
+	//I/O
 	void	eventsLoop();
 	void	handleEvents(pollfd& pfd);
 	void	addClient();
@@ -89,18 +75,19 @@ private:
 	void cmdInvite(int fd, t_data data);
 	void cmdTopic(int fd, const t_data data);
 	void cmdMode(int fd, const t_data data);
-	//extra cmds
+	//extra
 	void cmdPart(int fd, const t_data data);
 	void cmdPing(int fd, const t_data& data);
 	void cmdWho(int fd, const t_data data);
 	
+	//utils
 	void	ft_send(int fd, const std::string& message) { clients_[fd].toSend(message); }
+	int getClientFdByNick(const std::string& nick) const;
+	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick);
+	void handlePositiveMode(int fd, const std::string& command, const std::string& target, const std::string& modeStr, const std::string& param, Channel& channel);
+	void handleNegativeMode(int fd, const std::string& target, const std::string& modeStr, const std::string& param, Channel& channel);
 	std::vector<std::string>	tokenize(std::istringstream& cmdParams);
-	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick); // Kick user from channel
-	void handlePositiveMode(int fd, const std::string& command, const std::string& target,
-                                const std::string& modeStr, const std::string& param, Channel& channel);
-	void handleNegativeMode(int fd, const std::string& target,
-                                const std::string& modeStr, const std::string& param, Channel& channel); 
+
 public:
 	Server();
 	explicit Server(Config&& cfg);
@@ -108,11 +95,8 @@ public:
 	Server& operator=(Server&& other) noexcept;
 	Server(Server&)				= delete;
 	Server& operator=(Server&)	= delete;
-	~Server()	= default;
+	~Server()					= default;
 
 	void	run();
 	void	gracefulShutdown();
-	int		getPort() const noexcept {return cfg_.getPort();}
-	int		getServerFd() const { return listenSo_.getFd(); }
-	int		getClientFdByNick(const std::string& nick) const;
 };

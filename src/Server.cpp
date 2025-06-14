@@ -203,8 +203,10 @@ void Server::addClient() {
 }
 
 /*
-	rmClient from pollFds_ vector, clients_ map, and all of client's own joinedChannels (destroying the channels which remain empty,
-	or broadcasting ClientQuit msg to all remaining members),
+	- Safely removes fd from pollFds_ vector
+	- removes Client[fd] and leaves from all joinedChannels (destroying the channels which remain empty,
+	or broadcasting ClientQuit msg to all remaining members).
+	- Does not do anything if fd == listenSoFd_
 */
 void Server::rmClient(int rmFd) {
 	

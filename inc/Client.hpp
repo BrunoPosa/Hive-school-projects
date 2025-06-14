@@ -5,6 +5,9 @@
 #include <map>
 #include <chrono>
 #include <cassert>
+#include <cstring>//strerror
+#include <cerrno>
+#include <poll.h>
 #include "Socket.hpp"
 
 #define IRC_BUFFER_SIZE 4096
