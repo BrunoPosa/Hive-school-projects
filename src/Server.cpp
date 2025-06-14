@@ -275,12 +275,12 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 	Client& newClient = clients_.at(fromFd);
 	std::string	delimiter(newClient.getDelimiter());
 	std::string	response;
+
 	newClient.addAuthAttempt();
 	int attemptsLeft = cfg_.getMaxAuthAttempts() - newClient.getAuthAttempts();
 
 	while ((pos = messages.find(delimiter)) != std::string::npos) {
 		msg = messages.substr(0, pos);
-
 		if (msg.find("PASS ") == 0 || msg.find("pass ") == 0) {
 			msg.erase(0, 5);
 			if (cfg_.CheckPassword(msg) == true) {
@@ -302,10 +302,14 @@ bool	Server::processAuth(int fromFd, std::string messages) {
 		newClient.setAuthenticated();
 		response = IrcMessages::welcome(newClient.getNick(), cfg_.getServName());
 	} else {
-		response += IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick()) + IrcMessages::askPass(newClient.getNick());
+		response += IrcMessages::attemptsLeft(attemptsLeft, newClient.getNick());
 	}
 
-	newClient.toSend(response);
+	if (newClient.hasReceivedPass()) {
+		newClient.toSend(response);
+	} else {
+		newClient.toSend(response + IrcMessages::askPass(newClient.getNick()));
+	}
 
 	if (attemptsLeft <= 0) {
 		return false;
