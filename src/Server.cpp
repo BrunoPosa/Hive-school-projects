@@ -196,10 +196,10 @@ void Server::addClient() {
 	}
 
 	std::cout << YELLOWIRC
-			<< "Accepted new connection from "
-			<< clients_[fd].getIP() << ":"
-			<< clients_[fd].getPort()
-			<< " (FD: " << fd << ")" << RESETIRC << std::endl;
+			<< "Accepted fd[" << fd
+			<< "] from " << clients_[fd].getHost()
+			<< " with address " << clients_[fd].getIP() << ":"
+			<< clients_[fd].getPort() << RESETIRC << std::endl;
 }
 
 /*
@@ -244,7 +244,7 @@ void Server::rmClient(int rmFd) {
 		accepting_ = true;//start accepting again if the server was not accepting (due to maxing out)
 	}
 
-	std::cout << "client fd:" << rmFd << " removed." << std::endl;
+	std::cout << YELLOWIRC << "-Removed fd[" << rmFd << "]" << RESETIRC << std::endl;
 }
 
 //if this returns false, client should be removed

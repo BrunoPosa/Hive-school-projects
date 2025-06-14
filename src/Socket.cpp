@@ -106,7 +106,7 @@ bool	Socket::accept(Socket& toSocket) const {
 
 std::string Socket::resolveHost() {
 	char hostname[HOST_NAME_MAX];
-	if (gethostname(hostname, HOST_NAME_MAX) != 0) {
+	if (::gethostname(hostname, HOST_NAME_MAX) != 0) {
 		perror("gethostname");
 		return "none";
 	}
@@ -116,14 +116,14 @@ std::string Socket::resolveHost() {
 bool	Socket::setNonBlocking(int fd) const {
 	int flags = 0;
 
-	while ((flags = fcntl(fd, F_GETFL, 0)) < 0) {
+	while ((flags = ::fcntl(fd, F_GETFL, 0)) < 0) {
 		cerr << "fcntl() error: " << strerror(errno) << endl;
 		if (errno == EINTR) {
 			continue;
 		}
 		return false;
 	}
-	while (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
+	while (::fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
 		cerr << "fcntl() error: " << strerror(errno) << endl;
 		if (errno == EINTR) {
 			continue;
@@ -136,7 +136,7 @@ bool	Socket::setNonBlocking(int fd) const {
 std::string	Socket::getIpStr() const {
 	char ipStr[INET_ADDRSTRLEN] = {};
 
-	if (inet_ntop(AF_INET, &addr_.sin_addr, ipStr, INET_ADDRSTRLEN) == nullptr) {
+	if (::inet_ntop(AF_INET, &addr_.sin_addr, ipStr, INET_ADDRSTRLEN) == nullptr) {
 		std::cerr << "inet_ntop error: " << strerror(errno) << std::endl;
 		return "";
 	}

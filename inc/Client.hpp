@@ -54,13 +54,14 @@ class Client {
 		bool	send();
 		bool	receive();
 
-		int		getFd() const	{ return this->so_.getFd(); }
-		std::string getIP() const {return so_.getIpStr();}
-		uint16_t	getPort() const { return so_.getPortNum(); }
+		int		getFd() const		{ return this->so_.getFd(); }
+		std::string getIP() const	{ return so_.getIpStr(); }
+		uint16_t	getPort() const	{ return so_.getPortNum(); }
+		std::string	getHost()		{ return so_.resolveHost(); }
 		std::string	getMsgs();
 		std::string getFullId() const; 
 		std::string&	getDelimiter() { return delimiter_; }
-		int	getAuthAttempts() const { return authAttempts_; }
+		int	getAuthAttempts() const	{ return authAttempts_; }
 		int getChannelCount () const { return channelCount_; }
 		void addAuthAttempt() { ++authAttempts_; }
 

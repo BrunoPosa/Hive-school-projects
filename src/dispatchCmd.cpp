@@ -3,7 +3,6 @@
 //dispatches command from a client to correct cmd handling function
 void Server::dispatchCmd(int fd, const std::string& message)
 {
-	std::cout << "dispatchCmd() message: " << message << std::endl;
 	std::istringstream iss(message);
 	std::string command;
 	if (iss) {

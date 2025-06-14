@@ -35,3 +35,6 @@ ircserv
 
 # vscode
 .vscode/
+
+# log
+.log

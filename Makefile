@@ -37,15 +37,23 @@ SRCS	=	$(SRCDIR)main.cpp \
 			$(SRCDIR)cmd/Invite.cpp \
 			$(SRCDIR)cmd/Part.cpp
 
+OBJDIR	=	obj/
+OBJCS	=	$(SRCS:$(SRCDIR)%.cpp=$(OBJDIR)%.o)
+
+
 
 
 all: $(NAME)
 
-$(NAME): $(SRCS) $(HEADERS)
-	$(CXX) $(MAIN_FLAGS) -o $(NAME) $(SRCS)
+$(NAME): $(OBJCS)
+	$(CXX) $(MAIN_FLAGS) -o $(NAME) $(OBJCS)
+
+$(OBJDIR)%.o: $(SRCDIR)%.cpp $(HEADERS)
+	@mkdir -p $(dir $@)
+	$(CXX) $(MAIN_FLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(FSAN_NAME) $(VALGR_NAME)
+	$(RM) $(OBJDIR) $(FSAN_NAME) $(VALGR_NAME)
 
 fclean: clean
 	$(RM) $(NAME) a.out log.log
