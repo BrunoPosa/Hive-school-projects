@@ -25,12 +25,14 @@ Config& Config::operator=(Config&& other) noexcept {
 
 void	Config::validate_() {
 	if (!isValidPort_()) {
-		throw std::invalid_argument("Invalid port number. Port must be between 1024 and 65535 "
+		throw std::invalid_argument("\nInvalid port number. Port must be between 1024 and 65535 "
 									"(but check /etc/services for unavailable ones)");
 	}
 	if (!isValidPassword_()) {
-		std::string	errmsg("Invalid password. Special chars allowed:" + allowedPassChars_.substr(62) + " and min pass length is " + std::to_string(minPassLen_));
-		throw std::invalid_argument(errmsg);
+		std::string	errmsg("\nInvalid server password.\nAllowed special chars="
+			+ allowedPassChars_.substr(allowedPassChars_.find('-'))
+			+ "\nminimum password length=" + std::to_string(minPassLen_));
+		throw std::invalid_argument(errmsg + " and max=" + std::to_string(maxPassLen_));
 	}
 }
 

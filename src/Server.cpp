@@ -122,7 +122,7 @@ void	Server::eventsLoop() {
 			}
 
 		} catch (const std::exception& e) {
-			std::cerr << "Exception caught in event loop: " << e.what() << std::endl;
+			std::cerr << REDIRC << "Exception caught in event loop: " << RESETIRC << e.what() << std::endl;
 			gracefulShutdown();
 		}
 	}
@@ -166,7 +166,7 @@ void	Server::handleEvents(pollfd& pfd) {
 		cerr << "Bad allocation exception while handling fd:" << fd << endl;
 		throw;
 	} catch (const std::exception& e) {
-		cerr << "Exception " << e.what() << " caught while handling fd:" << fd << endl;
+		cerr << YELLOWIRC << "Exception " << RESETIRC << e.what() << " caught while handling fd:" << fd << endl;
 		rmClient(fd);
 	}
 }

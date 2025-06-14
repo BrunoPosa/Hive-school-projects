@@ -1,6 +1,4 @@
-
-#ifndef CONFIG_HPP
-# define CONFIG_HPP
+#pragma once
 
 #include <string>
 #include <utility>//std::exchange, move
@@ -9,10 +7,12 @@
 
 class Config {
 	int					port_;
-	std::string					portStr_;
-	std::string					password_;
-	const std::string			serverName_{"ft_irc, WB edition ®"};
-	const std::string			allowedPassChars_{"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?#"};//validate_() specifies minimum 62 chars
+	std::string			portStr_;
+	std::string			password_;
+	const std::string	serverName_{"ft_irc, WB edition ®"};
+	const std::string	allowedPassChars_{//validate_() needs '-' in this string as delimiter for printing special chars
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?#"
+	};
 	static constexpr unsigned int	maxAuthAttempts_{10};
 	static constexpr unsigned int	minPassLen_{4};
 	static constexpr unsigned int	maxPassLen_{400};
@@ -39,5 +39,3 @@ public:
 	bool				CheckPassword(const std::string& input) const noexcept {return input == password_;}
 	std::chrono::seconds	getAllowedInactivity() { return allowedInactivity_; }
 };
-
-#endif

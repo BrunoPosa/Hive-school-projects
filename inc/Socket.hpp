@@ -1,5 +1,4 @@
-#ifndef SOCKET_HPP
-# define SOCKET_HPP
+#pragma once
 
 #include <unistd.h>
 #include <string>
@@ -47,5 +46,3 @@ public:
 	uint16_t	getPortNum() const { return ntohs(addr_.sin_port); }
 	bool		isListener() const noexcept {return isListening_;}
 };
-
-#endif

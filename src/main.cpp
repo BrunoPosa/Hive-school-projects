@@ -33,10 +33,10 @@ int main(int argc, char* argv[])
 		ircserver.run();
 
 	} catch (const std::exception& e) {
-		std::cerr << "Exception caught in main!" << e.what() << std::endl;
+		std::cerr << REDIRC << "Exception caught in main!" << RESETIRC << e.what() << std::endl;
 		return 3;
 	} catch (...) {
-		std::cerr << "... exception caught in main!" << std::endl;
+		std::cerr << REDIRC << "... exception caught in main!" << RESETIRC << std::endl;
 		throw;
 	}
 	return 0;
