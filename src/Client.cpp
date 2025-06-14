@@ -97,13 +97,9 @@ void	Client::toSend(const std::string& data) {
 		return;
 	}
 
-	try {
-		sendBuf_.append(data);
+	sendBuf_.append(data);
 	assert(pfd_);
-		pfd_->events |= POLLOUT;
-	} catch (std::bad_alloc& e) {
-		std::cerr << "toSend() append failed: " << e.what() << std::endl;
-	}
+	pfd_->events |= POLLOUT;
 }
 
 //if returns false client connection should be deleted
@@ -143,7 +139,7 @@ bool	Client::send() {
 bool	Client::receive() {
 	char buffer[IRC_BUFFER_SIZE + 1];
 
-	ssize_t bytesRead = recv(so_.getFd(), buffer, sizeof(buffer) - 1, MSG_NOSIGNAL);
+	ssize_t bytesRead = ::recv(so_.getFd(), buffer, sizeof(buffer) - 1, MSG_NOSIGNAL);
 	if (bytesRead < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
 			return true;
@@ -178,19 +174,13 @@ bool	Client::receive() {
 }
 
 std::string	Client::getMsgs() {
-	try {
-		size_t	pos = recvBuf_.rfind(delimiter_);
-		std::string	completeMsgs;
-		if (pos != std::string::npos) {
-			completeMsgs = recvBuf_.substr(0, pos + delimiter_.length());
-			recvBuf_.erase(0, pos + delimiter_.length());
-		}
-		return completeMsgs;
-
-	} catch (std::exception& e) {
-		std::cerr << "Error: " << e.what() << "Client fd:" << so_.getFd() << std::endl;
+	size_t	pos = recvBuf_.rfind(delimiter_);
+	std::string	completeMsgs;
+	if (pos != std::string::npos) {
+		completeMsgs = recvBuf_.substr(0, pos + delimiter_.length());
+		recvBuf_.erase(0, pos + delimiter_.length());
 	}
-	return "";
+	return completeMsgs;
 }
 
 void	Client::resolveDelimiter() {

@@ -9,6 +9,7 @@ namespace {
 		}
 	}
 }
+
 int main(int argc, char* argv[])
 {
 	if (signal(SIGTERM, sigShutdown) == SIG_ERR
@@ -25,15 +26,18 @@ int main(int argc, char* argv[])
 	}
 	try {
 		Config	config(argv[1], argv[2]);
-		Server	server(std::move(config));//config unreachable after this
+		Server	ircserver(std::move(config));//config unreachable after this
 
-		g_servPtr = &server;
+		g_servPtr = &ircserver;
 
-		server.run();
+		ircserver.run();
 
 	} catch (const std::exception& e) {
-		std::cerr << "Exception caught in main: " << e.what() << std::endl;
+		std::cerr << "Exception caught in main!" << e.what() << std::endl;
 		return 3;
+	} catch (...) {
+		std::cerr << "... exception caught in main!" << std::endl;
+		throw;
 	}
 	return 0;
 }

@@ -7,8 +7,8 @@
 #include <cassert>
 #include "Socket.hpp"
 
-#define IRC_BUFFER_SIZE 512
-#define IRC_MAX_BUF 64000
+#define IRC_BUFFER_SIZE 4096
+#define IRC_MAX_BUF 16384 //16kb
 
 // #define IRC_BUF_PRINTS //for netcat testing
 

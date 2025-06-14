@@ -13,6 +13,7 @@ void Server::kickUser(int fd, const std::string& channelName, const std::string&
     channel.removeClient(target_fd);
     clients_[target_fd].leaveChannel(channelName);
 }
+
 void Server::cmdKick(int fd, const t_data data) {
     std::vector<std::string> params{data.cmdParams};
     if (params.size() < 2) {
