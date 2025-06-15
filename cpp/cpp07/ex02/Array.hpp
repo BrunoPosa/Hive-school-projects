@@ -24,7 +24,7 @@ public:
 		this->operator=(other);
 		std::cout << "copy ctor" << std::endl;
 	}
-	Array&	operator=(const Array<T>& other) {
+	Array<T>&	operator=(const Array<T>& other) {
 		if (this != &other) {
 			if (arr_) {
 				delete[] arr_;

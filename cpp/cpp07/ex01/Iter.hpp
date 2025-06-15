@@ -1,8 +1,25 @@
-#ifndef ITER_HPP
-# define ITER_HPP
+#pragma once
 
-template <typename T> void iter(T*[], size_t len, (void*)f(T)) {
-	
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+
+template <typename T> void printer(T obj) {
+	std::cout << obj << std::endl;
 }
 
-#endif
+template <typename T> void iter(T* arr, size_t len, void (*f)(T)) {
+	if (!arr || !f) {
+		return;
+	}
+
+	size_t	i = 0;
+
+	while (i != len) {
+		if (arr + i) {
+			f(arr[i]);
+		}
+		i++;
+	}
+}

@@ -1,5 +1,4 @@
-#ifndef STARTWITHAFEWFUNCTIONS_HPP
-# define STARTWITHAFEWFUNCTIONS_HPP
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -17,5 +16,3 @@ template <typename T> void swap(T& l, T& r) {
 	l = r;
 	r = temp;
 }
-
-#endif
