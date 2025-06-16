@@ -31,7 +31,7 @@ void Server::cmdTopic(int fd, const t_data data) {
             ft_send(fd, RPL_NOTOPIC(client.getNick(), channel));
         else
         {
-            ft_send(fd, RPL_TOPIC(client.getNick(), channel, ch.getTopic()));
+            ft_send(fd, RPL_TOPIC(client.getFullId(), channel, ch.getTopic()));
 
             std::time_t topicSetTime = std::chrono::system_clock::to_time_t(ch.getTopicSetTime());
             ft_send(fd, RPL_TOPICWHOTIME(client.getNick(), channel, ch.getTopicSetter(), std::to_string(topicSetTime)));

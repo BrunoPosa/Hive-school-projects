@@ -1,8 +1,5 @@
 #include "../inc/Server.hpp"
 
-Channel::Channel(std::map<int, Client>* ptrToAllClients)
-: name_(""), topic_(""), pwd_(""), userLimit_(-1), inviteOnly_(false), topicRestrictedToOperators_(true), allClientsPtr_(ptrToAllClients) {}
-
 Channel::Channel(const std::string &name, std::map<int, Client>* ptrToAllClients)
 : name_(name), topic_(""), pwd_(""), userLimit_(-1), inviteOnly_(false), topicRestrictedToOperators_(true), allClientsPtr_(ptrToAllClients) {}
 

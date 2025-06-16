@@ -20,9 +20,8 @@ class Config {
 
 	void	validate_();
 	bool	isValidPort_();
-	bool	isValidPassword_();
-
-public:
+	
+	public:
 	Config();
 	Config(std::string listenPort, std::string passw);
 	Config(const Config&)				= delete;
@@ -30,7 +29,7 @@ public:
 	Config(Config&&) noexcept;
 	Config&	operator=(Config&& other) noexcept;
 	~Config()							= default;
-
+	
 	int					getPort() const noexcept {return port_;}
 	const std::string&	getServName() const noexcept {return serverName_;}
 	int					getMaxAuthAttempts() const noexcept {return maxAuthAttempts_;}
@@ -38,4 +37,5 @@ public:
 	const std::string&	getAllowPassChars()	const noexcept {return allowedPassChars_;}
 	bool				CheckPassword(const std::string& input) const noexcept {return input == password_;}
 	std::chrono::seconds	getAllowedInactivity() { return allowedInactivity_; }
+	bool				isValidPassword_(std::string pass);
 };

@@ -41,6 +41,5 @@ void Server::cmdInvite(int fd, const t_data data) {
 	// Notify sender that the invite was sent
 	ft_send(fd, RPL_INVITING(sender.getNick(), targetNick, channelName));
 	// Send invite to the target client
-	std::string inviteMsg = ":" + sender.getNick() + " INVITE " + targetNick + " :" + channelName + "\r\n";
-	ft_send(target_fd, inviteMsg);
+	ft_send(target_fd, IrcMessages::inviteMsg(sender.getNick(), targetNick, channelName));
 }

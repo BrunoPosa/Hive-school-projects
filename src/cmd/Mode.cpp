@@ -15,25 +15,18 @@ namespace {
 void Server::handlePositiveMode(int fd, const std::string& command, const std::string& target,
                                 const std::string& modeStr, const std::string& param, Channel& channel) {
     if (modeStr == "+i") {
-        std::cerr << "target: " << target << std::endl;
         channel.setInviteOnly(true);
-        std::string fullId = clients_[fd].getFullId(); // nick!user@host
-        std::string msg = ":" + fullId + " MODE " + target + " +i\r\n";
-        channel.broadcastToAll(msg);
+        channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + " +i\r\n");
     } else if (modeStr == "+t") {
         channel.setTopicRestrictedToOperators(true);
-        std::string fullId = clients_[fd].getFullId();
-        std::string msg = ":" + fullId + " MODE " + target + " +t\r\n";
-        channel.broadcastToAll(msg);
+        channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + " +t\r\n");
     } else if (modeStr == "+k") {
-        if (param.empty()) {
+        if (param.empty() || cfg_.isValidPassword_(param) == false) {
             ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(),command));
             return;
         }
         channel.setPassword(param);
-        std::string fullId = clients_[fd].getFullId();
-        std::string msg = ":" + fullId + " MODE " + target + " +k " + param + "\r\n";
-        channel.broadcastToAll(msg);
+        channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + " +k " + param + "\r\n");
     } else if (modeStr == "+o") {
         int targetFd = channel.getClientFdByNick(param, clients_);
         if (targetFd == -1) {
@@ -41,9 +34,7 @@ void Server::handlePositiveMode(int fd, const std::string& command, const std::s
             return;
         }
         channel.addOperator(targetFd);
-        std::string fullId = clients_[fd].getFullId();
-        std::string msg = ":" + fullId + " MODE " + target + " +o\r\n";
-        channel.broadcastToAll(msg);
+        channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + " +o\r\n");
 	} else if (modeStr == "+l") {
 		try {
 			if (!isValidInt(param)) {
@@ -54,9 +45,7 @@ void Server::handlePositiveMode(int fd, const std::string& command, const std::s
 				throw std::invalid_argument("negative limit");
 			}
 			channel.setUserLimit(limit);
-			std::string fullId = clients_[fd].getFullId();
-			std::string msg = ":" + fullId + " MODE " + target + " +l " + param + "\r\n";
-			channel.broadcastToAll(msg);
+			channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + " +l " + param + "\r\n");
         } catch (const std::exception& e) {
             ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
             return;
@@ -70,19 +59,13 @@ void Server::handleNegativeMode(int fd, const std::string& target,
                                 const std::string& modeStr, const std::string& param, Channel& channel) {
     if (modeStr == "-i") {
         channel.setInviteOnly(false);
-        std::string fullId = clients_[fd].getFullId();
-        std::string msg = ":" + fullId + " MODE " + target + " -i\r\n";
-        channel.broadcastToAll(msg);
+        channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + " -i\r\n");
     } else if (modeStr == "-t") {
         channel.setTopicRestrictedToOperators(false);
-        std::string fullId = clients_[fd].getFullId();
-        std::string msg = ":" + fullId + " MODE " + target + " -t\r\n";
-        channel.broadcastToAll(msg);
+        channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + " -t\r\n");
     } else if (modeStr == "-k") {
         channel.setPassword("");
-        std::string fullId = clients_[fd].getFullId();
-        std::string msg = ":" + fullId + " MODE " + target + " -k\r\n";
-        channel.broadcastToAll(msg);
+        channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + " -k\r\n");
     } else if (modeStr == "-o") {
         int targetFd = channel.getClientFdByNick(param, clients_);
         if (targetFd == -1) {
@@ -90,14 +73,10 @@ void Server::handleNegativeMode(int fd, const std::string& target,
             return;
         }
         channel.removeOperator(targetFd);
-        std::string fullId = clients_[fd].getFullId();
-        std::string msg = ":" + fullId + " MODE " + target + " -o\r\n";
-        channel.broadcastToAll(msg);
+        channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + " -o\r\n");
     } else if (modeStr == "-l") {
         channel.setUserLimit(-1);
-        std::string fullId = clients_[fd].getFullId();
-        std::string msg = ":" + fullId + " MODE " + target + param + " -l\r\n";
-        channel.broadcastToAll(msg);
+        channel.broadcastToAll(":" + clients_[fd].getFullId() + " MODE " + target + param + " -l\r\n");
     } else {
         ft_send(fd, ERR_UNKNOWNMODE(clients_[fd].getNick(), modeStr));
     }
@@ -124,36 +103,31 @@ void Server::cmdMode(int fd, const t_data data) {
         ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
         return;
     }
-    if (modeStr.empty() && channels_[target].getName() == target) {
+    if (modeStr.empty() && channels_.find(target) != channels_.end()) {
         std::string currentModes = channels_[target].getModeString();
         std::string nick = clients_[fd].getNick();
-        // Send RPL_CHANNELMODEIS (324)
-        ft_send(fd, RPL_CHANNELMODEIS(clients_[fd].getNick(), target, currentModes, param));
+        ft_send(fd, RPL_CHANNELMODEIS(clients_[fd].getFullId(), target, currentModes, param));
         return;
     }
     Client& sender = clients_[fd];
     if (target.empty() || target[0] != '#') {
         if (clients_[fd].getNick() == target)
             return; 
-    ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
-    return;
-    }
-    if (channels_.find(target) == channels_.end()) {
         ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
         return;
     }
     // Check if channel exists
+    std::cerr << "target: " << target << std::endl;
     if (channels_.find(target) == channels_.end()) {
         ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
         return;
     }
-    Channel& channel = channels_[target];
     // Check if the client is an operator in the channel
-    if (!channel.isOperator(fd)) {
+    if (!channels_[target].isOperator(fd)) {
         ft_send(fd, ERR_CHANOPRIVSNEEDED(sender.getNick(),target));
         return;
     }
-	std::cerr << "fd:" << fd << "\ncommands:" << command << "\ntarget:" << target << "\nmodeStr:" << modeStr << "\nparam:" << param << std::endl;
+    Channel& channel = channels_[target];
     if (modeStr[0] == '+') {
         handlePositiveMode(fd, command, target, modeStr, param, channel);
     } else if (modeStr[0] == '-') {

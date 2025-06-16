@@ -26,6 +26,8 @@
 	(":localhost 324 " + nick + " " + chan + " " + modes + params + "\r\n")
 // 329 - RPL_CREATIONTIME
 // #define RPL_CREATIONTIME(nick, chan, timestamp) (":localhost 329 " + nick + " " + chan + " " + timestamp + "\r\n")
+// 352 RPL_WHOREPLY
+#define RPL_WHOREPLY(chan, user, nick) (":localhost 352 " + chan + " " + user + " localhost localhost " + nick + " H :0 realname\r\n")
 // 401 - ERR_NOSUCHNICK
 #define ERR_NOSUCHNICK(nick, chan) (":localhost 401 " + nick + " " + chan + " :No such nick/channel\r\n")
 // 404 - ERR_CANNOTSENDTOCHAN
@@ -132,5 +134,9 @@ namespace IrcMessages {
 
 	inline std::string RPL_ENDOFNAMES(const std::string& nick, Channel *ch) {
 		return (":localhost 366 " + nick + " " + ch->getName() + " :End of /NAMES list.\r\n");
+	}
+
+	inline std::string inviteMsg(std::string sender, std::string targetNick, std::string channelName) {
+		return (":" + sender + " INVITE " + targetNick + " :" + channelName + "\r\n");
 	}
 }

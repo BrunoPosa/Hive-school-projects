@@ -28,7 +28,7 @@ void	Config::validate_() {
 		throw std::invalid_argument("\nInvalid port number. Port must be between 1024 and 65535 "
 									"(but check /etc/services for unavailable ones)");
 	}
-	if (!isValidPassword_()) {
+	if (!isValidPassword_(password_)) {
 		std::string	errmsg("\nInvalid server password.\nAllowed special chars="
 			+ allowedPassChars_.substr(allowedPassChars_.find('-'))
 			+ "\nminimum password length=" + std::to_string(minPassLen_));
@@ -51,14 +51,14 @@ bool Config::isValidPort_() {
 	}
 }
 
-bool Config::isValidPassword_() {
-	if (password_.empty()) {
+bool Config::isValidPassword_(std::string pass) {
+	if (pass.empty()) {
 		return false;
 	}
-	if (password_.find_first_not_of(allowedPassChars_) != std::string::npos) {
+	if (pass.find_first_not_of(allowedPassChars_) != std::string::npos) {
 		return false;
 	}
-	if (password_.length() < minPassLen_ || password_.length() > maxPassLen_) {
+	if (pass.length() < minPassLen_ || pass.length() > maxPassLen_) {
 		return false;
 	}
 	return true;

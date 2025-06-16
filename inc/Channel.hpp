@@ -29,7 +29,6 @@ class Channel
 
     public:
         Channel() = default;
-        Channel(std::map<int, Client>* ptrToAllClients);
         Channel(const std::string &name, std::map<int, Client>* ptrToAllClients);
         Channel(const Channel &other);
         ~Channel();
@@ -53,13 +52,13 @@ class Channel
         bool getTopicRestricted() const         { return this->topicRestrictedToOperators_; }
         bool getInviteOnly() const              { return this->inviteOnly_; }
         bool hasPassword() const                { return !this->pwd_.empty(); } // returns true if password is set
+        void setPassword(const std::string& newPassword) { this->pwd_ = newPassword; }
         bool hasUserLimit() const               { return this->userLimit_ > 0; } // returns true if +l is set
         
         int  getUserCount() const               { return this->chClients_.size(); } // current number of clients
 
-        void addOperator(int fd); // Add a client as an operator in the channel
-        void removeOperator(int fd); // Remove a client as an operator in the channel
-        void setPassword(const std::string& newPassword) { this->pwd_ = newPassword; }
+        void addOperator(int fd);
+        void removeOperator(int fd);
         void setUserLimit(int limit)            { this->userLimit_ = limit; }
         void setInviteOnly(bool inviteOnly)     { this->inviteOnly_ = inviteOnly; }
         void setTopicRestrictedToOperators(bool restricted) { this->topicRestrictedToOperators_ = restricted; }

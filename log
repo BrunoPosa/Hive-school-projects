@@ -1,0 +1,118 @@
+<< CAP LS
+<< PASS 4242
+<< NICK bposa
+<< USER bposa bposa localhost :Bruno Posa
+>> :unknown NICK :bposa
+>> :localhost 001 bposa :Welcome to the ft_irc, WB edition ® Internet Relay Network
+<< MODE bposa +i
+>> :localhost 002 bposa :Your host is localhost
+>> :localhost 003 bposa :This server was created today
+>> :localhost 004 bposa :localhost 1.0
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< JOIN #ch1
+>> :bposa!~bposa@localhost JOIN :#ch1
+>> :localhost 353 bposa = #ch1 :@bposa 
+>> :localhost 366 bposa #ch1 :End of /NAMES list.
+<< MODE #ch1
+>> :localhost 332 bposa #ch1 :No topic is set
+>> :localhost 324 bposa #ch1 +t
+--> chanquery mode
+<< WHO #ch1
+>> :localhost 324 bposa #ch1 +t
+>> :localhost 315 bposa #ch1 :End of /WHO list
+--> chanquery who end
+<< MODE #ch1 b
+<< TOPIC #ch1 :hi
+>> :bposa TOPIC #ch1 :hi
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> FAILED mode b: chanquery abort
+<< MODE #ch1 b
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< CAP LS
+<< PASS 4242
+<< NICK bposa
+<< USER bposa bposa localhost :Bruno Posa
+>> :unknown NICK :bposa
+>> :localhost 001 bposa :Welcome to the ft_irc, WB edition ® Internet Relay Network
+<< MODE bposa +i
+>> :localhost 002 bposa :Your host is localhost
+>> :localhost 003 bposa :This server was created today
+>> :localhost 004 bposa :localhost 1.0
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< JOIN #ch1
+>> :bposa!~bposa@localhost JOIN :#ch1
+>> :localhost 353 bposa = #ch1 :@bposa 
+>> :localhost 366 bposa #ch1 :End of /NAMES list.
+<< MODE #ch1
+>> :localhost 332 bposa #ch1 :No topic is set
+>> :localhost 324 bposa #ch1 +t
+--> chanquery mode
+<< WHO #ch1
+>> :localhost 324 bposa!~bposa@localhost #ch1 +t
+>> :localhost 315 bposa!~bposa@localhost #ch1 :End of /WHO list
+--> chanquery who end
+<< MODE #ch1 b
+<< TOPIC #ch1 :hi
+>> :bposa TOPIC #ch1 :hi
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< WHO #ch1
+>> :localhost 315 bposa!~bposa@localhost #ch1 :End of /WHO list
+<< WHO hi
+>> :localhost 315 bposa!~bposa@localhost hi :End of /WHO list
+<< WHO bposa
+>> :localhost 315 bposa!~bposa@localhost bposa :End of /WHO list
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> FAILED mode b: chanquery abort
+<< MODE #ch1 b
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> FAILED mode b: chanquery abort
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong
+<< PING localhost
+>> :localhost PONG localhost :localhost
+--> lag pong

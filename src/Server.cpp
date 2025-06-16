@@ -350,6 +350,7 @@ void	Server::cmdWho(int fd, const t_data data) {
 	if (data.fullMsg.length() < 5) {
 		return;
 	}
-
-	clients_[fd].toSend(RPL_ENDOFWHO(clients_[fd].getNick(), data.fullMsg.substr(4)));
+	const std::string ch("ch");
+	clients_[fd].toSend(RPL_WHOREPLY(ch, clients_[fd].getUser(), clients_[fd].getNick()));
+	clients_[fd].toSend(RPL_ENDOFWHO(clients_[fd].getFullId(), data.fullMsg.substr(4)));
 }
