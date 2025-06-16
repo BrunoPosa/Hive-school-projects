@@ -89,7 +89,7 @@ void	Client::toSend(const std::string& data) {
 	}
 
 	if (sendBuf_.size() + data.size() > IRC_MAX_BUF) {
-		cerr << "sendBuf_ at fd " << so_.getFd() << " almost reached max " << IRC_MAX_BUF << "bytes and last message has been ignored." << endl;
+		cerr << "sendBuf_ at fd " << so_.getFd() << " almost reached IRC_MAX_BUF " << IRC_MAX_BUF << " bytes and last message has been ignored." << endl;
 		return;
 	}
 
@@ -152,7 +152,7 @@ bool	Client::receive() {
 
 	if (recvBuf_.size() + bytesRead > IRC_MAX_BUF) {
 		std::cerr << "recvBuff filling up! Data lost! Client fd:" << so_.getFd() << std::endl;
-		return true;
+		return false;
 	}
 
 	recvBuf_.append(buffer, bytesRead);

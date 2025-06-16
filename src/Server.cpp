@@ -152,7 +152,8 @@ void	Server::handleEvents(pollfd& pfd) {
 			}
 		}
 		if ((POLLERR | POLLHUP | POLLNVAL) & pfd.revents) {
-			std::cerr << REDIRC << "POLL ERRS" << RESETIRC << strerror(errno) << " revents: " << pfd.revents << " on fd " << fd << std::endl;
+			std::cerr << REDIRC << "POLL ERRS errno: " << RESETIRC << strerror(errno) << "; fd " << fd << std::endl;
+			errPrint(pfd.revents);
 			rmClient(fd);
 
 		} else if (POLLOUT & pfd.revents) {
@@ -351,4 +352,10 @@ void	Server::cmdWho(int fd, const t_data data) {
 		return;
 	}
 	clients_[fd].toSend(RPL_ENDOFWHO(clients_[fd].getFullId(), data.fullMsg.substr(4)));
+}
+
+void	Server::errPrint(short revents) {
+	if (revents & POLLERR) cerr << "POLLERR" << endl;
+	if (revents & POLLHUP) cerr << "POLLHUP" << endl;
+	if (revents & POLLNVAL) cerr << "POLLNVAL" << endl;
 }

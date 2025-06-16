@@ -85,6 +85,7 @@ class Server {
 	void handlePositiveMode(int fd, const std::string& command, const std::string& target, const std::string& modeStr, const std::string& param, Channel& channel);
 	void handleNegativeMode(int fd, const std::string& target, const std::string& modeStr, const std::string& param, Channel& channel);
 	std::vector<std::string>	tokenize(std::istringstream& cmdParams);
+	void errPrint(short revents);
 
 public:
 	Server();
