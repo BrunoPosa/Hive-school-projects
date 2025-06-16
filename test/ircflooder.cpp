@@ -10,6 +10,7 @@
 
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 6667
+#define SERVER_PASS 4242
 #define SLEEP_US 15 // microseconds delay between sends
 
 int main() {
@@ -35,7 +36,7 @@ int main() {
 
 
 	//auth
-	std::string authMsg("CAP LS\r\nPASS 4242\r\nNICK booooop\r\nUSER booooop booooop localhost :Brunuiu\r\n");
+	std::string authMsg("CAP LS\r\nPASS " + std::to_string(SERVER_PASS) + "\r\nNICK booooop\r\nUSER booooop booooop localhost :Brunuiu\r\n");
 	if (send(sock, authMsg.c_str(), authMsg.length(), 0) < 0) {
 		perror("send");
 		return 1;
