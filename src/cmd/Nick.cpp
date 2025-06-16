@@ -4,15 +4,12 @@ namespace {
     bool isValidNick(const std::string& nick) {
         if (nick.empty())
             return false;
-
         // Valid characters per RFC 2812
         const std::string special = "[]\\`_^{|}";
-
         // First character: must be a letter (A–Z or a–z) or special
         char first = nick[0];
         if (!std::isalpha(first) && special.find(first) == std::string::npos)
             return false;
-
         // Rest of the nickname: can include letter, digit, special, or '-'
         for (size_t i = 1; i < nick.size(); ++i) {
             char c = nick[i];
@@ -22,7 +19,6 @@ namespace {
                 return false;
             }
         }
-
         return true;
     }
     bool isNickInUse(const std::map<int, Client>& clients, const std::string& nick, int excludeFd) {

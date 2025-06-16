@@ -20,8 +20,6 @@ void Server::cmdPart(int fd, const t_data data) {
         reason = "leaving";
     }
 	Client& client = clients_[fd];
-	std::string nick = client.getNick();
-	std::string user = client.getUser();
 	std::istringstream chStream(channelList);
 	std::string channelName;
 	while (std::getline(chStream, channelName, ',')) {
@@ -35,7 +33,7 @@ void Server::cmdPart(int fd, const t_data data) {
 			continue;
 		}
 		// Send PART message before removing
-		std::string prefix = ":" + nick + "!" + user + "@localhost";
+		std::string prefix = ":" + client.getNick() + "!" + client.getUser() + "@localhost";
 		std::string partMsg = prefix + " PART " + channelName + " :" + reason + "\r\n";
 		channel.broadcastToAll(partMsg);
 		// Clean up
