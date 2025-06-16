@@ -1,5 +1,17 @@
 #include "../../inc/Server.hpp"
 
+namespace {
+	bool isValidInt(const std::string& s) {
+		if (s.empty()) return false;
+		for (size_t i = 0; i < s.size(); ++i) {
+			if (!std::isdigit(static_cast<unsigned char>(s[i]))) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
+
 void Server::handlePositiveMode(int fd, const std::string& command, const std::string& target,
                                 const std::string& modeStr, const std::string& param, Channel& channel) {
     if (modeStr == "+i") {
@@ -32,16 +44,20 @@ void Server::handlePositiveMode(int fd, const std::string& command, const std::s
         std::string fullId = clients_[fd].getFullId(); // nick!user@host
         std::string msg = ":" + fullId + " MODE " + target + " +o\r\n";
         channel.broadcastToAll(msg);
-    } else if (modeStr == "+l") {
-        try {
-            int limit = std::stoi(param);
-            if (limit < 0) {
-                throw std::invalid_argument("negative limit");
-            }
-            channel.setUserLimit(limit);
-            std::string fullId = clients_[fd].getFullId(); // nick!user@host
-            std::string msg = ":" + fullId + " MODE " + target + " +l\r\n";
-            channel.broadcastToAll(msg);
+	} else if (modeStr == "+l") {
+		try {
+			// Check if the string contains only digits (optionally with a leading '+')
+			if (!isValidInt(param)) {
+				throw std::invalid_argument("not a valid integer");
+			}
+			int limit = std::stoi(param);
+			if (limit < 0) {
+				throw std::invalid_argument("negative limit");
+			}
+			channel.setUserLimit(limit);
+			std::string fullId = clients_[fd].getFullId(); // nick!user@host
+			std::string msg = ":" + fullId + " MODE " + target + " +l " + param + "\r\n";
+			channel.broadcastToAll(msg);
         } catch (const std::exception& e) {
             ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
             return;
@@ -109,13 +125,11 @@ void Server::cmdMode(int fd, const t_data data) {
         ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
         return;
     }
-    if (modeStr.empty()) {
-        Channel& channel = channels_[target];
-        std::string currentModes = channel.getModeString(); // e.g., "+nt"
+    if (modeStr.empty() && channels_[target].getName() == target) {
+        std::string currentModes = channels_[target].getModeString(); // e.g., "+nt"
         std::string nick = clients_[fd].getNick();          // The user's nick
         // Send RPL_CHANNELMODEIS (324)
         ft_send(fd, RPL_CHANNELMODEIS(clients_[fd].getNick(), target, currentModes, param));
-
         return;
     }
     Client& sender = clients_[fd];
@@ -147,6 +161,6 @@ void Server::cmdMode(int fd, const t_data data) {
     } else if (modeStr[0] == '-') {
         handleNegativeMode(fd, target, modeStr, param, channel);
     } else {
-        ft_send(fd, ERR_UNKNOWNMODE(clients_[fd].getNick(), modeStr));
+		return;
     }
 }

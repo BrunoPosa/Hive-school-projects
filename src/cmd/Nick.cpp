@@ -55,8 +55,7 @@ void Server::cmdNick(int fd, const t_data data) {
     }
     if (clients_[fd].isAuthenticated()) {
         if (isNickInUse(clients_, nick, fd)) {
-            std::string errorMsg = ERR_NICK_IN_USE(nick);
-            ft_send(fd, errorMsg);
+            ft_send(fd, ERR_NICK_IN_USE(clients_[fd].getUser(), nick));
             return;
         }
     } else {
@@ -65,12 +64,14 @@ void Server::cmdNick(int fd, const t_data data) {
         }
     }
     std::string oldNick = clients_[fd].getNick();
+	if (oldNick == nick){
+		return;
+	}
     clients_[fd].setNick(nick);
-    clients_[fd].setNickReceived();
-    if (clients_[fd].hasReceivedUser() && clients_[fd].isAuthenticated()) {
-        std::string welcomeMsg = RPL_WELCOME(nick);
-        ft_send(fd, welcomeMsg);
+    if (clients_[fd].hasReceivedUser() && clients_[fd].isAuthenticated() && !clients_[fd].hasReceivedNick()) {
+        ft_send(fd, RPL_WELCOME(nick));
     }
+	clients_[fd].setNickReceived();
     // Broadcast nick change to all unique clients INCLUDING the sender
     std::set<int> notifiedClients;
     std::string msg = ":" + oldNick + " NICK :" + nick + "\r\n";
@@ -85,8 +86,5 @@ void Server::cmdNick(int fd, const t_data data) {
                 }
             }
         }
-    }
-    if (clients_[fd].hasReceivedUser() && clients_[fd].isAuthenticated()) {
-        ft_send(fd, RPL_WELCOME(nick));
     }
 }

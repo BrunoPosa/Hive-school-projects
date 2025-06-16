@@ -45,7 +45,7 @@
 // 432 - ERR_ERRONONEOUS_NICKNAME
 #define ERR_ERRONEOUS_NICKNAME(nick) (":localhost 432 " + nick + " :Erroneous nickname\r\n")
 // 433 - ERR_NICK_IN_USE
-#define ERR_NICK_IN_USE(nick) (":localhost 433 " + nick + " :Nickname is already in use\r\n")
+#define ERR_NICK_IN_USE(user, nick) (":localhost 433 " + user + " " + nick + " :Nickname is already in use\r\n")
 // 441 - ERR_USERNOTINCHANNEL
 #define ERR_USERNOTINCHANNEL(nick, chan) (":localhost 441 " + nick + " " + chan + " :They aren't on that channel\r\n")
 // 442 - ERR_NOTONCHANNEL
