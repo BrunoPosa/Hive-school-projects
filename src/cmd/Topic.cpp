@@ -43,7 +43,7 @@ void Server::cmdTopic(int fd, const t_data data) {
             return;
         }
         ch.setTopic(topic);
-        std::string broadcast = ":" + client.getNick() + " TOPIC " + channel + " :" + topic + "\r\n";
+        std::string broadcast = ":" + client.getFullId() + " TOPIC " + channel + " :" + topic + "\r\n";
         ch.broadcastToAll(broadcast);
     }
 }
