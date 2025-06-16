@@ -8,7 +8,6 @@ namespace {
         char first = nick[0];
         if (!std::isalpha(first) && special.find(first) == std::string::npos)
             return false;
-        // Rest of the nickname: can include letter, digit, special, or '-'
         for (size_t i = 1; i < nick.size(); ++i) {
             char c = nick[i];
             if (!std::isalnum(c) &&

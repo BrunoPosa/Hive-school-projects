@@ -42,7 +42,6 @@ Channel &Channel::operator=(const Channel &other)
 
 // In Channel.cpp
 int Channel::getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const {
-std::cout << "getCLientFDbyNick" << std::endl;
 	for (std::map<int, Client>::const_iterator it = clients.begin(); it != clients.end(); ++it){
 		int fd = it->first;
 		std::map<int, Client>::const_iterator cit = clients.find(fd);

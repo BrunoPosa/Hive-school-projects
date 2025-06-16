@@ -23,11 +23,13 @@ void Server::cmdPart(int fd, const t_data data) {
 	std::istringstream chStream(channelList);
 	std::string channelName;
 	while (std::getline(chStream, channelName, ',')) {
+		//check if channel exists
 		if (channels_.find(channelName) == channels_.end()) {
 			ft_send(fd, ERR_NOSUCHCHANNEL(client.getNick(), channelName));
 			continue;
 		}
 		Channel& channel = channels_[channelName];
+		// Check if user in channel
 		if (channel.isEmpty()) {
 			ft_send(fd, ERR_NOTONCHANNEL(client.getNick(), channelName));
 			continue;

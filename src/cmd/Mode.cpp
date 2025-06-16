@@ -103,6 +103,7 @@ void Server::cmdMode(int fd, const t_data data) {
         ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), command));
         return;
     }
+    // Check if it is only MODE + channel to show the channel's current modes
     if (modeStr.empty() && channels_.find(target) != channels_.end()) {
         std::string currentModes = channels_[target].getModeString();
         std::string nick = clients_[fd].getNick();
@@ -110,6 +111,7 @@ void Server::cmdMode(int fd, const t_data data) {
         return;
     }
     Client& sender = clients_[fd];
+    // Check if the Mode is targeting a user and not a channel
     if (target.empty() || target[0] != '#') {
         if (clients_[fd].getNick() == target)
             return; 
@@ -117,7 +119,6 @@ void Server::cmdMode(int fd, const t_data data) {
         return;
     }
     // Check if channel exists
-    std::cerr << "target: " << target << std::endl;
     if (channels_.find(target) == channels_.end()) {
         ft_send(fd, ERR_NOSUCHCHANNEL(sender.getNick(), target));
         return;

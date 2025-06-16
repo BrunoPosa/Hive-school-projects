@@ -122,7 +122,6 @@ namespace IrcMessages {
 			// Check if the client is an operator in this channel
 			if (ch->isOperator(clientFd)) {
 				msg += "@";
-				std::cerr << "found op" << std::endl;
 			}
 			msg += clientNick + " ";
 		}
