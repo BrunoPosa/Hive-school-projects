@@ -1,6 +1,10 @@
 #pragma once
 
-// System
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <stdexcept>
+#include <chrono>
 #include <poll.h>
 #include <cerrno>
 #include <cstring>//strerror, strsignal
@@ -9,16 +13,11 @@
 #include <limits.h>//hostnamemax
 
 // Standard Template Library
-#include <iostream>
-#include <string>
 #include <vector>
 #include <map>
 #include <set>
 #include <unordered_map>
 #include <functional>
-#include <sstream>
-#include <stdexcept>
-#include <chrono>
 
 // Project Headers
 #include "error.hpp"
@@ -43,7 +42,6 @@ typedef struct cmdFunctionParameters {
 #define MAX_CLIENTS_IRC 999
 
 class Server {
-private:
 	Config		cfg_;
 	Socket		listenSo_;
 	int			listenSoFd_;
@@ -58,7 +56,7 @@ private:
 	std::map<std::string, Channel>	channels_;
 	std::unordered_map<std::string, std::function<void(int, const t_data&)>>	cmds_;
 
-	//I/O
+	//I/O handling
 	void	eventsLoop();
 	void	handleEvents(pollfd& pfd);
 	void	addClient();
@@ -67,6 +65,7 @@ private:
 	bool	processAuth(int fromFd, std::string msg);
 	void	dispatchCmd(int fd, const std::string& message);
 
+	//commands
 	void cmdNick(int fd, const t_data data);
 	void cmdUser(int fd, const t_data data);
 	void cmdJoin(int fd, const t_data data);
@@ -75,13 +74,12 @@ private:
 	void cmdInvite(int fd, t_data data);
 	void cmdTopic(int fd, const t_data data);
 	void cmdMode(int fd, const t_data data);
-	//extra
-	void cmdPart(int fd, const t_data data);
-	void cmdPing(int fd, const t_data& data);
-	void cmdWho(int fd, const t_data data);
+	void cmdPart(int fd, const t_data data);//extra
+	void cmdPing(int fd, const t_data& data);//extra
+	void cmdWho(int fd, const t_data data);//extra
 	
 	//utils
-	void	ft_send(int fd, const std::string& message) { clients_[fd].toSend(message); }
+	void ft_send(int fd, const std::string& message) { clients_[fd].toSend(message); }
 	int getClientFdByNick(const std::string& nick) const;
 	void kickUser(int sender_fd, const std::string& channelName, const std::string& reason, const std::string& targetNick);
 	void handlePositiveMode(int fd, const std::string& command, const std::string& target, const std::string& modeStr, const std::string& param, Channel& channel);

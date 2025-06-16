@@ -10,7 +10,6 @@ Client::Client()
 :	so_{},
 	pfd_{nullptr},
 	nick_{"unknown"},
-	hostnm_{},
 	delimiter_{"\n"},
 	authenticated{false},
 	nickReceived{false},
@@ -25,11 +24,10 @@ Client::Client()
 	recvBuf_.reserve(IRC_MAX_BUF);
 }
 
-Client::Client(Socket&& so, pollfd *pfd, std::string hostname)
+Client::Client(Socket&& so, pollfd *pfd)
 :	so_{std::move(so)},
 	pfd_{pfd},
 	nick_{"unknown"},
-	hostnm_{hostname},
 	delimiter_{"\n"},
 	authenticated{false},
 	nickReceived{false},
@@ -51,7 +49,6 @@ Client::Client(Client&& other) noexcept
 		recvBuf_{std::move(other.recvBuf_)},
 		nick_{std::move(other.nick_)},
 		usrnm_{std::move(other.usrnm_)},
-		hostnm_{std::move(other.usrnm_)},
 		delimiter_{std::move(other.delimiter_)},
 		joinedChannels{std::move(other.joinedChannels)},
 		authenticated{std::exchange(other.authenticated, false)},
@@ -72,7 +69,6 @@ Client&	Client::operator=(Client&& other) noexcept {
 		recvBuf_ = std::move(other.recvBuf_);
 		nick_ = std::move(other.nick_);
 		usrnm_ = std::move(other.usrnm_);
-		hostnm_ = std::move(other.hostnm_);
 		delimiter_ = std::move(other.delimiter_);
 		joinedChannels = std::move(other.joinedChannels);
 		authenticated = std::exchange(other.authenticated, false);
@@ -239,8 +235,4 @@ void Client::setOperator(const std::string &channel, bool is_operator)
 {
 	if (isInChannel(channel))
 		joinedChannels[channel] = is_operator;
-}
-
-std::string Client::getFullId() const {
-    return this->getNick() + "!" + this->getUser() + "@localhost";
 }

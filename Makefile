@@ -73,17 +73,7 @@ val: fclean
 	$(CXX) $(DEBUG_FLAGS) -o $(VALGR_NAME) $(SRCS)
 	valgrind --leak-check=full --track-fds=yes --show-leak-kinds=all ./$(VALGR_NAME) $(DEFAULT_ARG)
 
-git: fclean
-	clear
-	git status
-	git add .
-	git status
-	git commit -m "$(NAME) - save state"
-	git push
-	git status
 
 
 
-
-.PHONY: all clean fclean re fs val git
-
+.PHONY: all clean fclean re fs val

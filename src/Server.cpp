@@ -15,7 +15,7 @@ Server::Server()
 	running_{false},
 	allowedInactivity_{300},
 	cmds_{
-		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
+		{"NICK", [this](int fd, const t_data d) { cmdNick(fd, d); }},
 		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
 		{"JOIN", [this](int fd, const t_data d) { cmdJoin(fd, d); }},
 		{"MODE", [this](int fd, const t_data d) { cmdMode(fd, d); }},
@@ -38,7 +38,7 @@ Server::Server(Config&& cfg)
 	accepting_{false},
 	running_{false},
 	cmds_{
-		{"NICK",  [this](int fd, const t_data d) { cmdNick(fd, d); }},
+		{"NICK", [this](int fd, const t_data d) { cmdNick(fd, d); }},
 		{"USER", [this](int fd, const t_data d) { cmdUser(fd, d); }},
 		{"JOIN", [this](int fd, const t_data d) { cmdJoin(fd, d); }},
 		{"MODE", [this](int fd, const t_data d) { cmdMode(fd, d); }},
@@ -189,7 +189,7 @@ void Server::addClient() {
 
 	int fd = clientSock.getFd();
 	pollFds_.push_back({fd, POLLIN, 0});
-	clients_.emplace(fd, Client(std::move(clientSock), &pollFds_.back(), host_));
+	clients_.emplace(fd, Client(std::move(clientSock), &pollFds_.back()));
 
 	if (clients_.size() == MAX_CLIENTS_IRC) {
 		accepting_ = false;
@@ -197,7 +197,7 @@ void Server::addClient() {
 
 	std::cout << YELLOWIRC
 			<< "Accepted fd[" << fd
-			<< "] from " << clients_[fd].getHost()
+			<< "] from " << clients_[fd].fetchHost()
 			<< " with address " << clients_[fd].getIP() << ":"
 			<< clients_[fd].getPort() << RESETIRC << std::endl;
 }
@@ -350,6 +350,5 @@ void	Server::cmdWho(int fd, const t_data data) {
 	if (data.fullMsg.length() < 5) {
 		return;
 	}
-	const std::string ch("ch");
 	clients_[fd].toSend(RPL_ENDOFWHO(clients_[fd].getFullId(), data.fullMsg.substr(4)));
 }

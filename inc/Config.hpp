@@ -21,7 +21,7 @@ class Config {
 	void	validate_();
 	bool	isValidPort_();
 	
-	public:
+public:
 	Config();
 	Config(std::string listenPort, std::string passw);
 	Config(const Config&)				= delete;
