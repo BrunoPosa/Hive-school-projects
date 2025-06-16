@@ -22,7 +22,6 @@ void Server::cmdKick(int fd, const t_data data) {
     }
     const std::string& channelName = params[0];
     const std::string& targetNick = params[1];
-
     if (channels_.find(channelName) == channels_.end()) {
 		ft_send(fd, ERR_NOSUCHCHANNEL(clients_[fd].getNick(), channelName));
 		return;

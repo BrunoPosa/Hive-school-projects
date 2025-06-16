@@ -17,5 +17,3 @@ void Server::cmdPing(int fd, const t_data& data) {
 	std::string pongResponse = ":localhost PONG localhost :" + token + "\r\n";
 	ft_send(fd, pongResponse);
 }
-
-

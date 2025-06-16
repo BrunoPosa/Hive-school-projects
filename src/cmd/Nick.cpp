@@ -4,9 +4,7 @@ namespace {
     bool isValidNick(const std::string& nick) {
         if (nick.empty())
             return false;
-        // Valid characters per RFC 2812
         const std::string special = "[]\\`_^{|}";
-        // First character: must be a letter (A–Z or a–z) or special
         char first = nick[0];
         if (!std::isalpha(first) && special.find(first) == std::string::npos)
             return false;

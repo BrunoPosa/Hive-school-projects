@@ -65,4 +65,3 @@ void Server::cmdPrivMsg(int fd, const t_data data) {
         }
     }
 }
-
