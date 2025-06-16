@@ -28,7 +28,7 @@ void Server::cmdPart(int fd, const t_data data) {
 			continue;
 		}
 		Channel& channel = channels_[channelName];
-		if (!channel.hasClient(fd)) {
+		if (channel.isEmpty()) {
 			ft_send(fd, ERR_NOTONCHANNEL(client.getNick(), channelName));
 			continue;
 		}

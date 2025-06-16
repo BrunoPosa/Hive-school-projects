@@ -9,7 +9,7 @@ class Config {
 	int					port_;
 	std::string			portStr_;
 	std::string			password_;
-	const std::string	serverName_{"ft_irc, WB edition ®"};
+	const std::string	serverName_{"ft_irc, WB edition 🐭🧀"};
 	const std::string	allowedPassChars_{//validate_() needs '-' in this string as delimiter for printing special chars
 		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?#"
 	};

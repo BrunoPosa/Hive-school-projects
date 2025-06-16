@@ -73,7 +73,7 @@ void Server::cmdNick(int fd, const t_data data) {
     clients_[fd].toSend(msg.c_str());
     notifiedClients.insert(fd);
     for (std::map<std::string, Channel>::iterator it = channels_.begin(); it != channels_.end(); ++it) {
-        if (it->second.hasClient(fd)) {
+        if (!it->second.isEmpty()) {
             for (int otherFd : it->second.getChClients()) {
                 if (notifiedClients.insert(otherFd).second) {
                     clients_[otherFd].toSend(msg.c_str());
