@@ -6,8 +6,8 @@ void Server::cmdInvite(int fd, const t_data data) {
 		ft_send(fd, ERR_NEEDMOREPARAMS(clients_[fd].getNick(), params[0]));
 		return;
 	}
-	const std::string& targetNick = params[0];
-	const std::string& channelName = params[1];
+	const std::string& targetNick = params[1];
+	const std::string& channelName = params[0];
 	// Check if target client exists
 	int target_fd = getClientFdByNick(targetNick);
 	if (target_fd == -1) {
