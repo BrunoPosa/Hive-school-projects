@@ -1,6 +1,6 @@
 #include "../inc/Server.hpp"
 
-Channel::Channel(const std::string &name, std::map<int, Client>* ptrToAllClients)
+Channel::Channel(const std::string &name, clientMap* ptrToAllClients)
 : name_(name), topic_(""), pwd_(""), userLimit_(-1), inviteOnly_(false), topicRestrictedToOperators_(true), allClientsPtr_(ptrToAllClients) {}
 
 Channel::~Channel() {
@@ -41,10 +41,11 @@ Channel &Channel::operator=(const Channel &other)
 ////////////////////////////////////////////////////////////////////////////
 
 // In Channel.cpp
-int Channel::getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const {
-	for (std::map<int, Client>::const_iterator it = clients.begin(); it != clients.end(); ++it){
+int Channel::getClientFdByNick(const std::string &nickname, const clientMap& clients) const
+{
+	for (clientMap::const_iterator it = clients.begin(); it != clients.end(); ++it){
 		int fd = it->first;
-		std::map<int, Client>::const_iterator cit = clients.find(fd);
+		clientMap::const_iterator cit = clients.find(fd);
 		if (cit != clients.end() && cit->second.getNick() == nickname) {
 			return fd;
 		}

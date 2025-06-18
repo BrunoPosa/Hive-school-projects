@@ -29,6 +29,7 @@ Server::Server()
 	}
 {
 	pollFds_.reserve(MAX_CLIENTS_IRC);
+	clients_.reserve(MAX_CLIENTS_IRC);
 }
 
 Server::Server(Config&& cfg)
@@ -53,6 +54,7 @@ Server::Server(Config&& cfg)
 {
 	allowedInactivity_ = cfg_.getAllowedInactivity();
 	pollFds_.reserve(MAX_CLIENTS_IRC);
+	clients_.reserve(MAX_CLIENTS_IRC);
 }
 
 Server::Server(Server&& other) noexcept
@@ -64,8 +66,8 @@ Server::Server(Server&& other) noexcept
 	accepting_{false},
 	running_{false},
 	allowedInactivity_{other.allowedInactivity_},
-	clients_(std::move(other.clients_)),
 	pollFds_(std::move(other.pollFds_)),
+	clients_(std::move(other.clients_)),
 	channels_(std::move(other.channels_)),
 	cmds_{std::move(other.cmds_)}
 {}
@@ -80,8 +82,8 @@ Server& Server::operator=(Server&& other) noexcept {
 		accepting_ = false;
 		running_ = false;
 		allowedInactivity_ = other.allowedInactivity_;
-		clients_ = std::move(other.clients_);
 		pollFds_ = std::move(other.pollFds_);
+		clients_ = std::move(other.clients_);
 		channels_ = std::move(other.channels_);
 		cmds_ = std::move(other.cmds_);
 	}
@@ -339,7 +341,7 @@ std::vector<std::string>	Server::tokenize(std::istringstream& cmdParams){
 }
 
 int Server::getClientFdByNick(const std::string& nick) const {
-	for (std::map<int, Client>::const_iterator it = clients_.begin(); it != clients_.end(); ++it) {
+	for (std::unordered_map<int, Client>::const_iterator it = clients_.begin(); it != clients_.end(); ++it) {
 		if (it->second.getNick() == nick) {
 			return it->first;
 		}

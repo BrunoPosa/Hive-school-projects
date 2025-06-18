@@ -8,6 +8,8 @@
 
 #include "Client.hpp"
 
+typedef std::unordered_map<int, Client> clientMap;
+
 class Channel
 {
     private:
@@ -24,11 +26,11 @@ class Channel
         bool topicRestrictedToOperators_;  // t
         bool hasPassword_; // k
         bool hasUserLimit_; // l
-        std::map<int, Client>* allClientsPtr_;
+        clientMap* allClientsPtr_;
 
     public:
         Channel() = default;
-        Channel(const std::string &name, std::map<int, Client>* ptrToAllClients);
+        Channel(const std::string &name, clientMap* ptrToAllClients);
         Channel(const Channel &other);
         Channel &operator=(const Channel &src);
         ~Channel();
@@ -43,10 +45,10 @@ class Channel
         const std::string& getPwd() const       { return this->pwd_; }
         bool hasPassword() const                { return !this->pwd_.empty(); }
 
-        std::vector<int> getChClients() const   {return chClients_;}
+        std::vector<int>& getChClients()        { return chClients_;}
         bool hasUserLimit() const               { return this->userLimit_ > 0; }
         int  getUserLimit() const               { return this->userLimit_; }
-        int  getClientFdByNick(const std::string& nickname, const std::map<int, Client>& clients) const;
+        int  getClientFdByNick(const std::string& nickname, const clientMap& clients) const;
         bool getInviteOnly() const              { return this->inviteOnly_; }
         bool getIsUserInvited(const int& fd) const { return std::find(this->invitedUsers_.begin(), this->invitedUsers_.end(), fd) != this->invitedUsers_.end(); }
         int  getUserCount() const               { return this->chClients_.size(); }

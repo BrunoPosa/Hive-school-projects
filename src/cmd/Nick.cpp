@@ -18,7 +18,7 @@ namespace {
         }
         return true;
     }
-    bool isNickInUse(const std::map<int, Client>& clients, const std::string& nick, int excludeFd) {
+    bool isNickInUse(const std::unordered_map<int, Client>& clients, const std::string& nick, int excludeFd) {
         for (const auto& pair : clients) {
             if (pair.first != excludeFd && pair.second.getNick() == nick)
                 return true;
@@ -71,7 +71,7 @@ void Server::cmdNick(int fd, const t_data data) {
     // Always notify the sender too
     clients_[fd].toSend(msg.c_str());
     notifiedClients.insert(fd);
-    for (std::map<std::string, Channel>::iterator it = channels_.begin(); it != channels_.end(); ++it) {
+    for (std::unordered_map<std::string, Channel>::iterator it = channels_.begin(); it != channels_.end(); ++it) {
         if (!it->second.isEmpty()) {
             for (int otherFd : it->second.getChClients()) {
                 if (notifiedClients.insert(otherFd).second) {

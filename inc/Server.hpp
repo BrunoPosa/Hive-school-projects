@@ -39,7 +39,7 @@ typedef struct cmdFunctionParameters {
 #define GREENIRC "\033[1;32m"
 #define RESETIRC "\033[0m"
 
-#define MAX_CLIENTS_IRC 999
+#define MAX_CLIENTS_IRC 1024
 
 class Server {
 	Config		cfg_;
@@ -51,9 +51,9 @@ class Server {
 	volatile sig_atomic_t	running_;
 	std::chrono::seconds	allowedInactivity_;
 
-	std::map<int, Client>	clients_;
 	std::vector<struct pollfd>	pollFds_;
-	std::map<std::string, Channel>	channels_;
+	std::unordered_map<int, Client>	clients_;
+	std::unordered_map<std::string, Channel>	channels_;
 	std::unordered_map<std::string, std::function<void(int, const t_data&)>>	cmds_;
 
 	//I/O handling

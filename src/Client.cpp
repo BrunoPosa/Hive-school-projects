@@ -58,7 +58,7 @@ Client::Client(Client&& other) noexcept
 		modeReceived{std::exchange(other.modeReceived, false)},
 		whois{std::exchange(other.modeReceived, false)},
 		authAttempts_{std::exchange(other.authAttempts_, 0)},
-		lastActive_{std::chrono::steady_clock::now()}
+		lastActive_{other.lastActive_}
 {}
 
 Client&	Client::operator=(Client&& other) noexcept {
