@@ -185,12 +185,14 @@ void test_move_assignment() {
 
 
 int main() {
-
+try{
 	test_constructor();
     test_param_constructor();
 	test_move_constructor();
 	// test_listener_accept_send_receive();
 	test_move_assignment();
-
+} catch (std::exception& e) {
+	std::cout << "exceptioN:" << e.what() << std::endl;
+}
 	return 0;
 }
