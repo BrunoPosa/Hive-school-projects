@@ -38,8 +38,6 @@ Channel &Channel::operator=(const Channel &other)
 	return *this;
 }
 
-////////////////////////////////////////////////////////////////////////////
-
 // In Channel.cpp
 int Channel::getClientFdByNick(const std::string &nickname, const clientMap& clients) const
 {
@@ -52,8 +50,6 @@ int Channel::getClientFdByNick(const std::string &nickname, const clientMap& cli
 	}
 	return -1; // Not found
 }
-
-////////////////////////////////////////////////////////////////
 
 void Channel::addInvitedUser(const int& client_fd)
 {
