@@ -4,7 +4,7 @@ FSANITNAME	= buildFsanitiz
 VALGRNAME	= buildValgrind
 
 CXX			= c++
-FLAGS		= -std=c++11 -Wall -Wextra -Werror
+FLAGS		= -std=c++17 -Wall -Wextra -Werror
 DEBUGFLAGS	= -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
 VALGRFLAGS	= -Wpedantic -Wshadow -g -O0
 RM			= rm -rf

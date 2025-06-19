@@ -5,22 +5,15 @@
 #include <iterator>
 #include <algorithm>
 #include <string>
+#include <stdexcept>
 
-//container might be array, vector, list, forward-list, and dequeue
-// template<typename T>
-// bool easyfind(T& container, int num) {
-// 	for (auto it : container) {
-// 		if (it == num) {
-// 			return true;
-// 		}
-// 	}
-// 	return false;
-// }
+//should work with array, vector, list, forward-list, dequeue, map, unordered_map, set
+//does not work with anything that does not have begin() and end() defined, nor null- or raw pointers
 template<typename T>
 size_t easyfind(T& container, int num) {
-	for (auto it = container.begin(); it != container.end(); ++it) {
+	for (auto it = std::begin(container); it != std::end(container); ++it) {
 		if (*it == num) {
-			return std::distance(container.begin(), it);
+			return std::distance(std::begin(container), it);
 		}
 	}
 	throw std::runtime_error("Value not found");
