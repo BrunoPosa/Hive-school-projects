@@ -13,6 +13,7 @@ namespace {
 		std::vector<std::function<bool()>> tests_;
 
 	public:
+		Tester(std::vector<std::function<bool()>> tests) : tests_{std::move(tests)} {};
 		void addTest(std::function<bool()> test) {
 			tests_.push_back(test);
 		}
@@ -57,7 +58,7 @@ namespace {
 
 		std::vector<int> bigVec(N);
 		std::iota(bigVec.begin(), bigVec.end(), 0); // Fill with 0 to N-1
-		sp.addRange(bigVec.begin(), bigVec.end());
+		sp.addRange(bigVec.begin(), bigVec.end(), bigVec);
 
 		if (sp.shortestSpan() == 1) correct++;
 		if (sp.longestSpan() == N - 1) correct++;
@@ -176,6 +177,47 @@ namespace {
 		return (correct == 2);
 	}
 
+
+	bool	addRangeByPointerType() {
+		cout << YELLOWISH() << "\naddRangeByPointerType" << RESETISH() << endl;
+		int correct = 0;
+
+		Span sp(8);
+		int array[] = {8, 10, -3, 5, 7, 25, 11, -2};
+
+		cout << "array:" << endl;
+		for (auto n : array)	cout << n << ", ";
+		cout << endl;
+		sp.addRange(array, array + 8, array);
+
+		if (sp.shortestSpan() == 1) correct++;
+		cout << "shortest span:" << sp.shortestSpan() << endl;
+		if (sp.longestSpan() == 28) correct++;
+		cout << "longest span:" << sp.longestSpan() << endl;
+
+		return (correct == 2);
+	}
+
+
+	bool	addRangeFromDifferentContainers() {
+		cout << YELLOWISH() << "\naddRangeFromDifferentContainers" << RESETISH() << endl;
+		int correct = 0;
+
+		Span sp(8);
+		std::vector<int> A; A.push_back(3); A.push_back(5);  A.push_back(7);
+		std::vector<int> B; B.push_back(-2); B.push_back(-4);
+
+		try {
+			sp.addRange(A.begin(), B.end(), A);
+			cout << "longest span:" << sp.longestSpan() << endl;
+		} catch (std::runtime_error& e) {
+			cout << "caught exception (different containers): " << e.what() << endl;
+			correct++;
+		}
+
+		return (correct == 1);
+	}
+
 }
 
 int main(void)
@@ -184,17 +226,20 @@ int main(void)
 		givenSubjectMain();
 		cout << endl;
 
-		Tester myTests;
-		myTests.addTest(testLargeVector);
-		myTests.addTest(testExceptions);
-		myTests.addTest(testDuplicateSpan);
-		myTests.addTest(negativeNumbers);
-		myTests.addTest(edgeValues);
-		myTests.addTest(allEqual);
+		Tester myTests({
+			testLargeVector,
+			testExceptions,
+			testDuplicateSpan,
+			negativeNumbers,
+			edgeValues,
+			allEqual,
+			addRangeByPointerType,
+			addRangeFromDifferentContainers
+		});
 
 		myTests.run();
 
 	} catch (std::exception& e) {
-		cout << "exception in main:" << e.what() << endl;
+		cout << REDISH() << "exception in main:" << e.what() << RESETISH() << endl;
 	}
 }

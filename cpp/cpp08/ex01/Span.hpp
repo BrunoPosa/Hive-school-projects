@@ -26,7 +26,10 @@ public:
 	size_t	shortestSpan() const;
 	size_t	longestSpan() const;
 	void	addNumber(int num);
-	template<typename It> void	addRange(It begin, It end) {
+	template<typename It, typename Container> void	addRange(It begin, It end, Container& c) {
+		if (std::distance(std::begin(c), begin) != 0 || std::distance(std::end(c), end) != 0) {
+			throw std::runtime_error("addRange must accept both iterators from same container!");
+		}
 		while (begin != end) {
 			addNumber(*begin);
 			begin++;
