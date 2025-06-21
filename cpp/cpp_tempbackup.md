@@ -459,7 +459,9 @@ When Could static_cast Work?
 ====================================================
 CPP 07 - Templates
 ====================================================
-
+-typename
+-In the template parameter list of a template declaration, typename can be used as an alternative to class to declare type template parameters and template template parameters(since C++17).
+-Inside a declaration or a definition of a template, typename can be used to declare that a dependent qualified name is a type. 
 
 
 
