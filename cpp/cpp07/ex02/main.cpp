@@ -51,6 +51,11 @@ namespace {
 		Array<TestClass> assignedArr;
 		assignedArr = arr;
 	}
+
+	void foo(Array<int> obj) {
+		cout << "foo" << endl;
+		cout << obj.operator[](0) << endl;
+	}
 }
 
 int main (void) {
@@ -62,12 +67,14 @@ int main (void) {
 		// cout << "a=" << *z << endl;
 		// // cout << a[20] << endl;
 
+foo();
+
 		// Test 1: Default constructor
 		Array<int> a;
 		cout << "Size of default array: " << a.size() << endl;
 
 		// Test 2: Parameterized constructor
-		Array<int> b(5);
+		Array<int> b(0);
 		cout << "Size of parameterized array: " << b.size() << endl;
 
 		// Fill array with values

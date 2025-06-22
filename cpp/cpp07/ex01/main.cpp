@@ -1,6 +1,5 @@
 #include "Iter.hpp"
 
-using std::string;
 using std::cout;
 using std::endl;
 
@@ -27,14 +26,14 @@ namespace {
 	}
 
 	void printNumSquare(int num) {
-		std::cout << num * num << std::endl;
+		cout << num * num << endl;
 	}
 
 	void strToUpper(std::string str) {
 		for (char& c : str) {
 			c = std::toupper(c);
 		}
-		std::cout << str << std::endl;
+		cout << str << endl;
 	}
 
 
@@ -71,7 +70,7 @@ namespace {
 	void stringTest1() {
 		//init
 		int n = 10;
-		string strings[n];
+		std::string strings[n];
 		std::srand(std::time(nullptr));
 		cout << "init values of strings[]:" << endl;
 		for (int i = 0; i < n; i++) {

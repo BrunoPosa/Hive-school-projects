@@ -2,7 +2,8 @@
 
 #include <iostream>
 #include <string>
-#include <cstdlib>
+#include <cctype>//std::toupper
+#include <cstdlib>//std::srand
 #include <ctime>
 
 template <typename T> void printer(T obj) {

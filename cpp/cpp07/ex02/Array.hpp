@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <new>
-#include <exception>
+#include <stdexcept>
 
 template <typename T>
 class Array {
@@ -12,8 +12,12 @@ class Array {
 public:
 	Array() noexcept : arr_{nullptr}, n_{0} { std::cout << "def. ctor" << std::endl; }
 	explicit Array(const unsigned int n) : arr_{nullptr}, n_{n} {
+		std::cout << "n=" << n << std::endl;
 		if (n > 0) {
-			arr_ = new T[n];
+			arr_ = new (std::nothrow) T[n];//bc Hania says Valgrind does not like 'new' exceptions
+			if (!arr_) {
+				throw std::runtime_error("new failed to allocate!");
+			}
 		}
 		for (unsigned int i = 0; i < n; i++) {
 			arr_[i] = T{};
@@ -30,7 +34,10 @@ public:
 				delete[] arr_;
 			}
 			if (other.n_ != 0) {
-				arr_ = new T[other.n_];
+				arr_ = new (std::nothrow) T[other.n_];//bc Hania says so
+				if (!arr_) {
+					throw std::runtime_error("new failed to allocate!");
+				}
 			}
 			n_ = other.n_;
 			for (unsigned int i = 0; i < n_; i++) {
