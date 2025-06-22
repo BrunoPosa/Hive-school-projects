@@ -51,11 +51,6 @@ namespace {
 		Array<TestClass> assignedArr;
 		assignedArr = arr;
 	}
-
-	void foo(Array<int> obj) {
-		cout << "foo" << endl;
-		cout << obj.operator[](0) << endl;
-	}
 }
 
 int main (void) {
@@ -67,7 +62,6 @@ int main (void) {
 		// cout << "a=" << *z << endl;
 		// // cout << a[20] << endl;
 
-foo();
 
 		// Test 1: Default constructor
 		Array<int> a;
