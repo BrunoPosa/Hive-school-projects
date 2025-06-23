@@ -11,16 +11,12 @@ class Array {
 
 public:
 	Array() noexcept : arr_{nullptr}, n_{0} { std::cout << "def. ctor" << std::endl; }
-	explicit Array(const unsigned int n) : arr_{nullptr}, n_{n} {
-		std::cout << "n=" << n << std::endl;
+	explicit Array(unsigned int n) : arr_{nullptr}, n_{n} {
 		if (n > 0) {
-			arr_ = new (std::nothrow) T[n];//bc Hania says Valgrind does not like 'new' exceptions
+			arr_ = new (std::nothrow) T[n];//Valgrind does not like 'new' exceptions (Hania says so)
 			if (!arr_) {
 				throw std::runtime_error("new failed to allocate!");
 			}
-		}
-		for (unsigned int i = 0; i < n; i++) {
-			arr_[i] = T{};
 		}
 		std::cout << "param. ctor" << std::endl;
 	}
@@ -34,7 +30,7 @@ public:
 				delete[] arr_;
 			}
 			if (other.n_ != 0) {
-				arr_ = new (std::nothrow) T[other.n_];//bc Hania says so
+				arr_ = new (std::nothrow) T[other.n_];
 				if (!arr_) {
 					throw std::runtime_error("new failed to allocate!");
 				}
