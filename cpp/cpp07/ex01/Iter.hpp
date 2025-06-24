@@ -10,7 +10,7 @@ template <typename T> void printer(T obj) {
 	std::cout << obj << std::endl;
 }
 
-template <typename T> void iter(T* arr, size_t len, void (*f)(T)) {
+template <typename T> void iter(T* arr, size_t len, void (*f)(T)) {//make reference
 	if (!arr || !f) {
 		return;
 	}
@@ -22,3 +22,9 @@ template <typename T> void iter(T* arr, size_t len, void (*f)(T)) {
 		i++;
 	}
 }
+
+//add version with const reference
+
+
+
+//OR simply have the 3rd argument be a typename T f
