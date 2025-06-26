@@ -6,11 +6,13 @@
 #include <cstdlib>//std::srand
 #include <ctime>
 
-template <typename T> void printer(T obj) {
+template <typename T>
+void printer(const T& obj) {
 	std::cout << obj << std::endl;
 }
 
-template <typename T> void iter(T* arr, size_t len, void (*f)(T)) {//make reference
+template <typename T, typename F>
+void iter(T* arr, size_t len, F f) {
 	if (!arr || !f) {
 		return;
 	}
@@ -22,9 +24,3 @@ template <typename T> void iter(T* arr, size_t len, void (*f)(T)) {//make refere
 		i++;
 	}
 }
-
-//add version with const reference
-
-
-
-//OR simply have the 3rd argument be a typename T f

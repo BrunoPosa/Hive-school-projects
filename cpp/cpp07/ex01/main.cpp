@@ -14,12 +14,12 @@ namespace {
 		void setName(std::string name) { name_ = name; }
 		void setCohort(int cohort) { cohort_ = cohort; }
 		void setCoalition(std::string coalition) { coalition_ = coalition; }
-		std::string getName() { return name_; }
-		int	getCohort() { return cohort_; }
-		std::string	getCoalition() { return coalition_; }
+		std::string getName() const { return name_; }
+		int	getCohort() const { return cohort_; }
+		std::string	getCoalition() const { return coalition_; }
 	};
 
-	std::ostream&	operator<<(std::ostream& os, Hiver& obj)
+	std::ostream& operator<<(std::ostream& os, const Hiver& obj)
 	{
 		os << "Hiver " << obj.getName() << " from cohort " << obj.getCohort() << " and coalition: " << obj.getCoalition(); 
 		return os;
@@ -52,7 +52,7 @@ namespace {
 			hivers[i].setName(std::string("'peop" + std::to_string(i) + "_" + hivers[i].getCoalition() + std::to_string(hivers[i].getCohort())) + "'");
 		}
 		//run
-		iter(hivers, n, printer);
+		iter(hivers, n, printer<Hiver>);
 	}
 
 	void numTest1() {
@@ -64,6 +64,7 @@ namespace {
 			arr[i] = i;
 		}
 		//run
+		
 		iter(arr, n, printNumSquare);
 	}
 
