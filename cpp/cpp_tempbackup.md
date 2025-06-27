@@ -162,6 +162,7 @@ Encapsulation pros:
 - type specifier is 'int', 'double' etc in front of variable. Type modifiers are 'signed', 'unsigned', 'long', 'short'; Type qualifiers are 'const', 'mutable', 'volatile'. A SPECIFIER SEQUENCE combines keywords (like const, volatile, unsigned, etc.) and type specifiers (like int, char, float, etc.) to describe the exact nature of the type being declared.
 -"A class in C++ is an extension of the idea of struct found in C. A class packages a data type with its associated functions and operators. This in turn can be used to implement abstract data types (ADTs). An abstract data type, such as a stack, is a set of values and operations that define the type A large part of the object-oriented programming (OOP) design process involves thinking up the appropriate ADTs for a problem."
 
+'A a{4, 5};' - direct-list-initialization
 
 ===
 Eval lessons:
@@ -462,6 +463,25 @@ CPP 07 - Templates
 -typename
 -In the template parameter list of a template declaration, typename can be used as an alternative to class to declare type template parameters and template template parameters(since C++17).
 -Inside a declaration or a definition of a template, typename can be used to declare that a dependent qualified name is a type. 
+
+-Template deduction constness is same as in funcion calls - top level is ignored, lower level stays
+-template<typename T> void func(T&& x);  // x is a universal reference
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

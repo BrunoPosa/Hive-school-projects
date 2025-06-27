@@ -6,7 +6,7 @@ using std::endl;
 
 class Entity {
 	string Name_;
-	int age_;
+	unsigned int age_;
 	
 public:
 	Entity() {
@@ -16,16 +16,21 @@ public:
 	Entity(const string& name) : Name_(name), age_(-1) {//string param. ctor
 		cout << "str ctor" << endl;
 	}
-	 Entity(int age) : Name_("Unknown"), age_(age) {
+
+	explicit Entity(unsigned int age) : Name_("Unknown"), age_(age) {//age param. ctor
 		cout << "age " + std::to_string(age_) + " ctor" << endl;
 	}
 
-	string getName() {return Name_;}
+	Entity (const Entity& other) : Name_(other.Name_), age_(other.age_) {
+		cout << "copy ctor" << endl;
+	}
 
+	string getName() {return Name_;}
+	unsigned int getAge() const {return age_;}
 };
 
 void	PrintEntity(const Entity& entity) {
-	// cout << entity.getName() << endl;
+	cout << entity.getAge() << endl;
 	(void)entity;
 }
 
@@ -33,14 +38,13 @@ void	PrintEntity(const Entity& entity) {
 int main (void)
 {
 	// Entity a("Hellokitty");
-	// Entity b(22);
+	// Entity b = 21;
 
 	// Entity a = "hello";
-	Entity b = 21;
-
-
-	PrintEntity(42);
-	PrintEntity(Entity("Kitty"));
+	// Entity b = 21;
+Entity c = (Entity)22;
+	PrintEntity(Entity (23));
+	// PrintEntity(Entity("Kitty"));
 
 	return 0;
 }

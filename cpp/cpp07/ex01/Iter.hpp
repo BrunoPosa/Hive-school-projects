@@ -13,14 +13,11 @@ void printer(const T& obj) {
 
 template <typename T, typename F>
 void iter(T* arr, size_t len, F f) {
-	if (!arr || !f) {
+	if (!arr) {
 		return;
 	}
 
-	size_t	i = 0;
-
-	while (i != len) {
+	for (size_t i = 0; i < len; i++) {
 		f(arr[i]);
-		i++;
 	}
 }
