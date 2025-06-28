@@ -37,6 +37,26 @@ namespace {
 		}
 	};
 
+	class emptyClass {
+		int a;
+	public:
+		emptyClass() : a(0) {}
+		emptyClass(int value) : a(value) {}
+		emptyClass(const emptyClass& other) : a(other.a) {}
+		emptyClass& operator=(const emptyClass& other) {
+			if (this != &other) {
+				a = other.a;
+			}
+			return *this;
+		}
+		~emptyClass() = default;
+
+		bool operator==(const emptyClass& other) const {
+			return a == other.a;
+		}
+		int getValue() const { return a; }
+	};
+
 
 	int	givenSubjectMain() {
 		MutantStack<int> mstack;
@@ -107,23 +127,57 @@ namespace {
 	
 		return correct == 2;
 	}
-}
+
+
+	bool	emptyClassTest() {
+		int correct = 0;
+		MutantStack<emptyClass> mstack;
+		mstack.push(emptyClass(42));
+		mstack.push(emptyClass(21));
+
+		// copy constructor
+		MutantStack<emptyClass> copyStack(mstack);
+		if (copyStack.size() == mstack.size()) {
+			if (copyStack.top() == mstack.top()) {
+				++correct;
+			}
+		}
+
+		// assignment operator
+		MutantStack<emptyClass> assignedStack;
+		assignedStack = mstack;
+		if (assignedStack.size() == mstack.size()) {
+			if (assignedStack.top() == mstack.top()) {
+				++correct;
+			}
+		}
+
+		return correct == 2;
+	}
+
+} // namespace
 
 int main()
 {
-	cout << YELLOWISH() << "givenSubjectMain" << RESETISH() << endl;
-	givenSubjectMain();
-	cout << endl;
+	try {
+		cout << YELLOWISH() << "givenSubjectMain" << RESETISH() << endl;
+		givenSubjectMain();
+		cout << endl;
 
-	cout << YELLOWISH() << "\ngivenSubjectMainWithList" << RESETISH() << endl;
-	givenSubjectMainWithList();
-	cout << endl;
+		cout << YELLOWISH() << "\ngivenSubjectMainWithList" << RESETISH() << endl;
+		givenSubjectMainWithList();
+		cout << endl;
 
-	Tester tests({
-		ctorTest
-	});
+		Tester tests({
+			ctorTest,
+			emptyClassTest
+		});
 
-	tests.run();
+		tests.run();
 
+	} catch (const std::exception& e) {
+		cout << "Exception: " << e.what() << endl;
+		return 1;
+	}
 	return 0;
 }

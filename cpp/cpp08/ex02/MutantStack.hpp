@@ -24,7 +24,7 @@ public:
 	}
 	~MutantStack() = default;
 
-	constexpr iterator	begin() { return std::begin(this->c); }
+	iterator	begin() { return std::begin(this->c); }
 	iterator	end() {	return std::end(this->c);	}
 	const_iterator	begin() const { return std::begin(this->c); }
 	const_iterator	end() const { return std::end(this->c); }
