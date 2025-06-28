@@ -42,8 +42,8 @@ int main (void)
 
 	// Entity a = "hello";
 	// Entity b = 21;
-Entity c = (Entity)22;
-	PrintEntity(Entity (23));
+Entity c = 22;
+	PrintEntity(23);
 	// PrintEntity(Entity("Kitty"));
 
 	return 0;
