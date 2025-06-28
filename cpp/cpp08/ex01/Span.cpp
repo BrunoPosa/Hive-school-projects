@@ -45,5 +45,5 @@ size_t	Span::longestSpan() const {
 		throw std::runtime_error("No span can be found! You need at least 2 numbers in vector.");
 	}
 	auto [minIt, maxIt] = std::minmax_element(numbers_.begin(), numbers_.end());
-	return (static_cast<ssize_t>(*maxIt) - static_cast<size_t>(*minIt));//important to cast
+	return (static_cast<ssize_t>(*maxIt) - static_cast<ssize_t>(*minIt));//important to cast
 }
