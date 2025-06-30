@@ -1,5 +1,8 @@
 #include "Span.hpp"
 
+#include <functional>//std::function
+#include <numeric>//std::iota
+
 using std::cout;
 using std::endl;
 

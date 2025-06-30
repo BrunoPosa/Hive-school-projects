@@ -1,17 +1,21 @@
 #include "Span.hpp"
 
+Span::Span(){};
+
 Span::Span(unsigned int N) {
 	numbers_.reserve(N);
 }
 
-Span::Span(const Span& other) : numbers_{std::move(other.numbers_)} {}
+Span::Span(const Span& other) : numbers_{other.numbers_} {}
 
 Span&	Span::operator=(const Span& other) {
 	if (this != &other) {
-		numbers_ = std::move(other.numbers_);
+		numbers_ = other.numbers_;
 	}
 	return *this;
 }
+
+Span::~Span(){};
 
 void	Span::addNumber(int num) {
 	if (numbers_.size() == numbers_.capacity()) {

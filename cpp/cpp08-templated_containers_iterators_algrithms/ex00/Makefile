@@ -1,12 +1,12 @@
 NAME		= easyfind
 EXERCISE	= cpp--08 - ex00
-FSANITNAME	= buildFsanitiz
-VALGRNAME	= buildValgrind
+DEBUG_NAME	= debugBuild
 
 CXX			= c++
 FLAGS		= -std=c++17 -Wall -Wextra -Werror
-DEBUGFLAGS	= -Wpedantic -Wshadow -g -O0 -fsanitize=address -fsanitize=undefined #-v
-VALGRFLAGS	= -Wpedantic -Wshadow -g -O0
+DEBUG_BASE	= -Wpedantic -Wshadow -g -O0 #-v
+DEBUG_STL	= -D_GLIBCXX_DEBUG
+DEBUG_FSAN	= -fsanitize=address -fsanitize=undefined
 RM			= rm -rf
 
 
@@ -23,7 +23,7 @@ $(NAME): $(SRCS) $(HEADERS)
 	$(CXX) $(FLAGS) -o $(NAME) $(SRCS)
 
 clean:
-	$(RM) $(FSANITNAME) $(VALGRNAME)
+	$(RM) $(DEBUG_NAME)
 
 fclean: clean
 	$(RM) $(NAME) a.out
@@ -32,16 +32,20 @@ re: fclean all
 
 
 
+debug: fclean
+	@echo "####################### debug STL #######################"
+	$(CXX) $(FLAGS) $(DEBUG_BASE) $(DEBUG_STL) -o $(DEBUG_NAME) $(SRCS)
+	./$(DEBUG_NAME)
 
 fs: fclean
-	echo ########################################################
-	$(CXX) $(FLAGS) $(DEBUGFLAGS) -o $(FSANITNAME) $(SRCS)
-	./$(FSANITNAME)
+	@echo "####################### fsanitize #######################"
+	$(CXX) $(FLAGS) $(DEBUG_BASE) $(DEBUG_FSAN) -o $(DEBUG_NAME) $(SRCS)
+	./$(DEBUG_NAME)
 
 val: fclean
-	echo ########################################################
-	$(CXX) $(FLAGS) $(VALGRFLAGS) -o $(VALGRNAME) $(SRCS)
-	valgrind --leak-check=full --show-leak-kinds=all ./$(VALGRNAME)
+	@echo "####################### valgrind #######################"
+	$(CXX) $(FLAGS) $(DEBUG_BASE) -o $(DEBUG_NAME) $(SRCS)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(DEBUG_NAME)
 
 git: fclean
 	clear

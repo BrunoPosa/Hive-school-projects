@@ -1,11 +1,20 @@
 #include "easyfind.hpp"
 
+#include <string>
+#include <functional>
+#include <random>
+#include <algorithm>//std::shuffle, std::copy, std::find
+#include <vector>
+#include <list>
+#include <forward_list>
+#include <deque>
+
 using std::cout;
 using std::endl;
 
 namespace {
 	constexpr int SIZE = 20;// Size of the vector, array, list, forward_list, and deque - elements are shuffled in range [0, SIZE-1]
-	constexpr int TARGET = 15; // Target value to find in the containers
+	constexpr int TARGET = 7; // Target value to find in the containers
 
 	inline std::vector<int> shuffledVector(int size) {
 		std::vector<int> vec(size);
@@ -33,7 +42,7 @@ namespace {
 		}
 
 		int run() {
-			int passed = 0;
+			unsigned int passed = 0;
 			for (size_t i = 0; i < tests_.size(); ++i) {
 				bool result = tests_[i]();
 				cout << "Test " << i + 1 << ": " << (result ?
@@ -41,7 +50,7 @@ namespace {
 												: RED() + "FAILED") << RESET() << endl;
 				passed += result;
 			}
-			if (passed == static_cast<int>(tests_.size())) {
+			if (passed == (tests_.size())) {
 				cout << GREEN() << "All tests passed ✅" << RESET() << endl;
 			} else {
 				cout << passed << " out of " << tests_.size() << " tests passed ❌" << endl;
@@ -53,7 +62,7 @@ namespace {
 	bool	VectorTest() {
 		int target = TARGET;
 		constexpr int	size = SIZE;
-		int result = -1;
+		size_t result = SIZE_MAX;
 
 		try {
 			std::vector<int> intVec = shuffledVector(size);
@@ -66,14 +75,14 @@ namespace {
 					cout << intVec[i] << " ";
 				}
 			}
-			int rvalue = static_cast<int>(easyfind(intVec, target));
+			auto rvalue = easyfind(intVec, target);
 			cout << YELLOW() << "found target " + std::to_string(target) + " at index " + std::to_string(rvalue) << RESET() << endl;
 
 			return result == rvalue;
 
 		} catch (const std::runtime_error& e) {
 			cout << YELLOW() << "Exception in VectorTest" << RESET() << endl;
-			if (result == -1 && e.what() == std::string("Value not found")) {
+			if (result == SIZE_MAX && e.what() == std::string("Value not found")) {
 				return true;
 			} else {
 				return false;
@@ -84,7 +93,7 @@ namespace {
 	bool	ArrayTest() {
 		int target = TARGET;
 		constexpr int size = SIZE;
-		int result = -1;
+		size_t result = SIZE_MAX;
 
 		try {
 			auto vec = shuffledVector(size);
@@ -100,14 +109,14 @@ namespace {
 					cout << intArr[i] << " ";
 				}
 			}
-			int rvalue = static_cast<int>(easyfind(intArr, target));
+			auto rvalue = easyfind(intArr, target);
 			cout << YELLOW() << "found target " + std::to_string(target) + " at index " + std::to_string(rvalue) << RESET() << endl;
 
 			return result == rvalue;
 
 		} catch (const std::runtime_error& e) {
 			cout << YELLOW() << "Exception in ArrayTest" << RESET() << endl;
-			if (result == -1 && e.what() == std::string("Value not found")) {
+			if (result == SIZE_MAX && e.what() == std::string("Value not found")) {
 				return true;
 			} else {
 				return false;
@@ -118,7 +127,7 @@ namespace {
 	bool	ListTest() {
 		int target = TARGET;
 		constexpr int size = SIZE;
-		int result = -1;
+		size_t result = SIZE_MAX;
 
 		try {
 			auto vec = shuffledVector(size);
@@ -136,14 +145,14 @@ namespace {
 					cout << *it << " ";
 				}
 			}
-			int rvalue = static_cast<int>(easyfind(intList, target));
+			auto rvalue = easyfind(intList, target);
 			cout << YELLOW() << "found target " + std::to_string(target) + " at value " + std::to_string(rvalue) << RESET() << endl;
 
 			return result == rvalue;
 
 		} catch (const std::runtime_error& e) {
 			cout << YELLOW() << "Exception in ListTest" << RESET() << endl;
-			if (result == -1 && e.what() == std::string("Value not found")) {
+			if (result == SIZE_MAX && e.what() == std::string("Value not found")) {
 				return true;
 			} else {
 				return false;
@@ -154,7 +163,7 @@ namespace {
 	bool	ForwardListTest() {
 		int target = TARGET;
 		constexpr int size = SIZE;
-		int result = -1;
+		size_t result = SIZE_MAX;
 
 		try {
 			auto vec = shuffledVector(size);
@@ -173,14 +182,14 @@ namespace {
 				}
 				++i;
 			}
-			int rvalue = static_cast<int>(easyfind(intFList, target));
+			auto rvalue = easyfind(intFList, target);
 			cout << YELLOW() << "found target " + std::to_string(target) + " at value " + std::to_string(rvalue) << RESET() << endl;
 
 			return result == rvalue;
 
 		} catch (const std::runtime_error& e) {
 			cout << YELLOW() << "Exception in ForwardListTest" << RESET() << endl;
-			if (result == -1 && e.what() == std::string("Value not found")) {
+			if (result == SIZE_MAX && e.what() == std::string("Value not found")) {
 				return true;
 			} else {
 				return false;
@@ -191,7 +200,7 @@ namespace {
 	bool	DequeTest() {
 		int target = TARGET;
 		constexpr int size = SIZE;
-		int result = -1;
+		size_t result = SIZE_MAX;
 
 		try {
 			auto vec = shuffledVector(size);
@@ -207,14 +216,14 @@ namespace {
 					cout << intDeque[i] << " ";
 				}
 			}
-			int rvalue = static_cast<int>(easyfind(intDeque, target));
+			auto rvalue = easyfind(intDeque, target);
 			cout << YELLOW() << "found target " + std::to_string(target) + " at value " + std::to_string(rvalue) << RESET() << endl;
 
 			return result == rvalue;
 
 		} catch (const std::runtime_error& e) {
 			cout << YELLOW() << "Exception in DequeTest" << RESET() << endl;
-			if (result == -1 && e.what() == std::string("Value not found")) {
+			if (result == SIZE_MAX && e.what() == std::string("Value not found")) {
 				return true;
 			} else {
 				return false;

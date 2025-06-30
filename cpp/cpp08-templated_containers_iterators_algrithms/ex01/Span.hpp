@@ -9,19 +9,15 @@
 #include <utility>//std::move
 #include <limits>
 
-//main()
-#include <functional>//std::function
-#include <numeric>//std::iota
-
 class Span {
 	std::vector<int>	numbers_;
 
 public:
-	Span()	= default;
+	Span();
 	explicit Span(unsigned int N);
 	Span(const Span& other);
 	Span&	operator=(const Span& other);
-	~Span()	= default;
+	~Span();
 
 	size_t	shortestSpan() const;
 	size_t	longestSpan() const;

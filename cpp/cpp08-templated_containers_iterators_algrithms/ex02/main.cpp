@@ -1,5 +1,10 @@
 #include "MutantStack.hpp"
 
+#include <iostream>
+#include <vector>
+#include <functional>
+#include <list>
+
 using std::cout;
 using std::endl;
 
