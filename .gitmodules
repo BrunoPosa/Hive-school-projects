@@ -1,6 +1,27 @@
-[submodule "IRC-server"]
-	path = IRC-server
-	url = https://github.com/BrunoPosa/IRC-Server
-[submodule "C-RayTracer"]
-	path = C-RayTracer
+[submodule "miniRT"]
+	path = miniRT
 	url = https://github.com/BrunoPosa/C-RayTracer
+[submodule "ft_irc"]
+	path = ft_irc
+	url = https://github.com/BrunoPosa/IRC-Server
+[submodule "libft"]
+	path = libft
+	url = https://github.com/BrunoPosa/my-C-stdlib
+[submodule "minitalk"]
+	path = minitalk
+	url = https://github.com/BrunoPosa/minitalk
+[submodule "inception"]
+	path = inception
+	url = https://github.com/BrunoPosa/inception
+[submodule "fractol"]
+	path = fractol
+	url = https://github.com/BrunoPosa/fractol
+[submodule "push-swap"]
+	path = push-swap
+	url = https://github.com/BrunoPosa/Stack-Sort
+[submodule "get_next_line"]
+	path = get_next_line
+	url = https://github.com/BrunoPosa/get_next_line
+[submodule "ft_printf"]
+	path = ft_printf
+	url = https://github.com/BrunoPosa/printf
