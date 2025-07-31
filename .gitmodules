@@ -1,0 +1,3 @@
+[submodule "IRC-server"]
+	path = IRC-server
+	url = https://github.com/BrunoPosa/IRC-Server
