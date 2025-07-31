@@ -4,17 +4,17 @@ My completed projects from the 42 Network curriculum at Hive Helsinki. Most proj
 
 | Project         | Description                                               |
 |-----------------|-----------------------------------------------------------|
-| **cpp**         | C++ modules covering foundational concepts.               |
-| **fractol**     | Fractal renderer using MLX42 graphics library.            |
-| **ft_irc**      | Partial IRC server with multiplexing.                      |
-| **ft_printf**   | My partial printf implementation.                          |
-| **get_next_line** | Reads a line from a file descriptor.                      |
-| **inception**   | Multi-container Docker project.                            |
-| **libft**       | Custom C library implementing standard functions.         |
-| **miniRT**      | Ray tracer rendering 3D static scenes with spheres, cylinders, and planes. |
-| **minitalk**    | Unix signals-based communication.                          |
-| **philosophers**| Dining philosophers problem with threads and mutexes.     |
-| **push-swap**   | Sorting integers with two stacks and using special operations. |
+| **[cpp](https://github.com/BrunoPosa/Hive-school-projects/tree/main/cpp)**         | C++ modules covering foundational concepts.               |
+| **[fractol](https://github.com/BrunoPosa/fractol)**     | Fractal renderer using MLX42 graphics library.            |
+| **[ft_irc](https://github.com/BrunoPosa/IRC-Server)**      | Partial IRC server with multiplexing.                      |
+| **[ft_printf](https://github.com/BrunoPosa/printf)**   | My partial printf implementation.                          |
+| **[get_next_line](https://github.com/BrunoPosa/get_next_line)** | Reads a line from a file descriptor.                      |
+| **[inception](https://github.com/BrunoPosa/inception)**   | Multi-container Docker project.                            |
+| **[libft](https://github.com/BrunoPosa/my-C-stdlib)**       | Custom C library implementing standard functions.         |
+| **[miniRT](https://github.com/BrunoPosa/C-RayTracer)**      | Ray tracer rendering 3D static scenes with spheres, cylinders, and planes. |
+| **[minitalk](https://github.com/BrunoPosa/minitalk)**    | Unix signals-based communication.                          |
+| **[philosophers](https://github.com/BrunoPosa/Hive-school-projects/tree/main/philosophers)**| Dining philosophers problem with threads and mutexes.     |
+| **[push-swap](https://github.com/BrunoPosa/Stack-Sort)**   | Sorting integers with two stacks and using special operations. |
 
 
 ## About Hive Helsinki
