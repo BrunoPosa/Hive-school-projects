@@ -1,3 +1,6 @@
 [submodule "IRC-server"]
 	path = IRC-server
 	url = https://github.com/BrunoPosa/IRC-Server
+[submodule "C-RayTracer"]
+	path = C-RayTracer
+	url = https://github.com/BrunoPosa/C-RayTracer
