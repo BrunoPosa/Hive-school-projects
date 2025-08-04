@@ -1,6 +1,7 @@
-NAME		= BitcoinExchange
+NAME		= btc
 EXERCISE	= cpp--09 - ex00
 DEBUG_NAME	= debugBuild
+INPUT_FILE	= ./input.txt
 
 CXX			= c++
 FLAGS		= -std=c++17 -Wall -Wextra -Werror
@@ -13,7 +14,7 @@ RM			= rm -rf
 
 HEADERS	=	BitcoinExchange.hpp
 
-SRCS	=	main.cpp
+SRCS	=	main.cpp \
 
 
 
@@ -35,17 +36,17 @@ re: fclean all
 debug: fclean
 	@echo "####################### debug STL #######################"
 	$(CXX) $(FLAGS) $(DEBUG_BASE) $(DEBUG_STL) -o $(DEBUG_NAME) $(SRCS)
-	./$(DEBUG_NAME)
+	./$(DEBUG_NAME) $(INPUT_FILE)
 
 fs: fclean
 	@echo "####################### fsanitize #######################"
 	$(CXX) $(FLAGS) $(DEBUG_BASE) $(DEBUG_FSAN) -o $(DEBUG_NAME) $(SRCS)
-	./$(DEBUG_NAME)
+	./$(DEBUG_NAME) $(INPUT_FILE)
 
 val: fclean
 	@echo "####################### valgrind #######################"
 	$(CXX) $(FLAGS) $(DEBUG_BASE) -o $(DEBUG_NAME) $(SRCS)
-	valgrind --leak-check=full --show-leak-kinds=all ./$(DEBUG_NAME)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(DEBUG_NAME) $(INPUT_FILE)
 
 git: fclean
 	clear
@@ -58,5 +59,4 @@ git: fclean
 
 
 
-
-.PHONY: all clean fclean re fs val git
+.PHONY: all clean fclean re debug fs val git
