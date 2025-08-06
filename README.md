@@ -1,4 +1,4 @@
-# 🐝 Hive Helsinki — 42 Network Projects
+# 🐝 Hive Helsinki — 42 Network School Projects
 
 My completed projects from the 42 Network curriculum at Hive Helsinki. Most follow the strict 42 Norm (functions up to 25 lines, etc)
 
