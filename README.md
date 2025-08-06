@@ -1,11 +1,11 @@
 # 🐝 Hive Helsinki — 42 Network Projects
 
-My completed projects from the 42 Network curriculum at Hive Helsinki. Most projects are done solo, but some are with a partner.
+My completed projects from the 42 Network curriculum at Hive Helsinki. Most follow the strict 42 Norm (functions up to 25 lines, etc)
 
 | Project         | Description                                               |
 |-----------------|-----------------------------------------------------------|
-| **[ft_irc](https://github.com/BrunoPosa/IRC-Server)**      | Partial IRC server with multiplexing.                      |
-| **[miniRT](https://github.com/BrunoPosa/C-RayTracer)**      | Ray tracer rendering 3D static scenes with spheres, cylinders, and planes. |
+| **[ft_irc](https://github.com/BrunoPosa/IRC-Server)**      | Partial IRC server with multiplexing. Done with [@Torutu](https://github.com/Torutu)                      |
+| **[miniRT](https://github.com/BrunoPosa/C-RayTracer)**      | Ray tracer rendering 3D static scenes with spheres, cylinders, and planes. Done with [@Jack](https://github.com/jackwaddington)|
 | **[inception](https://github.com/BrunoPosa/inception)**   | Multi-container Docker project.                            |
 | **[cpp](https://github.com/BrunoPosa/Hive-school-projects/tree/main/cpp)**         | C++ modules covering foundational concepts.               |
 | **[fractol](https://github.com/BrunoPosa/fractol)**     | Fractal renderer using MLX42 graphics library.            |
