@@ -4,7 +4,7 @@ DEBUG_NAME	= debugBuild
 INPUT_FILE	= ./input.txt
 
 CXX			= c++
-FLAGS		= -std=c++17 -Wall -Wextra -Werror
+FLAGS		= -std=c++20 -Wall -Wextra -Werror
 DEBUG_BASE	= -Wpedantic -Wshadow -g -O0 #-v
 DEBUG_STL	= -D_GLIBCXX_DEBUG
 DEBUG_FSAN	= -fsanitize=address -fsanitize=undefined

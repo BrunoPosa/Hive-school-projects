@@ -1,13 +1,5 @@
 #include "BitcoinExchange.hpp"
-
-#include <iostream>
-#include <string>
-#include <exception>
-
-using std::cout;
-using std::endl;
-using std::string;
-
+#include <vector>
 namespace {
 	void printUsage() {
 		cout << BTC_YELLOW << "usage: ./btc <filename>" << BTC_CLEAR << endl;
@@ -27,14 +19,16 @@ int main (int ac, char** av) {
 
 		std::string str(av[1]);
 
-		BitcoinExchange a(av[1]);
+		// BitcoinExchange a(av[1]);
+		std::vector<BitcoinExchange<std::string>> vec;
+		vec.emplace_back(BitcoinExchange(str));
 		// BitcoinExchange b(str);
 
 	} catch (std::exception& e) {
 		cout << BTC_RED << e.what() << BTC_CLEAR << endl;
 		return 2;
 	} catch (...) {
-		cout << BTC_RED << "other exception!" << endl;
+		cout << BTC_RED << "stray exception! catch & release" << endl;
 		throw;
 	}
 
