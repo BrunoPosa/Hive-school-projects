@@ -12,15 +12,15 @@ RM			= rm -rf
 
 
 
-HEADERS	=	BitcoinExchange.hpp
-
+DEPS	=	BitcoinExchange.tpp \
+			BitcoinExchange.hpp
 SRCS	=	main.cpp \
 
 
 
 all: $(NAME)
 
-$(NAME): $(SRCS) $(HEADERS)
+$(NAME): $(SRCS) $(HEADERS) $(DEPS)
 	$(CXX) $(FLAGS) -o $(NAME) $(SRCS)
 
 clean:
