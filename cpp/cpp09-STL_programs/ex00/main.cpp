@@ -2,7 +2,11 @@
 #include <vector>
 namespace {
 	void printUsage() {
-		cout << BTC_YELLOW << "usage: ./btc <filename>" << BTC_CLEAR << endl;
+		cout << BTC_YELLOW << "usage: ./btc <filename>\n" << BTC_CLEAR
+			<< "[notice:]\n"
+			<< "inside your file, the allowed syntax is:\n"
+			<< BTC_YELLOW << "	<date> | <amount>\n" << BTC_CLEAR
+			<< "date must be YYYY-MM-DD, and amount between 0 and 1000" << endl;
 	}	
 }
 /*

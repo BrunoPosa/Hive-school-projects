@@ -9,6 +9,7 @@
 #include <utility> //move
 #include <map>
 #include <iomanip>//std::setw
+#include <functional>
 
 #include <cstring>
 #include <limits.h>
@@ -26,13 +27,16 @@
 */
 template <typename T> 
 class BitcoinExchange {
-	static inline constexpr std::string	dataPath_ = "./data.csv";
-	static inline constexpr std::string allowedSeparators_ = "|,";
-	static inline constexpr std::string allowedDateChars_ = "0123456789-/.";
 	std::map<std::chrono::year_month_day, double>	data_;
+	static inline const std::string	dataPath_ = "./data.csv";
+	static inline const std::string	allowedSeparators_ = "|,";
+	static inline const std::string	allowedChars_ = "0123456789-/.\t\v ";
 	std::chrono::year_month_day		parseDate_(const std::string& line);
-	double	toPositiveNum(const std::string& numStr);
-
+	int								printCalculation_(std::chrono::year_month_day date, double amount);
+	int								addToMap_(std::chrono::year_month_day date, double amount);
+	double							toPositiveNum_(const std::string& numStr);
+	void							run_(std::ifstream& file, std::function<int(std::chrono::year_month_day, double)> function);
+	
 public:
 	BitcoinExchange(){};
 	BitcoinExchange(T input);
@@ -44,8 +48,16 @@ public:
 		return *this;
 	}
 	~BitcoinExchange() {
-
+		
 	}
 };
 
 #include "BitcoinExchange.tpp"
+/*
+	Errors:
+	-file errors badbit/could not open
+	-sys err (bad allocs..)
+	-value negative in data.csv or input
+	-date incorrect
+	-bad syntax/no separator
+*/
