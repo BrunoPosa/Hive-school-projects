@@ -19,13 +19,13 @@ BitcoinExchange<T>::BitcoinExchange(T input) {
 	std::string headline;
 	std::getline(datafile_, headline);
 
-	//add data to map [key=date and value=btc rate] - skip empty lines and print errors if any
+	//add data to map [key=date ; value=btc rate] - skip empty lines and print errors if any
 	run_(datafile_,
 		[this](year_month_day ymd, double value) {
         	return this->addToMap_(ymd, value);
     });
 
-	//print value multiplied by exhcange rate for each valid input line and date
+	//print value multiplied by exchange rate for each valid input line and date
 	run_(infile_,
 		[this](year_month_day ymd, double value) {
         	return this->printCalculation_(ymd, value);
@@ -33,9 +33,33 @@ BitcoinExchange<T>::BitcoinExchange(T input) {
 
 }
 
+//run given function on the lines of the file, skipping empty lines and validating everything
+template<typename T>
+void	BitcoinExchange<T>::run_(std::ifstream& file, std::function<int(year_month_day, double)> function) {
+	for (string line; std::getline(file, line); ) {
+		if (!line.empty()) {
+			year_month_day	date 		= parseDate_(line);
+			std::size_t		separator	= line.find_first_of(allowedSeparators_);
+			double			amount		= toPositiveNum_(line.substr(
+				(separator != string::npos ? separator + 1 : 0))
+			);
+
+			if (line.find_first_not_of(allowedChars_ + allowedSeparators_) != std::string::npos) {
+				errPrint_("forbidden characters!", line);
+			} else if (date.ok() == false) {
+				errPrint_("incorrect date!", line);
+			} else if (separator == string::npos) {
+				errPrint_("could not find separator!", line);
+			} else if (function(date, amount) == -1) {
+				errPrint_("amount out of bounds!", line);
+			}
+		}
+	}
+}
+
 /*
-	Returns parsed date that is correct
-	OR returns empty date on error / incorrect input / nonexisting date
+	Returns parsed date if correct
+	OR empty date if incorrect input / nonexisting date
 */
 template<typename T>
 year_month_day	BitcoinExchange<T>::parseDate_(const std::string& line) {
@@ -65,6 +89,10 @@ double	BitcoinExchange<T>::toPositiveNum_(const std::string& numStr) {
 	}
 }
 
+/*
+	prints value of given amount of btc on given date
+	(having multiplied it with the btc rate from stored data on that or lower date)
+*/
 template<typename T>
 int	BitcoinExchange<T>::printCalculation_(year_month_day date, double amount) {
 	if (amount > 0 && amount < 1000) {
@@ -88,24 +116,6 @@ int	BitcoinExchange<T>::addToMap_(year_month_day date, double amount) {
 }
 
 template<typename T>
-void	BitcoinExchange<T>::run_(std::ifstream& file, std::function<int(year_month_day, double)> function) {
-	for (string line; std::getline(file, line); ) {
-		if (!line.empty()) {
-			year_month_day	date	= parseDate_(line);
-			std::size_t		sep		= line.find_first_of(allowedSeparators_);
-			double			amount 	= toPositiveNum_(line.substr(
-				(sep != string::npos ? sep + 1 : 0))
-			);
-
-			if (line.find_first_not_of(allowedChars_ + allowedSeparators_) != std::string::npos) {
-				cout << BTC_RED << "Error: " << BTC_CLEAR << "forbidden characters! => "  << (line.length() > 42 ? line.substr(0, 39) + "..." : line) << endl;
-			} else if (!date.ok()) {
-				cout << BTC_RED << "Error: " << BTC_CLEAR << "incorrect date! => " << (line.length() > 42 ? line.substr(0, 39) + "..." : line) << endl;
-			} else if (sep == string::npos) {
-				cout << BTC_RED << "Error: " << BTC_CLEAR << "could not find separator! => " << (line.length() > 42 ? line.substr(0, 39) + "..." : line) << endl;
-			} else if (function(date, amount) == -1) {
-				cout << BTC_RED << "Error: " << BTC_CLEAR << "amount out of bounds! => " << (line.length() > 42 ? line.substr(0, 39) + "..." : line) << endl;
-			}
-		}
-	}
+void	BitcoinExchange<T>::errPrint_(std::string msg, std::string& line) {
+	cout << BTC_RED << "Error: " << BTC_CLEAR << msg << " => "  << (line.length() > 42 ? line.substr(0, 39) + "..." : line) << endl;
 }

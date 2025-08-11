@@ -21,12 +21,10 @@ int main (int ac, char** av) {
 
 	try {
 
-		// std::string str(av[1]);
+		std::string str(av[1]);
 
-		BitcoinExchange a(av[1]);
-		// std::vector<BitcoinExchange<std::string>> vec;
-		// vec.emplace_back(BitcoinExchange(str));
-		// BitcoinExchange b(str);
+		// BitcoinExchange a(av[1]);
+		BitcoinExchange b(str);
 
 	} catch (std::exception& e) {
 		cout << BTC_RED << e.what() << BTC_CLEAR << endl;
