@@ -1,5 +1,5 @@
 NAME		= RPN
-EXERCISE	= cpp--09 - ex00
+EXERCISE	= cpp--09 - ex01
 DEBUG_NAME	= debugBuild
 INPUT_FILE	= ./input.txt
 
