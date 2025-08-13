@@ -46,7 +46,7 @@ fs: fclean
 val: fclean
 	@echo "####################### valgrind #######################"
 	$(CXX) $(FLAGS) $(DEBUG_BASE) -o $(DEBUG_NAME) $(SRCS)
-	valgrind --leak-check=full --show-leak-kinds=all ./$(DEBUG_NAME)
+# 	valgrind --leak-check=full --show-leak-kinds=all ./$(DEBUG_NAME)
 
 git: fclean
 	clear

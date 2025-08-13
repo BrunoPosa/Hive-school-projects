@@ -6,7 +6,7 @@ using std::endl;
 int main (int ac, char** av) {
 
 	if (ac != 2) {
-		cout << RPN_YELLOW << "usage: ./RPN \"7 7 * 7 -\"" << RPN_CLEAR << endl;
+		cout << RPN_YELLOW << "usage: ./RPN \"7 7 * -7 -\"" << RPN_CLEAR << endl;
 		return 1;
 	}
 
