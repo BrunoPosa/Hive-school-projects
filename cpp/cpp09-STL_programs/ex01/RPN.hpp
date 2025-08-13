@@ -23,7 +23,7 @@ public:
 	RPN(const RPN& other);
 	RPN&	operator=(const RPN& other);
 	~RPN() = default;
-	explicit RPN(const char * args);
+	RPN(const char * args);
 
 	void	calculate_();
 };

@@ -1,7 +1,7 @@
 NAME		= RPN
 EXERCISE	= cpp--09 - ex01
 DEBUG_NAME	= debugBuild
-INPUT_FILE	= ./input.txt
+
 
 CXX			= c++
 FLAGS		= -std=c++20 -Wall -Wextra -Werror
@@ -36,17 +36,17 @@ re: fclean all
 debug: fclean
 	@echo "####################### debug STL #######################"
 	$(CXX) $(FLAGS) $(DEBUG_BASE) $(DEBUG_STL) -o $(DEBUG_NAME) $(SRCS)
-	./$(DEBUG_NAME) $(INPUT_FILE)
+	./$(DEBUG_NAME) "1 2 + 3 4 5 + * -"
 
 fs: fclean
 	@echo "####################### fsanitize #######################"
 	$(CXX) $(FLAGS) $(DEBUG_BASE) $(DEBUG_FSAN) -o $(DEBUG_NAME) $(SRCS)
-	./$(DEBUG_NAME) $(INPUT_FILE)
+	./$(DEBUG_NAME) "1 2 + 3 4 5 + * -"
 
 val: fclean
 	@echo "####################### valgrind #######################"
 	$(CXX) $(FLAGS) $(DEBUG_BASE) -o $(DEBUG_NAME) $(SRCS)
-	valgrind --leak-check=full --show-leak-kinds=all ./$(DEBUG_NAME) $(INPUT_FILE)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(DEBUG_NAME)
 
 git: fclean
 	clear
