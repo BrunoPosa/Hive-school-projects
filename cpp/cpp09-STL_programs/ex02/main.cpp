@@ -4,41 +4,31 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-// #define DEQUE
-
 int main (int ac, char **av) {
-	
-	if (ac < 2 || PmergeMe<std::vector<int>>::validateStr(ac, av) == false) {
-		cout << FMT_YELLOW << "Usage: ./PmergeMe <positive int sequence>" << FMT_CLEAR << endl;
+
+	if (ac < 2 || PmergeMe::validateStr(ac, av) == false) {
+		cerr << FMT_YELLOW << "Usage: ./PmergeMe <positive int sequence>" << FMT_CLEAR << endl;
 		return 1;
 	}
 
 	try {
-
-		#ifdef DEQUE
-			std::deque<int>	dq;
-		#else
-			std::vector<int> vec;
-			vec.reserve(ac);
-		#endif
-
-		cout << "Before: " << endl;
-		for (int i = 1; i < ac; i++) {	
-			cout << av[i] << " ";
-			#ifdef DEQUE
-				dq.push_back(std::stoi(av[i]));
-			#else
-				vec.push_back(std::stoi(av[i]));
-			#endif
+		std::deque<int>		dq;
+		std::vector<int>	vec;
+		vec.reserve(ac);
+		
+		//init containers with given values
+		cout << "Before:";
+		for (int i = 1; i < ac; i++) {
+			int num = std::stoi(av[i]);
+			cout << " " << num;
+			dq.push_back(num);
+			vec.push_back(num);
 		}
 		cout << endl;
 
-		#ifdef DEQUE
-			PmergeMe<std::deque<int>>::sort(dq);
-		#else
-			PmergeMe<std::vector<int>>::sort(vec);
-		#endif
-
+		//sort and print results
+		cout << " After: ";
+		PmergeMe::measuredSort(vec, dq);
 
 	} catch (std::exception& e) {
 		cerr << FMT_YELLOW << "\nException! " << e.what() << FMT_CLEAR << endl;
