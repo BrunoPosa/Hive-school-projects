@@ -28,7 +28,7 @@ int main (int ac, char **av) {
 
 		//sort and print results
 		cout << " After: ";
-		PmergeMe::measuredSort(vec, dq);
+		PmergeMe::runComparison(vec, dq);
 
 	} catch (std::exception& e) {
 		cerr << FMT_YELLOW << "\nException! " << e.what() << FMT_CLEAR << endl;

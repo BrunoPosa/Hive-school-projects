@@ -21,25 +21,27 @@ bool PmergeMe::validateStr(int ac, char **args) {
 	return true;
 }
 
-void	PmergeMe::measuredSort(std::vector<int>& vec, std::deque<int>& dq) {
-	auto startVec = std::chrono::high_resolution_clock::now();
-    PmergeMe::sort(vec);
-    auto endVec = std::chrono::high_resolution_clock::now();
-	
-	auto startDq = std::chrono::high_resolution_clock::now();
-    PmergeMe::sort(dq);
-    auto endDq = std::chrono::high_resolution_clock::now();
+void	PmergeMe::runComparison(std::vector<int>& vec, std::deque<int>& dq) {
+	auto durVec = PmergeMe::measureSorting(vec);
+	auto durDq = PmergeMe::measureSorting(dq);
 
-	(std::equal(vec.begin(), vec.end(), dq.begin(), dq.end()))
-		?	PmergeMe::printValues(vec)
-		:	cout << "containers different!";
+	if (std::equal(vec.begin(), vec.end(), dq.begin(), dq.end())) {
+		PmergeMe::printValues(vec);
+	} else {
+		cout << " sorting failed!";
+	}
 
-	cout << "Time to process a range of " << vec.size() << " elements with std::vector<int> : "
-    	<< std::chrono::duration_cast<std::chrono::microseconds>(endVec - startVec).count() << endl;
+	cout << "Time to process a range of " << vec.size()
+		<< " elements with std::vector<int> : "
+    	<< std::fixed << std::setprecision(3) << durVec << " µs" << endl;
 
-	PmergeMe::printValues(dq);
-	cout << "Time to process a range of " << dq.size() << " elements with std::deque<int> : "
-    	<< std::chrono::duration_cast<std::chrono::microseconds>(endDq - startDq).count() << endl;
+	cout << "Time to process a range of " << dq.size()
+		<< " elements with std::deque<int>  : "
+    	<< std::fixed << std::setprecision(3) << durDq << " µs" << endl;
+
+	#ifdef STEPCOUNT
+		cout << "step count: in progress" << endl;
+	#endif
 }
 
 //returns std::vector<int>& ?

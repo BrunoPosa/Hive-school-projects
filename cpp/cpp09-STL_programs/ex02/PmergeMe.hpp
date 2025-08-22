@@ -6,7 +6,8 @@
 #include <deque>
 #include <cctype>//isdigit
 #include <chrono>
-#include <algorithm>//std::sort placeholder
+#include <algorithm>//std::sort placeholder, std::equal
+#include <iomanip>
 
 # define FMT_RED "\033[31m"
 # define FMT_YELLOW "\033[33m"
@@ -21,17 +22,16 @@ class PmergeMe {
 	~PmergeMe()						= delete;
 
 public:
+	static void	runComparison(std::vector<int>& vec, std::deque<int>& dq);
 	static bool validateStr(int ac, char **args);
-	static void	measuredSort(std::vector<int>& vec, std::deque<int>& dq);
 	static void sort(std::vector<int>& args);
 	static void sort(std::deque<int>& args);
 
 	template<typename C>
-	static void	printValues(const C& c, const std::string& sep = " ") {
-		for (auto it = c.begin(); it != c.end(); ++it) {
-			if (it != c.begin()) std::cout << sep;
-			std::cout << *it;
-		}
-		std::cout << std::endl;
-	}
+	static double	measureSorting(C& c);
+
+	template<typename C>
+	static void		printValues(const C& c, const std::string& sep = " ");
 };
+
+#include "PmergeMe.tpp"
