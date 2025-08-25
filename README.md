@@ -17,8 +17,4 @@ My completed projects from the 42 Network curriculum at Hive Helsinki. Most foll
 | **[libft](https://github.com/BrunoPosa/my-C-stdlib)**       | Custom C library implementing standard functions.         |
 
 
-## About Hive Helsinki
-
-Hive Helsinki is part of the 42 Network, offering a peer-to-peer, project-based curriculum without traditional teachers. Students learn through collaboration and hands-on projects, developing skills in various areas of software development.
-
-For more information, visit [hive.fi](https://www.hive.fi/en)
+[Hive Helsinki](https://www.hive.fi/en) is part of the 42 Network, offering a peer-to-peer, project-based curriculum without traditional teachers. Students learn through collaboration and hands-on projects, developing skills in various areas of software development.
