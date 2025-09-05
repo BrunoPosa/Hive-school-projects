@@ -4,7 +4,8 @@ DEBUG_NAME	= debugBuild
 PROG_ARGS	= `shuf -i 1-10000000 -n 3000 | tr "\n" " "`
 
 CXX			= c++
-FLAGS		= -std=c++20 -Wall -Wextra -Werror -O2 -march=native
+FLAGS		= -std=c++20 -Wall -Wextra -Werror
+OFLAGS		= -O3 -march=native -mtune=native
 DEBUG_BASE	= -Wpedantic -Wshadow -g -O0
 DEBUG_STL	= -D_GLIBCXX_DEBUG
 DEBUG_FSAN	= -fsanitize=address -fsanitize=undefined
@@ -18,9 +19,10 @@ SRCS	=	main.cpp \
 
 
 all: $(NAME)
+	./$(NAME) $(PROG_ARGS)
 
 $(NAME): $(SRCS) $(HEADERS) $(DEPS)
-	$(CXX) $(FLAGS) $(SRCS) -o $(NAME)
+	$(CXX) $(FLAGS) $(OFLAGS) $(SRCS) -o $(NAME)
 
 clean:
 	$(RM) $(DEBUG_NAME)
@@ -32,7 +34,8 @@ re: fclean all
 
 
 steps:
-	$(CXX) $(FLAGS) -DSTEPCOUNT $(SRCS) -o $(NAME)
+	$(CXX) $(FLAGS) $(OFLAGS) -DSTEPCOUNT $(SRCS) -o $(NAME)
+	./$(NAME) $(PROG_ARGS)
 
 debug: fclean
 	@echo "####################### debug STL #######################"
