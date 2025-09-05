@@ -15,10 +15,8 @@ BitcoinExchange<T>::BitcoinExchange(T input) {
 		throw std::invalid_argument("Could not open infile or datafile: " + string(strerror(errno)));
 	}
 
-	//skip first line in both files
-	std::string headline;
-	std::getline(datafile_, headline);
-	std::getline(infile_, headline);
+	checkHeadline_(datafile_, allowedData1stLine_);
+	checkHeadline_(infile_, allowedFile1stLine_);
 	if (datafile_.eof() || infile_.eof()) return;
 
 	//add data to map [key=date ; value=btc rate] - skip empty lines and print errors if any
@@ -94,7 +92,7 @@ double	BitcoinExchange<T>::toPositiveNum_(const std::string& numStr) {
 }
 
 template<typename T>
-double	BitcoinExchange<T>::selectValueFrom_(year_month_day date) {
+double	BitcoinExchange<T>::selectValueFromData_(year_month_day date) {
 	double	value = 0;
 	auto it = data_.lower_bound(date);
 
@@ -107,6 +105,15 @@ double	BitcoinExchange<T>::selectValueFrom_(year_month_day date) {
 	return value;
 }
 
+template<typename T>
+void	BitcoinExchange<T>::checkHeadline_(std::ifstream& file, const std::string& expectedHeadline) {
+	std::string headline;
+	std::getline(file, headline);
+	if (headline != expectedHeadline) {
+		throw std::invalid_argument(std::string("Incorrect headline in file! Expecting: '" + expectedHeadline + "'"));
+	}
+}
+
 /*
 	prints value of given amount of btc on given date
 	(having multiplied it with the btc rate from stored data on that or lower date)
@@ -114,7 +121,7 @@ double	BitcoinExchange<T>::selectValueFrom_(year_month_day date) {
 template<typename T>
 int	BitcoinExchange<T>::printCalculation_(year_month_day date, double amount) {
 	if (amount > 0 && amount < 1000) {
-		double	rate = selectValueFrom_(date);
+		double	rate = selectValueFromData_(date);
 
 		cout << int(date.year()) << "-"
 			<< unsigned(date.month()) << "-"

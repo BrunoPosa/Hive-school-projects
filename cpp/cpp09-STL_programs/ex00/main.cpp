@@ -11,9 +11,6 @@ namespace {
 	}	
 }
 
-/*
-	-av can be ARG_MAX which may be INT_MAX, so we may not want to alloc for the av
-*/
 int main (int ac, char** av) {
 
 	if (ac != 2) {
