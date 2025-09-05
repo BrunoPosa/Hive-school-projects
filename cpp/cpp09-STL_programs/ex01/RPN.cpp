@@ -74,7 +74,7 @@ void	RPN::calculate_() {
 	}
 }
 
-//returns pos of next operationChar, ignoring negative numbers ('-' with digit right after, e.g. '-3')
+//returns pos of next operationChar, ignoring negative numbers ('-' with a digit right after it)
 size_t	RPN::nextOperationPos_(const std::string& args) {
 	size_t	pos = 0;
 

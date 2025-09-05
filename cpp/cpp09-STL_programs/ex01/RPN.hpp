@@ -14,7 +14,7 @@
 # define RPN_CLEAR "\033[0m"
 
 class RPN {
-	std::stack<double>		stack_;
+	std::stack<double>	stack_;
 	std::string			args_;
 	const std::string	allowedChars_ = "0123456789 \t\v";
 	const std::string	operationChars_	= "+-/*";

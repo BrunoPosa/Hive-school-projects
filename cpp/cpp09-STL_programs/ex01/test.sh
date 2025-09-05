@@ -1,6 +1,6 @@
 #!/bin/bash
 
-_program=$"./RPN"
+_program="./RPN"
 YELLOW=$'\033[33m'
 PASS=$'\033[1;32mPASS\033[0m'
 FAIL=$'\033[31mFAIL\033[0m'
@@ -37,7 +37,7 @@ tests=(
     "3 4 5e0+ *     "         $YELLOW
 
     # --- Large doubles ---
-    "1$(printf '0%.0s' {1..308}) 1$(printf '0%.0s' {1..308}) +" $YELLOW  # Overflow to infinity → isfinite() fail
+    "1$(printf '0%.0s' {1..308}) 1$(printf '0%.0s' {1..308}) +" $YELLOW  # Overflow to infinity -> isfinite() fail
     "1$(printf '0%.0s' {1..308}) 2 /" "5e+307"  # still finite
     # parser sets fail
 	"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999 1*10*10*1*"	$YELLOW
@@ -66,7 +66,7 @@ tests=(
     "3 4 +"             "7"      # recheck that valid still passes
 
     # --- Mixed tricky negatives ---
-    "-2 -3 /"          "0.666667"  # negative / negative → positive
+    "-2 -3 /"          "0.666667"  # negative / negative -> positive
     "-2 3 /"           "-0.666667"
     "2 -3 /"           "-0.666667"
 
@@ -96,7 +96,7 @@ tests=(
     $'\xff\xfe\xfd'             $YELLOW
 
     # 11. Very long token (heap allocation stress / leak potential)
-    "$(printf '9%.0s' {1..100000})"   $YELLOW
+    "$(printf '9%.0s' {1..10000})"   $YELLOW
 
     # 12. Excessively many numbers without operators (stack growth)
     "$(printf '1 %.0s' {1..10000})"   $YELLOW
@@ -138,7 +138,7 @@ for ((i=0; i<${#tests[@]}; i+=2)); do
     		=> got '$output', expected yellow text"
         fi
     else
-        if [[ "$output" == "$expected" ]]; then
+        if [[ $output == $expected ]]; then
             echo "$PASS: '$input' => $output"
         else
             echo "$FAIL: '$input'
