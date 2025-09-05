@@ -34,6 +34,7 @@ class BitcoinExchange {
 	int							addToMap_(std::chrono::year_month_day date, double amount);
 	int							printCalculation_(std::chrono::year_month_day date, double amount);
 	std::chrono::year_month_day	parseDate_(const std::string& line);
+	double						selectValueFrom_(std::chrono::year_month_day date);
 	double						toPositiveNum_(const std::string& numStr);
 	void						errPrint_(std::string msg, std::string& line);
 	

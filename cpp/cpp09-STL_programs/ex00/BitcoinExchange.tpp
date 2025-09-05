@@ -11,13 +11,15 @@ BitcoinExchange<T>::BitcoinExchange(T input) {
 	std::ifstream infile_{input};
 	std::ifstream datafile_{dataPath_};
 
-	if (!datafile_.is_open() || !infile_.is_open()) {
+	if (datafile_.is_open() == false || infile_.is_open() == false) {
 		throw std::invalid_argument("Could not open infile or datafile: " + string(strerror(errno)));
 	}
 
-	//skip first line in datafile
+	//skip first line in both files
 	std::string headline;
 	std::getline(datafile_, headline);
+	std::getline(infile_, headline);
+	if (datafile_.eof() || infile_.eof()) return;
 
 	//add data to map [key=date ; value=btc rate] - skip empty lines and print errors if any
 	run_(datafile_,
@@ -37,7 +39,7 @@ BitcoinExchange<T>::BitcoinExchange(T input) {
 template<typename T>
 void	BitcoinExchange<T>::run_(std::ifstream& file, std::function<int(year_month_day, double)> function) {
 	for (string line; std::getline(file, line); ) {
-		if (!line.empty()) {
+		if (line.empty() == false) {
 			year_month_day	date 		= parseDate_(line);
 			std::size_t		separator	= line.find_first_of(allowedSeparators_);
 			double			amount		= toPositiveNum_(line.substr(
@@ -73,7 +75,9 @@ year_month_day	BitcoinExchange<T>::parseDate_(const std::string& line) {
 		&& allowedChars_.find(dash1) != string::npos
 		&& allowedChars_.find(dash2) != string::npos)
 	{
-        return std::chrono::year{y}/std::chrono::month{m}/std::chrono::day{d};
+		if (y >= (int)std::chrono::year::min() && y <= (int)std::chrono::year::max()) {
+        	return std::chrono::year{y}/std::chrono::month{m}/std::chrono::day{d};
+		}
     }
     return year_month_day{};
 }
@@ -89,6 +93,20 @@ double	BitcoinExchange<T>::toPositiveNum_(const std::string& numStr) {
 	}
 }
 
+template<typename T>
+double	BitcoinExchange<T>::selectValueFrom_(year_month_day date) {
+	double	value = 0;
+	auto it = data_.lower_bound(date);
+
+	if (it != data_.end() && it->first == date) {
+		value = it->second;
+	} else if (it != data_.begin()) {
+		--it;
+		value = it->second;
+	}
+	return value;
+}
+
 /*
 	prints value of given amount of btc on given date
 	(having multiplied it with the btc rate from stored data on that or lower date)
@@ -96,13 +114,13 @@ double	BitcoinExchange<T>::toPositiveNum_(const std::string& numStr) {
 template<typename T>
 int	BitcoinExchange<T>::printCalculation_(year_month_day date, double amount) {
 	if (amount > 0 && amount < 1000) {
+		double	rate = selectValueFrom_(date);
+
 		cout << int(date.year()) << "-"
 			<< unsigned(date.month()) << "-"
 			<< unsigned(date.day())
-			<< " => " << amount << " = " 
-			<< (data_.lower_bound(date)->first == date
-				? (data_.lower_bound(date))->second * amount
-				: (--data_.lower_bound(date))->second * amount) << endl;
+			<< " --> " << amount << " x " << rate
+			<< " = " << rate * amount << endl;
 		return 0;
 	} else {
 		return -1;
@@ -117,5 +135,5 @@ int	BitcoinExchange<T>::addToMap_(year_month_day date, double amount) {
 
 template<typename T>
 void	BitcoinExchange<T>::errPrint_(std::string msg, std::string& line) {
-	cout << BTC_RED << "Error: " << BTC_CLEAR << msg << " => "  << (line.length() > 42 ? line.substr(0, 39) + "..." : line) << endl;
+	cout << BTC_RED << "Error: " << BTC_CLEAR << msg << " '"  << (line.length() > 42 ? line.substr(0, 39) + "..." : line) << "'" << endl;
 }
