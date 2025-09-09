@@ -22,13 +22,17 @@ class PmergeMe {
 	~PmergeMe()						= delete;
 
 public:
-	static void	runComparison(std::vector<int>& vec, std::deque<int>& dq);
 	static bool validateStr(int ac, char **args);
-	static void sort(std::vector<int>& args);
-	static void sort(std::deque<int>& args);
+	static void	runComparison(std::vector<int>& vec, std::deque<int>& dq);
 
 	template<typename C>
 	static double	measureSorting(C& c);
+	
+	template<typename T>
+	static void sort(std::vector<T>& args);
+
+	template<typename T>
+	static void sort(std::deque<T>& args);
 
 	template<typename C>
 	static void		printValues(const C& c, const std::string& sep = " ");
