@@ -12,7 +12,7 @@ void	PmergeMe::printValues(const C& c, const std::string& sep) {
 template<typename C>
 double	PmergeMe::measureSorting(C& c) {
 	auto start = std::chrono::high_resolution_clock::now();
-    PmergeMe::sort(c);
+    PmergeMe::sorter(c);
     auto end = std::chrono::high_resolution_clock::now();
 
 	return std::chrono::duration<double, std::micro>(end - start).count();

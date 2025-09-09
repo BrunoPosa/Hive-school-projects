@@ -8,6 +8,7 @@
 #include <chrono>
 #include <algorithm>//std::sort placeholder, std::equal
 #include <iomanip>
+#include <optional>
 
 # define FMT_RED "\033[31m"
 # define FMT_YELLOW "\033[33m"
@@ -29,10 +30,10 @@ public:
 	static double	measureSorting(C& c);
 	
 	template<typename T>
-	static void sort(std::vector<T>& args);
+	static void sorter(std::vector<T>& args);
 
 	template<typename T>
-	static void sort(std::deque<T>& args);
+	static void sorter(std::deque<T>& args);
 
 	template<typename C>
 	static void		printValues(const C& c, const std::string& sep = " ");

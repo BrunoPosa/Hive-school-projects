@@ -44,23 +44,25 @@ void	PmergeMe::runComparison(std::vector<int>& vec, std::deque<int>& dq) {
 	#endif
 }
 
-//returns std::vector<int>& ? 
+//returns std::vector<int>& ?
 //sorts vector containing any type of elements
+//ideally avoids moving elements until last moment (sorts indices/pointers)
 template<typename T>
-void PmergeMe::sort(std::vector<T>& args) {
-	
+void PmergeMe::sorter(std::vector<T>& args) {
+
 	std::size_t n = args.size();
 	cout << "n = " << n << endl;
-	bool unpaired = n % 2;
+	bool pairless = n % 2;
+	cout << ((pairless) ? "1 pairless" : "all paired") << endl;
 
-	std::vector<std::pair<T, T>>temp;
-	temp.reserve(n / 2 + unpaired);
+	std::vector<std::pair<T, T>>temp;//use reference T&?
+	temp.reserve(n / 2 + pairless);
 
-	for (std::size_t i = 0; i < n - unpaired; i += 2) {
-		cout << ((unpaired) ? "1 unpaired" : "all paired") << endl;
-		std::pair<T, T> a(args[i], args[i + 1]);
-		temp.push_back(a);
+	for (std::size_t i = 0; i < n - pairless; i += 2) {
+		std::pair<T, T> a(args.at(i), args.at(i + 1));//rm .at, use forward?
+		temp.emplace_back(a);
 	}
+	
 
 	cout << "vector of pairs:" << endl;
 	for (auto it : temp) {
@@ -71,7 +73,7 @@ void PmergeMe::sort(std::vector<T>& args) {
 
 //returns std::deque<int>& ?
 template<typename T>
-void PmergeMe::sort(std::deque<T>& args) {
+void PmergeMe::sorter(std::deque<T>& args) {
 	// std::sort(args.begin(), args.end());
 	cout << FMT_YELLOW << "deque sort placeholder.. " << FMT_CLEAR << endl;
 	(void)args;
