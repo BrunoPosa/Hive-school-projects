@@ -43,7 +43,6 @@ void	PmergeMe::runComparison(std::vector<int>& vec, std::deque<int>& dq) {
     	<< std::fixed << std::setprecision(3) << durDq << " µs" << endl;
 
 	#ifdef COMPARISON_COUNT
-		// cout << "step count: in progress" << endl;
 		cout << "comparisons: " << PmergeMe::comparisons << endl;
 	#endif
 }
@@ -55,27 +54,39 @@ template<typename T>
 void PmergeMe::sorter(std::vector<T>& args) {
 
 	std::size_t n = args.size();
-	cout << "n = " << n << endl;
+	if (n <= 1) return;
 	bool pairless = n % 2;
-	cout << ((pairless) ? "1 pairless" : "all paired") << endl;
+	T* extra;
+	pairless ? extra = &args[n - 1] : extra = nullptr;
+	cout << "extra:" << ((pairless) ? *extra : -1) << endl;
 
-	std::vector<std::pair<T, T>>temp;//use reference T&?
-	temp.reserve(n / 2 + pairless);
+	std::vector<T>a;
+	std::vector<std::pair<T, T>>b;//use reference T&?
+	a.reserve(n / 2);
+	b.reserve(n / 2 + pairless);
 
 	for (std::size_t i = 0; i < n - pairless; i += 2) {
-		std::pair<T, T> a(args.at(i), args.at(i + 1));//rm .at, use forward?
-		temp.emplace_back(a);
-	}
-	
-
-	cout << "vector of pairs:" << endl;
-	for (auto it : temp) {
-		cout << "elems: first is " << it.first << " and second is " << it.second << endl;
-		if (isLLessThanR(it.first, it.second) == false) {
-			std::swap(it.first, it.second);
+		std::pair<T, T> pair(args.at(i), args.at(i + 1));//rm .at, use forward?
+		if (!isLLessThanR(pair.first, pair.second)) {
+			std::swap(pair.first, pair.second);
 		}
-		cout << "-->swaps?: first="<< it.first << " second=" << it.second << endl;
+		a.emplace_back(pair.second);//bigger element in pair
+		b.emplace_back(pair);
 	}
+
+	PmergeMe::sorter(a);
+	cout << "a vector:" << endl;
+	for (auto var : a) {
+		cout << var << " ";
+	}
+	cout << endl << "b vector:" << endl;
+	for (auto it : b) {
+		cout << it.first << " ";//smaller
+	}
+	if (extra) {
+		cout << *extra;
+	}
+	cout << endl;
 
 }
 
