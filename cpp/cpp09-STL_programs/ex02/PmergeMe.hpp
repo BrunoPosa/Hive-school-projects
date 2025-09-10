@@ -35,17 +35,9 @@ public:
 
 	template<typename T>	static void sorter(std::deque<T>& args);
 
-<<<<<<< HEAD
 	template<typename T>	static bool	isLLessThanR(T& l, T& r);
 
 	template<typename C>	static void		printValues(const C& c, const std::string& sep = " ");
-=======
-	template<typename T>
-	static bool	isLLessThanR(T& l, T& r);
-
-	template<typename C>
-	static void		printValues(const C& c, const std::string& sep = " ");
->>>>>>> 0137bc54e3b0fed4b7552cca80951d2bfdd9b64c
 };
 
 #include "PmergeMe.tpp"
