@@ -3,6 +3,9 @@
 using std::cout;
 using std::endl;
 
+
+size_t	PmergeMe::comparisons = 0;
+
 //is it faster to process passing a single argument of space-separated ints? or as many args
 bool PmergeMe::validateStr(int ac, char **args) {
 	for (int i = 1; i < ac; i++) {
@@ -39,8 +42,9 @@ void	PmergeMe::runComparison(std::vector<int>& vec, std::deque<int>& dq) {
 		<< " elements with std::deque<int>  : "
     	<< std::fixed << std::setprecision(3) << durDq << " µs" << endl;
 
-	#ifdef STEPCOUNT
-		cout << "step count: in progress" << endl;
+	#ifdef COMPARISON_COUNT
+		// cout << "step count: in progress" << endl;
+		cout << "comparisons: " << PmergeMe::comparisons << endl;
 	#endif
 }
 
@@ -67,6 +71,10 @@ void PmergeMe::sorter(std::vector<T>& args) {
 	cout << "vector of pairs:" << endl;
 	for (auto it : temp) {
 		cout << "elems: first is " << it.first << " and second is " << it.second << endl;
+		if (isLLessThanR(it.first, it.second) == false) {
+			std::swap(it.first, it.second);
+		}
+		cout << "-->swaps?: first="<< it.first << " second=" << it.second << endl;
 	}
 
 }
@@ -74,7 +82,9 @@ void PmergeMe::sorter(std::vector<T>& args) {
 //returns std::deque<int>& ?
 template<typename T>
 void PmergeMe::sorter(std::deque<T>& args) {
+
 	// std::sort(args.begin(), args.end());
 	cout << FMT_YELLOW << "deque sort placeholder.. " << FMT_CLEAR << endl;
 	(void)args;
 }
+
