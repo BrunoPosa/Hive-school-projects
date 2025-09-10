@@ -15,6 +15,8 @@
 # define FMT_GREEN "\033[1;32m"
 # define FMT_CLEAR "\033[0m"
 
+// #define COMPARISON_COUNT //remove 
+
 //const?
 class PmergeMe {
 	PmergeMe()						= delete;
@@ -23,6 +25,7 @@ class PmergeMe {
 	~PmergeMe()						= delete;
 
 public:
+	static size_t	comparisons;
 	static bool validateStr(int ac, char **args);
 	static void	runComparison(std::vector<int>& vec, std::deque<int>& dq);
 
@@ -34,6 +37,9 @@ public:
 
 	template<typename T>
 	static void sorter(std::deque<T>& args);
+
+	template<typename T>
+	static bool	isLLessThanR(T& l, T& r);
 
 	template<typename C>
 	static void		printValues(const C& c, const std::string& sep = " ");

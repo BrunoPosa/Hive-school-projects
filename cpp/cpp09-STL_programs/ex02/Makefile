@@ -33,8 +33,8 @@ fclean: clean
 re: fclean all
 
 
-steps:
-	$(CXX) $(FLAGS) $(OFLAGS) -DSTEPCOUNT $(SRCS) -o $(NAME)
+comp:
+	$(CXX) $(FLAGS) $(OFLAGS) -DCOMPARISON_COUNT $(SRCS) -o $(NAME)
 	./$(NAME) $(PROG_ARGS)
 
 debug: fclean
