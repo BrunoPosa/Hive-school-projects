@@ -47,6 +47,34 @@ void	PmergeMe::runComparison(std::vector<int>& vec, std::deque<int>& dq) {
 	#endif
 }
 
+// size_t PmergeMe::jacobsthal(size_t n) {
+//     if (n == 0) return 0;
+//     if (n == 1) return 1;
+//     return jacobsthal(n-1) + 2*jacobsthal(n-2);
+// }
+
+std::vector<size_t> PmergeMe::generateJacobsthalOrder(size_t size) {
+    std::vector<std::size_t> order;
+        std::size_t j_prev = 0;
+        std::size_t j_curr = 1;
+        while (j_curr <= size) {
+            // push unique values only
+            if (order.empty() || order.back() != j_curr) order.push_back(j_curr);
+            std::size_t next = j_curr + 2 * j_prev;
+            j_prev = j_curr;
+            j_curr = next;
+        }
+
+        // Append missing indices in descending order safely
+        for (std::size_t k = size; k >= 1; --k) {
+            if (std::find(order.begin(), order.end(), k) == order.end())
+                order.push_back(k);
+            if (k == 1) break; // prevent underflow (size_t is unsigned)
+        }
+
+        return order;
+}
+
 //returns std::vector<int>& ?
 //sorts vector containing any type of elements
 //ideally avoids moving elements until last moment (sorts indices/pointers)
@@ -76,13 +104,19 @@ void PmergeMe::sorter(std::vector<T>& args) {
 
 	PmergeMe::sorter(a);
 
-	//temp inserting before jacobstahl way
-	for (auto& pair : b) {
-		PmergeMe::binaryInsert(pair.first, a);
-	}
-	if (extra) PmergeMe::binaryInsert(*extra, a);
-	args = std::move(a);
+	std::vector<size_t> order = generateJacobsthalOrder(b.size());//pairless?
 
+	// perform inserts in Jacobsthal order
+	for (size_t idx : order) {
+		if (idx - 1 < b.size()){
+			PmergeMe::binaryInsert(b.at(idx - 1).first, a);
+		}
+	}
+	if (extra) {
+		PmergeMe::binaryInsert(*extra, a);
+	}
+
+	args = std::move(a);
 }
 
 //returns std::deque<int>& ?

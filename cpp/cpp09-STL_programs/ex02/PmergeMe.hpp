@@ -28,6 +28,8 @@ public:
 	static size_t	comparisons;
 	static bool validateStr(int ac, char **args);
 	static void	runComparison(std::vector<int>& vec, std::deque<int>& dq);
+	// static size_t	jacobsthal(size_t n);
+	static std::vector<size_t>	generateJacobsthalOrder(size_t size);
 
 	template<typename C>	static double	measureSorting(C& c);
 	
@@ -37,10 +39,9 @@ public:
 
 	template<typename T>	static bool	isLLessThanR(T& l, T& r);
 
-	template<typename C>	static void		printValues(const C& c, const std::string& sep = " ");
+	template<typename C>	static void	printValues(const C& c, const std::string& sep = " ");
 
-	template<typename T>
-	static void binaryInsert(T& obj, std::vector<T>& vec);
+	template<typename T>	static void binaryInsert(T& obj, std::vector<T>& vec);
 };
 
 #include "PmergeMe.tpp"
