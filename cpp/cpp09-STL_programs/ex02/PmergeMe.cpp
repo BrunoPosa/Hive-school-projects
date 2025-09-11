@@ -63,7 +63,7 @@ void PmergeMe::sorter(std::vector<T>& args) {
 	std::vector<T>a;
 	std::vector<std::pair<T, T>>b;//use reference T&?
 	a.reserve(n / 2);
-	b.reserve(n / 2 + pairless);
+	b.reserve(n / 2);
 
 	for (std::size_t i = 0; i < n - pairless; i += 2) {
 		std::pair<T, T> pair(args.at(i), args.at(i + 1));//rm .at, use forward?
@@ -75,18 +75,13 @@ void PmergeMe::sorter(std::vector<T>& args) {
 	}
 
 	PmergeMe::sorter(a);
-	cout << "a vector:" << endl;
-	for (auto var : a) {
-		cout << var << " ";
+
+	//temp inserting before jacobstahl way
+	for (auto& pair : b) {
+		PmergeMe::binaryInsert(pair.first, a);
 	}
-	cout << endl << "b vector:" << endl;
-	for (auto it : b) {
-		cout << it.first << " ";//smaller
-	}
-	if (extra) {
-		cout << *extra;
-	}
-	cout << endl;
+	if (extra) PmergeMe::binaryInsert(*extra, a);
+	args = std::move(a);
 
 }
 
@@ -98,4 +93,3 @@ void PmergeMe::sorter(std::deque<T>& args) {
 	cout << FMT_YELLOW << "deque sort placeholder.. " << FMT_CLEAR << endl;
 	(void)args;
 }
-
