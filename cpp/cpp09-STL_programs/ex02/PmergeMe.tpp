@@ -20,3 +20,20 @@ double	PmergeMe::measureSorting(C& c) {
 
 	return std::chrono::duration<double, std::micro>(end - start).count();
 }
+
+template<typename T>
+void PmergeMe::binaryInsert(T& obj, std::vector<T>& vec) {
+	std::size_t	left = 0;
+	std::size_t	right = vec.size();
+
+	while (left < right) {
+		std::size_t	mid = left + (right - left) / 2;
+		if (isLLessThanR(obj, vec[mid])) {
+			right = mid;
+		} else {
+			left = mid + 1;
+		}
+	}
+
+	vec.insert(vec.begin() + left, obj);
+}

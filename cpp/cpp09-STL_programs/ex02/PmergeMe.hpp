@@ -38,6 +38,9 @@ public:
 	template<typename T>	static bool	isLLessThanR(T& l, T& r);
 
 	template<typename C>	static void		printValues(const C& c, const std::string& sep = " ");
+
+	template<typename T>
+	static void binaryInsert(T& obj, std::vector<T>& vec);
 };
 
 #include "PmergeMe.tpp"
