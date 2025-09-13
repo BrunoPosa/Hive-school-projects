@@ -17,6 +17,7 @@ void	PmergeMe::printValues(const C& c, const std::string& sep) {
 
 template<typename T>
 void	PmergeMe::runComparison(std::vector<T>& vec, std::deque<T>& dq) {
+	size = vec.size();
 	std::vector<T*> vecRefs;
 	vecRefs.reserve(vec.size());
 	for (auto &v : vec) {
@@ -89,26 +90,33 @@ void PmergeMe::sorter(std::vector<T*>& args) {
 		a.emplace_back(pair.second);//bigger element in pair
 		b.emplace_back(pair);
 	}
-	// cout << "b: ";
-	// for (auto& it : b) {cout << *it.first << " "; }
-	// cout << endl;
+
+	cout << "----\n" << "level " << size / args.size() << " of recursion - in" << endl; 
+	cout << "a: "; for (auto& it : a) {cout << *it << " "; } cout << endl;
+	cout << "b: "; for (auto& it : b) {cout << *it.first << " ";} cout << ((extra) ? *extra : -1) << endl;
 
 	PmergeMe::sorter(a);
 
-	std::vector<size_t> order = generateJacobsthalOrder(b.size());//pairless?
+	cout << "----\n" << "level " << size / args.size() << " of recursion - out" << endl; 
+	cout << "a: "; for (auto& it : a) {cout << *it << " "; } cout << endl;
+	cout << "b: "; for (auto& it : b) {cout << *it.first << " ";} cout << ((extra) ? *extra : -1) << endl;
 
+	std::vector<size_t> order = generateJacobsthalOrder(b.size());
+
+	T*	ignore = nullptr;
+	for (std::size_t i = 0; i < b.size(); i++) {
+		if (b.at(i).second == a.at(0)) {
+			ignore = b.at(i).second;
+			a.insert(a.begin(), b.at(i).first);
+			cout << FMT_YELLOW << "1st inserted " << *b.at(i).first << ", " << b.at(i).first << FMT_CLEAR<< endl;
+			break;
+		}
+	}
 	// perform ordered inserts
 	for (size_t idx : order) {
 		//for smallest element in a, we insert its pair to the left without comparisons
-		if (idx == 1) {
-			for (std::size_t i = 0; i < b.size(); i++) {
-				if (b.at(i).second == a.at(0)) {
-					a.insert(a.begin(), b.at(i).first);
-					// cout << "1st inserted " << *b.at(i).first << endl;
-					break;
-				}
-			}
-		} else {
+		if (a.at(idx - 1) == ignore) {cout << "IGNORING : "<< *a.at(idx - 1) << " == ignored:" << *ignore << ", " << ignore << endl;}
+		if (a.at(idx - 1) != ignore) {
 			auto it = std::find(a.begin(), a.end(), b.at(idx - 1).second);
 			std::size_t	right = 0;
 			if (it == a.end()) {
@@ -117,16 +125,19 @@ void PmergeMe::sorter(std::vector<T*>& args) {
 				right = std::distance(a.begin(), it);
 			}
 			PmergeMe::binaryInsert(b.at(idx - 1).first, right, a);
+			cout << FMT_YELLOW << "inserted " << *b.at(idx - 1).first << FMT_CLEAR << endl;
 		}
 	}
 	if (extra) {
 		PmergeMe::binaryInsert(extra, a.size(), a);
+		cout << FMT_YELLOW << "inserted " << *extra << FMT_CLEAR << endl;
 	}
+
 	if (a.size() != n) {
-		std::cerr << "ERROR: after insertion a.size()=" << a.size() << " expected=" << n << "b size=" << b.size() << '\n';}
-	// cout << "a: ";
-	// for (auto& it : a) {cout << *it << " "; }
-	// cout << endl;
+		std::cerr << "ERROR: after insertion a.size()=" << a.size() << " expected=" << n << ", b size=" << b.size() << '\n';}
+
+	cout << "a: "; for (auto& it : a) {cout << *it << " "; } cout << endl;
+
 	args = std::move(a);
 }
 
@@ -154,3 +165,17 @@ void PmergeMe::binaryInsert(T* obj, std::size_t right, std::vector<T*>& vec) {
 
 	vec.insert(vec.begin() + left, obj);
 }
+
+
+/*
+
+10	8
+7	4
+-->4,7,8,10
+
+10	7	8	4
+1	5	3	0	9
+-->0,1,3,4,5,7,8,9,10
+
+
+*/

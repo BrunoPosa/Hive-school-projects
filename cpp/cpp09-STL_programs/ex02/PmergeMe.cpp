@@ -5,6 +5,7 @@ using std::endl;
 
 
 size_t	PmergeMe::comparisons = 0;
+size_t	PmergeMe::size = 0;
 
 //is it faster to process passing a single argument of space-separated ints? or as many args
 bool PmergeMe::validateStr(int ac, char **args) {
@@ -46,8 +47,8 @@ std::vector<size_t> PmergeMe::generateJacobsthalOrder(size_t n) {
 	while (n != prev) {
 		order.push_back(n--);
 	}
-// cout << "order:" ;
-// for (auto& it: order) cout << it << " ";
-// cout << endl;
+cout<< FMT_GREEN << "order:" ;
+for (auto& it: order) cout << it << " ";
+cout << FMT_CLEAR << endl;
 	return order;
 }
