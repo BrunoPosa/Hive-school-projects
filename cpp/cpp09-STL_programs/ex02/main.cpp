@@ -29,10 +29,6 @@ int main (int ac, char **av) {
 		//sort and print results
 		cout << " After: ";
 		PmergeMe::runComparison(vec, dq);
-		for (auto& it : vec) {
-			cout << it << " ";
-		}
-		
 
 	} catch (std::exception& e) {
 		cerr << FMT_YELLOW << "\nException! " << e.what() << FMT_CLEAR << endl;

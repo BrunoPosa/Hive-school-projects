@@ -27,13 +27,14 @@ class PmergeMe {
 public:
 	static size_t	comparisons;
 	static bool validateStr(int ac, char **args);
-	static void	runComparison(std::vector<int>& vec, std::deque<int>& dq);
+
+	template<typename T>	static void	runComparison(std::vector<T>& vec, std::deque<T>& dq);
 	// static size_t	jacobsthal(size_t n);
 	static std::vector<size_t>	generateJacobsthalOrder(size_t size);
 
 	template<typename C>	static double	measureSorting(C& c);
 	
-	template<typename T>	static void sorter(std::vector<T>& args);
+	template<typename T>	static void sorter(std::vector<T*>& args);
 
 	template<typename T>	static void sorter(std::deque<T>& args);
 
@@ -41,7 +42,7 @@ public:
 
 	template<typename C>	static void	printValues(const C& c, const std::string& sep = " ");
 
-	template<typename T>	static void binaryInsert(T& obj, std::vector<T>& vec);
+	template<typename T>	static void binaryInsert(T* obj, std::size_t right, std::vector<T*>& vec);
 };
 
 #include "PmergeMe.tpp"
