@@ -30,6 +30,8 @@ public:
 	static size_t	comparisons;
 	static size_t	size;
 	static bool validateStr(int ac, char **args);
+	
+	template<typename T>	static void adjustB(std::vector<T*>& a, std::vector<std::pair<T*, T*>>& b);
 
 	template<typename T>	static void	runComparison(std::vector<T>& vec, std::deque<T>& dq);
 	// static size_t	jacobsthal(size_t n);

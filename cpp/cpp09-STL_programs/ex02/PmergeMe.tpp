@@ -58,6 +58,20 @@ double	PmergeMe::measureSorting(C& c) {
 	return std::chrono::duration<double, std::micro>(end - start).count();
 }
 
+template<typename T>
+void PmergeMe::adjustB(std::vector<T*>& a, std::vector<std::pair<T*, T*>>& b) {
+	std::vector<std::pair<T*, T*>>temp;
+
+	for (std::size_t i = 0; i < a.size(); i++) {
+		for (std::size_t j = 0; j < b.size(); j++) {
+			if (a.at(i) == b.at(j).second) {
+				temp.insert(temp.begin() + i, b.at(j));
+			}
+		}
+	}
+
+	b = std::move(temp);
+}
 
 /*
  does not sort in less than max moves for 9 numbers e.g. with the following numbers:
@@ -107,6 +121,7 @@ void PmergeMe::sorter(std::vector<T*>& main) {
 
 	PmergeMe::sorter(a);
 
+	adjustB(a, b);
 	cout << "----\n" << "<< OUT - level " << size / main.size() << " of recursion" << endl; 
 	cout << "a: "; for (auto& it : a) {cout << std::setw(2) << *it << " "; } cout << endl;
 	cout << "b: "; for (auto& it : b) {cout << std::setw(2) << *it.first << " ";} cout << std::setw(2) << ((extra) ? *extra : -1) << endl;
@@ -119,7 +134,7 @@ void PmergeMe::sorter(std::vector<T*>& main) {
 			ignore = b.at(i).second;
 			a.insert(a.begin(), b.at(i).first);
 			cout << FMT_YELLOW << "instantly inserted " << *b.at(i).first << ", " << b.at(i).first << FMT_CLEAR<< endl;
-			b.erase(b.begin() + i);
+			// b.erase(b.begin() + i);
 			break;
 		}
 	}
