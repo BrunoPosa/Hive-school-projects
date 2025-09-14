@@ -58,6 +58,11 @@ double	PmergeMe::measureSorting(C& c) {
 	return std::chrono::duration<double, std::micro>(end - start).count();
 }
 
+
+/*
+ does not sort in less than max moves for 9 numbers e.g. with the following numbers:
+ 4 8 5 7 0 9 10 6 3
+*/
 //returns std::vector<int>& ?
 //sorts vector containing any type of elements
 //ideally avoids moving elements until last moment (sorts indices/pointers)
@@ -65,12 +70,12 @@ template<typename T>
 void PmergeMe::sorter(std::vector<T*>& args) {
 
 	std::size_t n = args.size();
-	if (n <= 2) {//or 1
+	if (n == 2) {//or 1
 		if (!isLLessThanR(*args.at(0), *args.at(1))) {
 			std::swap(args.at(0), args.at(1));
 		}
 		return;
-	}
+	} else if (n == 1) {cout << "N ======= 1 !!!!!!!!!!" << endl; return; }
 	T* extra = nullptr;
 	bool pairless = n % 2;
 	if (pairless) {
@@ -104,6 +109,7 @@ void PmergeMe::sorter(std::vector<T*>& args) {
 	std::vector<size_t> order = generateJacobsthalOrder(b.size());
 
 	T*	ignore = nullptr;
+	//for smallest element in a, which is a[0], we insert its pair to the left without comparisons
 	for (std::size_t i = 0; i < b.size(); i++) {
 		if (b.at(i).second == a.at(0)) {
 			ignore = b.at(i).second;
@@ -114,19 +120,18 @@ void PmergeMe::sorter(std::vector<T*>& args) {
 	}
 	// perform ordered inserts
 	for (size_t idx : order) {
-		//for smallest element in a, we insert its pair to the left without comparisons
-		if (a.at(idx - 1) == ignore) {cout << "IGNORING : "<< *a.at(idx - 1) << " == ignored:" << *ignore << ", " << ignore << endl;}
-		if (a.at(idx - 1) != ignore) {
-			auto it = std::find(a.begin(), a.end(), b.at(idx - 1).second);
-			std::size_t	right = 0;
-			if (it == a.end()) {
-				right = a.size();
-			} else {
-				right = std::distance(a.begin(), it);
-			}
-			PmergeMe::binaryInsert(b.at(idx - 1).first, right, a);
-			cout << FMT_YELLOW << "inserted " << *b.at(idx - 1).first << FMT_CLEAR << endl;
+		if (b.at(idx - 1).second == ignore) {cout << "IGNORING : "<< *b.at(idx - 1).first << " == ignored pair in a:" << *ignore << ", " << ignore << endl;
+			continue;}
+		if (std::find(a.begin(), a.end(), b.at(idx - 1).first) != a.end()) { cout << "YOUOOOOY! " << endl; continue;}
+		auto it = std::find(a.begin(), a.end(), b.at(idx - 1).second);
+		std::size_t	right = 0;
+		if (it == a.end()) {
+			right = a.size();
+		} else {
+			right = std::distance(a.begin(), it);
 		}
+		PmergeMe::binaryInsert(b.at(idx - 1).first, right, a);
+		cout << FMT_YELLOW << "inserted " << *b.at(idx - 1).first << ", " << b.at(idx - 1).first << FMT_CLEAR << endl;
 	}
 	if (extra) {
 		PmergeMe::binaryInsert(extra, a.size(), a);
@@ -165,17 +170,3 @@ void PmergeMe::binaryInsert(T* obj, std::size_t right, std::vector<T*>& vec) {
 
 	vec.insert(vec.begin() + left, obj);
 }
-
-
-/*
-
-10	8
-7	4
--->4,7,8,10
-
-10	7	8	4
-1	5	3	0	9
--->0,1,3,4,5,7,8,9,10
-
-
-*/
