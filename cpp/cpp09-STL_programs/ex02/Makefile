@@ -2,7 +2,7 @@ NAME		= PmergeMe
 EXERCISE	= cpp--09 - ex02
 DEBUG_NAME	= debugBuild
 # PROG_ARGS	= `shuf -i 0-2147483647 -n 3000 | tr "\n" " "`
-PROG_ARGS	= `shuf -i 0-10 -n 9 | tr "\n" " "`
+PROG_ARGS	= `shuf -i 0-5 -n 5 | tr "\n" " "`
 CXX			= c++
 FLAGS		= -std=c++20 -Wall -Wextra -Werror
 OFLAGS		= -O3 -march=native -mtune=native

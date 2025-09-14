@@ -6,10 +6,11 @@
 #include <deque>
 #include <cctype>//isdigit
 #include <chrono>
-#include <algorithm>//std::sort placeholder, std::equal
+#include <algorithm>//std::sort placeholder, std::equal, std::upper_bound
 #include <iomanip>
 #include <optional>
 #include <cassert>
+#include <iomanip> //setw
 
 # define FMT_RED "\033[31m"
 # define FMT_YELLOW "\033[33m"
@@ -36,7 +37,7 @@ public:
 
 	template<typename C>	static double	measureSorting(C& c);
 	
-	template<typename T>	static void sorter(std::vector<T*>& args);
+	template<typename T>	static void sorter(std::vector<T*>& main);
 
 	template<typename T>	static void sorter(std::deque<T>& args);
 
