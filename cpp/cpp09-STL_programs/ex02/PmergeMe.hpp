@@ -9,6 +9,7 @@
 #include <algorithm>//std::sort placeholder, std::equal
 #include <iomanip>
 #include <optional>
+#include <cassert>
 
 # define FMT_RED "\033[31m"
 # define FMT_YELLOW "\033[33m"

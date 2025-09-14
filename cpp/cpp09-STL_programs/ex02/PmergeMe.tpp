@@ -62,6 +62,9 @@ double	PmergeMe::measureSorting(C& c) {
 /*
  does not sort in less than max moves for 9 numbers e.g. with the following numbers:
  4 8 5 7 0 9 10 6 3
+ -HANDLE DUPLICATES?
+ -Should i just have jacobstahl order start with 3? instead of 1
+ -why do i keep the already inserted first b value (from smallest a pair) in the b array? it might be messing up the ideal jacobstahl order
 */
 //returns std::vector<int>& ?
 //sorts vector containing any type of elements
@@ -96,7 +99,8 @@ void PmergeMe::sorter(std::vector<T*>& args) {
 		b.emplace_back(pair);
 	}
 
-	cout << "----\n" << "level " << size / args.size() << " of recursion - in" << endl; 
+	cout << "----\n" << "level " << size / args.size() << " of recursion - IN" << endl; 
+	cout << FMT_YELLOW << "  comparisons so far: " << FMT_CLEAR << comparisons << endl;
 	cout << "a: "; for (auto& it : a) {cout << *it << " "; } cout << endl;
 	cout << "b: "; for (auto& it : b) {cout << *it.first << " ";} cout << ((extra) ? *extra : -1) << endl;
 
@@ -106,7 +110,7 @@ void PmergeMe::sorter(std::vector<T*>& args) {
 	cout << "a: "; for (auto& it : a) {cout << *it << " "; } cout << endl;
 	cout << "b: "; for (auto& it : b) {cout << *it.first << " ";} cout << ((extra) ? *extra : -1) << endl;
 
-	std::vector<size_t> order = generateJacobsthalOrder(b.size());
+	std::vector<size_t> order = generateJacobsthalOrder(b.size() + pairless);
 
 	T*	ignore = nullptr;
 	//for smallest element in a, which is a[0], we insert its pair to the left without comparisons
@@ -120,22 +124,31 @@ void PmergeMe::sorter(std::vector<T*>& args) {
 	}
 	// perform ordered inserts
 	for (size_t idx : order) {
-		if (b.at(idx - 1).second == ignore) {cout << "IGNORING : "<< *b.at(idx - 1).first << " == ignored pair in a:" << *ignore << ", " << ignore << endl;
+		if (idx - 1 == b.size() && extra) {
+			PmergeMe::binaryInsert(extra, a.size(), a);
+			cout << FMT_YELLOW << "inserted " << *extra << FMT_CLEAR << endl;
+			cout <<  FMT_YELLOW << "  comparisons so far: " << FMT_CLEAR << comparisons << endl;
+			extra = nullptr;
+			continue;
+		}
+		if (b.at(idx - 1).second == ignore) {cout << "IGNORING : "<< *b.at(idx - 1).first << " == ignored pair in a:" << *ignore << ", " << b.at(idx - 1).second << endl;
 			continue;}
-		if (std::find(a.begin(), a.end(), b.at(idx - 1).first) != a.end()) { cout << "YOUOOOOY! " << endl; continue;}
 		auto it = std::find(a.begin(), a.end(), b.at(idx - 1).second);
 		std::size_t	right = 0;
 		if (it == a.end()) {
 			right = a.size();
 		} else {
 			right = std::distance(a.begin(), it);
+			cout << FMT_GREEN << "right=" << FMT_CLEAR << right << endl;
 		}
 		PmergeMe::binaryInsert(b.at(idx - 1).first, right, a);
 		cout << FMT_YELLOW << "inserted " << *b.at(idx - 1).first << ", " << b.at(idx - 1).first << FMT_CLEAR << endl;
+		cout <<  FMT_YELLOW << "  comparisons so far: " << FMT_CLEAR << comparisons << endl;
 	}
 	if (extra) {
 		PmergeMe::binaryInsert(extra, a.size(), a);
 		cout << FMT_YELLOW << "inserted " << *extra << FMT_CLEAR << endl;
+		cout <<  FMT_YELLOW << "  comparisons so far: " << FMT_CLEAR << comparisons << endl;
 	}
 
 	if (a.size() != n) {
@@ -157,6 +170,7 @@ void PmergeMe::sorter(std::deque<T>& args) {
 
 template<typename T>
 void PmergeMe::binaryInsert(T* obj, std::size_t right, std::vector<T*>& vec) {
+	assert(right <= vec.size());
 	std::size_t	left = 0;
 // cout << "inserting: " << *obj << ", sizeof vec in BinaryInsert: " << vec.size() << " and right is " << right << endl;
 	while (left < right) {
