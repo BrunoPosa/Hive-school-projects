@@ -17,24 +17,26 @@ void	PmergeMe::printValues(const C& c, const std::string& sep) {
 
 template<typename T>
 void	PmergeMe::runComparison(std::vector<T>& vec, std::deque<T>& dq) {
-	size = vec.size();
+	PmergeMe::size = vec.size();
+	assert(size == dq.size());
+
 	std::vector<T*> vecRefs;
 	vecRefs.reserve(vec.size());
 	for (auto &v : vec) {
-    	vecRefs.push_back(&v);
+		vecRefs.push_back(&v);
+	}
+	std::deque<T*>	dqRefs;
+	for (auto &v : dq) {
+		dqRefs.push_back(&v);
 	}
 	auto durVec = PmergeMe::measureSorting(vecRefs);
-	auto durDq = PmergeMe::measureSorting(dq);
+	auto durDq = PmergeMe::measureSorting(dqRefs);
 
-	for (auto& num : vecRefs) {
-		cout << *num << " ";
+	if (isSorted(vecRefs) && isSorted(dqRefs) && std::equal(vec.begin(), vec.end(), dq.begin(), dq.end())) {
+		PmergeMe::printValues(vec);
+	} else {
+		cout << FMT_RED << " sorting failed!" << FMT_CLEAR << endl;
 	}
-
-	// if (std::equal(vec.begin(), vec.end(), dq.begin(), dq.end())) {
-	// 	PmergeMe::printValues(vec);
-	// } else {
-	// 	cout << " sorting failed!";
-	// }
 
 	cout << "\nTime to process a range of " << vec.size()
 		<< " elements with std::vector<int> : "
@@ -51,6 +53,9 @@ void	PmergeMe::runComparison(std::vector<T>& vec, std::deque<T>& dq) {
 
 template<typename C>
 double	PmergeMe::measureSorting(C& c) {
+	if (isSorted(c)) {
+		return 0;
+	}
 	auto start = std::chrono::high_resolution_clock::now();
     PmergeMe::sorter(c);
     auto end = std::chrono::high_resolution_clock::now();
@@ -73,14 +78,19 @@ void PmergeMe::adjustB(std::vector<T*>& a, std::vector<std::pair<T*, T*>>& b) {
 	b = std::move(temp);
 }
 
-/*
- does not sort in less than max moves for 9 numbers e.g. with the following numbers:
- 4 8 5 7 0 9 10 6 3
- -HANDLE DUPLICATES?
- -Should i just have jacobstahl order start with 3? instead of 1
- -why do i keep the already inserted first b value (from smallest a pair) in the b array? it might be messing up the ideal jacobstahl order
- -check if sorted to stop early
-*/
+template<typename C>
+bool	PmergeMe::isSorted(C& c) {
+	if (c.empty()) return true;
+
+    for (auto it = c.begin(); std::next(it) != c.end(); ++it) {
+        auto nxt = std::next(it);
+        if (**it > **nxt) {
+            return false;
+        }
+    }
+    return true;
+}
+
 //returns std::vector<int>& ?
 //sorts vector containing any type of elements
 //ideally avoids moving elements until last moment (sorts indices/pointers)
@@ -134,7 +144,6 @@ void PmergeMe::sorter(std::vector<T*>& main) {
 			ignore = b.at(i).second;
 			a.insert(a.begin(), b.at(i).first);
 			cout << FMT_YELLOW << "instantly inserted " << *b.at(i).first << ", " << b.at(i).first << FMT_CLEAR<< endl;
-			// b.erase(b.begin() + i);
 			break;
 		}
 	}

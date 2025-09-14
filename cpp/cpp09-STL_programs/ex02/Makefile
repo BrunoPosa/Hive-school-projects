@@ -1,8 +1,8 @@
 NAME		= PmergeMe
 EXERCISE	= cpp--09 - ex02
 DEBUG_NAME	= debugBuild
-# PROG_ARGS	= `shuf -i 0-2147483647 -n 3000 | tr "\n" " "`
-PROG_ARGS	= `shuf -i 0-22 -n 21 | tr "\n" " "`
+# PROG_ARGS = `shuf -i 1-21 -n 11; shuf -i 1-21 -n 10` 		# duplicates
+PROG_ARGS	= `shuf -i 0-9 -n 9 | tr "\n" " "`
 CXX			= c++
 FLAGS		= -std=c++20 -Wall -Wextra -Werror
 OFLAGS		= -O3 -march=native -mtune=native
@@ -33,8 +33,8 @@ fclean: clean
 re: fclean all
 
 
-comp:
-	$(CXX) $(FLAGS) $(OFLAGS) -DCOMPARISON_COUNT $(SRCS) -o $(NAME)
+trace:
+	$(CXX) $(FLAGS) $(OFLAGS) -DCOMPARISON_COUNT -DTRACE $(SRCS) -o $(NAME)
 	./$(NAME) $(PROG_ARGS)
 
 debug: fclean

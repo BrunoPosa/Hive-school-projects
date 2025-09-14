@@ -48,6 +48,8 @@ public:
 	template<typename C>	static void	printValues(const C& c, const std::string& sep = " ");
 
 	template<typename T>	static void binaryInsert(T* obj, std::size_t right, std::vector<T*>& vec);
+
+	template<typename C>	static bool	isSorted(C& c);
 };
 
 #include "PmergeMe.tpp"

@@ -27,7 +27,7 @@ int main (int ac, char **av) {
 		cout << endl;
 
 		//sort and print results
-		cout << " After: ";std::cout << endl;
+		cout << " After: ";
 		PmergeMe::runComparison(vec, dq);
 
 	} catch (std::exception& e) {
