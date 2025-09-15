@@ -1,11 +1,12 @@
 NAME		= PmergeMe
 EXERCISE	= cpp--09 - ex02
 DEBUG_NAME	= debugBuild
+
 # PROG_ARGS = `shuf -i 1-21 -n 11; shuf -i 1-21 -n 10` 		# duplicates
 PROG_ARGS	= `shuf -i 0-9 -n 9 | tr "\n" " "`
 CXX			= c++
 FLAGS		= -std=c++20 -Wall -Wextra -Werror
-OFLAGS		= -O3 -march=native -mtune=native
+OFLAGS		= -O3 -march=native
 DEBUG_BASE	= -Wpedantic -Wshadow -g -O0
 DEBUG_STL	= -D_GLIBCXX_DEBUG
 DEBUG_FSAN	= -fsanitize=address -fsanitize=undefined
@@ -19,7 +20,6 @@ SRCS	=	main.cpp \
 
 
 all: $(NAME)
-	./$(NAME) $(PROG_ARGS)
 
 $(NAME): $(SRCS) $(HEADERS) $(DEPS)
 	$(CXX) $(FLAGS) $(OFLAGS) $(SRCS) -o $(NAME)

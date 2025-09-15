@@ -4,21 +4,8 @@ using std::cout;
 using std::endl;
 
 template<typename T>
-bool	PmergeMe::isLLessThanR(T& l, T& r) { PmergeMe::comparisons++; return l < r; }
-
-template<typename C>
-void	PmergeMe::printValues(const C& c, const std::string& sep) {
-	for (auto it = c.begin(); it != c.end(); ++it) {
-		if (it != c.begin()) std::cout << sep;
-		std::cout << **it;
-	}
-	std::cout << std::endl;
-}
-
-template<typename T>
 void	PmergeMe::runComparison(std::vector<T>& vec, std::deque<T>& dq) {
 	PmergeMe::size = vec.size();
-	assert(size == dq.size());
 
 	//make mirror vec and dq containers with pointers to original container members, to be used in actual sorting
 	std::vector<T*> vecRefs;
@@ -69,35 +56,6 @@ double	PmergeMe::measureSorting(C& c) {
 	return std::chrono::duration<double, std::micro>(end - start).count();
 }
 
-template<typename Ptr>
-void PmergeMe::adjustB(std::vector<Ptr>& a, std::vector<std::pair<Ptr, Ptr>>& b) {
-    std::vector<std::pair<Ptr, Ptr>> temp;
-    temp.reserve(b.size());
-    for (std::size_t i = 0; i < a.size(); ++i) {
-        for (std::size_t j = 0; j < b.size(); ++j) {
-            if (a.at(i) == b.at(j).second) {
-                // insert in the same relative position as 'a'
-                temp.insert(temp.begin() + i, b.at(j));
-                break;
-            }
-        }
-    }
-    b = std::move(temp);
-}
-
-template<typename C>
-bool	PmergeMe::isSorted(C& c) {
-	if (c.empty() || c.size() == 1) return true;
-
-    for (auto it = c.begin(); std::next(it) != c.end(); ++it) {
-        auto nxt = std::next(it);
-        if (**it > **nxt) {
-            return false;
-        }
-    }
-    return true;
-}
-
 template<typename C>
 void PmergeMe::sorter(C& main) {
     using Ptr = typename C::value_type;
@@ -106,13 +64,13 @@ void PmergeMe::sorter(C& main) {
 	std::size_t n = main.size();
 	if (n <= 1) return;
 	if (n == 2) {
-		if (!isLLessThanR(*main.at(0), *main.at(1)))	std::swap(main[0], main[1]);
+		if (!isLLessThanR(*main[0], *main[1]))	std::swap(main[0], main[1]);
 		return;
 	}
 
 	Ptr extra = nullptr;
 	bool pairless = n % 2;
-	if (pairless) extra = main.at(n - 1);
+	if (pairless) extra = main[n - 1];
 
 	std::vector<Ptr>	a;
 	std::vector<std::pair<Ptr, Ptr>>	b;
@@ -121,7 +79,7 @@ void PmergeMe::sorter(C& main) {
 
 	//split into pairs, bigger element pointers go to A and the smaller element pointers stay in B while still paired to their respective As
 	for (std::size_t i = 0; i < n - pairless; i += 2) {
-		std::pair<Ptr, Ptr> pair(main.at(i), main.at(i + 1));
+		std::pair<Ptr, Ptr> pair(main[i], main[i + 1]);
 		if (!isLLessThanR(*pair.first, *pair.second)) std::swap(pair.first, pair.second);
 		a.emplace_back(pair.second);
 		b.emplace_back(pair);
@@ -144,10 +102,10 @@ void PmergeMe::sorter(C& main) {
 	#endif
 
 	//for smallest element in A, which is a[0], we insert its smaller pair element from B to the left without any comparisons
-	Ptr	autoInsert = b.at(0).second;
-	a.insert(a.begin(), b.at(0).first);
+	Ptr	autoInsert = b[0].second;
+	a.insert(a.begin(), b[0].first);
 	#ifdef TRACE
-		cout << FMT_YELLOW << "automatically inserted " << *b.at(0).first << ", " << b.at(0).first << FMT_CLEAR << endl;
+		cout << FMT_YELLOW << "automatically inserted " << *b[0].first << ", " << b[0].first << FMT_CLEAR << endl;
 	#endif
 
 	// perform ordered insertions
@@ -158,12 +116,12 @@ void PmergeMe::sorter(C& main) {
 			extra = nullptr;
 			continue;
 		}
-		if (b.at(idx - 1).second == autoInsert) continue;
+		if (b[idx - 1].second == autoInsert) continue;
 
 		//find right edge of search field for binary search by looking for the index of B's pair in A
-		auto it = std::find(a.begin(), a.end(), b.at(idx - 1).second);
+		auto it = std::find(a.begin(), a.end(), b[idx - 1].second);
 		std::size_t	right = (it == a.end()) ? a.size() : std::distance(a.begin(), it);
-		PmergeMe::binaryInsert<std::vector<Ptr>>(b.at(idx - 1).first, right, a);
+		PmergeMe::binaryInsert<std::vector<Ptr>>(b[idx - 1].first, right, a);
 	}
 
 	if (extra)	PmergeMe::binaryInsert<std::vector<Ptr>>(extra, a.size(), a);
@@ -171,7 +129,6 @@ void PmergeMe::sorter(C& main) {
 	#ifdef TRACE
 		cout << "a: "; for (auto& it : a) {cout << *it << " "; } cout << endl;
 	#endif
-	assert(a.size() == n);
 	main.assign(a.begin(), a.end());
 }
 
@@ -179,12 +136,11 @@ template<typename C>
 void PmergeMe::binaryInsert(typename C::value_type obj, std::size_t right, C& vec) {
     using Ptr = typename C::value_type;
     static_assert(std::is_pointer_v<Ptr>, "Container must hold pointers (T*)");
-    assert(right <= vec.size());
 
     std::size_t left = 0;
     while (left < right) {
         std::size_t mid = left + (right - left) / 2;
-        if (isLLessThanR(*obj, *vec.at(mid))) {
+        if (isLLessThanR(*obj, *vec[mid])) {
             right = mid;
         } else {
             left = mid + 1;
@@ -196,4 +152,48 @@ void PmergeMe::binaryInsert(typename C::value_type obj, std::size_t right, C& ve
 		cout <<  FMT_YELLOW << "  comparisons so far: " << FMT_CLEAR << PmergeMe::comparisons << endl;
 	#endif
     vec.insert(vec.begin() + left, obj);
+}
+
+template<typename Ptr>
+void PmergeMe::adjustB(std::vector<Ptr>& a, std::vector<std::pair<Ptr, Ptr>>& b) {
+    std::vector<std::pair<Ptr, Ptr>> temp;
+    temp.reserve(b.size());
+
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        for (std::size_t j = 0; j < b.size(); ++j) {
+            if (a[i] == b[j].second) {
+                // insert in the same relative position as 'a'
+                temp.insert(temp.begin() + i, b[j]);
+                break;
+            }
+        }
+    }
+    b = std::move(temp);
+}
+
+template<typename C>
+bool	PmergeMe::isSorted(const C& c) {
+	if (c.empty() || c.size() == 1) return true;
+
+    for (auto it = c.begin(); std::next(it) != c.end(); ++it) {
+        auto nxt = std::next(it);
+        if (**it > **nxt) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<typename T>
+bool	PmergeMe::isLLessThanR(const T& l, const T& r) {
+	PmergeMe::comparisons++; return l < r;
+}
+
+template<typename C>
+void	PmergeMe::printValues(const C& c, const std::string& sep) {
+	for (auto it = c.begin(); it != c.end(); ++it) {
+		if (it != c.begin()) std::cout << sep;
+		std::cout << **it;
+	}
+	std::cout << std::endl;
 }

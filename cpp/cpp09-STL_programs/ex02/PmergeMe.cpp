@@ -3,11 +3,9 @@
 using std::cout;
 using std::endl;
 
-
 size_t	PmergeMe::comparisons = 0;
 size_t	PmergeMe::size = 0;
 
-//is it faster to process passing a single argument of space-separated ints? or as many args
 bool PmergeMe::validateStr(int ac, char **args) {
 	for (int i = 1; i < ac; i++) {
 		int j = 0;

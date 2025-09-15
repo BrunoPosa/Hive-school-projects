@@ -15,7 +15,7 @@ int main (int ac, char **av) {
 		std::deque<int>		dq;
 		std::vector<int>	vec;
 		vec.reserve(ac);
-		
+
 		//init containers with given values
 		cout << "Before:";
 		for (int i = 1; i < ac; i++) {
