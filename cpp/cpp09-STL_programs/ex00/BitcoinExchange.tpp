@@ -82,13 +82,25 @@ year_month_day	BitcoinExchange<T>::parseDate_(const std::string& line) {
 
 template<typename T>
 double	BitcoinExchange<T>::toPositiveNum_(const std::string& numStr) {
+	std::size_t pos = 0;
+	double num = 0;
+
 	try {
-		return std::stod(numStr);
+		num = std::stod(numStr, &pos);
 	} catch (std::out_of_range&) {
 		return -1;
 	} catch (std::invalid_argument&) {
 		return -1;
 	}
+
+	while (pos < numStr.size()) {
+		if (!std::isspace(numStr[pos])) {
+			return -1;
+		}
+		pos++;
+	}
+
+	return num;
 }
 
 template<typename T>
