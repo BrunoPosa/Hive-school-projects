@@ -59,7 +59,7 @@ void	BitcoinExchange<T>::run_(std::ifstream& file, std::function<int(year_month_
 
 /*
 	Returns parsed date if correct
-	OR empty date if incorrect input / nonexisting date
+	OR empty date if incorrect input / nonexisting date / leap year
 */
 template<typename T>
 year_month_day	BitcoinExchange<T>::parseDate_(const std::string& line) {
@@ -74,7 +74,8 @@ year_month_day	BitcoinExchange<T>::parseDate_(const std::string& line) {
 		&& allowedChars_.find(dash2) != string::npos)
 	{
 		if (y >= (int)std::chrono::year::min() && y <= (int)std::chrono::year::max()) {
-        	return std::chrono::year{y}/std::chrono::month{m}/std::chrono::day{d};
+        	year_month_day	ymd = std::chrono::year{y}/std::chrono::month{m}/std::chrono::day{d};
+			if (ymd.ok()) return ymd;
 		}
     }
     return year_month_day{};
