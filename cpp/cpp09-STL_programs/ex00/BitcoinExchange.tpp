@@ -84,9 +84,9 @@ template<typename T>
 double	BitcoinExchange<T>::toPositiveNum_(const std::string& numStr) {
 	try {
 		return std::stod(numStr);
-	} catch (std::out_of_range) {
+	} catch (std::out_of_range&) {
 		return -1;
-	} catch (std::invalid_argument) {
+	} catch (std::invalid_argument&) {
 		return -1;
 	}
 }
