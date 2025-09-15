@@ -124,8 +124,6 @@ void PmergeMe::sorter(C& main) {
 		PmergeMe::binaryInsert<std::vector<Ptr>>(b[idx - 1].first, right, a);
 	}
 
-	if (extra)	PmergeMe::binaryInsert<std::vector<Ptr>>(extra, a.size(), a);
-
 	#ifdef TRACE
 		cout << "a: "; for (auto& it : a) {cout << *it << " "; } cout << endl;
 	#endif
