@@ -32,7 +32,7 @@ public:
 	template<typename T>	static void		runComparison(std::vector<T>& vec, std::deque<T>& dq);
 	template<typename C>	static double	measureSorting(C& c);
 	template<typename C>	static void		sorter(C& main);
-	template<typename C>	static void 	binaryInsert(typename C::value_type obj, std::size_t right, C& vec);
+	template<typename C>	static void 	binaryInsert(typename C::value_type obj, std::size_t rightEdge, C& vec);
 	template<typename Ptr>	static void		adjustB(std::vector<Ptr>& a, std::vector<std::pair<Ptr, Ptr>>& b);
 	template<typename C>	static bool		isSorted(const C& c);
 	template<typename T>	static bool		isLLessThanR(const T& l, const T& r);

@@ -81,8 +81,8 @@ void PmergeMe::sorter(C& main) {
 	for (std::size_t i = 0; i < n - pairless; i += 2) {
 		std::pair<Ptr, Ptr> pair(main[i], main[i + 1]);
 		if (!isLLessThanR(*pair.first, *pair.second)) std::swap(pair.first, pair.second);
-		a.emplace_back(pair.second);
-		b.emplace_back(pair);
+		a.push_back(pair.second);
+		b.push_back(pair);
 	}
 
 	#ifdef TRACE
@@ -106,7 +106,6 @@ void PmergeMe::sorter(C& main) {
 	for (size_t idx : order) {
 		if (idx > b.size() && extra != nullptr) {
 			PmergeMe::binaryInsert<std::vector<Ptr>>(extra, a.size(), a);
-			extra = nullptr;
 			continue;
 		}
 
@@ -123,9 +122,10 @@ void PmergeMe::sorter(C& main) {
 }
 
 template<typename C>
-void PmergeMe::binaryInsert(typename C::value_type obj, std::size_t right, C& vec) {
+void PmergeMe::binaryInsert(typename C::value_type obj, std::size_t rightEdge, C& vec) {
     using Ptr = typename C::value_type;
     static_assert(std::is_pointer_v<Ptr>, "Container must hold pointers (T*)");
+	std::size_t	right = rightEdge;
 
     std::size_t left = 0;
     while (left < right) {
@@ -137,7 +137,7 @@ void PmergeMe::binaryInsert(typename C::value_type obj, std::size_t right, C& ve
         }
     }
 	#ifdef TRACE
-		cout << FMT_GREEN << "right edge=" << FMT_CLEAR << right << endl;
+		cout << FMT_GREEN << "right edge index=" << FMT_CLEAR << rightEdge << endl;
 		cout << FMT_YELLOW << "inserted " << *obj << FMT_CLEAR << endl;
 		cout <<  FMT_YELLOW << "  comparisons so far: " << FMT_CLEAR << PmergeMe::comparisons << endl;
 	#endif
