@@ -7,7 +7,7 @@ to test with high coverage, run `make` and then the following command:
 The output might take a while depending how many numbers are given. Comparison count should never exceed F(n) values. 
 
 
-![Screenshot](./screenshot.png)
+![Screenshot](./img/screenshot.png)
 
 
 
@@ -17,13 +17,13 @@ The output might take a while depending how many numbers are given. Comparison c
 To understand better the flow of the sorting, run `make trace`.
 The program works with positive numbers only, and '-1' in the image below represents the lack of a pairless number.
 
-![Trace](./trace.png)
+![Trace](./img/trace.png)
 
 
 
 And here is the algorithm description from the source:
 
-![Algorithm](./ford-johnson_merge_insertion.png)
+![Algorithm](./img/ford-johnson_merge_insertion.png)
 
 
 ## Notes
