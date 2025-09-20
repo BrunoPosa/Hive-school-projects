@@ -101,26 +101,18 @@ void PmergeMe::sorter(C& main) {
 		cout << "b: "; for (auto& it : b) {cout << std::setw(2) << *it.first << " ";} cout << std::setw(2) << ((extra) ? *extra : -1) << endl;
 	#endif
 
-	//for smallest element in A, which is a[0], we insert its smaller pair element from B to the left without any comparisons
-	Ptr	autoInsert = b[0].second;
-	a.insert(a.begin(), b[0].first);
-	#ifdef TRACE
-		cout << FMT_YELLOW << "automatically inserted " << *b[0].first << ", " << b[0].first << FMT_CLEAR << endl;
-	#endif
-
 	// perform ordered insertions
 	std::vector<size_t> order = generateJacobsthalOrder(b.size() + pairless);
 	for (size_t idx : order) {
-		if (idx - 1 == b.size() && extra) {
+		if (idx > b.size() && extra != nullptr) {
 			PmergeMe::binaryInsert<std::vector<Ptr>>(extra, a.size(), a);
 			extra = nullptr;
 			continue;
 		}
-		if (b[idx - 1].second == autoInsert) continue;
 
 		//find right edge of search field for binary search by looking for the index of B's pair in A
 		auto it = std::find(a.begin(), a.end(), b[idx - 1].second);
-		std::size_t	right = (it == a.end()) ? a.size() : std::distance(a.begin(), it);
+		std::size_t	right = std::distance(a.begin(), it);
 		PmergeMe::binaryInsert<std::vector<Ptr>>(b[idx - 1].first, right, a);
 	}
 
@@ -145,7 +137,7 @@ void PmergeMe::binaryInsert(typename C::value_type obj, std::size_t right, C& ve
         }
     }
 	#ifdef TRACE
-		cout << FMT_GREEN << "right=" << FMT_CLEAR << right << endl;
+		cout << FMT_GREEN << "right edge=" << FMT_CLEAR << right << endl;
 		cout << FMT_YELLOW << "inserted " << *obj << FMT_CLEAR << endl;
 		cout <<  FMT_YELLOW << "  comparisons so far: " << FMT_CLEAR << PmergeMe::comparisons << endl;
 	#endif

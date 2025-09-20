@@ -46,7 +46,7 @@ std::vector<size_t> PmergeMe::generateJacobsthalOrder(size_t n) {
 		order.push_back(n--);
 	}
 	#ifdef TRACE
-		cout<< FMT_GREEN << "order:" ;
+		cout<< FMT_GREEN << "insertion order:" ;
 		for (auto& it: order) cout << it << " ";
 		cout << FMT_CLEAR << endl;
 	#endif
