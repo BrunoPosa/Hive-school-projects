@@ -22,7 +22,7 @@ SRCS	=	main.cpp \
 all: $(NAME)
 
 $(NAME): $(SRCS) $(HEADERS) $(DEPS)
-	$(CXX) $(FLAGS) $(OFLAGS) $(SRCS) -o $(NAME)
+	$(CXX) $(FLAGS) $(OFLAGS) -DCOMPARISON_COUNT $(SRCS) -o $(NAME)
 
 clean:
 	$(RM) $(DEBUG_NAME)
