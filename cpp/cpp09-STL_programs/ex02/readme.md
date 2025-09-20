@@ -29,5 +29,3 @@ And here is the algorithm description from the source:
 ## Notes
 
 I understood from [leske42's great guide](https://github.com/leske42/CPP09) that the best use case for this algorithm would be for sorting elements which are expensive to compare, not simple integers. Following that idea, I understood the same elements might be expensive to move, so I decided to only move their pointers and not the data.
-
-Without comments and trace prints, sorter() has 42 lines :3
