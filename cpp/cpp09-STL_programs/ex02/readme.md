@@ -1,6 +1,6 @@
 ## Ford-Johnson merge insertion sort
 
-This exercise is one of the more fun ways to learn to use a couple STL containers. Most of the meat here is implementing this very specific algorithm which optimizes for number of comparisons. Here is the description:
+This exercise is one of the more fun ways to learn to use a couple STL containers. Most of the meat here is implementing this very specific algorithm which optimizes for number of comparisons. Key concepts are element pairing, recursion, Jacobstahl sequence, and binary search. Here is the description:
 
 ![Algorithm](./img/ford-johnson_merge_insertion.png)
 
