@@ -31,4 +31,4 @@ The program works with positive numbers only, and '-1' in the trace screenshot m
 
 ## Notes
 
-I understood from [leske42's great guide](https://github.com/leske42/CPP09) that the best use case for this algorithm would be for sorting elements which are expensive to compare, not simple integers. Following that idea, the same elements might be expensive to move, so I decided to only move their pointers and not the data.
+I understood from [leske42's great guide](https://github.com/leske42/CPP09) that the best use case for this algorithm would be for sorting elements which are expensive to compare, not simple integers. 
